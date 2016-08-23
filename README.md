@@ -100,9 +100,14 @@ Not 100% sure testing works, it was ported from another starter code project. If
 
 To build your application, run:
 
-* `npm run build`
+* `npm run build:dev`
 
 You can now go to `/dist` and deploy that to your server!
+
+The production build adds minification via Uglify.
+
+* `npm run build:prod`
+
 
 ## Documentation
 
