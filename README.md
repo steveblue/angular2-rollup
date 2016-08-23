@@ -13,7 +13,6 @@ This seed repo serves as an Angular 2 starter for anyone looking to get up and r
 * End-to-end Angular 2 code using [Protractor](https://angular.github.io/protractor/).
 * Stylesheets with [SASS](http://sass-lang.com/) (not required, it supports regular css too).
 * Error reported with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer).
-* Documentation with [TypeDoc](http://typedoc.io/).
 
 >Warning: Make sure you're using the latest version of Node.js and NPM
 
@@ -50,7 +49,6 @@ go to [http://localhost:4200](http://localhost:4200) in your browser.
     * [Developing](#developing)
     * [Testing](#testing)
     * [Production](#production)
-    * [Documentation](#documentation)
 * [Frequently asked questions](#faq)
 * [TypeScript](#typescript)
 * [License](#license)
@@ -108,12 +106,6 @@ The production build adds minification via Uglify.
 
 * `npm run build:prod`
 
-
-## Documentation
-
-You can generate api docs (using [TypeDoc](http://typedoc.io/)) for your code with the following:
-
-* `npm run docs`
 
 # FAQ
 

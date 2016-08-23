@@ -40,12 +40,20 @@ Thumbs.db
 /typings/
 /tsd_typings/
 
+# Typescript Build #
+
+src/main.js
+src/main.js.map
+src/vendor.js
+src/vendor.js.map
+src/app/**/*.js
+src/app/**/*.js.map
+
 # Dist #
 /dist
 /public/__build__/
 /src/*/__build__/
 __build__/**
-.webpack.json
 
 # Doc #
 /doc/
