@@ -4,7 +4,7 @@
 
 A complete, yet simple, starter for Angular 2 using Rollup.
 
-This seed repo serves as an Angular 2 starter for anyone looking to get up and running with Angular 2 and TypeScript fast. Using [Rollup](http://rollupjs.org) for building our files and assisting with boilerplate. We're also using Protractor for our end-to-end story and Karma for our unit tests. This starter code was ported from this [Webpack Starter Code](https://github.com/preboot/angular2-webpack) and was initially created by [Steve Belovarich](https://github.com/steveblue). If you are interested in helping out, please contribute to this repository.
+This seed repo serves as an Angular 2 starter for anyone looking to get up and running with Angular 2 and TypeScript fast. Using [Rollup](http://rollupjs.org) for building our files and assisting with boilerplate. We're also using Protractor for our end-to-end story and Karma for our unit tests. This starter code was ported from this [Webpack Starter Code](https://github.com/preboot/angular2-webpack). If you are interested in helping out, please contribute to this repository.
 
 * Best practices in file and application organization for [Angular 2](https://angular.io/).
 * Ready to go build system using [Rollup](http://rollupjs.org)) for working with [TypeScript](http://www.typescriptlang.org/).
