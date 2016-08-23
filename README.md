@@ -114,7 +114,7 @@ You can generate api docs (using [TypeDoc](http://typedoc.io/)) for your code wi
 
 #### Do I need to add script / link tags into index.html ?
 
-Yes, as of right now Rollup will not handle this for you, but may in the future. The typical Angular 2 dependencies have been added for you. These dependencies are currently stored in /src/public/lib and require a script to copy dependencies which hasn't been written yet.
+Yes, as of right now Rollup will not handle this for you, but may in the future. The typical Angular 2 dependencies have been added for you. These dependencies are currently stored in /src/public/lib and require a script to copy dependencies which hasn't been written yet. This situation is not ideal, since dep are currently being tracked by github and a myriad of other reasons. This will be fixed soon.
 
 #### How to include external angular 2 libraries ?
 
