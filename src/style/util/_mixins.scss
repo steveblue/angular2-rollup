@@ -1,0 +1,53 @@
+
+//-----------------------------------------
+//  Font Weight
+//-----------------------------------------
+@mixin font-weight($weight) {
+  font-weight: $weight;
+}
+
+//-----------------------------------------
+//  Layout
+//-----------------------------------------
+@mixin vertical-align {
+  position: relative;
+  top: 50%;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+}
+
+@mixin horizontal-align {
+  position: relative;
+  left: 50%;
+      -webkit-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+      transform: translateX(-50%);
+}
+
+//-----------------------------------------
+//  Font Size
+//-----------------------------------------
+
+/**
+ * Convert font-size from px to rem with px fallback
+ *
+ * @param $size - the value in pixel you want to convert
+ *
+ * e.g. p {@include fontSize(12px);}
+ *
+ */
+
+// Function for converting a px based font-size to rem.
+@function calculate-rem($size) {
+  $remSize: $size / 16px;
+//Default font size on html element is 100%, equivalent to 16px;
+  @return #{$remSize}rem;
+}
+
+// Mixin that will include the fall back px declaration as well as the calculated rem value.
+@mixin font-size($size) {
+  font-size: $size;
+  font-size: calculate-rem($size);
+}
+
