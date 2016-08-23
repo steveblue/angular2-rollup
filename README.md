@@ -111,7 +111,15 @@ The production build adds minification via Uglify.
 
 #### Do I need to add script / link tags into index.html ?
 
-Yes, as of right now Rollup will not handle this for you. The typical Angular 2 dependencies have been added for you. These dependencies are currently stored in /src/public/lib.  This project requires a script to copy dependencies from `node_nodules` which hasn't been written yet. This situation is not ideal, since dependencies are currently being tracked by github and a myriad of other reasons. Please consider submitting a fix for this.
+Yes, as of right now this starter package will not handle this for you but it is possible. The typical Angular 2 dependencies have been added for you and you can configure more in `static.config.js`. A script runs that copies each dependency into `/dist/lib` (or wherever you specify in the config). You can then reference the library in `index.html` like so:
+
+```
+    <script src="/lib/zone.js/dist/zone.js"></script>
+    <script src="/lib/reflect-metadata/Reflect.js"></script>
+```
+
+NOTE: Entire dependency folders are copied from `node_modules` to `dist/lib`.
+
 
 #### How to include external angular 2 libraries ?
 
