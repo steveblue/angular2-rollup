@@ -26,7 +26,7 @@ This seed repo serves as an Angular 2 starter for anyone looking to get up and r
 
 ```bash
 # clone the repo
-$ git clone https://github.com/steveblue/angular2-rollup-starter my-app
+$ git clone https://github.com/steveblue/angular2-rollup my-app
 
 # change directory to your app
 $ cd my-app
