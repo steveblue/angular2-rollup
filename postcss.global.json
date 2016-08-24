@@ -1,0 +1,9 @@
+{
+    "use": ["autoprefixer", "cssnano"],
+    "input": "dist/style/style.css",
+    "output": "dist/style/style.min.css",
+    "local-plugins": true,
+    "autoprefixer": {
+        "browsers": "> 5%"
+    }
+}
