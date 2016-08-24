@@ -1,4 +1,4 @@
-/* line 1, /Users/steve/www/angular2-rollup-starter/src/app/shared/components/home/home.component.scss */
+/* line 1, /Users/steveb/vvv/angular2-rollup/src/app/shared/components/home/home.component.scss */
 :host {
   width: 256px;
   height: 256px;
@@ -9,7 +9,7 @@
           transform: translateX(-50%) translateY(-50%);
   -webkit-perspective: 1000px;
           perspective: 1000px; }
-  /* line 9, /Users/steve/www/angular2-rollup-starter/src/app/shared/components/home/home.component.scss */
+  /* line 9, /Users/steveb/vvv/angular2-rollup/src/app/shared/components/home/home.component.scss */
   :host img {
     width: 100%;
     height: 100%; }
