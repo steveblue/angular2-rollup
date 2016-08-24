@@ -1,5 +1,7 @@
 # angular2-rollup
 
+[![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 **Note: This guide is following the Angular's [Style Guide](http://angular.io/styleguide)
 
 A complete, yet simple, starter for Angular 2 using Rollup.
