@@ -69,9 +69,18 @@ What you need to run this app:
 
 ## Developing
 
-After you have installed all dependencies you can now start developing with:
+After you have installed all dependencies you can now build the project:
 
 * `npm start`
+
+Start the watchers with the following command:
+
+* `npm run watch`
+
+Then start the development server:
+
+* `npm run dev:server`
+
 
 It will start a local server using `live-server` and combined with `nodemon` will watch, build (in-memory), and reload for you. The application can be checked at `http://localhost:4200`.
 
