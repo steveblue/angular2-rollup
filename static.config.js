@@ -3,6 +3,6 @@ module.exports = {
         'reflect-metadata',
         'zone.js'
     ],
-    src: './node_modules',
-    dist: './dist/lib'
+    src: 'node_modules',
+    dist: 'dist/lib'
 }

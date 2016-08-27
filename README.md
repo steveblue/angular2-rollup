@@ -34,14 +34,16 @@ $ cd my-app
 # install the dependencies with npm
 $ npm install
 
-# build the dev environment from scratch, usually you will just need build:dev
-$ npm run build:clean
-
-#start the watchers, currently listens for changes in src/public, ts and scss files in src/app
-$ npm run watch
+# Build and start the watchers, currently listens for changes in src/public, ts and scss files in src/app
+$ npm start
 
 #open a new terminal window and start live-server
 $ npm run dev:server
+
+#Optionally, set environment variables with npm start.
+
+$ NODE_ENV=production npm start
+
 
 ```
 go to [http://localhost:4200](http://localhost:4200) in your browser.
