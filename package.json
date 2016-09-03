@@ -6,7 +6,8 @@
   "scripts": {
     "clean": "rimraf node_modules doc dist && npm cache clean",
     "clean:install": "npm run clean && npm install",
-    "clean:start": "npm run clean:install && npm start",
+    "clean:start": "rimraf dist && npm run compile:vendor && npm run start",
+    "clean:dist": "rimraf dist && npm run compile:vendor",
     "copy:public": "cp -a src/public/. dist/",
     "copy:dep": "node static.copy",
     "bundle:vendor": "rollup -c rollup.config.vendor.js",

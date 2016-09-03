@@ -46,9 +46,9 @@ const options = {
     rulesDirectory: 'node_modules/codelyzer'
 };
 
-const tslint = () => {
+const tslint = (path) => {
 
-    let program = Linter.createProgram('./tsconfig.json', './src/');
+    let program = Linter.createProgram('./tsconfig.json', path ? path.substring(0, path.lastIndexOf('/')) : './src/');
     let files = Linter.getFileNames(program);
     let results = files.map(file => {
 
@@ -94,8 +94,12 @@ let copy = {
 
 /* Compile */
 
+let isCompiling = false;
+
 let compile = {
     vendor : () => {
+
+        isCompiling = true;
 
         let vendor = exec(scripts['bundle:vendor'], function(code, output) {
 
@@ -117,6 +121,8 @@ let compile = {
     },
     src : () => {
 
+        isCompiling = true;
+
         let bundle = exec(scripts['bundle:src'], function(code, output) {
 
             log('Rollup', 'bundled', 'bundle.es2015.js in', 'dist/');
@@ -127,7 +133,10 @@ let compile = {
                 if (env === 'production') {
                     exec(scripts['uglify:src'], function(code, output) {
                         log('Uglify', 'minified', 'bundle.js to', 'dist/bundle.js');
+                        isCompiling = false;
                     });
+                } else {
+                    isCompiling = false;
                 }
 
             });
@@ -167,7 +176,11 @@ let style = {
             }
 
             let postcss = exec(scripts[script[1]], function(code, output) {
-                compile.src();
+
+                if(!isCompiling) {
+                    compile.src();
+                }
+
             });
 
         });
@@ -203,12 +216,32 @@ let watcher = chokidar.watch('./src/**/*.*', {
 
       }
 
+
+      else if ( path.indexOf('.html') > -1 && path.indexOf('src') > -1) {
+
+       log('File', path, 'triggered', 'transpile');
+
+       if (!isCompiling) {
+
+          compile.src();
+
+       }
+
+
+
+      }
+
       else if ( path.indexOf('.ts') > -1 ) {
 
        log('File', path, 'triggered', 'transpile');
 
-       tslint();
-       compile.src();
+       tslint(path);
+
+       if (!isCompiling) {
+
+          compile.src();
+
+       }
 
 
       }
@@ -246,6 +279,7 @@ watcher
     copy.public();
     style.global();
     style.src();
+    //tslint();
 
 
   });

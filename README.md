@@ -80,9 +80,6 @@ After you have installed all dependencies you can now build the project:
 
 * `npm start`
 
-Start the watchers with the following command:
-
-* `npm run watch`
 
 Then start the development server:
 
