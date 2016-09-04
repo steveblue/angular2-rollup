@@ -58,13 +58,14 @@ const tslint = (path) => {
 
         if (results.failureCount > 0) {
             let failures = JSON.parse(results.output);
-            failures.forEach((data) => {
-                log('tslint:',
-                    data.failure,
-                    '[' + data.startPosition.line +
-                    ', ' + data.startPosition.character + ']',
-                    data.name);
-            });
+            for (let i = 0; i < failures.length; i++) {
+                 log('tslint:',
+                    failures[i].failure,
+                    '[' + failures[i].startPosition.line +
+                    ', ' + failures[i].startPosition.character + ']',
+                    failures[i].name);
+            }
+
         }
 
     });
@@ -98,8 +99,6 @@ let isCompiling = false;
 
 let compile = {
     vendor : () => {
-
-        isCompiling = true;
 
         let vendor = exec(scripts['bundle:vendor'], function(code, output) {
 
@@ -237,11 +236,11 @@ let watcher = chokidar.watch('./src/**/*.*', {
 
        tslint(path);
 
-       if (!isCompiling) {
+        if (!isCompiling) {
 
-          compile.src();
+            compile.src();
 
-       }
+        }
 
 
       }
