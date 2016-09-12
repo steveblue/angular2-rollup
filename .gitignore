@@ -1,7 +1,6 @@
 # Logs
 logs
 *.log
-.npm-debug.log.*
 
 # Runtime data
 pids
@@ -41,20 +40,22 @@ Thumbs.db
 /typings/
 /tsd_typings/
 
-# Typescript Build #
+# Src #
 
-src/main.js
-src/main.js.map
-src/vendor.js
-src/vendor.js.map
-src/app/**/*.js
-src/app/**/*.js.map
+/tmp
+/ngfactory
+/src/app/*.js
+/src/app/**/*.js
+/src/app/**/*.metadata.json
+/src/public/compiler.jar
+
 
 # Dist #
 /dist
 /public/__build__/
 /src/*/__build__/
 __build__/**
+.webpack.json
 
 # Doc #
 /doc/

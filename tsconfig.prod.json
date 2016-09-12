@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "es2015",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "allowUnreachableCode": false,
+    "moduleResolution": "node"
+  },
+  "angularCompilerOptions": {
+   "genDir": "./ngfactory",
+   "debug": false
+  },
+  "files": [
+    "./tmp/app/app.module.ts",
+    "main.prod.ts"
+  ],
+  "compileOnSave": false,
+  "buildOnSave": false
+}

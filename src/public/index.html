@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="/">
 
-    <title>Angular Rollup</title>
+    <title>Angular / Rollup</title>
 
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/style/style.css">
 
+    <script src="/lib/core-js/client/shim.min.js"></script>
     <script src="/lib/zone.js/dist/zone.js"></script>
     <script src="/lib/reflect-metadata/Reflect.js"></script>
-
+    <script src="/lib/systemjs/dist/system.js"></script>
   </head>
   <body>
 
@@ -20,10 +21,19 @@
         <div class="loading__icon is--large is--center"></div>
     </app-root>
 
-    <script src="/vendor.js"></script>
-    <script src="/bundle.js"></script>
+    <!-- build:remove:prod -->
+    <script src="system.config.js"></script>
+    <script>
+
+       Promise.all([
+          System.import('app')
+       ]);
+
+    </script>
+    <!-- /build -->
+    <!-- build:remove:dev -->
+    <script src="system.import.js"></script>
+    <!-- /build -->
 
   </body>
 </html>
-
-

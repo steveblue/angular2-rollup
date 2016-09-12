@@ -1,7 +1,8 @@
 import { Component, OnDestroy, trigger, state, style, transition, animate } from '@angular/core';
 
 @Component({
-  selector: 'app-home',
+  moduleId: module.id,
+  selector: 'my-app-home',
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.css'],
   animations: [

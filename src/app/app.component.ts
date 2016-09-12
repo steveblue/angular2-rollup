@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
+    moduleId: module.id,
     selector: 'app-root',
     templateUrl: 'app.component.html',
     styleUrls: ['app.component.css']
@@ -9,9 +10,6 @@ import { Component } from '@angular/core';
 
 export class AppComponent {
 
-    constructor() {
+    constructor() {}
 
-        this.world = '';
-
-    }
 }

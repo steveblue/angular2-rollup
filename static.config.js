@@ -1,8 +1,12 @@
 module.exports = {
     dep: [
+        'core-js',
         'reflect-metadata',
-        'zone.js'
+        'zone.js',
+        'systemjs',
+        '@angular',
+        'rxjs'
     ],
-    src: 'node_modules',
-    dist: 'dist/lib'
+    src: './node_modules',
+    dist: './dist/lib'
 }
