@@ -5,7 +5,6 @@ const alias   = require('rollup-plugin-alias');
 const replace = require('rollup-plugin-replace');
 const resolve = require('rollup-plugin-node-resolve');
 const include = require('rollup-plugin-includepaths');
-const closure = require('google-closure-compiler-js');
 const cleanup = require('rollup-plugin-cleanup');
 
 var bundle = rollup.rollup({

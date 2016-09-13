@@ -7,8 +7,6 @@ import include from 'rollup-plugin-includepaths';
 import typescript from 'rollup-plugin-typescript';
 import cleanup from 'rollup-plugin-cleanup';
 
-const closure = require('google-closure-compiler-js');
-
 export default {
   entry: 'main.prod.js',
   format: 'iife',
