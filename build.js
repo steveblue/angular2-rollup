@@ -13,19 +13,7 @@ const sass = require('node-sass');
 
 const env = process.env.NODE_ENV || 'dev';
 
-let hasServer, hasWatcher;
 
-process.argv.forEach(function(arg){
-
-  if(arg === '--serve') {
-    hasServer = true;
-  }
-
-  if(arg === '--watch') {
-    hasWatcher = true;
-  }
-
-});
 
 /* Log Formatting */
 
@@ -166,11 +154,9 @@ const compile = {
 
                      let closure = exec(scripts['transpile:closure'], function(code, output, error){
                           log('Closure Compiler', 'transpiled', './dist/bundle.es2015.js to', './dist/bundle.js');
+                          log(colors.green('Ready'), 'to', colors.green('serve'));
                           compile.clean();
                           isCompiling = false;
-                          if(env === 'prod' && hasInit === false && hasServer === true) {
-                              exec('node server.js');
-                          }
                           hasInit = true;
                      });
                  });
@@ -218,9 +204,9 @@ const tslint = (path) => {
             let failures = JSON.parse(results.output);
             for (let i = 0; i < failures.length; i++) {
                  log('tslint:',
-                    failures[i].failure,
-                    '[' + failures[i].startPosition.line +
-                    ', ' + failures[i].startPosition.character + ']',
+                    colors.red(failures[i].failure),
+                    colors.white('[' + failures[i].startPosition.line +
+                    ', ' + failures[i].startPosition.character + ']'),
                     failures[i].name);
             }
 
@@ -274,7 +260,8 @@ let style = {
                             compile.src();
                         }
                         if( env === 'dev' ) {
-                          exec('node server.js');
+                          //exec('node server.js');
+                          log(colors.green('Ready'), 'to', colors.green('serve'));
                         }
                       }
                     }
@@ -329,6 +316,7 @@ let server = {
 let init = function() {
 
   if (env === 'prod') {
+    mkdir('./tmp');
     copy.lib();
     copy.public();
     style.src();
@@ -344,7 +332,6 @@ let init = function() {
 };
 
 /* Watcher */
-if ( env === 'dev' || hasWatcher === true ) {
 
 let watcher = chokidar.watch('./src/**/*.*', {
   ignored: /[\/\\]\./,
@@ -420,7 +407,3 @@ watcher
     init();
 
   });
-
-} else {
-  init();
-}

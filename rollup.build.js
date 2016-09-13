@@ -8,18 +8,7 @@ const include = require('rollup-plugin-includepaths');
 const closure = require('google-closure-compiler-js');
 const cleanup = require('rollup-plugin-cleanup');
 
-function transpile(){
-  return {
-    transformBundle(bundle){
-      console.log(bundle);
-      var transformed = closure.compile({jsCode: [{src: bundle}]});
-      console.log(transformed);
-      return transformed.compiledCode;
-    }
-  }
-}
-
-var aot = rollup.rollup({
+var bundle = rollup.rollup({
     entry: './main.prod.js',
     plugins: [
       alias({ rxjs: __dirname + '/node_modules/rxjs-es' }),
@@ -35,4 +24,4 @@ var aot = rollup.rollup({
     })
 }).catch(err => console.log(err));
 
-Promise.all([aot]).then(() => console.log('Rollup!'))
+Promise.all([bundle]).then(() => console.log('Rollup!'))

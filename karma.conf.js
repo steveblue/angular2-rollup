@@ -1,7 +1,5 @@
 var path = require('path');
 
-var webpackConfig = require('./webpack.config');
-
 module.exports = function (config) {
   var _config = {
 
@@ -23,16 +21,9 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      './karma-shim.js': ['webpack', 'sourcemap']
+      './karma-shim.js': []
     },
 
-    webpack: webpackConfig,
-
-    webpackMiddleware: {
-      // webpack-dev-middleware configuration
-      // i. e.
-      stats: 'errors-only'
-    },
 
     coverageReporter: {
       dir: 'coverage/',
@@ -55,9 +46,6 @@ module.exports = function (config) {
       timeoutNoMoreFiles: 1000 // default value
     },
 
-    webpackServer: {
-      noInfo: true // please don't spam the console when running in karma!
-    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'mocha'

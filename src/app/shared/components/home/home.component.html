@@ -1,3 +1,5 @@
-
 <img [@intro]="stealthMode"
-     src="/assets/ng2-stealth.png">
+     src="/assets/ng2-stealth.png"
+     class="app__icon"
+     [ngClass]="{'is--active' : stealthMode === 'active',
+                 'is--inactive' : stealthMode === 'inactive'}">

@@ -9,15 +9,6 @@ import cleanup from 'rollup-plugin-cleanup';
 
 const closure = require('google-closure-compiler-js');
 
-function transpile(){
-  return {
-    transformBundle(bundle){
-      var transformed = closure.compile({jsCode: [{src: bundle}]});
-      return transformed.compiledCode;
-    }
-  }
-}
-
 export default {
   entry: 'main.prod.js',
   format: 'iife',
