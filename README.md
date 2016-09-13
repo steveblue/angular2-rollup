@@ -37,7 +37,17 @@ We're also using Protractor for our end-to-end story and Karma for our unit test
 `$ npm install`
 
 #### Install the server config
-$ See Configure Server section below.
+
+Paste the following into /conf/config.local.js:
+
+```
+const config = {
+                 origin: 'localhost',
+                 port: 4200
+               };
+
+module.exports = config;
+```
 
 #### Build, start the server and watchers
 `$ npm start`
