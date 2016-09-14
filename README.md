@@ -38,15 +38,14 @@ We're also using Protractor for our end-to-end story and Karma for our unit test
 
 #### Install the server config
 
-Paste the following into /conf/config.local.js:
+Change the host and/or port in `/conf/config.local.js` if needed. This config is used for the Express Server.
 
 ```
-const config = {
-                 origin: 'localhost',
-                 port: 4200
-               };
+{
+   origin: 'localhost',
+   port: 4200
+};
 
-module.exports = config;
 ```
 
 #### Build, start the server and watchers
@@ -89,9 +88,9 @@ What you need to run this app:
 
 ###Configure Server
 
-Server configuration happens per environment. Currently two environments are supported: `dev` and `prod`. Create config files for each environment in the  `conf/` directory called `config.local.js` and `config.prod.js`. The files are listed in the `.gitignore` so they are not included in the repository.
+Server configuration happens per environment. Currently two environments are supported: `dev` and `prod`. Create config files for each environment in the  `conf/` directory called `config.local.js` and `config.prod.js`.
 
-The configuration file only takes two arguments for now: `origin` and `port`. `server.js` uses this configuration to initialize an Express Server either for development or production. Copy and paste the following to get started:
+The configuration file only takes two arguments for now: `origin` and `port`. `server.js` uses this configuration to initialize an Express Server either for development or production. A basic config looks like this:
 
 ```
 const config = {
