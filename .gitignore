@@ -42,7 +42,6 @@ Thumbs.db
 
 # Src #
 
-/conf
 /tmp
 /ngfactory
 /src/app/*.js

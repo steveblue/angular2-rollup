@@ -1,6 +1,6 @@
 {
   "name": "angular2-rollup",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.7",
   "license": "MIT",
   "repository": "https://github.com/steveblue/angular2-rollup",
   "scripts": {
