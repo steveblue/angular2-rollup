@@ -89,7 +89,7 @@
     "remap-istanbul": "^0.6.4",
     "replace-in-file": "^2.0.1",
     "rimraf": "^2.5.1",
-    "rollup": "^0.33.0",
+    "rollup": "^0.34.0",
     "rollup-plugin-alias": "^1.2.0",
     "rollup-plugin-angular": "=0.2.2",
     "rollup-plugin-cleanup": "^0.1.2",
