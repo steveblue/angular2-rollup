@@ -342,7 +342,12 @@ let watcher = chokidar.watch('./src/**/*.*', {
 
       if ( path.indexOf('src/public') > -1 ) {
 
-          copy.file(path);
+          if ( path.indexOf('src/index.html') ) {
+            copy.public();
+          } else {
+            copy.file(path);
+          }
+
 
       }
 
