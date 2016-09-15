@@ -221,13 +221,14 @@ let styleCount = 0;
 let initStyleCount = 0;
 
 let style = {
+
     src: (path, watch) => {
 
       if(path) {
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf('style.scss') > -1 ? 'dist/style/style.css' : (env === 'dev') ? 'dist/'+srcPath+'/'+filename.replace('.scss','.css') : path.replace('.scss','.css').replace('src', 'tmp');
+        let outFile = path.indexOf('src/style') > -1 ? 'dist/style/style.css' : (env === 'dev') ? 'dist/'+srcPath+'/'+filename.replace('.scss','.css') : path.replace('.scss','.css').replace('src', 'tmp');
         sass.render({
           file: path,
           outFile: outFile,
@@ -396,7 +397,9 @@ let watcher = chokidar.watch('./src/**/*.*', {
 
         log('File', path, 'triggered', 'compile');
 
-        style.src(path, true);
+         style.src(path, true);
+
+
 
       }
 
