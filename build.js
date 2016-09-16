@@ -8,7 +8,7 @@ const clim = require('clim');
 const console = clim();
 const colors = require('chalk');
 const scripts = require('./package.json').scripts;
-const lib = require('./static.config.js');
+const paths = require('./paths.config.js');
 const sass = require('node-sass');
 
 const env = process.env.NODE_ENV || 'dev';
@@ -73,6 +73,11 @@ const copy = {
 
         log(path || 'src/public/', 'copied', 'to', 'dist/');
 
+        if(paths && paths.clean) {
+          clean.paths();
+        }
+
+
     },
     file: (path) => {
         cp('-R', path, 'dist/');
@@ -86,16 +91,40 @@ const copy = {
     },
     lib: () => {
 
-        mkdir('-p', __dirname + '/' + lib.dist);
+        mkdir('-p', __dirname + '/' + paths.dist);
 
-        for( var i=0;  i < lib.dep.length; i++ ) {
+        for( var i=0;  i < paths.dep.length; i++ ) {
 
-            cp('-R', lib.src + '/' + lib.dep[i], lib.dist + '/' + lib.dep[i]);
-            log(lib.dep[i], 'copied', 'to',  lib.dist + '/' + lib.dep[i]);
+            cp('-R', paths.src + '/' + paths.dep[i], paths.dist + '/' + paths.dep[i]);
+            log(paths.dep[i], 'copied', 'to',  paths.dist + '/' + paths.dep[i]);
 
         }
-    }
+    },
 };
+
+
+const clean = {
+
+  paths: () => {
+
+    if( paths.clean.files ) {
+
+    paths.clean.files.forEach((file) => {
+      rm(file);
+    });
+
+    }
+    if( paths.clean.folders ) {
+
+      paths.clean.folders.forEach((folder) => {
+        rm('-rf', folder);
+      });
+
+    }
+
+  }
+
+}
 
 /* Compile */
 

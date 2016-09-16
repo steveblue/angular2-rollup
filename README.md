@@ -145,7 +145,7 @@ Since the bundle is still ES2015, we need to transpile the bundle into ES5. For 
 
 In order to build for production, you need to install [Closure Compiler](https://developers.google.com/closure/compiler/). Closure Compiler is the only tool that we found would transpile the ES2015 Rollup Bundle to ES5 with 100% reliability after it was processed with `ngc`. Closure Compiler is also a great solution because it optimizes the bundle and does code checking after Rollup tree shakes the application. Google uses Closure Compiler internally to optimize JavaScript files for production.
 
-To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and the application file found [at the bottom of this page](https://developers.google.com/closure/compiler/). Rename the .jar file (ex: closure-compiler-v20160822.jar ) to `compiler.jar` and place it in `src/pubic/compiler.jar`. This file is in the .gitignore, which is why you have to manually install it. We tested the JavaScript version of Closure Compiler and found it resulted in `out of process memory` issues with multiple versions of `node`, which is why the Java application is necessary.
+To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and the application file found [at the bottom of this page](https://developers.google.com/closure/compiler/). Rename the .jar file (ex: closure-compiler-v20160822.jar ) to `compiler.jar` and copy it into the project root directory (`./compiler.jar`). This file is in the `.gitignore`, which is why you have to manually install it. We tested the JavaScript version of Closure Compiler and found it resulted in `out of process memory` issues with multiple versions of `node`, which is why the Java application is necessary.
 
 To build your application, run:
 
@@ -158,7 +158,7 @@ You can now go to `/dist` and deploy that to your server!
 
 #### Do I need to add script / link tags into index.html ?
 
-Yes, as of right now this starter package will not handle this for you. The typical Angular 2 dependencies have been added already. Configure more dependencies to be included in your web app in `static.config.js`. A script runs that copies each dependency from `node_modules` into `/dist/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
+Yes, as of right now this starter package will not handle this for you. The typical Angular 2 dependencies have been added already. Configure more dependencies to be included in your web app in `paths.config.js`. A script runs that copies each dependency from `node_modules` into `/dist/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
 
 ```
     <script src="/lib/zone.js/dist/zone.js"></script>
@@ -181,7 +181,7 @@ or with SystemJS like so:
 
 #### How to include external libraries?
 
-It's simple, just install the lib via npm, add the library to the build in `static.config.js` and inject the library via SystemJS in `src/public/system.config.js` and `index.html` for development and `src/public/system.config.prod.js` and `system.import.js` for production.
+It's simple, just install the lib via npm, add the library to the build in `paths.config.js` and inject the library via SystemJS in `src/public/system.config.js` and `index.html` for development and `src/public/system.config.prod.js` and `system.import.js` for production.
 
 
 #### How do I bundle external libraries for production?

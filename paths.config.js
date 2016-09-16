@@ -8,5 +8,9 @@ module.exports = {
         'rxjs'
     ],
     src: './node_modules',
-    dist: './dist/lib'
+    dist: './dist/lib',
+    clean:{
+      files:[],
+      folders:[]
+    }
 }
