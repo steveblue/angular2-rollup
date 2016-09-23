@@ -13,6 +13,14 @@ export default {
   dest: 'dist/bundle.es2015.js',
   sourceMap: false,
   plugins: [
+    {
+      resolveId: id => {
+        if (id.startsWith('rxjs/') || id.startsWith('rxjs\\')) {
+          let result = `${__dirname}/node_modules/rxjs-es/${id.replace('rxjs/', '')}.js`;
+          return result.replace(/\//g, "\\");
+        }
+      }
+    },
     alias({ rxjs: __dirname + '/node_modules/rxjs-es' }),
     replace({ 'ENVIRONMENT': JSON.stringify( 'production' ) }),
     resolve({ module: true }),
