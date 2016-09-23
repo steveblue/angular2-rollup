@@ -8,7 +8,7 @@ const clim = require('clim');
 const console = clim();
 const colors = require('chalk');
 const scripts = require('./package.json').scripts;
-const lib = require('./static.config.js');
+const paths = require('./paths.config.js');
 const sass = require('node-sass');
 
 const env = process.env.NODE_ENV || 'dev';
@@ -34,8 +34,8 @@ const log = (action, noun, verb, next) => {
 };
 
 const warn = function(action, noun) {
-    let a = action ? colors.green(action) : '';
-    let n = noun ? colors.magenta(noun) : '';
+    let a = action ? colors.red(action) : '';
+    let n = noun ? colors.white(noun) : '';
     console.warn(a + ' ' + n);
 };
 
@@ -73,6 +73,11 @@ const copy = {
 
         log(path || 'src/public/', 'copied', 'to', 'dist/');
 
+        if(paths && paths.clean) {
+          clean.paths();
+        }
+
+
     },
     file: (path) => {
         cp('-R', path, 'dist/');
@@ -86,16 +91,40 @@ const copy = {
     },
     lib: () => {
 
-        mkdir('-p', __dirname + '/' + lib.dist);
+        mkdir('-p', __dirname + '/' + paths.dist);
 
-        for( var i=0;  i < lib.dep.length; i++ ) {
+        for( var i=0;  i < paths.dep.length; i++ ) {
 
-            cp('-R', lib.src + '/' + lib.dep[i], lib.dist + '/' + lib.dep[i]);
-            log(lib.dep[i], 'copied', 'to',  lib.dist + '/' + lib.dep[i]);
+            cp('-R', paths.src + '/' + paths.dep[i], paths.dist + '/' + paths.dep[i]);
+            log(paths.dep[i], 'copied', 'to',  paths.dist + '/' + paths.dep[i]);
 
         }
-    }
+    },
 };
+
+
+const clean = {
+
+  paths: () => {
+
+    if( paths.clean.files ) {
+
+    paths.clean.files.forEach((file) => {
+      rm(file);
+    });
+
+    }
+    if( paths.clean.folders ) {
+
+      paths.clean.folders.forEach((folder) => {
+        rm('-rf', folder);
+      });
+
+    }
+
+  }
+
+}
 
 /* Compile */
 
@@ -217,17 +246,16 @@ const tslint = (path) => {
 
 
 /* Styling */
-let styleCount = 0;
-let initStyleCount = 0;
+let styleFiles = [];
 
 let style = {
-    src: (path, watch) => {
 
-      if(path) {
+    file: (path, watch) => {
+
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf('style.scss') > -1 ? 'dist/style/style.css' : (env === 'dev') ? 'dist/'+srcPath+'/'+filename.replace('.scss','.css') : path.replace('.scss','.css').replace('src', 'tmp');
+        let outFile = path.indexOf('src/style') > -1 ? 'dist/style/style.css' : (env === 'dev') ? 'dist/'+srcPath+'/'+filename.replace('.scss','.css') : path.replace('.scss','.css').replace('src', 'tmp');
         sass.render({
           file: path,
           outFile: outFile,
@@ -248,16 +276,15 @@ let style = {
                 if (watch === true) log('node-sass', 'compiled', 'component style at', outFile);
 
                 let postcss = exec('postcss -c postcss.'+env+'.json -r '+outFile, function(code, output, error) {
+
+                    log('PostCSS', 'transformed', 'component style at', outFile);
                     if ( watch === true ) log('PostCSS', 'transformed', 'component style at', outFile);
-                    if ( watch === true && env === 'prod' && path.indexOf('style.scss') < 0) {
-                        compile.src();
-                    }
                     if( !watch ) {
-                      initStyleCount++;
-                      if( initStyleCount === styleCount - 1) {
+
+                      if( styleFiles.indexOf(path) === styleFiles.length - 1  ) {
                         log('node-sass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
                         if ( env === 'prod' ) {
-                            compile.src();
+                          setTimeout(compile.src, 2000);
                         }
                         if( env === 'dev' ) {
                           //exec('node server.js');
@@ -272,28 +299,26 @@ let style = {
           }
         });
 
-      } else {
+    },
+    src:() =>{
 
         mkdir('dist/style');
 
         ls('src/**/*.scss').forEach(function(file, index) {
           if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
-             styleCount++;
+             styleFiles.push(file);
           }
         });
 
         ls('src/**/*.scss').forEach(function(file, index) {
           if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
-            style.src(file);
+            style.file(file);
           }
         });
-        // server.dev();
+
         if(env === 'dev') {
           hasInit = true;
         }
-
-
-      }
 
     }
 };
@@ -316,7 +341,8 @@ let server = {
 let init = function() {
 
   if (env === 'prod') {
-    mkdir('./tmp');
+    cp('-R', './src', './tmp');
+    mkdir('./ngfactory');
     copy.lib();
     copy.public();
     style.src();
@@ -342,7 +368,12 @@ let watcher = chokidar.watch('./src/**/*.*', {
 
       if ( path.indexOf('src/public') > -1 ) {
 
-          copy.file(path);
+          if ( path.indexOf('src/index.html') ) {
+            copy.public();
+          } else {
+            copy.file(path);
+          }
+
 
       }
 
@@ -391,7 +422,9 @@ let watcher = chokidar.watch('./src/**/*.*', {
 
         log('File', path, 'triggered', 'compile');
 
-        style.src(path, true);
+         style.file(path, true);
+
+
 
       }
 

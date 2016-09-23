@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup.
+A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup. Supports RC.7 and now 2.0.0!
 
 This repo serves as an Angular 2 starter for anyone looking to get up and running fast with Angular 2 and TypeScript and Ahead Of Time (AOT) compilation. We're using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) for compiling AOT and [Rollup](http://rollupjs.org) for bundling our files for production. The development server compiles just in time (JIT) using Typescript and SystemJS for fast and efficient development.
 
@@ -15,12 +15,11 @@ We're also using Protractor for our end-to-end story and Karma for our unit test
 * Testing Angular 2 code with [Jasmine](http://jasmine.github.io/) and [Karma](http://karma-runner.github.io/).
 * Coverage with [Istanbul](https://github.com/gotwarlost/istanbul)
 * End-to-end Angular 2 code using [Protractor](https://angular.github.io/protractor/).
-* Stylesheets with [SASS](http://sass-lang.com/)
+* Stylesheets with [SASS](http://sass-lang.com/) and [PostCSS](http://postcss.org).
 * Error reporting with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer).
 
 >Warning: Make sure you're using the latest version of Node.js and NPM
 
-[Is Angular 2 Ready Yet?](http://splintercode.github.io/is-angular-2-ready/)
 
 ### Quick start
 
@@ -146,7 +145,7 @@ Since the bundle is still ES2015, we need to transpile the bundle into ES5. For 
 
 In order to build for production, you need to install [Closure Compiler](https://developers.google.com/closure/compiler/). Closure Compiler is the only tool that we found would transpile the ES2015 Rollup Bundle to ES5 with 100% reliability after it was processed with `ngc`. Closure Compiler is also a great solution because it optimizes the bundle and does code checking after Rollup tree shakes the application. Google uses Closure Compiler internally to optimize JavaScript files for production.
 
-To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and the application file found [at the bottom of this page](https://developers.google.com/closure/compiler/). Rename the .jar file (ex: closure-compiler-v20160822.jar ) to `compiler.jar` and place it in `src/pubic/compiler.jar`. This file is in the .gitignore, which is why you have to manually install it. We tested the JavaScript version of Closure Compiler and found it resulted in `out of process memory` issues with multiple versions of `node`, which is why the Java application is necessary.
+To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and the application file found [at the bottom of this page](https://developers.google.com/closure/compiler/). Rename the .jar file (ex: closure-compiler-v20160822.jar ) to `compiler.jar` and copy it into the project root directory (`./compiler.jar`). This file is in the `.gitignore`, which is why you have to manually install it. We tested the JavaScript version of Closure Compiler and found it resulted in `out of process memory` issues with multiple versions of `node`, which is why the Java application is necessary.
 
 To build your application, run:
 
@@ -159,7 +158,7 @@ You can now go to `/dist` and deploy that to your server!
 
 #### Do I need to add script / link tags into index.html ?
 
-Yes, as of right now this starter package will not handle this for you. The typical Angular 2 dependencies have been added already. Configure more dependencies to be included in your web app in `static.config.js`. A script runs that copies each dependency from `node_modules` into `/dist/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
+Yes, as of right now this starter package will not handle this for you. The typical Angular 2 dependencies have been added already. Configure more dependencies to be included in your web app in `paths.config.js`. A script runs that copies each dependency from `node_modules` into `/dist/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
 
 ```
     <script src="/lib/zone.js/dist/zone.js"></script>
@@ -182,7 +181,7 @@ or with SystemJS like so:
 
 #### How to include external libraries?
 
-It's simple, just install the lib via npm, add the library to the build in `static.config.js` and inject the library via SystemJS in `src/public/system.config.js` and `index.html` for development and `src/public/system.config.prod.js` and `system.import.js` for production.
+It's simple, just install the lib via npm, add the library to the build in `paths.config.js` and inject the library via SystemJS in `src/public/system.config.js` and `index.html` for development and `src/public/system.config.prod.js` and `system.import.js` for production.
 
 
 #### How do I bundle external libraries for production?
@@ -198,7 +197,7 @@ plugins: [
 ]
 ```
 
-A Rollup plugin does exist that will transform commonjs modules to ES2015 for the bundle called `rollup-plugin-commonjs` and it is included in package.json by default. If someone gets this working with the current build we'd love to see an example!
+A Rollup plugin does exist that will transform commonjs modules to ES2015 for the bundle called `rollup-plugin-commonjs` and it is included in package.json by default. If someone gets this working with the current build we'd love to see examples!
 
 # TypeScript
 
