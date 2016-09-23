@@ -2,12 +2,17 @@
   "compilerOptions": {
     "target": "es2015",
     "module": "es2015",
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "noImplicitAny": false,
+    "noEmitHelpers": true,
     "removeComments": true,
     "allowUnreachableCode": false,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "typeRoots": [ "node_modules/@types" ],
+    "types": [
+      "node"
+    ]
   },
   "angularCompilerOptions": {
    "genDir": "./ngfactory",

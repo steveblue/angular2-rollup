@@ -35,11 +35,6 @@ Thumbs.db
 # Coverage #
 /coverage/
 
-# Typing #
-/src/typings/tsd/
-/typings/
-/tsd_typings/
-
 # Src #
 
 /tmp
@@ -62,3 +57,6 @@ __build__/**
 # IDE #
 .idea/
 *.swp
+
+# VS Code #
+/.vscode
