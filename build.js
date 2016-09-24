@@ -194,16 +194,25 @@ const compile = {
 
     },
 
-    ts : () => {
+    ts : (path) => {
 
         isCompiling = true;
 
         let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
 
-            log('typescript', 'started', 'transpiling', './src/*.ts');
+            if (path) {
+               log('typescript', 'started', 'transpiling', path);
+            } else {
+               log('typescript', 'started', 'transpiling', 'src/*ts');
+            }
 
             let tsc = exec(scripts['transpile:src'], function(code, output, error) {
-                log('typescript', 'transpiled', './src/*.ts to', './dist/*.js');
+                if (path) {
+                  log('typescript', 'transpiled', path+' to', 'dist/'+path.replace('.ts','.js'));
+                  cp(path, 'dist/'+path);
+                } else {
+                  log('typescript', 'transpiled', 'src/*ts to', 'dist/src/*ts');
+                }
 
                 if(hasInit === false) {
                     copy.html();
@@ -277,8 +286,15 @@ let style = {
 
                 let postcss = exec('postcss -c postcss.'+env+'.json -r '+outFile, function(code, output, error) {
 
-                    log('PostCSS', 'transformed', 'component style at', outFile);
-                    if ( watch === true ) log('PostCSS', 'transformed', 'component style at', outFile);
+
+                    if ( watch === true ) {
+                      log('PostCSS', 'transformed', 'component style at', outFile);
+                      if( env === 'prod') {
+                        setTimeout(compile.src, 1000);
+                      }
+                    } else {
+                        log('PostCSS', 'transformed', 'component style at', outFile);
+                    }
                     if( !watch ) {
 
                       if( styleFiles.indexOf(path) === styleFiles.length - 1  ) {
@@ -407,7 +423,7 @@ let watcher = chokidar.watch('./src/**/*.*', {
           tslint(path);
 
           if (env === 'dev') {
-            compile.ts();
+            compile.ts(path);
           }
           if (env === 'prod') {
             compile.src();
