@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
 
 
 export class AppComponent {
-
+    url = 'https://github.com/steveblue/angular2-rollup';
     constructor() {}
 
 }
