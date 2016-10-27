@@ -24,7 +24,7 @@
     "e2e": "concurrently \"http-server -s\" \"protractor protractor.conf.js\" --kill-others --success first",
     "e2e:live": "protractor --elementExplorer",
     "pretest": "npm run lint",
-    "test": "karma start dist/karma.conf.js",
+    "test": "karma start karma.conf.js",
     "test:watch": "karma start --no-single-run --auto-watch",
     "ci": "npm run e2e && npm run test",
     "start": "rimraf dist && npm run build",

@@ -1,40 +1,21 @@
-// #docregion
 module.exports = function(config) {
-
-  var appBase    = 'src/';       // transpiled app JS and map files
-  var appSrcBase = 'src/';       // app source TS files
-  var appAssets  = '/base/src/'; // component assets fetched by Angular's compiler
-
-  var testBase    = 'testing/';       // transpiled test JS and map files
-  var testSrcBase = 'testing/';       // test source TS files
-
   config.set({
-    basePath: '',
+
+    basePath: './',
+
     frameworks: ['jasmine'],
-    plugins: [
-      require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-jasmine-html-reporter'), // click "Debug" in browser to see it
-      require('karma-htmlfile-reporter') // crashing w/ strange socket error
-    ],
 
-    customLaunchers: {
-      // From the CLI. Not used here but interesting
-      // chrome setup for travis CI using chromium
-      Chrome_travis_ci: {
-        base: 'Chrome',
-        flags: ['--no-sandbox']
-      }
-    },
     files: [
-      // System.js for module loading
-      'node_modules/systemjs/dist/system.src.js',
+      // Polyfills.
+      'node_modules/core-js/client/shim.min.js',
 
-      // Polyfills
-      'node_modules/core-js/client/shim.js',
       'node_modules/reflect-metadata/Reflect.js',
 
-      // zone.js
+      // System.js for module loading
+      'node_modules/systemjs/dist/system-polyfills.js',
+      'node_modules/systemjs/dist/system.src.js',
+
+      // Zone.js dependencies
       'node_modules/zone.js/dist/zone.js',
       'node_modules/zone.js/dist/long-stack-trace-zone.js',
       'node_modules/zone.js/dist/proxy.js',
@@ -43,57 +24,38 @@ module.exports = function(config) {
       'node_modules/zone.js/dist/async-test.js',
       'node_modules/zone.js/dist/fake-async-test.js',
 
-      // RxJs
+      // RxJs.
       { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
       { pattern: 'node_modules/rxjs/**/*.js.map', included: false, watched: false },
 
-      // Paths loaded via module imports:
+
+      {pattern: 'karma-test-shim.js', included: true, watched: true},
+
+      // paths loaded via module imports
       // Angular itself
-      { pattern: 'node_modules/@angular/**/*.js', included: false, watched: false },
-      { pattern: 'node_modules/@angular/**/*.js.map', included: false, watched: false },
+      {pattern: 'node_modules/@angular/**/*.js', included: false, watched: true},
+      {pattern: 'node_modules/@angular/**/*.js.map', included: false, watched: true},
 
-      { pattern: 'systemjs.config.js', included: false, watched: false },
-      { pattern: 'systemjs.config.extras.js', included: false, watched: false },
-      'karma-shim.js',
+      // Our built application code
+      {pattern: 'dist/**/*.js', included: false, watched: true},
 
-      // transpiled application & spec code paths loaded via module imports
-      { pattern: appBase + '**/*.js', included: false, watched: true },
-      { pattern: testBase + '**/*.js', included: false, watched: true },
-
-
-      // Asset (HTML & CSS) paths loaded via Angular's component compiler
+      // paths loaded via Angular's component compiler
       // (these paths need to be rewritten, see proxies section)
-      { pattern: appBase + '**/*.html', included: false, watched: true },
-      { pattern: appBase + '**/*.css', included: false, watched: true },
+      {pattern: 'dist/**/*.html', included: false, watched: true},
+      {pattern: 'dist/**/*.css', included: false, watched: true},
 
-      // Paths for debugging with source maps in dev tools
-      { pattern: appSrcBase + '**/*.ts', included: false, watched: false },
-      { pattern: appBase + '**/*.js.map', included: false, watched: false },
-      { pattern: testSrcBase + '**/*.ts', included: false, watched: false },
-      { pattern: testBase + '**/*.js.map', included: false, watched: false }
+      // paths to support debugging with source maps in dev tools
+      {pattern: 'src/**/*.ts', included: false, watched: true},
+      //{pattern: 'dist/**/*.js.map', included: false, watched: false}
     ],
 
-    // Proxied base paths for loading assets
+    // proxied base paths
     proxies: {
-      // required for component assets fetched by Angular's compiler
-      "/src/": appAssets
+      // required for component assests fetched by Angular's compiler
+      "/app/": "/base/dist/app/"
     },
 
-    exclude: [],
-    preprocessors: {},
-    // disabled HtmlReporter; suddenly crashing w/ strange socket error
-    reporters: ['progress', 'kjhtml'],//'html'],
-
-    // HtmlReporter configuration
-    htmlReporter: {
-      // Open this file to see results in browser
-      outputFile: '_test-output/tests.html',
-
-      // Optional
-      pageTitle: 'Unit Tests',
-      subPageTitle: __dirname
-    },
-
+    reporters: ['progress'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
