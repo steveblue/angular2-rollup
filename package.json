@@ -21,7 +21,7 @@
     "webdriver:update": "webdriver-manager update",
     "webdriver:start": "webdriver-manager start",
     "lint": "tslint --force \"src/app/**/*.ts\"",
-    "e2e": "concurrently \"http-server -s\" \"protractor protractor.conf.js\" --kill-others --success first",
+    "e2e": "concurrently \"npm run dev:server\" \"protractor protractor.config.js\" --kill-others --success first",
     "e2e:live": "protractor --elementExplorer",
     "pretest": "npm run lint",
     "test": "karma start karma.conf.js",
