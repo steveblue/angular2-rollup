@@ -123,8 +123,8 @@ NOTE: If you find issues scaling the test environment, please submit a Pull Requ
 #### 2. End-to-End Tests (aka. e2e, integration)
 
 * single run:
-  * in a tab, *if not already running!*: `npm start`
-  * in a new tab: `npm run webdriver:start`
+  * in a tab: `npm start`
+  * in a new tab *if not already running!*: `npm run webdriver:start`
   * in a new tab: `npm run dev:server`
   * in another new tab: `npm run e2e`
 * interactive mode:
