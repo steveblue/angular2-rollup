@@ -55,7 +55,7 @@ module.exports = function(config) {
       "/app/": "/base/dist/app/"
     },
 
-    reporters: ['progress'],
+    reporters: ['progress', 'verbose'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,

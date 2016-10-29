@@ -1,24 +1,25 @@
-import { TestBed } from '@angular/core/testing';
-import { provideRoutes } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+/* tslint:disable:no-unused-variable */
 
-import { ApiService } from './shared';
 import { AppComponent } from './app.component';
+import { TestBed }      from '@angular/core/testing';
 
-describe('App', () => {
-  // provide our implementations or mocks to the dependency injector
+
+describe('AppComponent', function () {
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [AppComponent],
-      providers: [ApiService, provideRoutes([])]
+      declarations: [AppComponent]
     });
   });
 
-  it('should have an url', () => {
-    let fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    expect(fixture.debugElement.componentInstance.url).toEqual('https://github.com/steveblue/angular2-rollup');
+  it('should instantiate component', () => {
+
+    TestBed.compileComponents().then(() => {
+      let fixture = TestBed.createComponent(AppComponent);
+      expect(fixture.componentInstance instanceof AppComponent).toBe(true, 'should create AppComponent');
+    });
+
   });
+
 
 });
