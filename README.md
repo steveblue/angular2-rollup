@@ -8,7 +8,7 @@ This repo serves as an Angular 2 starter for anyone looking to get up and runnin
 
 `node` scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow for cross platform support for the dev environment. A boilerplate [Express](http://expressjs.com) server is also included with support for livereload.
 
-We're also using Protractor for our end-to-end story and Karma for our unit tests, however these tests are largely ported from this [Webpack Starter Code](https://github.com/preboot/angular2-webpack) and have yet to be fully tested in a development scenario. If you are interested in helping out, please contribute to this repository.
+We're also using Protractor for our end-to-end story and Karma for our unit tests.
 
 * Best practices in file and application organization for [Angular 2](https://angular.io/).
 * Ready to go build system using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) and [Rollup](http://rollupjs.org).
@@ -114,7 +114,7 @@ After you have installed all dependencies you can now build the project:
 
 ## Testing
 
-NOTE: Not 100% sure testing works, it was ported from another starter code project, [angular2-webpack](https://github.com/preboot/angular2-webpack). If you find issues or want to help build the testing suite out, please submit a Pull Request with bug fixes and feature requests.
+NOTE: If you find issues scaling the test environment, please submit a Pull Request with bug fixes and feature requests.
 
 #### 1. Unit Tests
 
@@ -125,6 +125,7 @@ NOTE: Not 100% sure testing works, it was ported from another starter code proje
 * single run:
   * in a tab, *if not already running!*: `npm start`
   * in a new tab: `npm run webdriver:start`
+  * in a new tab: `npm run dev:server`
   * in another new tab: `npm run e2e`
 * interactive mode:
   * instead of the last command above, you can run: `npm run e2e:live`

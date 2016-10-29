@@ -1,11 +1,13 @@
-describe('App', function () {
+import { browser, element, by } from 'protractor';
+
+describe('angular2-rollup E2E Tests', function () {
 
   beforeEach(function () {
-    browser.get('/');
+    browser.get('');
   });
 
   it('should have <router-outlet>', function () {
-    expect(element(by.css('app-root outer-outlet')).isPresent()).toEqual(true);
+    expect(element(by.css('router-outlet')).getText()).toEqual('');
   });
 
 });

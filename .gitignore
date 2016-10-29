@@ -59,6 +59,10 @@ __build__/**
 # Doc #
 /doc/
 
+# Tests #
+
+_test-output/
+
 # IDE #
 .idea/
 *.swp
