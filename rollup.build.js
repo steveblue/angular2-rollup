@@ -1,28 +1,30 @@
 // rollup.build.js
 
 const rollup  = require('rollup');
-const alias   = require('rollup-plugin-alias');
 const replace = require('rollup-plugin-replace');
 const resolve = require('rollup-plugin-node-resolve');
-const include = require('rollup-plugin-includepaths');
 const cleanup = require('rollup-plugin-cleanup');
+const commonjs = require('rollup-plugin-commonjs');
 
 var bundle = rollup.rollup({
     entry: './main.prod.js',
+    sourceMap: false,
+    treeshake: true,
     plugins: [
-      {
-        resolveRxJS: id => {
-          if (id.startsWith('rxjs/') || id.startsWith('rxjs\\')) {
-            let result = `${__dirname}/node_modules/rxjs-es/${id.replace('rxjs/', '')}.js`;
-            return result.replace(/\//g, "\\");
-          }
-        }
-      },
-      alias({ rxjs: __dirname + '/node_modules/rxjs-es' }),
-      resolve({ module: true }),
       replace({ 'ENVIRONMENT': JSON.stringify( 'production' ) }),
+      commonjs({
+       include: 'node_modules/rxjs/**'
+      }),
+      resolve({ jsnext: true, module: true }),
       cleanup()
-    ]
+    ],
+    onwarn: function ( message ) {
+      if ( /at the top level of an ES module, and has been rewritten/.test( message ) ) {
+        return;
+      }
+      console.error( message );
+    }
+  }
 })
 .then(bundle => {
     return bundle.write({

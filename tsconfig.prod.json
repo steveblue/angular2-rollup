@@ -6,7 +6,6 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
-    "noEmitHelpers": true,
     "removeComments": true,
     "allowUnreachableCode": false,
     "moduleResolution": "node",
