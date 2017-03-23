@@ -41,11 +41,10 @@ const warn = function(action, noun) {
 
 /* Linter Options */
 
-const Linter = require('tslint');
+const Linter = require('tslint').Linter;
 const configuration = require('./tslint.json');
 const options = {
     formatter: 'json',
-    configuration: configuration,
     rulesDirectory: 'node_modules/codelyzer'
 };
 
@@ -235,10 +234,10 @@ const tslint = (path) => {
     let results = files.map(file => {
 
         let fileContents = program.getSourceFile(file).getFullText();
-        let linter = new Linter(file, fileContents, options, program);
-        let results = linter.lint();
+        let linter = new Linter(options, program);
+        let results = linter.lint(file, fileContents, configuration);
 
-        if (results.failureCount > 0) {
+        if (results && results.failureCount > 0) {
             let failures = JSON.parse(results.output);
             for (let i = 0; i < failures.length; i++) {
                  log('tslint:',

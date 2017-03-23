@@ -180,9 +180,15 @@ or with SystemJS like so:
 ```
 
 
+#### How do I update?
+
+- Install rimraf globally `npm i -g rimraf`
+- Run `npm run clean:install`
+
+
 #### How to include external libraries?
 
-It's simple, just install the lib via npm, add the library to the build in `paths.config.js` and inject the library via SystemJS in `src/public/system.config.js` and `index.html` for development and `src/public/system.config.prod.js` and `system.import.js` for production.
+It's simple, just install the library via npm, add the library to the build in `paths.config.js` and inject the library via SystemJS in `src/public/system.config.js` and in some cases `index.html` for development. For Production, a different, minimal configuration for the bundle is required in `src/public/system.config.prod.js` and `system.import.js`.
 
 
 #### How do I bundle external libraries for production?
@@ -191,14 +197,13 @@ You can bundle external dependencies with Rollup. Out of the box there is suppor
 
 ```
 plugins: [
-  alias({ rxjs: __dirname + '/node_modules/rxjs-es' }),
   replace({ 'ENVIRONMENT': JSON.stringify( 'production' ) }),
   resolve({ module: true }),
   cleanup()
 ]
 ```
 
-A Rollup plugin does exist that will transform commonjs modules to ES2015 for the bundle called `rollup-plugin-commonjs` and it is included in package.json by default. If someone gets this working with the current build we'd love to see examples!
+A Rollup plugin does exist that will transform commonjs modules to ES2015 for the bundle called `rollup-plugin-commonjs` and it is included in package.json by default.
 
 # TypeScript
 
