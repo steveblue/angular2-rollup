@@ -185,6 +185,13 @@ or with SystemJS like so:
 - Install rimraf globally `npm i -g rimraf`
 - Run `npm run clean:install`
 
+### Can I build without the watcher?
+
+By default the build step enables a watcher that listens for file changes. This watcher can be disabled with by setting the `watch` argument to `false`.
+
+- `npm start watch=false` for Development
+- `NODE_ENV=prod npm start watch=false` for Production
+
 
 #### How to include external libraries?
 

@@ -12,9 +12,13 @@ const paths = require('./paths.config.js');
 const sass = require('node-sass');
 
 const env = process.env.NODE_ENV || 'dev';
+let canWatch = true;
 
-
-
+process.argv.forEach((arg)=>{
+  if (arg.includes('watch')) {
+    canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+});
 /* Log Formatting */
 
 clim.getTime = function(){
@@ -182,7 +186,12 @@ const compile = {
 
                      let closure = exec(scripts['transpile:closure'], function(code, output, error){
                           log('Closure Compiler', 'transpiled', './dist/bundle.es2015.js to', './dist/bundle.js');
-                          log(colors.green('Ready'), 'to', colors.green('serve'));
+                          if (canWatch === true) {
+                            log(colors.green('Ready'), 'to', colors.green('serve'));
+                            log(colors.green('Watcher'), 'listening for', colors.green('changes'));
+                          } else {
+                            log(colors.green('Build'), 'is', colors.green('ready'));
+                          }
                           compile.clean();
                           isCompiling = false;
                           hasInit = true;
@@ -309,7 +318,13 @@ let style = {
                         }
                         if( env === 'dev' ) {
                           //exec('node server.js');
-                          log(colors.green('Ready'), 'to', colors.green('serve'));
+
+                          if (canWatch === true) {
+                            log(colors.green('Ready'), 'to', colors.green('serve'));
+                            log(colors.green('Watcher'), 'listening for', colors.green('changes'));
+                          } else {
+                            log(colors.green('Build'), 'is', colors.green('ready'));
+                          }
                         }
                       }
                     }
@@ -380,9 +395,10 @@ let init = function() {
 
 /* Watcher */
 
+
 let watcher = chokidar.watch('./src/**/*.*', {
   ignored: /[\/\\]\./,
-  persistent: true
+  persistent: canWatch
 }).on('change', path => {
 
       log('File', path, 'has been', 'changed');
