@@ -42,7 +42,7 @@ const warn = function(action, noun) {
 /* Linter Options */
 
 const Linter = require('tslint').Linter;
-const configuration = require('./tslint.json');
+const Configuration = require('tslint').Configuration;
 const options = {
     formatter: 'json',
     rulesDirectory: 'node_modules/codelyzer'
@@ -229,13 +229,19 @@ const compile = {
 
 const tslint = (path) => {
 
+    if (!path) {
+      return;
+    }
+
     let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './src/');
     let files = Linter.getFileNames(program);
     let results = files.map(file => {
 
-        let fileContents = program.getSourceFile(file).getFullText();
-        let linter = new Linter(options, program);
-        let results = linter.lint(file, fileContents, configuration);
+        let fileContents = fs.readFileSync(file, 'utf8');
+        let linter = new Linter(options);
+        console.log(file);
+        let configLoad = Configuration.findConfiguration('./tsconfig.'+env+'.json', file );
+        let results = linter.lint(file, fileContents, configLoad.results);
 
         if (results && results.failureCount > 0) {
             let failures = JSON.parse(results.output);
@@ -419,7 +425,7 @@ let watcher = chokidar.watch('./src/**/*.*', {
 
         if (!isCompiling) {
 
-          tslint(path);
+          //tslint(path);
 
           if (env === 'dev') {
             compile.ts(path);
