@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup. Supports RC.7 and now 2.0.0!
+A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup. Supports 2.x.x and 4.0.0!
 
 This repo serves as an Angular 2 starter for anyone looking to get up and running fast with Angular 2 and TypeScript and Ahead Of Time (AOT) compilation. We're using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) for compiling AOT and [Rollup](http://rollupjs.org) for bundling our files for production. The development server compiles just in time (JIT) using Typescript and SystemJS for fast and efficient development.
 
