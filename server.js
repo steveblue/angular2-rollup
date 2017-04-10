@@ -5,6 +5,8 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+
+const paths = require('./paths.config.js');
 const config = {
   dev: require('./conf/config.local.js'),
   prod: require('./conf/config.prod.js')
@@ -36,11 +38,11 @@ let live = function() {
    let liveserver = livereload.createServer({
      port: 35729
    });
-   liveserver.watch([__dirname + '/dist/assets',
-                     __dirname + '/dist/src',
-                     __dirname + '/dist/style',
-                     __dirname + '/dist/*.html',
-                     __dirname + '/dist/*.js']);
+   liveserver.watch([__dirname + '/'+paths.build+'/assets',
+                     __dirname + '/'+paths.build+'/src',
+                     __dirname + '/'+paths.build+'/style',
+                     __dirname + '/'+paths.build+'/*.html',
+                     __dirname + '/'+paths.build+'/*.js']);
    console.log('Livereload available at '+host+':'+35729);
 };
 

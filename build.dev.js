@@ -57,13 +57,13 @@ const options = {
 const copy = {
     public: (path) => {
 
-        cp('-R', paths.src+'/public/.', 'dist/');
+        cp('-R', paths.src+'/public/.', 'build/');
 
         exec(scripts['replace:html-dev'], function(code, output, error){
               log('index.html', 'formatted',  'for',  colors.bold(colors.cyan(env)));
         });
 
-        log(path || paths.src+'/public/', 'copied', 'to', 'dist/');
+        log(path || paths.src+'/public/', 'copied', 'to', 'build/');
 
         if(paths && paths.clean) {
           clean.paths();
@@ -72,13 +72,13 @@ const copy = {
 
     },
     file: (path) => {
-        cp('-R', path, 'dist/');
-        log(path, 'copied', 'to', 'dist/');
+        cp('-R', path, 'build/');
+        log(path, 'copied', 'to', 'build/');
     },
     html: (path) => {
         ls(paths.src+'/app/**/*.html').forEach(function(file) {
-          cp(file, 'dist/'+file);
-          log(file.replace(/^.*[\\\/]/, ''), 'copied', 'to',  'dist/'+file.substring(0, file.lastIndexOf("/")));
+          cp(file, 'build/'+file);
+          log(file.replace(/^.*[\\\/]/, ''), 'copied', 'to',  'build/'+file.substring(0, file.lastIndexOf("/")));
         });
     },
     lib: () => {
@@ -128,7 +128,7 @@ const compile = {
     clean: (path) => {
       const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
       const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
-      const outFile = path ? path : './dist/bundle.js';
+      const outFile = path ? path : './build/bundle.js';
 
       fs.readFile(outFile, 'utf8', function(err, contents) {
         if(!err) {
@@ -170,11 +170,11 @@ const compile = {
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
                  let bundle = exec(scripts['bundle:src'], function(code, output, error) {
-                     log('Rollup', 'bundled', 'bundle.es2015.js in', './dist');
+                     log('Rollup', 'bundled', 'bundle.es2015.js in', './build');
                      log('Closure Compiler', 'is optimizing', 'bundle.js', 'for '+ colors.bold(colors.cyan(env)));
 
                      let closure = exec(scripts['transpile:closure'], function(code, output, error){
-                          log('Closure Compiler', 'transpiled', './dist/bundle.es2015.js to', './dist/bundle.js');
+                          log('Closure Compiler', 'transpiled', './build/bundle.es2015.js to', './build/bundle.js');
                           if (canWatch === true) {
                             log(colors.green('Ready'), 'to', colors.green('serve'));
                             log(colors.green('Watcher'), 'listening for', colors.green('changes'));
@@ -205,10 +205,10 @@ const compile = {
 
             let tsc = exec(scripts['transpile:src'], function(code, output, error) {
                 if (path) {
-                  log('typescript', 'transpiled', path+' to', 'dist/'+path.replace('.ts','.js'));
-                  cp(path, 'dist/'+path);
+                  log('typescript', 'transpiled', path+' to', 'build/'+path.replace('.ts','.js'));
+                  cp(path, 'build/'+path);
                 } else {
-                  log('typescript', 'transpiled', paths.src+'/*ts to', 'dist/'+paths.src+'/*ts');
+                  log('typescript', 'transpiled', paths.src+'/*ts to', 'build/'+paths.src+'/*ts');
                 }
 
                 if(hasInit === false) {
@@ -267,7 +267,7 @@ let style = {
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf(paths.src+'/style') > -1 ? 'dist/style/style.css' : 'dist/'+srcPath+'/'+filename.replace('.scss','.css');
+        let outFile = path.indexOf(paths.src+'/style') > -1 ? 'build/style/style.css' : 'build/'+srcPath+'/'+filename.replace('.scss','.css');
         sass.render({
           file: path,
           outFile: outFile,
@@ -289,16 +289,16 @@ let style = {
 
                 let postcss = exec('postcss -c postcss.'+env+'.json -r '+outFile, function(code, output, error) {
 
+                    // if ( watch === true ) {
+                    //   log('PostCSS', 'transformed', 'component style at', outFile);
+                    // } else {
+                    //    log('PostCSS', 'transformed', 'component style at', outFile);
+                    // }
 
-                    if ( watch === true ) {
-                      log('PostCSS', 'transformed', 'component style at', outFile);
-                    } else {
-                       log('PostCSS', 'transformed', 'component style at', outFile);
-                    }
                     if( !watch ) {
 
                       if( styleFiles.indexOf(path) === styleFiles.length - 1  ) {
-                        log('node-sass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
+                        log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
                         if (canWatch === true) {
                           log(colors.green('Ready'), 'to', colors.green('serve'));
                           log(colors.green('Watcher'), 'listening for', colors.green('changes'));
@@ -318,7 +318,7 @@ let style = {
     },
     src:() =>{
 
-        mkdir('dist/style');
+        mkdir('build/style');
 
         ls(paths.src+'/**/*.scss').forEach(function(file, index) {
           if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
@@ -354,8 +354,12 @@ let server = {
 
 let init = function() {
 
+    rm('-rf', './'+paths.build);
+    rm('-rf', './dist');
+    rm('-rf', './ngfactory');
+    mkdir('./'+paths.build);
+    mkdir('./'+paths.build+'/lib');
     mkdir('./dist');
-    mkdir('./dist/'+paths.src);
     copy.lib();
     copy.public();
     compile.ts();

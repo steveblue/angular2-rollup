@@ -1,0 +1,89 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "@angular/forms@4.0.0",
+        "scope": "@angular",
+        "escapedName": "@angular%2fforms",
+        "name": "@angular/forms",
+        "rawSpec": "4.0.0",
+        "spec": "4.0.0",
+        "type": "version"
+      },
+      "/Users/steve/www/angular2-rollup"
+    ]
+  ],
+  "_from": "@angular/forms@4.0.0",
+  "_id": "@angular/forms@4.0.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/@angular/forms",
+  "_nodeVersion": "6.9.5",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/forms-4.0.0.tgz_1490313502414_0.7272121999412775"
+  },
+  "_npmUser": {
+    "name": "angular",
+    "email": "angular-core+npm@google.com"
+  },
+  "_npmVersion": "3.10.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "@angular/forms@4.0.0",
+    "scope": "@angular",
+    "escapedName": "@angular%2fforms",
+    "name": "@angular/forms",
+    "rawSpec": "4.0.0",
+    "spec": "4.0.0",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@angular/forms/-/forms-4.0.0.tgz",
+  "_shasum": "03163047a2e84af42106270da2e1f47ab0fafc37",
+  "_shrinkwrap": null,
+  "_spec": "@angular/forms@4.0.0",
+  "_where": "/Users/steve/www/angular2-rollup",
+  "author": {
+    "name": "angular"
+  },
+  "bugs": {
+    "url": "https://github.com/angular/angular/issues"
+  },
+  "dependencies": {},
+  "description": "Angular - directives and services for creating forms",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "03163047a2e84af42106270da2e1f47ab0fafc37",
+    "tarball": "https://registry.npmjs.org/@angular/forms/-/forms-4.0.0.tgz"
+  },
+  "es2015": "./@angular/forms.js",
+  "homepage": "https://github.com/angular/angular#readme",
+  "license": "MIT",
+  "main": "./bundles/forms.umd.js",
+  "maintainers": [
+    {
+      "name": "angular",
+      "email": "angular-core+npm@google.com"
+    }
+  ],
+  "module": "./@angular/forms.es5.js",
+  "name": "@angular/forms",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "@angular/core": "4.0.0",
+    "@angular/common": "4.0.0",
+    "@angular/platform-browser": "4.0.0"
+  },
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angular/angular.git"
+  },
+  "scripts": {},
+  "typings": "./forms.d.ts",
+  "version": "4.0.0"
+}

@@ -1,0 +1,94 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "@angular/router@4.0.0",
+        "scope": "@angular",
+        "escapedName": "@angular%2frouter",
+        "name": "@angular/router",
+        "rawSpec": "4.0.0",
+        "spec": "4.0.0",
+        "type": "version"
+      },
+      "/Users/steve/www/angular2-rollup"
+    ]
+  ],
+  "_from": "@angular/router@4.0.0",
+  "_id": "@angular/router@4.0.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/@angular/router",
+  "_nodeVersion": "6.9.5",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/router-4.0.0.tgz_1490313520971_0.7744395404588431"
+  },
+  "_npmUser": {
+    "name": "angular",
+    "email": "angular-core+npm@google.com"
+  },
+  "_npmVersion": "3.10.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "@angular/router@4.0.0",
+    "scope": "@angular",
+    "escapedName": "@angular%2frouter",
+    "name": "@angular/router",
+    "rawSpec": "4.0.0",
+    "spec": "4.0.0",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@angular/router/-/router-4.0.0.tgz",
+  "_shasum": "f4a2dc83b44e023db1d6f2c12ca5a37a22c66afc",
+  "_shrinkwrap": null,
+  "_spec": "@angular/router@4.0.0",
+  "_where": "/Users/steve/www/angular2-rollup",
+  "author": {
+    "name": "angular"
+  },
+  "bugs": {
+    "url": "https://github.com/angular/angular/issues"
+  },
+  "dependencies": {},
+  "description": "Angular - the routing library",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "f4a2dc83b44e023db1d6f2c12ca5a37a22c66afc",
+    "tarball": "https://registry.npmjs.org/@angular/router/-/router-4.0.0.tgz"
+  },
+  "es2015": "./@angular/router.js",
+  "homepage": "https://github.com/angular/angular/blob/master/modules/%40angular/router/README.md",
+  "keywords": [
+    "angular",
+    "router"
+  ],
+  "license": "MIT",
+  "main": "./bundles/router.umd.js",
+  "maintainers": [
+    {
+      "name": "angular",
+      "email": "angular-core+npm@google.com"
+    }
+  ],
+  "module": "./@angular/router.es5.js",
+  "name": "@angular/router",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "@angular/core": "4.0.0",
+    "@angular/common": "4.0.0",
+    "@angular/platform-browser": "4.0.0",
+    "rxjs": "^5.0.1"
+  },
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angular/angular.git"
+  },
+  "scripts": {},
+  "typings": "./router.d.ts",
+  "version": "4.0.0"
+}

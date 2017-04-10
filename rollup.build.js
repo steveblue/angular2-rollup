@@ -1,5 +1,6 @@
 // rollup.build.js
 
+const paths = require('./paths.config.js');
 const rollup  = require('rollup');
 const replace = require('rollup-plugin-replace');
 const resolve = require('rollup-plugin-node-resolve');
@@ -29,7 +30,7 @@ var bundle = rollup.rollup({
 .then(bundle => {
     return bundle.write({
         format: 'iife',
-        dest: 'dist/bundle.es2015.js'
+        dest: paths.build+'/bundle.es2015.js'
     })
 }).catch(err => console.log(err));
 
