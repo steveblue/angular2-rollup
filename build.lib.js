@@ -171,12 +171,12 @@ const compile = {
 
                  let bundle = exec(scripts['rollup:lib'], function(code, output, error) {
                      log('Rollup', 'bundled', 'default-lib.js in', './dist');
-                     //compile.es5Lib();
-                     exec(scripts['copy:lib'], function() {
+                     compile.es5Lib();
+                    //  exec(scripts['copy:lib'], function() {
 
-                      log('Copied', 'd.ts, metadata.json', ' to ', './dist');
+                    //   log('Copied', 'd.ts, metadata.json', ' to ', './dist');
 
-                    });
+                    // });
 
                  });
 
@@ -187,24 +187,24 @@ const compile = {
     },
 
 
-    // es5Lib : () => {
+    es5Lib : () => {
 
-    //      let tsc = exec(scripts['compile:es5'], function(code, output, error) {
-    //               log('ngc', 'compiled', '/ngfactory');
-    //               log('Rollup', 'started', 'bundling', 'ngfactory');
+         let tsc = exec(scripts['compile:es5'], function(code, output, error) {
+                  log('ngc', 'compiled', '/ngfactory');
+                  log('Rollup', 'started', 'bundling', 'ngfactory');
 
-    //              let bundle = exec(scripts['rollup:es5'], function(code, output, error) {
-    //                  log('Rollup', 'bundled', 'default-lib.es5.js in', './dist');
+                 let bundle = exec(scripts['rollup:es5'], function(code, output, error) {
+                     log('Rollup', 'bundled', 'default-lib.es5.js in', './dist');
 
-    //                 exec(scripts['copy:lib'], function() {
+                    exec(scripts['copy:lib'], function() {
 
-    //                   log('Copied', 'd.ts, metadata.json', ' to ', './dist');
+                      log('Copied', 'd.ts, metadata.json', ' to ', './dist');
 
-    //                 });
+                    });
 
-    //              });
-    //           });
-    // },
+                 });
+              });
+    },
 
 
 

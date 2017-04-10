@@ -12,10 +12,9 @@
     "allowUnreachableCode": false,
     "moduleResolution": "node",
     "outDir": "./ngfactory",
-    "typeRoots": [ "node_modules/@types" ],
-    "types": [
-       "node"
-    ]
+    "lib": ["es2015", "dom"],
+    "skipLibCheck": true,
+    "types": []
   },
   "angularCompilerOptions": {
    "genDir": "./ngfactory",
