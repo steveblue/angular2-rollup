@@ -27,8 +27,10 @@
     "test": "karma start karma.conf.js",
     "test:watch": "karma start --no-single-run --auto-watch",
     "ci": "npm run e2e && npm run test",
-    "start": "rimraf dist && npm run build",
+    "start": "npm run build:dev",
     "build": "node build.js",
+    "build:dev": "rimraf dist && node build.dev.js",
+    "build:prod": "rimraf dist && node build.prod.js",
     "serve": "node server.js",
     "postinstall": "npm run webdriver:update"
   },
