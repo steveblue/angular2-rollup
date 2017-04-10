@@ -51,7 +51,7 @@ compiler.jar
 
 
 # Dist #
-/dist
+/build
 /public/__build__/
 /src/*/__build__/
 __build__/**
@@ -67,3 +67,4 @@ _test-output/
 .idea/
 *.swp
 /.vscode
+build/
