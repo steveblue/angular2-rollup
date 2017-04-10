@@ -57,13 +57,13 @@ const options = {
 const copy = {
     public: (path) => {
 
-        cp('-R', 'src/public/.', 'dist/');
+        cp('-R', paths.src+'/public/.', 'dist/');
 
         exec(scripts['replace:html-prod'], function(code, output, error){
                log('index.html','formatted', 'for',  colors.bold(colors.cyan(env)));
         });
 
-        log(path || 'src/public/', 'copied', 'to', 'dist/');
+        log(path || paths.src+'/public/', 'copied', 'to', 'dist/');
 
         if(paths && paths.clean) {
           clean.paths();
@@ -76,7 +76,7 @@ const copy = {
         log(path, 'copied', 'to', 'dist/');
     },
     html: (path) => {
-        ls('src/app/**/*.html').forEach(function(file) {
+        ls(paths.src+'/app/**/*.html').forEach(function(file) {
           cp(file, 'dist/'+file);
           log(file.replace(/^.*[\\\/]/, ''), 'copied', 'to',  'dist/'+file.substring(0, file.lastIndexOf("/")));
         });
@@ -153,8 +153,8 @@ const compile = {
     src : () => {
 
         isCompiling = true;
-        cp('-R', 'src/.', 'tmp/');
-        log('src/*.ts', 'copied', 'to', 'tmp/*ts');
+        cp('-R', paths.src+'/.', 'tmp/');
+        log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
 
         // remove moduleId prior to ngc build. TODO: look for another method.
         ls('tmp/**/*.ts').forEach(function(file) {
@@ -200,7 +200,7 @@ const compile = {
             if (path) {
                log('typescript', 'started', 'transpiling', path);
             } else {
-               log('typescript', 'started', 'transpiling', 'src/*ts');
+               log('typescript', 'started', 'transpiling', paths.src+'/*ts');
             }
 
             let tsc = exec(scripts['transpile:src'], function(code, output, error) {
@@ -208,7 +208,7 @@ const compile = {
                   log('typescript', 'transpiled', path+' to', 'dist/'+path.replace('.ts','.js'));
                   cp(path, 'dist/'+path);
                 } else {
-                  log('typescript', 'transpiled', 'src/*ts to', 'dist/src/*ts');
+                  log('typescript', 'transpiled', paths.src+'/*ts to', 'dist/'+paths.src+'/*ts');
                 }
 
                 if(hasInit === false) {
@@ -231,7 +231,7 @@ const tslint = (path) => {
       return;
     }
 
-    let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './src/');
+    let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+paths.src+'/');
     let files = Linter.getFileNames(program);
     let results = files.map(file => {
 
@@ -267,11 +267,11 @@ let style = {
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf('src/style') > -1 ? 'dist/style/style.css' : path.replace('.scss','.css').replace('src', 'tmp');
+        let outFile = path.indexOf(paths.src+'/style') > -1 ? 'dist/style/style.css' : path.replace('.scss','.css').replace(paths.src, 'tmp');
         sass.render({
           file: path,
           outFile: outFile,
-          includePaths: [ 'src/style/' ],
+          includePaths: [ paths.src+'/style/' ],
           outputStyle: 'expanded',
           sourceComments: false
         }, function(error, result) {
@@ -315,13 +315,13 @@ let style = {
 
         mkdir('dist/style');
 
-        ls('src/**/*.scss').forEach(function(file, index) {
+        ls(paths.src+'/**/*.scss').forEach(function(file, index) {
           if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
              styleFiles.push(file);
           }
         });
 
-        ls('src/**/*.scss').forEach(function(file, index) {
+        ls(paths.src+'/**/*.scss').forEach(function(file, index) {
           if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
             style.file(file);
           }
@@ -347,7 +347,7 @@ let server = {
 
 let init = function() {
 
-    cp('-R', './src', './tmp');
+    cp('-R', './'+paths.src, './tmp');
     mkdir('./ngfactory');
     copy.lib();
     copy.public();
@@ -358,16 +358,16 @@ let init = function() {
 /* Watcher */
 
 
-let watcher = chokidar.watch('./src/**/*.*', {
+let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
   ignored: /[\/\\]\./,
   persistent: canWatch
 }).on('change', path => {
 
       log('File', path, 'has been', 'changed');
 
-      if ( path.indexOf('src/public') > -1 ) {
+      if ( path.indexOf(paths.src+'/public') > -1 ) {
 
-          if ( path.indexOf('src/index.html') ) {
+          if ( path.indexOf(paths.src+'/index.html') ) {
             copy.public();
           } else {
             copy.file(path);

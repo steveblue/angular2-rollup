@@ -14,5 +14,8 @@ module.exports = {
     clean:{
       files:[],
       folders:[]
-    }
+    },
+    src: 'src',
+    build: 'build',
+    dist: 'dist'
 }
