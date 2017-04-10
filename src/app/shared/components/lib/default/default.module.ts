@@ -8,4 +8,4 @@ import { DefaultComponent } from './default.component';
   declarations: [ DefaultComponent ]
 })
 
-export class HomeModule {}
+export class DefaultModule {}
