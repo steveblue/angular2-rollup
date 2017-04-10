@@ -17,5 +17,6 @@ module.exports = {
     },
     src: 'src',
     build: 'build',
-    dist: 'dist'
+    dist: 'dist',
+    lib: 'src/app/shared/components/lib'
 }

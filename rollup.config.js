@@ -1,7 +1,7 @@
 // rollup.config.js
 
 import replace from 'rollup-plugin-replace';
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from 'rollup-plugin-node-resolve-angular';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from 'rollup-plugin-commonjs';
 
@@ -18,7 +18,14 @@ export default {
     commonjs({
      include: 'node_modules/rxjs/**'
     }),
-    resolve({ jsnext: true, module: true }),
+    resolve({
+      es2015: true,
+      module: true,
+      jsnext: true,
+      main: true,
+      extensions: [ '.js', '.json' ],
+      preferBuiltins: false
+    }),
     cleanup()
   ],
   onwarn: function ( message ) {

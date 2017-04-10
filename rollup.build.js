@@ -3,7 +3,7 @@
 const paths = require('./paths.config.js');
 const rollup  = require('rollup');
 const replace = require('rollup-plugin-replace');
-const resolve = require('rollup-plugin-node-resolve');
+const resolve = require('rollup-plugin-node-resolve-angular');
 const cleanup = require('rollup-plugin-cleanup');
 const commonjs = require('rollup-plugin-commonjs');
 
@@ -16,7 +16,14 @@ var bundle = rollup.rollup({
       commonjs({
        include: 'node_modules/rxjs/**'
       }),
-      resolve({ jsnext: true, module: true }),
+      resolve({
+      es2015: true,
+      module: true,
+      jsnext: true,
+      main: true,
+      extensions: [ '.js', '.json' ],
+      preferBuiltins: false
+      }),
       cleanup()
     ],
     onwarn: function ( message ) {

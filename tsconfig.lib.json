@@ -2,6 +2,8 @@
   "compilerOptions": {
     "target": "es2015",
     "module": "es2015",
+    "declaration": true,
+    "stripInternal": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
@@ -9,6 +11,7 @@
     "removeComments": true,
     "allowUnreachableCode": false,
     "moduleResolution": "node",
+    "outDir": "./ngfactory",
     "typeRoots": [ "node_modules/@types" ],
     "types": [
        "node"
@@ -16,12 +19,15 @@
   },
   "angularCompilerOptions": {
    "genDir": "./ngfactory",
+   "strictMetadataEmit": true,
+   "skipTemplateCodegen": true,
    "annotateForClosureCompiler": true,
+   "flatModuleOutFile": "default-lib.js",
+   "flatModuleId": "default-lib",
    "debug": false
   },
   "files": [
-    "./tmp/app/app.module.ts",
-    "main.prod.ts"
+    "./tmp/index.ts"
   ],
   "compileOnSave": false,
   "buildOnSave": false

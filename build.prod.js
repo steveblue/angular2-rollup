@@ -165,7 +165,7 @@ const compile = {
 
               log('ngc', 'started', 'compiling', 'ngfactory');
 
-              let tsc = exec(scripts['build:ngc'], function(code, output, error) {
+              let tsc = exec(scripts['compile:ngc'], function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
