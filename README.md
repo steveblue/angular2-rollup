@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup. Supports 2.x.x and 4.0.0!
+A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup. Now supports 4.0.0+ and Library Builds!
 
 This repo serves as an Angular 2 starter for anyone looking to get up and running fast with Angular 2 and TypeScript and Ahead Of Time (AOT) compilation. We're using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) for compiling AOT and [Rollup](http://rollupjs.org) for bundling our files for production. The development server compiles just in time (JIT) using Typescript and SystemJS for fast and efficient development.
 
@@ -48,15 +48,15 @@ Change the host and/or port in `/conf/config.local.js` if needed. This config is
 ```
 
 #### Build, start the server and watchers
-`$ npm start`
+`$ npm run build:dev`
 
 #### Optionally, set environment variables
 
-`$ NODE_ENV=prod npm start`
+`$ npm run build:prod`
 
 #### In a second tab, start the Express Server
 
-`$ node server`
+`$ npm run dev:server`
 
 
 # Table of Contents
@@ -107,10 +107,10 @@ When everything is setup correctly, you should be able to visit  [http://localho
 
 After you have installed all dependencies you can now build the project:
 
-* `npm start && node server`
-* `node server`
+* `npm run build:dev`
+* `npm run dev:server`
 
-`build.js` will build the application for development. `server.js` will start a local server using Express and `liveserver` will watch for changes in the `/dist` directory.
+`build.env.js` will build the application for development for the appropriate environment. `server.js` will start a local server using Express and `liveserver` will watch for changes in the `/build` directory.
 
 ## Testing
 
@@ -138,7 +138,7 @@ The production build is quite different than development. While the development 
 
 1. `ngc` has compiles the files in `/src` to `/tmp`,
 
-2. Rollup bundles the files and their dependencies into `dist/bundle.es2015.js`.
+2. Rollup bundles the files and their dependencies into `build/bundle.es2015.js`.
 
 3. Closure Compiler optimizes the bundle and outputs ES5 for the browser.
 
@@ -150,16 +150,16 @@ To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.co
 
 To build your application, run:
 
-* `NODE_ENV=prod npm start`
+* `npm run build:prod`
 
-You can now go to `/dist` and deploy that to your server!
+You can now go to `/build` and deploy that to your server!
 
 
 # FAQ
 
 #### Do I need to add script / link tags into index.html ?
 
-Yes, as of right now this starter package will not handle this for you. The typical Angular 2 dependencies have been added already. Configure more dependencies to be included in your web app in `paths.config.js`. A script runs that copies each dependency from `node_modules` into `/dist/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
+Yes, as of right now this starter package will not handle this for you. The typical Angular 2 dependencies have been added already. Configure more dependencies to be included in your web app in `paths.config.js`. A script runs that copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
 
 ```
     <script src="/lib/zone.js/dist/zone.js"></script>
@@ -189,13 +189,17 @@ or with SystemJS like so:
 
 By default the build step enables a watcher that listens for file changes. This watcher can be disabled with by setting the `watch` argument to `false`.
 
-- `npm start watch=false` for Development
-- `NODE_ENV=prod npm start watch=false` for Production
+- `npm run build:dev watch=false` for Development
+- `npm run build:prod watch=false` for Production
 
 
 #### How to include external libraries?
 
 It's simple, just install the library via npm, add the library to the build in `paths.config.js` and inject the library via SystemJS in `src/public/system.config.js` and in some cases `index.html` for development. For Production, a different, minimal configuration for the bundle is required in `src/public/system.config.prod.js` and `system.import.js`.
+
+#### How to package a library for distribution?
+
+- `npm run build:lib`
 
 
 #### How do I bundle external libraries for production?
