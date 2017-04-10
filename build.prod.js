@@ -83,15 +83,15 @@ const copy = {
     },
     lib: () => {
 
-        mkdir('-p', __dirname + '/' + paths.dist);
+        mkdir('-p', __dirname + '/' + paths.dep.dist);
 
-        for( var i=0;  i < paths.dep.length; i++ ) {
+        for( var i=0;  i < paths.dep.lib.length; i++ ) {
 
-            cp('-R', paths.src + '/' + paths.dep[i], paths.dist + '/' + paths.dep[i]);
-            log(paths.dep[i], 'copied', 'to',  paths.dist + '/' + paths.dep[i]);
+            cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
+            log(paths.dep.lib[i], 'copied', 'to',  paths.dep.dist + '/' + paths.dep.lib[i]);
 
         }
-    },
+    }
 };
 
 
