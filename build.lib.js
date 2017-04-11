@@ -77,7 +77,7 @@ const copy = {
     },
     html: (path) => {
         ls(paths.src+'/app/**/*.html').forEach(function(file) {
-          cp(file, paths.dist+'/'+file);
+          // cp(file, paths.dist+'/'+file);
           log(file.replace(/^.*[\\\/]/, ''), 'copied', 'to',  paths.dist+'/'+file.substring(0, file.lastIndexOf("/")));
         });
     },
@@ -167,10 +167,11 @@ const compile = {
 
               let tsc = exec(scripts['compile:lib'], function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
+                  cp('-R', paths.lib+'/.', 'ngfactory/');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
-
                  let bundle = exec(scripts['rollup:lib'], function(code, output, error) {
                      log('Rollup', 'bundled', 'default-lib.js in', './dist');
+
                      compile.es5Lib();
                     //  exec(scripts['copy:lib'], function() {
 
@@ -369,11 +370,12 @@ let init = function() {
     rm('-rf', './ngfactory');
     mkdir('./dist');
     mkdir('./ngfactory');
+
     // cp('-R', './'+paths.src, './tmp');
     // copy.lib();
     // copy.public();
-    // style.src();
-    compile.src();
+    style.src();
+    // compile.src();
 
 };
 
