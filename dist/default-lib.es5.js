@@ -8,8 +8,10 @@ class DefaultComponent {
 DefaultComponent.decorators = [
     { type: Component, args: [{
                 selector: 'default',
-                templateUrl: 'default.component.html',
-                styleUrls: ['default.component.css']
+                template: `<a href="#">Link</a>`,
+                styles: [`:host {
+  background: red;
+}`]
             },] },
 ];
 DefaultComponent.ctorParameters = () => [];

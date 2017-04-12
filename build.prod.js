@@ -145,7 +145,7 @@ const compile = {
                      log('Closure Compiler', 'is optimizing', 'bundle.js', 'for '+ colors.bold(colors.cyan(env)));
 
                      let closure = exec(scripts['transpile:closure'], function(code, output, error){
-                          log('Closure Compiler', 'transpiled', './'+paths.build+'/bundle.es2015.js to', './'+paths.build+'bundle.js');
+                          log('Closure Compiler', 'transpiled', './'+paths.build+'/bundle.es2015.js to', './'+paths.build+'/bundle.js');
                           if (canWatch === true) {
                             log(colors.green('Ready'), 'to', colors.green('serve'));
                             log(colors.green('Watcher'), 'listening for', colors.green('changes'));
@@ -286,9 +286,9 @@ let init = function() {
 
     rm('-rf', './'+paths.build);
     rm('-rf', './ngfactory');
+    mkdir('./ngfactory');
     mkdir('./'+paths.build);
     mkdir('./'+paths.build+'/lib');
-    mkdir('./ngfactory');
     cp('-R', './'+paths.src, './tmp');
     copy.lib();
     copy.public();

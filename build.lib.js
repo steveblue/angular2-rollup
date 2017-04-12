@@ -2,10 +2,13 @@
 
 require('shelljs/global');
 
-const fs        = require('fs');
-const utils     = require('./build.utils.js');
-const chokidar  = require('chokidar');
-const sass      = require('node-sass');
+const fs          = require('fs');
+const path        = require('path');
+const utils       = require('./build.utils.js');
+const chokidar    = require('chokidar');
+const sass        = require('node-sass');
+const MagicString = require('magic-string');
+const minifyHtml  = require('html-minifier').minify;
 
 const console   = utils.console;
 const colors    = utils.colors;
@@ -13,6 +16,12 @@ const scripts   = utils.scripts;
 const paths     = utils.paths;
 const log       = utils.log;
 const warn      = utils.warn;
+
+const moduleIdRegex = /moduleId\s*:(.*)/g;
+const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
+const templateUrlRegex = /templateUrl\s*:(.*)/g;
+const styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
+const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 
 const env = 'prod';
 
@@ -26,6 +35,60 @@ process.argv.forEach((arg)=>{
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
+
+function insertText(str, dir, preprocessor = res => res, processFilename = false) {
+  return str.replace(stringRegex, function (match, quote, url) {
+    const includePath = path.join(dir, url);
+    if (processFilename) {
+      return '`' + preprocessor(includePath) + '`';
+    }
+    const text = fs.readFileSync(includePath).toString();
+    return '`' + preprocessor(text, includePath) + '`';
+  });
+}
+
+function angular(options, source, dir) {
+  options.preprocessors = options.preprocessors || {};
+  // ignore @angular/** modules
+  options.exclude = options.exclude || [];
+  if (typeof options.exclude === 'string' || options.exclude instanceof String) options.exclude = [options.exclude];
+  if (options.exclude.indexOf('node_modules/@angular/**') === -1) options.exclude.push('node_modules/@angular/**');
+
+  const magicString = new MagicString(source);
+
+  let hasReplacements = false;
+  let match;
+  let start, end, replacement;
+
+  while ((match = componentRegex.exec(source)) !== null) {
+    start = match.index;
+    end = start + match[0].length;
+
+    replacement = match[0]
+      .replace(templateUrlRegex, function (match, url) {
+        hasReplacements = true;
+        return 'template:' + insertText(url, dir, options.preprocessors.template, options.processFilename);
+      })
+      .replace(styleUrlsRegex, function (match, urls) {
+        hasReplacements = true;
+        return 'styles:' + insertText(urls, dir, options.preprocessors.style, options.processFilename);
+      })
+      .replace(moduleIdRegex, function (match, moduleId) {
+        hasReplacements = true;
+        return '';
+      });
+
+    if (hasReplacements) magicString.overwrite(start, end, replacement);
+  }
+
+  if (!hasReplacements) return null;
+
+  let result = { code: magicString.toString() };
+  if (options.sourceMap !== false) result.map = magicString.generateMap({ hires: true });
+
+  return result;
+
+}
 
 /* Copy */
 
@@ -102,11 +165,32 @@ const compile = {
       const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
       const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
       const outFile = path ? path : './'+paths.dist+'/bundle.js';
+      let inline = '';
 
       fs.readFile(outFile, 'utf8', function(err, contents) {
         if(!err) {
             contents = contents.replace(multilineComment, '');
             contents = contents.replace(singleLineComment, '');
+
+            if ( contents.search(componentRegex) > -1 ) {
+              inline = angular({
+                preprocessors: {
+                  template: template => minifyHtml(template, {
+                      caseSensitive: true,
+                      collapseWhitespace: true,
+                      removeComments: true,
+                  })
+                }
+              }, contents, path.substring(0, path.lastIndexOf('/')));
+              log('Inline', 'template and styles', 'for', path);
+
+              if (inline) {
+                contents = inline.code;
+              }
+
+            }
+
+
             fs.writeFile(outFile, contents, function(err){
               if(!err) {
               //  log('Cleaned up', 'comments', 'from', outFile);
@@ -130,6 +214,7 @@ const compile = {
 
         // remove moduleId prior to ngc build. TODO: look for another method.
         ls('tmp/**/*.ts').forEach(function(file) {
+          compile.clean(file);
           sed('-i', /^.*moduleId: module.id,.*$/, '', file);
         });
 
@@ -251,10 +336,10 @@ let style = {
           sourceComments: false
         }, function(error, result) {
           if (error) {
-            console.log(error.status);
-            console.log(error.column);
-            console.log(error.message);
-            console.log(error.line);
+            warn(error.status);
+            warn(error.column);
+            warn(error.message);
+            warn(error.line);
           } else {
 
             fs.writeFile(outFile, result.css, function(err){
@@ -308,9 +393,9 @@ let style = {
 let init = function() {
     rm('-rf', './tmp');
     rm('-rf', './ngfactory');
+    mkdir('./ngfactory');
     rm('-rf', './'+paths.dist);
     mkdir('./'+paths.dist);
-    mkdir('./ngfactory');
     style.src();
 };
 
