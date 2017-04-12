@@ -2,55 +2,30 @@
 
 require('shelljs/global');
 
-const fs = require('fs');
-const chokidar = require('chokidar');
-const clim = require('clim');
-const console = clim();
-const colors = require('chalk');
-const scripts = require('./package.json').scripts;
-const paths = require('./paths.config.js');
-const sass = require('node-sass');
+const fs        = require('fs');
+const utils     = require('./build.utils.js');
+const chokidar  = require('chokidar');
+const sass      = require('node-sass');
+
+const console   = utils.console;
+const colors    = utils.colors;
+const scripts   = utils.scripts;
+const paths     = utils.paths;
+const log       = utils.log;
+const warn      = utils.warn;
 
 const env = 'prod';
+
 let canWatch = true;
+let isCompiling = false;
+let hasInit = false;
+let styleFiles = [];
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
-/* Log Formatting */
-
-clim.getTime = function(){
-  let now = new Date();
-  return colors.gray(colors.dim('['+
-         now.getHours() + ':' +
-         now.getMinutes() + ':' +
-         now.getSeconds() + ']'));
-};
-
-const log = (action, noun, verb, next) => {
-    let a = action ? colors.magenta(action) : '';
-    let n = noun ? colors.green(noun) : '';
-    let v = verb ? colors.cyan(verb) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    console.log(a + ' ' + n + ' ' + v + ' ' + x );
-};
-
-const warn = function(action, noun) {
-    let a = action ? colors.red(action) : '';
-    let n = noun ? colors.white(noun) : '';
-    console.warn(a + ' ' + n);
-};
-
-/* Linter Options */
-
-const Linter = require('tslint').Linter;
-const Configuration = require('tslint').Configuration;
-const options = {
-    formatter: 'json',
-    rulesDirectory: 'node_modules/codelyzer'
-};
 
 /* Copy */
 
@@ -119,9 +94,6 @@ const clean = {
 }
 
 /* Compile */
-
-let isCompiling = false;
-let hasInit = false;
 
 const compile = {
 
@@ -195,13 +167,34 @@ const compile = {
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
                  let bundle = exec(scripts['rollup:es5'], function(code, output, error) {
-                     log('Rollup', 'bundled', 'default-lib.es5.js in', './dist');
+
+                    log('Rollup', 'bundled', 'default-lib.es5.js in', './'+paths.dist);
 
                     exec(scripts['copy:lib'], function() {
 
-                      log('Copied', 'd.ts, metadata.json', ' to ', './dist');
+                      log('Copied', 'd.ts, metadata.json', ' to ', './'+paths.dist);
+
+
+                      rm(paths.dist + '/index.ts');
+
+                      find('./'+paths.dist).filter(function(file) {
+
+                        if ( file.match(/component.ts$/) || file.match(/module.ts$/)) {
+                          rm(file);
+                        }
+
+                      });
+
 
                     });
+
+                    exec(scripts['copy:package'], function() {
+
+                      log('Copied', 'package.json', ' to ', './'+paths.dist);
+
+                    });
+
+
 
                  });
               });
@@ -246,40 +239,7 @@ const compile = {
 }
 
 
-const tslint = (path) => {
-
-    if (!path) {
-      return;
-    }
-
-    let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+paths.src+'/');
-    let files = Linter.getFileNames(program);
-    let results = files.map(file => {
-
-        let fileContents = fs.readFileSync(file, 'utf8');
-        let linter = new Linter(options);
-        console.log(file);
-        let configLoad = Configuration.findConfiguration('./tsconfig.'+env+'.json', file );
-        let results = linter.lint(file, fileContents, configLoad.results);
-
-        if (results && results.failureCount > 0) {
-            let failures = JSON.parse(results.output);
-            for (let i = 0; i < failures.length; i++) {
-                 log('tslint:',
-                    colors.red(failures[i].failure),
-                    colors.white('[' + failures[i].startPosition.line +
-                    ', ' + failures[i].startPosition.character + ']'),
-                    failures[i].name);
-            }
-
-        }
-
-    });
-};
-
-
 /* Styling */
-let styleFiles = [];
 
 let style = {
 
@@ -349,19 +309,6 @@ let style = {
     }
 };
 
-
-/* Server */
-
-
-let server = {
-    dev: () => {
-        exec('node server.js');
-    },
-    prod: () => {
-        exec(scripts['prod:server']);
-    }
-}
-
 /* Init */
 
 let init = function() {
@@ -370,13 +317,7 @@ let init = function() {
     rm('-rf', './ngfactory');
     mkdir('./dist');
     mkdir('./ngfactory');
-
-    // cp('-R', './'+paths.src, './tmp');
-    // copy.lib();
-    // copy.public();
     style.src();
-    // compile.src();
-
 };
 
 /* Watcher */

@@ -1,1 +1,1 @@
-export * from './default/default.module';
+export * from './components/default/default.module';

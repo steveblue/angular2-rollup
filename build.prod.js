@@ -2,55 +2,29 @@
 
 require('shelljs/global');
 
-const fs = require('fs');
-const chokidar = require('chokidar');
-const clim = require('clim');
-const console = clim();
-const colors = require('chalk');
-const scripts = require('./package.json').scripts;
-const paths = require('./paths.config.js');
-const sass = require('node-sass');
+const fs        = require('fs');
+const utils     = require('./build.utils.js');
+const chokidar  = require('chokidar');
+const sass      = require('node-sass');
 
-const env = 'prod';
-let canWatch = true;
+const console   = utils.console;
+const colors    = utils.colors;
+const scripts   = utils.scripts;
+const paths     = utils.paths;
+const log       = utils.log;
+const warn      = utils.warn;
+
+const env       = 'prod';
+let canWatch     = true;
+let isCompiling = false;
+let hasInit = false;
+let styleFiles = [];
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
-/* Log Formatting */
-
-clim.getTime = function(){
-  let now = new Date();
-  return colors.gray(colors.dim('['+
-         now.getHours() + ':' +
-         now.getMinutes() + ':' +
-         now.getSeconds() + ']'));
-};
-
-const log = (action, noun, verb, next) => {
-    let a = action ? colors.magenta(action) : '';
-    let n = noun ? colors.green(noun) : '';
-    let v = verb ? colors.cyan(verb) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    console.log(a + ' ' + n + ' ' + v + ' ' + x );
-};
-
-const warn = function(action, noun) {
-    let a = action ? colors.red(action) : '';
-    let n = noun ? colors.white(noun) : '';
-    console.warn(a + ' ' + n);
-};
-
-/* Linter Options */
-
-const Linter = require('tslint').Linter;
-const Configuration = require('tslint').Configuration;
-const options = {
-    formatter: 'json',
-    rulesDirectory: 'node_modules/codelyzer'
-};
 
 /* Copy */
 
@@ -83,7 +57,7 @@ const copy = {
     },
     lib: () => {
 
-        mkdir('-p', __dirname + '/' + paths.dep.build);
+        mkdir('-p', __dirname + '/' + paths.dep.dist);
 
         for( var i=0;  i < paths.dep.lib.length; i++ ) {
 
@@ -119,9 +93,6 @@ const clean = {
 }
 
 /* Compile */
-
-let isCompiling = false;
-let hasInit = false;
 
 const compile = {
 
@@ -225,40 +196,7 @@ const compile = {
 }
 
 
-const tslint = (path) => {
-
-    if (!path) {
-      return;
-    }
-
-    let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+paths.src+'/');
-    let files = Linter.getFileNames(program);
-    let results = files.map(file => {
-
-        let fileContents = fs.readFileSync(file, 'utf8');
-        let linter = new Linter(options);
-        console.log(file);
-        let configLoad = Configuration.findConfiguration('./tsconfig.'+env+'.json', file );
-        let results = linter.lint(file, fileContents, configLoad.results);
-
-        if (results && results.failureCount > 0) {
-            let failures = JSON.parse(results.output);
-            for (let i = 0; i < failures.length; i++) {
-                 log('tslint:',
-                    colors.red(failures[i].failure),
-                    colors.white('[' + failures[i].startPosition.line +
-                    ', ' + failures[i].startPosition.character + ']'),
-                    failures[i].name);
-            }
-
-        }
-
-    });
-};
-
-
 /* Styling */
-let styleFiles = [];
 
 let style = {
 
@@ -276,10 +214,10 @@ let style = {
           sourceComments: false
         }, function(error, result) {
           if (error) {
-            console.log(error.status);
-            console.log(error.column);
-            console.log(error.message);
-            console.log(error.line);
+            warn(error.status);
+            warn(error.column);
+            warn(error.message);
+            warn(error.line);
           } else {
 
             fs.writeFile(outFile, result.css, function(err){

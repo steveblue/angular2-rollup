@@ -2,55 +2,30 @@
 
 require('shelljs/global');
 
-const fs = require('fs');
-const chokidar = require('chokidar');
-const clim = require('clim');
-const console = clim();
-const colors = require('chalk');
-const scripts = require('./package.json').scripts;
-const paths = require('./paths.config.js');
-const sass = require('node-sass');
+const fs        = require('fs');
+const utils     = require('./build.utils.js');
+const chokidar  = require('chokidar');
+const sass      = require('node-sass');
+
+const console   = utils.console;
+const colors    = utils.colors;
+const scripts   = utils.scripts;
+const paths     = utils.paths;
+const log       = utils.log;
+const warn      = utils.warn;
 
 const env = 'dev';
+
 let canWatch = true;
+let isCompiling = false;
+let hasInit = false;
+let styleFiles = [];
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
-/* Log Formatting */
-
-clim.getTime = function(){
-  let now = new Date();
-  return colors.gray(colors.dim('['+
-         now.getHours() + ':' +
-         now.getMinutes() + ':' +
-         now.getSeconds() + ']'));
-};
-
-const log = (action, noun, verb, next) => {
-    let a = action ? colors.magenta(action) : '';
-    let n = noun ? colors.green(noun) : '';
-    let v = verb ? colors.cyan(verb) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    console.log(a + ' ' + n + ' ' + v + ' ' + x );
-};
-
-const warn = function(action, noun) {
-    let a = action ? colors.red(action) : '';
-    let n = noun ? colors.white(noun) : '';
-    console.warn(a + ' ' + n);
-};
-
-/* Linter Options */
-
-const Linter = require('tslint').Linter;
-const Configuration = require('tslint').Configuration;
-const options = {
-    formatter: 'json',
-    rulesDirectory: 'node_modules/codelyzer'
-};
 
 /* Copy */
 
@@ -119,9 +94,6 @@ const clean = {
 }
 
 /* Compile */
-
-let isCompiling = false;
-let hasInit = false;
 
 const compile = {
 
@@ -258,7 +230,6 @@ const tslint = (path) => {
 
 
 /* Styling */
-let styleFiles = [];
 
 let style = {
 

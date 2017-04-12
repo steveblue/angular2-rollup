@@ -19,9 +19,10 @@ class DefaultModule {
 DefaultModule.decorators = [
     { type: NgModule, args: [{
                 imports: [CommonModule],
-                declarations: [DefaultComponent]
+                declarations: [DefaultComponent],
+                exports: [DefaultComponent]
             },] },
 ];
 DefaultModule.ctorParameters = () => [];
 
-export { DefaultModule, DefaultComponent as ɵa };
+export { DefaultModule, DefaultComponent };
