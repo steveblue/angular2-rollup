@@ -236,7 +236,8 @@ let style = {
 
                       if( styleFiles.indexOf(path) === styleFiles.length - 1  ) {
                         log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
-                        setTimeout(compile.src, 2000);
+                        //setTimeout(compile.src, 2000);
+                        compile.src();
                       }
                     }
                 });
@@ -284,11 +285,9 @@ let server = {
 let init = function() {
 
     rm('-rf', './'+paths.build);
-    rm('-rf', './dist');
     rm('-rf', './ngfactory');
     mkdir('./'+paths.build);
     mkdir('./'+paths.build+'/lib');
-    mkdir('./dist');
     mkdir('./ngfactory');
     cp('-R', './'+paths.src, './tmp');
     copy.lib();

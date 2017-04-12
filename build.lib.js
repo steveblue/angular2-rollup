@@ -16,7 +16,7 @@ const warn      = utils.warn;
 
 const env = 'prod';
 
-let canWatch = true;
+let canWatch = false;
 let isCompiling = false;
 let hasInit = false;
 let styleFiles = [];
@@ -91,13 +91,14 @@ const clean = {
 
   }
 
-}
+};
 
 /* Compile */
 
 const compile = {
 
     clean: (path) => {
+
       const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
       const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
       const outFile = path ? path : './'+paths.dist+'/bundle.js';
@@ -118,7 +119,6 @@ const compile = {
         }
 
       });
-
 
     },
 
@@ -158,7 +158,6 @@ const compile = {
        });
 
     },
-
 
     es5Lib : () => {
 
@@ -200,11 +199,6 @@ const compile = {
               });
     },
 
-
-
-
-
-
     ts : (path) => {
 
         isCompiling = true;
@@ -236,7 +230,7 @@ const compile = {
        });
 
     }
-}
+};
 
 
 /* Styling */
@@ -313,9 +307,9 @@ let style = {
 
 let init = function() {
     rm('-rf', './tmp');
-    rm('-rf', './dist');
     rm('-rf', './ngfactory');
-    mkdir('./dist');
+    rm('-rf', './'+paths.dist);
+    mkdir('./'+paths.dist);
     mkdir('./ngfactory');
     style.src();
 };
@@ -381,5 +375,4 @@ watcher
     log('Initial scan complete.', 'Building', 'for', colors.bold(colors.cyan(env)));
 
     init();
-
-  });
+});

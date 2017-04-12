@@ -1,8 +1,8 @@
 {
   "name": "default-lib",
   "version": "1.0.0",
-  "description": "Example of bundling Angular libraries",
-  "authors": ["Jason Aden", "Steve Belovarich"],
+  "description": "Boilerplate for bundling Angular libraries",
+  "contributors": ["Jason Aden", "Steve Belovarich"],
   "license": "MIT",
   "devDependencies": {
     "@angular/core": "^4.0.1",

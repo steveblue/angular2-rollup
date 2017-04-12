@@ -44,7 +44,6 @@ const copy = {
           clean.paths();
         }
 
-
     },
     file: (path) => {
         cp('-R', path, 'build/');
@@ -91,7 +90,7 @@ const clean = {
 
   }
 
-}
+};
 
 /* Compile */
 
@@ -194,47 +193,13 @@ const compile = {
        });
 
     }
-}
-
-
-const tslint = (path) => {
-
-    if (!path) {
-      return;
-    }
-
-    let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+paths.src+'/');
-    let files = Linter.getFileNames(program);
-    let results = files.map(file => {
-
-        let fileContents = fs.readFileSync(file, 'utf8');
-        let linter = new Linter(options);
-        console.log(file);
-        let configLoad = Configuration.findConfiguration('./tsconfig.'+env+'.json', file );
-        let results = linter.lint(file, fileContents, configLoad.results);
-
-        if (results && results.failureCount > 0) {
-            let failures = JSON.parse(results.output);
-            for (let i = 0; i < failures.length; i++) {
-                 log('tslint:',
-                    colors.red(failures[i].failure),
-                    colors.white('[' + failures[i].startPosition.line +
-                    ', ' + failures[i].startPosition.character + ']'),
-                    failures[i].name);
-            }
-
-        }
-
-    });
 };
-
 
 /* Styling */
 
 let style = {
 
     file: (path, watch) => {
-
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
         let filename = path.replace(/^.*[\\\/]/, '');
@@ -247,10 +212,10 @@ let style = {
           sourceComments: true
         }, function(error, result) {
           if (error) {
-            console.log(error.status);
-            console.log(error.column);
-            console.log(error.message);
-            console.log(error.line);
+            warn(error.status);
+            warn(error.column);
+            warn(error.message);
+            warn(error.line);
           } else {
 
             fs.writeFile(outFile, result.css, function(err){
@@ -326,11 +291,9 @@ let server = {
 let init = function() {
 
     rm('-rf', './'+paths.build);
-    rm('-rf', './dist');
     rm('-rf', './ngfactory');
     mkdir('./'+paths.build);
     mkdir('./'+paths.build+'/lib');
-    mkdir('./dist');
     copy.lib();
     copy.public();
     compile.ts();
@@ -395,7 +358,6 @@ watcher
   .on('ready', () => {
 
     log('Initial scan complete.', 'Building', 'for', colors.bold(colors.cyan(env)));
-
     init();
 
-  });
+});
