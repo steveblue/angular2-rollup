@@ -1,10 +1,11 @@
 ##4.0.1
 
-- Added more configuration to `paths.config.js
-- Upgraded to Angular 4.0.1
+
+- Updated to Angular 4.0.1
+- Added more configuration to `paths.config.js`
 - Added new `lib` build for distributing libraries in ES6 and ES5
 - Refactored build process to default to `build` folder, `dist` is now the default for library files
-- Use `npm run build:dev` instead of `npm start`
+- Use `npm run build:dev` instead of `npm start` for development server
 - Added `npm run build:prod` for AOT production builds
 - Added `npm run build:lib` for building library files
 - To stop `watcher` set `watch=false` as optional argument in any build
