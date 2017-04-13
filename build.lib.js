@@ -36,18 +36,21 @@ process.argv.forEach((arg)=>{
   }
 });
 
+// Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz
+
 function insertText(str, dir, preprocessor = res => res, processFilename = false) {
   return str.replace(stringRegex, function (match, quote, url) {
     const includePath = path.join(dir, url);
     if (processFilename) {
-      return '`' + preprocessor(includePath) + '`';
+      return "'" + preprocessor(includePath) + "'";
     }
     const text = fs.readFileSync(includePath).toString();
-    return '`' + preprocessor(text, includePath) + '`';
+    return "'" + preprocessor(text, includePath) + "'";
   });
 }
 
 function angular(options, source, dir) {
+
   options.preprocessors = options.preprocessors || {};
   // ignore @angular/** modules
   options.exclude = options.exclude || [];
@@ -179,9 +182,11 @@ const compile = {
                       caseSensitive: true,
                       collapseWhitespace: true,
                       removeComments: true,
+                      quoteCharacter: '"'
                   })
                 }
               }, contents, path.substring(0, path.lastIndexOf('/')));
+
               log('Inline', 'template and styles', 'for', path);
 
               if (inline) {
@@ -189,7 +194,6 @@ const compile = {
               }
 
             }
-
 
             fs.writeFile(outFile, contents, function(err){
               if(!err) {
@@ -209,7 +213,7 @@ const compile = {
     src : () => {
 
         isCompiling = true;
-        cp('-R', paths.lib+'/.', 'tmp/');
+
         log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
 
         // remove moduleId prior to ngc build. TODO: look for another method.
@@ -227,7 +231,7 @@ const compile = {
                   cp('-R', paths.lib+'/.', 'ngfactory/');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
                  let bundle = exec(scripts['rollup:lib'], function(code, output, error) {
-                     log('Rollup', 'bundled', 'default-lib.js in', './dist');
+                     log('Rollup', 'bundled', paths.libFilename+'.js in', './dist');
 
                      compile.es5Lib();
                     //  exec(scripts['copy:lib'], function() {
@@ -252,7 +256,7 @@ const compile = {
 
                  let bundle = exec(scripts['rollup:es5'], function(code, output, error) {
 
-                    log('Rollup', 'bundled', 'default-lib.es5.js in', './'+paths.dist);
+                    log('Rollup', 'bundled', paths.libFilename+'.es5.js in', './'+paths.dist);
 
                     exec(scripts['copy:lib'], function() {
 
@@ -263,7 +267,7 @@ const compile = {
 
                       find('./'+paths.dist).filter(function(file) {
 
-                        if ( file.match(/component.ts$/) || file.match(/module.ts$/)) {
+                        if ( file.match(/component.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
                           rm(file);
                         }
 
@@ -327,7 +331,8 @@ let style = {
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.dist+'/style/style.css' : path.replace('.scss','.css').replace(paths.src, 'tmp');
+        let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.dist+'/style/style.css' : path.replace('.scss','.css').replace(paths.src, 'tmp').replace('lib/', '');
+
         sass.render({
           file: path,
           outFile: outFile,
@@ -343,16 +348,9 @@ let style = {
           } else {
 
             fs.writeFile(outFile, result.css, function(err){
-              if(!err){
 
                 let postcss = exec('postcss -c postcss.'+env+'.json -r '+outFile, function(code, output, error) {
 
-                    // if ( watch === true ) {
-                    //   log('PostCSS', 'transformed', 'component style at', outFile);
-                    //   setTimeout(compile.src, 1000);
-                    // } else {
-                    //    log('PostCSS', 'transformed', 'component style at', outFile);
-                    // }
 
                     if( !watch ) {
 
@@ -362,7 +360,7 @@ let style = {
                       }
                     }
                 });
-              }
+
             });
 
           }
@@ -373,13 +371,15 @@ let style = {
 
         mkdir(paths.dist+'/style');
 
-        ls(paths.src+'/**/*.scss').forEach(function(file, index) {
+        style.file(paths.src+'/style/style.scss');
+
+        ls('./'+paths.lib+'/**/*.scss').forEach(function(file, index) {
           if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
              styleFiles.push(file);
           }
         });
 
-        ls(paths.src+'/**/*.scss').forEach(function(file, index) {
+        ls('./'+paths.lib+'/**/*.scss').forEach(function(file, index) {
           if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
             style.file(file);
           }
@@ -392,6 +392,7 @@ let style = {
 
 let init = function() {
     rm('-rf', './tmp');
+    cp('-R', paths.lib+'/.', 'tmp/');
     rm('-rf', './ngfactory');
     mkdir('./ngfactory');
     rm('-rf', './'+paths.dist);

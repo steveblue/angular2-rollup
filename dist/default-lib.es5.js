@@ -1,17 +1,15 @@
-import { Component, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+(function (exports,_angular_core,_angular_common) {
+'use strict';
 
 class DefaultComponent {
     constructor() {
     }
 }
 DefaultComponent.decorators = [
-    { type: Component, args: [{
+    { type: _angular_core.Component, args: [{
                 selector: 'default',
-                template: `<a href="#">Link</a>`,
-                styles: [`:host {
-  background: red;
-}`]
+                template: '<a href="#">A Bundled Component Is A Happy Component</a>',
+                styles: [':host{background:red}']
             },] },
 ];
 DefaultComponent.ctorParameters = () => [];
@@ -19,12 +17,15 @@ DefaultComponent.ctorParameters = () => [];
 class DefaultModule {
 }
 DefaultModule.decorators = [
-    { type: NgModule, args: [{
-                imports: [CommonModule],
+    { type: _angular_core.NgModule, args: [{
+                imports: [_angular_common.CommonModule],
                 declarations: [DefaultComponent],
                 exports: [DefaultComponent]
             },] },
 ];
 DefaultModule.ctorParameters = () => [];
 
-export { DefaultModule, DefaultComponent };
+exports.DefaultModule = DefaultModule;
+exports.DefaultComponent = DefaultComponent;
+
+}((this['default-lib'] = this['default-lib'] || {}),_angular_core,_angular_common));

@@ -5,10 +5,10 @@ import angular from 'rollup-plugin-angular';
 const paths = require('./paths.config.js');
 
 export default {
-  entry: 'ngfactory/default-lib.js',
+  entry: 'ngfactory/'+paths.libFilename+'.js',
   format: 'iife',
-  moduleName: 'default-lib',
-  dest: paths.dist+'/default-lib.js',
+  moduleName: paths.libFilename,
+  dest: paths.dist+'/'+paths.libFilename+'.js',
   plugins: [
     angular()
   ],

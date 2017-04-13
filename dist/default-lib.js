@@ -8,10 +8,8 @@ class DefaultComponent {
 DefaultComponent.decorators = [
     { type: _angular_core.Component, args: [{
                 selector: 'default',
-                template: `<a href="#">Link</a>`,
-                styles: [`:host {
-  background: red;
-}`]
+                template: '<a href="#">A Bundled Component Is A Happy Component</a>',
+                styles: [':host{background:red}']
             },] },
 ];
 DefaultComponent.ctorParameters = () => [];

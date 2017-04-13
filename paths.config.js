@@ -18,5 +18,6 @@ module.exports = {
     src: 'src',
     build: 'build',
     dist: 'dist',
-    lib: 'src/app/shared/components/lib'
+    lib: 'src/lib',
+    libFilename: 'default-lib'
 }
