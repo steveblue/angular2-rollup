@@ -102,7 +102,6 @@ module.exports = config;
 
 When everything is setup correctly, you should be able to visit  [http://localhost:4200](http://localhost:4200) in your browser.
 
-
 ## Developing
 
 After you have installed all dependencies you can now build the project:
@@ -110,7 +109,7 @@ After you have installed all dependencies you can now build the project:
 * `npm run build:dev`
 * `npm run dev:server`
 
-`build.env.js` will build the application for development for the appropriate environment. `server.js` will start a local server using Express and `liveserver` will watch for changes in the `/build` directory.
+`build.env.js` will build the application for development for the appropriate environment. `server.js` will start a local server using Express and `liveserver` will watch for changes in the `/build` directory. The development environment bootstraps Angular with JIT Compiler for fast and efficient development compared to AOT.
 
 ## Testing
 
@@ -142,7 +141,7 @@ The production build is quite different than development. While the development 
 
 3. Closure Compiler optimizes the bundle and outputs ES5 for the browser.
 
-Since the bundle is still ES2015, we need to transpile the bundle into ES5. For this purpose, we tested multiple solutions and found the best option to either be Typescript (which failed after the update to RC.6) and Closure Compiler.
+Since the bundle is still ES2015, we need to transpile the bundle into ES5. For this purpose, we tested multiple solutions and found the best option to be Closure Compiler.
 
 In order to build for production, you need to install [Closure Compiler](https://developers.google.com/closure/compiler/). Closure Compiler is the only tool that we found would transpile the ES2015 Rollup Bundle to ES5 with 100% reliability after it was processed with `ngc`. Closure Compiler is also a great solution because it optimizes the bundle and does code checking after Rollup tree shakes the application. Google uses Closure Compiler internally to optimize JavaScript files for production.
 
@@ -153,34 +152,6 @@ To build an application for production, run the following command.
 * `npm run build:prod`
 
 You can now deploy the `/build` folder to your server!
-
-Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using`npm run build:dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `npm run build:prod watch=true`
-
-Then, start up the production server
-
-`NODE_ENV=prod npm run dev:server watch=true`
-
-For livereload to work in the browser for the production build you currently you have to edit `src/public/index.html`.
-
-Copy the livereload `script` to the `build:remove:dev` comment near the end of the file. It should look like the example below.
-
-```
-    <script>
-      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
-      ':35729/livereload.js?snipver=1"></' + 'script>')
-    </script>
-    <!-- /build -->
-    <!-- build:remove:dev -->
-    <script src="system.import.js"></script>
-    <script>
-      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
-      ':35729/livereload.js?snipver=1"></' + 'script>')
-    </script>
-    <!-- /build -->
-```
-
-It is not recommended that you deploy the livereload script to production. If anyone has a clever workaround for this please submit a Pull Request with the change.
-
 
 # FAQ
 
@@ -212,12 +183,11 @@ or with SystemJS like so:
 - Install rimraf globally `npm i -g rimraf`
 - Run `npm run clean:install`
 
-### Can I build without the watcher?
+### Can I build JIT without the watcher?
 
-By default the build step enables a watcher that listens for file changes. This watcher can be disabled with by setting the `watch` argument to `false`.
+By default the development build step enables a watcher that listens for file changes. This watcher can be disabled with by setting the `watch` argument to `false`.
 
-- `npm run build:dev watch=false` for Development
-- `npm run build:prod watch=false` for Production
+- `npm run build:dev watch=false`
 
 
 #### How to include external libraries?
@@ -239,16 +209,51 @@ plugins: [
 
 A Rollup plugin does exist that will transform commonjs modules to ES2015 for the bundle called `rollup-plugin-commonjs` and it is included in package.json by default.
 
-#### How do I package a library for distribution?
+#### Can I run livereload with the Production build?
+
+Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using`npm run build:dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `npm run build:prod watch=true`
+
+Then, start up the production server
+
+`NODE_ENV=prod npm run dev:server watch=true`
+
+For livereload to work in the browser for the production build you currently you have to edit `src/public/index.html`.
+
+Copy the livereload `script` to the `build:remove:dev` comment near the end of the file. It should look like the example below.
+
+```
+    <script>
+      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+      ':35729/livereload.js?snipver=1"></' + 'script>')
+    </script>
+    <!-- /build -->
+    <!-- build:remove:dev -->
+    <script src="system.import.js"></script>
+    <script>
+      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+      ':35729/livereload.js?snipver=1"></' + 'script>')
+    </script>
+    <!-- /build -->
+```
+
+It is not recommended that you deploy the livereload script to production. If anyone has a clever workaround for this please submit a Pull Request with the change.
+
+
+#### Can I use this repository to package a library for distribution?
 
 - `npm run build:lib`
 
-At ng-conf 2017 @jasonaden presented [a talk about Packaging Angular](https://www.youtube.com/watch?v=unICbsPGFIA). This project includes a build that produces the recommendation called [Angular Package Format 4.0](https://goo.gl/AMOU5G). The library build provides the necessary files to support AOT compile, treeshaking, and multiple bundlers.
+With Angular 4.0, there is an established contract between the Angular team, library authors, and application developers that describes a format for Angular Component libraries.
+
+This project includes a build that produces a library based on the recommendation found here [Angular Package Format 4.0](https://goo.gl/AMOU5G). `npm run build:lib` supports AOT compile, treeshaking, and multiple bundlers. More more information, watch @jasonaden at ng-conf 2017 where presented a talk called [Packaging Angular](https://www.youtube.com/watch?v=unICbsPGFIA).
+
+Boilerplate library files are found in `src/lib/`.
 
 
-# TypeScript
+#### How do I take advantage of TypeScript in my IDE?
 
-> To take full advantage of TypeScript with autocomplete you would have to use an editor with the correct TypeScript plugins.
+To take full advantage of TypeScript with autocomplete you would have to use an editor with the correct TypeScript plugins.
+
 
 ## Use a TypeScript-aware editor
 
@@ -258,6 +263,7 @@ We have good experience using these editors:
 * [Webstorm 11+](https://www.jetbrains.com/webstorm/download/)
 * [Atom](https://atom.io/) with [TypeScript plugin](https://atom.io/packages/atom-typescript)
 * [Sublime Text](http://www.sublimetext.com/3) with [Typescript-Sublime-Plugin](https://github.com/Microsoft/Typescript-Sublime-plugin#installation)
+
 
 # License
 
