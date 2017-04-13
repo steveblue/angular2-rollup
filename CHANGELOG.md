@@ -8,7 +8,8 @@
 - Use `npm run build:dev` instead of `npm start` for development server
 - Added `npm run build:prod` for AOT production builds
 - Added `npm run build:lib` for building library files
-- Set `watch=false` to stop watcher, use as argument in any build
+- Use `watch=true` to watch prod and lib builds, disabled by default
+- Fixed watcher in dev and prod modes, will now detect css changes properly
 - Updated README
 
 
@@ -30,11 +31,7 @@ module.exports = {
         ]
     },
     src: './node_modules',
-    dist: './dist/lib',
-    clean:{
-      files:[],
-      folders:[]
-    }
+    dist: './dist/lib'
 }
 ```
 
@@ -52,11 +49,7 @@ module.exports = {
             'rxjs'
         ],
         src: './node_modules',
-        dist: './dist/lib'
-    },
-    clean:{
-      files:[],
-      folders:[]
+        dist:  './build/lib'
     }
 }
 ```
@@ -75,7 +68,7 @@ module.exports = {
             'rxjs'
         ],
         src: './node_modules',
-        dist: './dist/lib'
+        dist: './build/lib'
     },
     clean:{
       files:[],
@@ -83,7 +76,9 @@ module.exports = {
     },
     src: 'src',
     build: 'build',
-    dist: 'dist'
+    dist: 'dist',
+    lib: 'src/lib',
+    libFilename: 'default-lib'
 }
 
 

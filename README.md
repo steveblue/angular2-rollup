@@ -148,11 +148,38 @@ In order to build for production, you need to install [Closure Compiler](https:/
 
 To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and the application file found [at the bottom of this page](https://developers.google.com/closure/compiler/). Rename the .jar file (ex: closure-compiler-v20160822.jar ) to `compiler.jar` and copy it into the project root directory (`./compiler.jar`). This file is in the `.gitignore`, which is why you have to manually install it. We tested the JavaScript version of Closure Compiler and found it resulted in `out of process memory` issues with multiple versions of `node`, which is why the Java application is necessary.
 
-To build your application, run:
+To build an application for production, run the following command.
 
 * `npm run build:prod`
 
-You can now go to `/build` and deploy that to your server!
+You can now deploy the `/build` folder to your server!
+
+Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using`npm run build:dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `npm run build:prod watch=true`
+
+Then, start up the production server
+
+`NODE_ENV=prod npm run dev:server watch=true`
+
+For livereload to work in the browser for the production build you currently you have to edit `src/public/index.html`.
+
+Copy the livereload `script` to the `build:remove:dev` comment near the end of the file. It should look like the example below.
+
+```
+    <script>
+      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+      ':35729/livereload.js?snipver=1"></' + 'script>')
+    </script>
+    <!-- /build -->
+    <!-- build:remove:dev -->
+    <script src="system.import.js"></script>
+    <script>
+      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+      ':35729/livereload.js?snipver=1"></' + 'script>')
+    </script>
+    <!-- /build -->
+    ```
+
+It is not recommended that you deploy the livereload script to production. If anyone has a clever workaround for this please submit a Pull Request with the change.
 
 
 # FAQ
@@ -197,10 +224,6 @@ By default the build step enables a watcher that listens for file changes. This 
 
 It's simple, just install the library via npm, add the library to the build in `paths.config.js` and inject the library via SystemJS in `src/public/system.config.js` and in some cases `index.html` for development. For Production, a different, minimal configuration for the bundle is required in `src/public/system.config.prod.js` and `system.import.js`.
 
-#### How to package a library for distribution?
-
-- `npm run build:lib`
-
 
 #### How do I bundle external libraries for production?
 
@@ -215,6 +238,13 @@ plugins: [
 ```
 
 A Rollup plugin does exist that will transform commonjs modules to ES2015 for the bundle called `rollup-plugin-commonjs` and it is included in package.json by default.
+
+#### How do I package a library for distribution?
+
+- `npm run build:lib`
+
+At ng-conf 2017 @jasonaden presented [a talk about Packaging Angular](https://www.youtube.com/watch?v=unICbsPGFIA). This project includes a build that produces the recommendation called [Angular Package Format 4.0](https://goo.gl/AMOU5G). The library build provides the necessary files to support AOT compile, treeshaking, and multiple bundlers.
+
 
 # TypeScript
 

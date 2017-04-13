@@ -5,31 +5,34 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-
+const app = express();
 const paths = require('./paths.config.js');
 const config = {
   dev: require('./conf/config.local.js'),
   prod: require('./conf/config.prod.js')
 };
 
+
 let env = process.env.NODE_ENV || 'dev';
+console.log(env);
+const port = config[env].port || process.env.PORT;
+const host = config[env].origin;
 let ssl = false;
-var server;
+let canWatch = false;
+let server;
 
 process.argv.forEach(function(arg){
 
   if(arg === '--https') {
     ssl = true;
   }
+  console.log(arg);
+  if (arg.includes('watch')) {
+    canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
 
 });
 
-const port = config[env].port || process.env.PORT;
-const host = config[env].origin;
-
-// Start Express
-
-const app = express();
 
 // Livereload Server Start
 
@@ -59,6 +62,11 @@ if ( env === 'prod' ) {
   } else {
     server = http.createServer(app);
   }
+
+  if (canWatch === true) {
+    live();
+  }
+
 
 }
 

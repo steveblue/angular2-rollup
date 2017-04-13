@@ -13,12 +13,14 @@ const scripts   = utils.scripts;
 const paths     = utils.paths;
 const log       = utils.log;
 const warn      = utils.warn;
+const clean     = utils.clean;
 
 const env       = 'prod';
-let canWatch     = true;
+let canWatch    = false;
 let isCompiling = false;
-let hasInit = false;
-let styleFiles = [];
+let hasInit     = false;
+let styleFiles  = [];
+let hasCompletedFirstStylePass = false;
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
@@ -40,20 +42,13 @@ const copy = {
         log(path || paths.src+'/public/', 'copied', 'to', paths.build+'/');
 
         if(paths && paths.clean) {
-          clean.paths();
+          clean.paths(paths);
         }
-
 
     },
     file: (path) => {
         cp('-R', path, paths.build+'/');
         log(path, 'copied', 'to', paths.build+'/');
-    },
-    html: (path) => {
-        ls(paths.src+'/app/**/*.html').forEach(function(file) {
-          cp(file, paths.build+'/'+file);
-          log(file.replace(/^.*[\\\/]/, ''), 'copied', 'to',  paths.build+'/'+file.substring(0, file.lastIndexOf("/")));
-        });
     },
     lib: () => {
 
@@ -69,42 +64,18 @@ const copy = {
 };
 
 
-const clean = {
-
-  paths: () => {
-
-    if( paths.clean.files ) {
-
-    paths.clean.files.forEach((file) => {
-      rm(file);
-    });
-
-    }
-    if( paths.clean.folders ) {
-
-      paths.clean.folders.forEach((folder) => {
-        rm('-rf', folder);
-      });
-
-    }
-
-  }
-
-}
-
 /* Compile */
 
 const compile = {
 
     clean: (path) => {
-      const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
-      const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
+
       const outFile = path ? path : './'+paths.build+'/bundle.js';
 
       fs.readFile(outFile, 'utf8', function(err, contents) {
         if(!err) {
-            contents = contents.replace(multilineComment, '');
-            contents = contents.replace(singleLineComment, '');
+            contents = contents.replace(utils.multilineComment, '');
+            contents = contents.replace(utils.singleLineComment, '');
             fs.writeFile(outFile, contents, function(err){
               if(!err) {
               //  log('Cleaned up', 'comments', 'from', outFile);
@@ -117,7 +88,6 @@ const compile = {
         }
 
       });
-
 
     },
 
@@ -160,38 +130,6 @@ const compile = {
               });
        });
 
-    },
-
-    ts : (path) => {
-
-        isCompiling = true;
-
-        let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
-
-            if (path) {
-               log('typescript', 'started', 'transpiling', path);
-            } else {
-               log('typescript', 'started', 'transpiling', paths.src+'/*ts');
-            }
-
-            let tsc = exec(scripts['transpile:src'], function(code, output, error) {
-                if (path) {
-                  log('typescript', 'transpiled', path+' to', paths.build+'/'+path.replace('.ts','.js'));
-                  cp(path, paths.build+'/'+path);
-                } else {
-                  log('typescript', 'transpiled', paths.src+'/*ts to', paths.build+'/'+paths.src+'/*ts');
-                }
-
-                if(hasInit === false) {
-                    copy.html();
-                    style.src();
-                }
-
-                isCompiling = false;
-
-            });
-       });
-
     }
 }
 
@@ -225,21 +163,14 @@ let style = {
 
                 let postcss = exec('postcss -c postcss.'+env+'.json -r '+outFile, function(code, output, error) {
 
-                    // if ( watch === true ) {
-                    //   log('PostCSS', 'transformed', 'component style at', outFile);
-                    //   setTimeout(compile.src, 1000);
-                    // } else {
-                    //    log('PostCSS', 'transformed', 'component style at', outFile);
-                    // }
-
-                    if( !watch ) {
-
-                      if( styleFiles.indexOf(path) === styleFiles.length - 1  ) {
-                        log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
-                        //setTimeout(compile.src, 2000);
-                        compile.src();
-                      }
+                    if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
+                      log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
+                      compile.src();
                     }
+                    if (hasCompletedFirstStylePass === true) {
+                      compile.src();
+                    }
+
                 });
               }
             });
@@ -267,18 +198,6 @@ let style = {
     }
 };
 
-
-/* Server */
-
-
-let server = {
-    dev: () => {
-        exec('node server.js');
-    },
-    prod: () => {
-        exec(scripts['prod:server']);
-    }
-}
 
 /* Init */
 
@@ -343,6 +262,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
         log('File', path, 'triggered', 'compile');
 
+         hasCompletedFirstStylePass = true;
          style.file(path, true);
 
       }

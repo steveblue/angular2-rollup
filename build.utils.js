@@ -1,12 +1,24 @@
 "use strict";
 
 require('shelljs/global');
-
+const fs   = require('fs');
+const path = require('path');
 const clim = require('clim');
 const cons = clim();
 const colors = require('chalk');
 const scripts = require('./package.json').scripts;
 const paths = require('./paths.config.js');
+
+const MagicString = require('magic-string');
+const minifyHtml  = require('html-minifier').minify;
+
+const moduleIdRegex = /moduleId\s*:(.*)/g;
+const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
+const templateUrlRegex = /templateUrl\s*:(.*)/g;
+const styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
+const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
+const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
+const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
 
 const linter = require('tslint').Linter;
 const tslintConfig = require('tslint').Configuration;
@@ -15,8 +27,7 @@ const tslintOptions = {
     rulesDirectory: 'node_modules/codelyzer'
 };
 
-/* Log Formatting */
-
+// Log Formatting
 clim.getTime = function(){
   let now = new Date();
   return colors.gray(colors.dim('['+
@@ -24,6 +35,19 @@ clim.getTime = function(){
          now.getMinutes() + ':' +
          now.getSeconds() + ']'));
 };
+
+// Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz
+function insertText(str, dir, preprocessor = res => res, processFilename = false) {
+  return str.replace(stringRegex, function (match, quote, url) {
+    const includePath = path.join(dir, url);
+    if (processFilename) {
+      return "'" + preprocessor(includePath) + "'";
+    }
+    const text = fs.readFileSync(includePath).toString();
+    return "'" + preprocessor(text, includePath) + "'";
+  });
+}
+
 
 const utils = {
     paths: paths,
@@ -41,6 +65,28 @@ const utils = {
         let a = action ? colors.red(action) : '';
         let n = noun ? colors.white(noun) : '';
         cons.warn(a + ' ' + n);
+    },
+    clean : {
+
+        paths: (p) => {
+
+            if( p.clean.files ) {
+
+                p.clean.files.forEach((file) => {
+                    rm(file);
+                });
+
+            }
+            if( p.clean.folders ) {
+
+                p.clean.folders.forEach((folder) => {
+                    rm('-rf', folder);
+                });
+
+            }
+
+        }
+
     },
     tslint : (path, env) => {
 
@@ -71,6 +117,56 @@ const utils = {
             }
 
         });
+    },
+    moduleIdRegex: moduleIdRegex,
+    componentRegex: componentRegex,
+    templateUrlRegex: templateUrlRegex,
+    styleUrlsRegex: styleUrlsRegex,
+    stringRegex: stringRegex,
+    multilineComment: multilineComment,
+    singleLineComment: singleLineComment,
+    angular : function(options, source, dir) {
+
+        options.preprocessors = options.preprocessors || {};
+        // ignore @angular/** modules
+        options.exclude = options.exclude || [];
+        if (typeof options.exclude === 'string' || options.exclude instanceof String) options.exclude = [options.exclude];
+        if (options.exclude.indexOf('node_modules/@angular/**') === -1) options.exclude.push('node_modules/@angular/**');
+
+        const magicString = new MagicString(source);
+
+        let hasReplacements = false;
+        let match;
+        let start, end, replacement;
+
+        while ((match = componentRegex.exec(source)) !== null) {
+            start = match.index;
+            end = start + match[0].length;
+
+            replacement = match[0]
+            .replace(templateUrlRegex, function (match, url) {
+                hasReplacements = true;
+                return 'template:' + insertText(url, dir, options.preprocessors.template, options.processFilename);
+            })
+            .replace(styleUrlsRegex, function (match, urls) {
+                hasReplacements = true;
+                return 'styles:' + insertText(urls, dir, options.preprocessors.style, options.processFilename);
+            })
+            .replace(moduleIdRegex, function (match, moduleId) {
+                hasReplacements = true;
+                return '';
+            });
+
+            if (hasReplacements) magicString.overwrite(start, end, replacement);
+        }
+
+        if (!hasReplacements) return null;
+
+        let result = { code: magicString.toString() };
+        if (options.sourceMap !== false) result.map = magicString.generateMap({ hires: true });
+
+        return result;
+
     }
 
 };

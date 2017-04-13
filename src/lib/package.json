@@ -4,8 +4,10 @@
   "description": "Boilerplate for bundling Angular libraries",
   "contributors": ["Jason Aden", "Steve Belovarich"],
   "license": "MIT",
-  "module": "dist/default-lib.es5.js",
-  "es2015": "dist/default-lib.js",
+  "module": "default-lib.es5.js",
+  "es2015": "default-lib.js",
+  "main": "bundles/default-lib.umd.js",
+  "typings": "default-lib.d.ts",
   "devDependencies": {
     "@angular/core": "^4.0.1",
     "@angular/compiler": "^4.0.1",

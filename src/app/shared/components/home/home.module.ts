@@ -10,6 +10,7 @@ import { HomeComponent } from './home.component';
   imports:      [ RouterModule,
                   CommonModule,
                   routing ],
+
   declarations: [ HomeComponent ]
 })
 

@@ -13,6 +13,7 @@ const scripts   = utils.scripts;
 const paths     = utils.paths;
 const log       = utils.log;
 const warn      = utils.warn;
+const clean     = utils.clean;
 
 const env = 'dev';
 
@@ -20,6 +21,7 @@ let canWatch = true;
 let isCompiling = false;
 let hasInit = false;
 let styleFiles = [];
+let hasCompletedFirstStylePass = false;
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
@@ -41,7 +43,7 @@ const copy = {
         log(path || paths.src+'/public/', 'copied', 'to', 'build/');
 
         if(paths && paths.clean) {
-          clean.paths();
+          clean.paths(paths);
         }
 
     },
@@ -68,43 +70,18 @@ const copy = {
     }
 };
 
-
-const clean = {
-
-  paths: () => {
-
-    if( paths.clean.files ) {
-
-    paths.clean.files.forEach((file) => {
-      rm(file);
-    });
-
-    }
-    if( paths.clean.folders ) {
-
-      paths.clean.folders.forEach((folder) => {
-        rm('-rf', folder);
-      });
-
-    }
-
-  }
-
-};
-
 /* Compile */
 
 const compile = {
 
     clean: (path) => {
-      const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
-      const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
+
       const outFile = path ? path : './build/bundle.js';
 
       fs.readFile(outFile, 'utf8', function(err, contents) {
         if(!err) {
-            contents = contents.replace(multilineComment, '');
-            contents = contents.replace(singleLineComment, '');
+            contents = contents.replace(utils.multilineComment, '');
+            contents = contents.replace(utils.singleLineComment, '');
             fs.writeFile(outFile, contents, function(err){
               if(!err) {
               //  log('Cleaned up', 'comments', 'from', outFile);
@@ -121,46 +98,6 @@ const compile = {
 
     },
 
-    src : () => {
-
-        isCompiling = true;
-        cp('-R', paths.src+'/.', 'tmp/');
-        log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
-
-        // remove moduleId prior to ngc build. TODO: look for another method.
-        ls('tmp/**/*.ts').forEach(function(file) {
-          sed('-i', /^.*moduleId: module.id,.*$/, '', file);
-        });
-
-        let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
-
-              log('ngc', 'started', 'compiling', 'ngfactory');
-
-              let tsc = exec(scripts['build:ngc'], function(code, output, error) {
-                  log('ngc', 'compiled', '/ngfactory');
-                  log('Rollup', 'started', 'bundling', 'ngfactory');
-
-                 let bundle = exec(scripts['bundle:src'], function(code, output, error) {
-                     log('Rollup', 'bundled', 'bundle.es2015.js in', './build');
-                     log('Closure Compiler', 'is optimizing', 'bundle.js', 'for '+ colors.bold(colors.cyan(env)));
-
-                     let closure = exec(scripts['transpile:closure'], function(code, output, error){
-                          log('Closure Compiler', 'transpiled', './build/bundle.es2015.js to', './build/bundle.js');
-                          if (canWatch === true) {
-                            log(colors.green('Ready'), 'to', colors.green('serve'));
-                            log(colors.green('Watcher'), 'listening for', colors.green('changes'));
-                          } else {
-                            log(colors.green('Build'), 'is', colors.green('ready'));
-                          }
-                          compile.clean();
-                          isCompiling = false;
-                          hasInit = true;
-                     });
-                 });
-              });
-       });
-
-    },
 
     ts : (path) => {
 
@@ -225,25 +162,17 @@ let style = {
 
                 let postcss = exec('postcss -c postcss.'+env+'.json -r '+outFile, function(code, output, error) {
 
-                    // if ( watch === true ) {
-                    //   log('PostCSS', 'transformed', 'component style at', outFile);
-                    // } else {
-                    //    log('PostCSS', 'transformed', 'component style at', outFile);
-                    // }
-
-                    if( !watch ) {
-
-                      if( styleFiles.indexOf(path) === styleFiles.length - 1  ) {
-                        log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
-                        if (canWatch === true) {
-                          log(colors.green('Ready'), 'to', colors.green('serve'));
-                          log(colors.green('Watcher'), 'listening for', colors.green('changes'));
-                        } else {
-                          log(colors.green('Build'), 'is', colors.green('ready'));
-                        }
-
+                    if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
+                      log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
+                      if (canWatch === true) {
+                            log(colors.green('Ready'), 'to', colors.green('serve'));
+                            log(colors.green('Watcher'), 'listening for', colors.green('changes'));
                       }
                     }
+                    if (hasCompletedFirstStylePass === true) {
+                      compile.ts();
+                    }
+
                 });
               }
             });
@@ -272,19 +201,6 @@ let style = {
 
     }
 };
-
-
-/* Server */
-
-
-let server = {
-    dev: () => {
-        exec('node server.js');
-    },
-    prod: () => {
-        exec(scripts['prod:server']);
-    }
-}
 
 /* Init */
 
@@ -344,7 +260,8 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
         log('File', path, 'triggered', 'compile');
 
-         style.file(path, true);
+        hasCompletedFirstStylePass = true;
+        style.file(path, true);
 
 
 
