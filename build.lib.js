@@ -29,6 +29,7 @@ let canWatch = false;
 let isCompiling = false;
 let hasInit = false;
 let styleFiles = [];
+let hasCompletedFirstStylePass = false;
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
@@ -96,42 +97,9 @@ function angular(options, source, dir) {
 /* Copy */
 
 const copy = {
-    public: (path) => {
-
-        cp('-R', paths.src+'/public/.', paths.dist+'/');
-
-        exec(scripts['replace:html-prod'], function(code, output, error){
-               log('index.html','formatted', 'for',  colors.bold(colors.cyan(env)));
-        });
-
-        log(path || paths.src+'/public/', 'copied', 'to', paths.dist+'/');
-
-        if(paths && paths.clean) {
-          clean.paths();
-        }
-
-
-    },
     file: (path) => {
         cp('-R', path, paths.dist+'/');
         log(path, 'copied', 'to', paths.dist+'/');
-    },
-    html: (path) => {
-        ls(paths.src+'/app/**/*.html').forEach(function(file) {
-          // cp(file, paths.dist+'/'+file);
-          log(file.replace(/^.*[\\\/]/, ''), 'copied', 'to',  paths.dist+'/'+file.substring(0, file.lastIndexOf("/")));
-        });
-    },
-    lib: () => {
-
-        mkdir('-p', __dirname + '/' + paths.dep.build);
-
-        for( var i=0;  i < paths.dep.lib.length; i++ ) {
-
-            cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
-            log(paths.dep.lib[i], 'copied', 'to',  paths.dep.dist + '/' + paths.dep.lib[i]);
-
-        }
     }
 };
 
@@ -286,38 +254,6 @@ const compile = {
 
                  });
               });
-    },
-
-    ts : (path) => {
-
-        isCompiling = true;
-
-        let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
-
-            if (path) {
-               log('typescript', 'started', 'transpiling', path);
-            } else {
-               log('typescript', 'started', 'transpiling', paths.src+'/*ts');
-            }
-
-            let tsc = exec(scripts['transpile:src'], function(code, output, error) {
-                if (path) {
-                  log('typescript', 'transpiled', path+' to', paths.dist+'/'+path.replace('.ts','.js'));
-                  cp(path, paths.dist+'/'+path);
-                } else {
-                  log('typescript', 'transpiled', paths.src+'/*ts to', paths.dist+'/'+paths.src+'/*ts');
-                }
-
-                if(hasInit === false) {
-                    copy.html();
-                    style.src();
-                }
-
-                isCompiling = false;
-
-            });
-       });
-
     }
 };
 
@@ -354,8 +290,9 @@ let style = {
 
                     if( !watch ) {
 
-                      if( styleFiles.indexOf(path) === styleFiles.length - 1  ) {
+                      if( hasCompletedFirstStylePass === true || styleFiles.indexOf(path) === styleFiles.length - 1) {
                         log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
+                        hasCompletedFirstStylePass === true;
                         setTimeout(compile.src, 2000);
                       }
                     }

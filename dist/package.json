@@ -2,7 +2,7 @@
   "name": "default-lib",
   "version": "1.0.0",
   "description": "Boilerplate for bundling Angular libraries",
-  "contributors": ["Jason Aden", "Steve Belovarich"],
+  "contributors": ["Steve Belovarich", "Jason Aden"],
   "license": "MIT",
   "module": "dist/default-lib.es5.js",
   "es2015": "dist/default-lib.js",

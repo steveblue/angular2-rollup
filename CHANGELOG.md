@@ -8,7 +8,7 @@
 - Use `npm run build:dev` instead of `npm start` for development server
 - Added `npm run build:prod` for AOT production builds
 - Added `npm run build:lib` for building library files
-- To stop `watcher` set `watch=false` as optional argument in any build
+- Set `watch=false` to stop watcher, use as argument in any build
 - Updated README
 
 
