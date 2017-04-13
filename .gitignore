@@ -66,5 +66,5 @@ _test-output/
 # IDE #
 .idea/
 *.swp
-/.vscode
+.vscode
 build/
