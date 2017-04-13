@@ -177,7 +177,7 @@ Copy the livereload `script` to the `build:remove:dev` comment near the end of t
       ':35729/livereload.js?snipver=1"></' + 'script>')
     </script>
     <!-- /build -->
-    ```
+```
 
 It is not recommended that you deploy the livereload script to production. If anyone has a clever workaround for this please submit a Pull Request with the change.
 
