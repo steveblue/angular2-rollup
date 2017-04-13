@@ -6,6 +6,7 @@
   "license": "MIT",
   "module": "default-lib.es5.js",
   "es2015": "default-lib.js",
+  "main": "bundles/default-lib.umd.js",
   "typings": "default-lib.d.ts",
   "devDependencies": {
     "@angular/core": "^4.0.1",
