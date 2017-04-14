@@ -7,7 +7,7 @@ Error.stackTraceLimit = 0; // "No stacktrace"" is usually best for app testing.
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 
-var builtPath = '/base/dist/src/app/';
+var builtPath = '/base/build/src/app/';
 
 __karma__.loaded = function () { };
 
@@ -28,14 +28,14 @@ var allSpecFiles = Object.keys(window.__karma__.files)
   .filter(isBuiltFile);
 
 System.config({
-  baseURL: '/base/dist/',
+  baseURL: '/base/build/',
   // Extend usual application package list with test folder
   packages: { 'testing': { main: 'index.js', defaultExtension: 'js' } },
 
   // Assume npm: is set in `paths` in systemjs.config
   // Map the angular testing umd bundles
   map: {
-    'app' : '/dist',
+    'app' : '/build',
     '@angular/core/testing': 'lib/@angular/core/bundles/core-testing.umd.js',
     '@angular/common/testing': 'lib/@angular/common/bundles/common-testing.umd.js',
     '@angular/compiler/testing': 'lib/@angular/compiler/bundles/compiler-testing.umd.js',
@@ -48,15 +48,15 @@ System.config({
   },
 });
 
-System.import('/base/dist/system.config.js')
+System.import('/base/build/system.config.js')
   .then(initTestBed)
   .then(initTesting);
 
 
 function initTestBed(){
   return Promise.all([
-    System.import('/base/dist/lib/@angular/core/bundles/core-testing.umd.js'),
-    System.import('/base/dist/lib/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js')
+    System.import('/base/build/lib/@angular/core/bundles/core-testing.umd.js'),
+    System.import('/base/build/lib/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js')
   ])
 
   .then(function (providers) {
