@@ -1,4 +1,4 @@
-// rollup.config.lib.js
+// rollup.config.lib-es5.js
 
 const paths = require('./build.config.js');
 
@@ -13,4 +13,5 @@ export default {
     return;
 
   }
+
 }

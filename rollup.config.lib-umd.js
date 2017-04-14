@@ -1,4 +1,4 @@
-// rollup.config.lib.js
+// rollup.config.lib-umd.js
 
 const paths = require('./build.config.js');
 
