@@ -11,7 +11,7 @@ const paths = require('./build.config.js');
 
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
-
+const escape = require('js-string-escape');
 const moduleIdRegex = /moduleId\s*:(.*)/g;
 const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
 const templateUrlRegex = /templateUrl\s*:(.*)/g;
@@ -19,6 +19,7 @@ const styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
 const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
+
 
 const linter = require('tslint').Linter;
 const tslintConfig = require('tslint').Configuration;
@@ -41,10 +42,14 @@ function insertText(str, dir, preprocessor = res => res, processFilename = false
   return str.replace(stringRegex, function (match, quote, url) {
     const includePath = path.join(dir, url);
     if (processFilename) {
-      return "'" + preprocessor(includePath) + "'";
+      let text = preprocessor(includePath);
+      text = escape(text);
+      return '"' + text + '"';
     }
-    const text = fs.readFileSync(includePath).toString();
-    return "'" + preprocessor(text, includePath) + "'";
+    let text = fs.readFileSync(includePath).toString();
+    text = preprocessor(text, includePath);
+    text = escape(text);
+    return '"' + text + '"';
   });
 }
 
