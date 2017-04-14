@@ -100,9 +100,9 @@
     "karma-verbose-reporter": "^0.0.6",
     "live-server": "^1.2.0",
     "livereload": "^0.6.2",
-    "node-sass": "^3.10.1",
+    "node-sass": "^4.5.2",
     "phantomjs-prebuilt": "^2.1.14",
-    "postcss": "^5.2.5",
+    "postcss": "^5.2.17",
     "postcss-cli": "^2.6.0",
     "protractor": "^5.1.1",
     "remap-istanbul": "^0.7.0",
@@ -115,7 +115,7 @@
     "rollup-plugin-replace": "^1.1.1",
     "shelljs": "^0.7.7",
     "ts-helpers": "^1.1.2",
-    "tslint": "^5.1.0",
+    "tslint": "^4.0.0",
     "typescript": "^2.2.2"
   }
 }
