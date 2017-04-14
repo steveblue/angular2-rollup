@@ -5,7 +5,7 @@ import resolve from 'rollup-plugin-node-resolve-angular';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from 'rollup-plugin-commonjs';
 
-const paths = require('./paths.config.js');
+const paths = require('./build.config.js');
 
 export default {
   entry: 'main.prod.js',

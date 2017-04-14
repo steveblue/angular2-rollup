@@ -2,7 +2,7 @@
 
 
 - Updated to Angular 4.0.1
-- Added more configuration to `paths.config.js`
+- Added more configuration to `build.config.js`, renamed from `paths.config.js`
 - Added new `lib` build for distributing libraries in ES6 and ES5
 - Refactored build process to default to `build` folder, `dist` is now the default for library files
 - Use `npm run build:dev` instead of `npm start` for development server
@@ -10,10 +10,13 @@
 - Added `npm run build:lib` for building library files
 - Use `watch=true` to watch prod and lib builds, disabled by default
 - Fixed watcher in dev and prod modes, will now detect css changes properly
+- Fixed an issue in prod build that could cause it to fail after libsass and PostCSS
+- Added documnetation for running livereload and watcher with `npm run build:prod`
 - Updated README
+- Created CHANGELOG
 
 
-To Upgrade `paths.config.js`:
+To Upgrade `build.config.js`:
 
 1. Move the `dep` Array to `dep.lib` and `src` to `dep.src`, `dist` to `dep.dist`.
 

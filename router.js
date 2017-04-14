@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = require('express').Router();
-const paths = require('./paths.config.js');
+const paths = require('./build.config.js');
 
 module.exports = function(app) {
   'use strict';

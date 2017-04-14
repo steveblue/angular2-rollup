@@ -255,15 +255,17 @@ let style = {
 /* Init */
 
 let init = function() {
-    rm('-rf', './tmp');
+
     rm('-rf', './ngfactory');
     mkdir('./ngfactory');
+
     rm('-rf', './'+paths.dist);
     mkdir('./'+paths.dist);
     mkdir('./'+paths.dist+'/bundles');
-    cp('-R', paths.lib+'/.', 'tmp/');
-    log(paths.lib+'/*.ts', 'copied', 'to', 'tmp/*ts');
+
+    clean.lib();
     style.src();
+
 };
 
 /* Watcher */
@@ -284,12 +286,12 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
             copy.file(path);
           }
 
-
       }
 
       else if ( path.indexOf('.html') > -1 && path.indexOf('src') > -1) {
 
         if(!isCompiling) {
+          clean.lib();
           compile.src();
         }
 
@@ -300,6 +302,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
        log('File', path, 'triggered', 'transpile');
 
         if (!isCompiling) {
+            clean.lib();
             compile.src();
         }
 
@@ -308,8 +311,8 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
       else if ( path.indexOf('.scss') > -1 ) {
 
         log('File', path, 'triggered', 'compile');
-
-         style.file(path, true);
+        clean.lib();
+        style.file(path, true);
 
       }
 

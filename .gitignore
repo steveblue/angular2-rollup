@@ -48,6 +48,8 @@ Thumbs.db
 /src/app/**/*.js
 /src/app/**/*.metadata.json
 compiler.jar
+main.js
+main.prod.js
 
 
 # Dist #

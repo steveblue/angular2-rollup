@@ -157,7 +157,7 @@ You can now deploy the `/build` folder to your server!
 
 #### Do I need to add script / link tags into index.html ?
 
-Yes, as of right now this starter package will not handle this for you. The typical Angular 2 dependencies have been added already. Configure more dependencies to be included in your web app in `paths.config.js`. A script runs that copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
+Yes, as of right now this starter package will not handle this for you. The typical Angular 2 dependencies have been added already. Configure more dependencies to be included in your web app in `build.config.js`. A script runs that copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
 
 ```
     <script src="/lib/zone.js/dist/zone.js"></script>
@@ -192,7 +192,7 @@ By default the development build step enables a watcher that listens for file ch
 
 #### How to include external libraries?
 
-It's simple, just install the library via npm, add the library to the build in `paths.config.js` and inject the library via SystemJS in `src/public/system.config.js` and in some cases `index.html` for development. For Production, a different, minimal configuration for the bundle is required in `src/public/system.config.prod.js` and `system.import.js`.
+It's simple, just install the library via npm, add the library to the build in `build.config.js` and inject the library via SystemJS in `src/public/system.config.js` and in some cases `index.html` for development. For Production, a different, minimal configuration for the bundle is required in `src/public/system.config.prod.js` and `system.import.js`.
 
 
 #### How do I bundle external libraries for production?

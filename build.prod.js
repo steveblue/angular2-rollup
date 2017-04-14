@@ -201,13 +201,14 @@ let style = {
 
 let init = function() {
 
-    rm('-rf', './'+paths.build);
     rm('-rf', './ngfactory');
     mkdir('./ngfactory');
+
+    rm('-rf', './'+paths.build);
     mkdir('./'+paths.build);
     mkdir('./'+paths.build+'/lib');
-    cp('-R', './'+paths.src, './tmp');
-    log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
+
+    clean.tmp();
     copy.lib();
     copy.public();
     style.src();
@@ -238,6 +239,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
       else if ( path.indexOf('.html') > -1 && path.indexOf('src') > -1) {
 
         if(!isCompiling) {
+          clean.tmp();
           compile.src();
         }
 
@@ -247,12 +249,9 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
        log('File', path, 'triggered', 'transpile');
 
-
-
         if (!isCompiling) {
-
+            clean.tmp();
             compile.src();
-
         }
 
 
@@ -262,6 +261,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
         log('File', path, 'triggered', 'compile');
 
          hasCompletedFirstStylePass = true;
+         clean.tmp();
          style.file(path, true);
 
       }

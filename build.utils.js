@@ -7,7 +7,7 @@ const clim = require('clim');
 const cons = clim();
 const colors = require('chalk');
 const scripts = require('./package.json').scripts;
-const paths = require('./paths.config.js');
+const paths = require('./build.config.js');
 
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
@@ -48,26 +48,41 @@ function insertText(str, dir, preprocessor = res => res, processFilename = false
   });
 }
 
+const log = function (action, noun, verb, next) {
+    let a = action ? colors.magenta(action) : '';
+    let n = noun ? colors.green(noun) : '';
+    let v = verb ? colors.cyan(verb) : '';
+    let x = next ? colors.dim(colors.white(next)) : '';
+    cons.log(a + ' ' + n + ' ' + v + ' ' + x );
+};
+
+const warn = function(action, noun) {
+    let a = action ? colors.red(action) : '';
+    let n = noun ? colors.white(noun) : '';
+    cons.warn(a + ' ' + n);
+};
+
 
 const utils = {
     paths: paths,
     scripts: scripts,
     console: cons,
     colors: colors,
-    log : (action, noun, verb, next) => {
-        let a = action ? colors.magenta(action) : '';
-        let n = noun ? colors.green(noun) : '';
-        let v = verb ? colors.cyan(verb) : '';
-        let x = next ? colors.dim(colors.white(next)) : '';
-        cons.log(a + ' ' + n + ' ' + v + ' ' + x );
-    },
-    warn : function(action, noun) {
-        let a = action ? colors.red(action) : '';
-        let n = noun ? colors.white(noun) : '';
-        cons.warn(a + ' ' + n);
-    },
+    log : log,
+    warn : warn,
     clean : {
-
+        tmp: () => {
+            rm('-rf', './tmp');
+            mkdir('./tmp');
+            cp('-R', './'+paths.src+'/.', './tmp');
+            log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
+        },
+        lib: () => {
+            rm('-rf', './tmp');
+            mkdir('./tmp');
+            cp('-R', paths.lib+'/.', 'tmp/');
+            log(paths.lib+'/*.ts', 'copied', 'to', 'tmp/*ts');
+        },
         paths: (p) => {
 
             if( p.clean.files ) {

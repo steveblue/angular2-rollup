@@ -1,6 +1,6 @@
 // rollup.config.lib.js
 
-const paths = require('./paths.config.js');
+const paths = require('./build.config.js');
 
 export default {
   entry: 'ngfactory/'+paths.libFilename+'.js',
