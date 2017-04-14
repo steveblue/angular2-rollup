@@ -75,6 +75,13 @@ const utils = {
     colors: colors,
     log : log,
     warn : warn,
+    moduleIdRegex: moduleIdRegex,
+    componentRegex: componentRegex,
+    templateUrlRegex: templateUrlRegex,
+    styleUrlsRegex: styleUrlsRegex,
+    stringRegex: stringRegex,
+    multilineComment: multilineComment,
+    singleLineComment: singleLineComment,
     clean : {
         tmp: () => {
             rm('-rf', './tmp');
@@ -138,13 +145,6 @@ const utils = {
 
         });
     },
-    moduleIdRegex: moduleIdRegex,
-    componentRegex: componentRegex,
-    templateUrlRegex: templateUrlRegex,
-    styleUrlsRegex: styleUrlsRegex,
-    stringRegex: stringRegex,
-    multilineComment: multilineComment,
-    singleLineComment: singleLineComment,
     angular : function(options, source, dir) {
 
         options.preprocessors = options.preprocessors || {};
