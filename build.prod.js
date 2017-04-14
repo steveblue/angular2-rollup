@@ -94,8 +94,6 @@ const compile = {
     src : () => {
 
         isCompiling = true;
-        cp('-R', paths.src+'/.', 'tmp/');
-        log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
 
         // remove moduleId prior to ngc build. TODO: look for another method.
         ls('tmp/**/*.ts').forEach(function(file) {
@@ -165,7 +163,7 @@ let style = {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
-                      compile.src();
+                      setTimeout(compile.src,2000);
                     }
                     if (hasCompletedFirstStylePass === true) {
                       compile.src();
@@ -209,6 +207,7 @@ let init = function() {
     mkdir('./'+paths.build);
     mkdir('./'+paths.build+'/lib');
     cp('-R', './'+paths.src, './tmp');
+    log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
     copy.lib();
     copy.public();
     style.src();
