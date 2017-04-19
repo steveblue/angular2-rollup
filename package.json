@@ -1,5 +1,5 @@
 {
-  "name": "angular2-rollup",
+  "name": "ngrollup",
   "version": "4.0.2",
   "license": "MIT",
   "repository": "https://github.com/steveblue/angular2-rollup",
@@ -63,6 +63,7 @@
     "@angular/platform-server": "4.0.2",
     "@angular/router": "4.0.2",
     "angular-in-memory-web-api": "~0.3.1",
+    "commander": "^2.9.0",
     "core-js": "^2.4.1",
     "express": "^4.14.0",
     "http": "0.0.0",
@@ -124,5 +125,8 @@
     "ts-helpers": "^1.1.2",
     "tslint": "^4.0.0",
     "typescript": "^2.2.2"
+  },
+  "bin": {
+      "ngrollup": "cli.js"
   }
 }
