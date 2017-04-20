@@ -2,8 +2,12 @@
 
 require('shelljs/global');
 
+
+const fs          = require('fs');
 const program     = require('commander');
 const spawn       = require('child_process').spawn;
+const utils       = require('./build.utils.js');
+
 
 let cliCommand = '';
 
@@ -38,9 +42,19 @@ if (program.generate) {
     // TODO: Make Boilerplate Templates and cp them here
 
     if (program.generate === 'class') {
-
+        let options = {
+            path: process.cwd(),
+            name: 'Hello'
+        };
+        utils.generate.class(options);
     }
     if (program.generate === 'component') {
+
+        let options = {
+            path: process.cwd(),
+            name: 'Hello'
+        };
+        utils.generate.component(options);
 
     }
     if (program.generate === 'directive') {

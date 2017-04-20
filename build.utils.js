@@ -7,7 +7,7 @@ const clim = require('clim');
 const cons = clim();
 const colors = require('chalk');
 const scripts = require('./package.json').scripts;
-const paths = require('./build.config.js');
+const config = require('./build.config.js');
 
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
@@ -69,7 +69,7 @@ const warn = function(action, noun) {
 
 
 const utils = {
-    paths: paths,
+    paths: config,
     scripts: scripts,
     console: cons,
     colors: colors,
@@ -86,14 +86,14 @@ const utils = {
         tmp: () => {
             rm('-rf', './tmp');
             mkdir('./tmp');
-            cp('-R', './'+paths.src+'/.', './tmp');
-            log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
+            cp('-R', './'+config.src+'/.', './tmp');
+            log(config.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
         },
         lib: () => {
             rm('-rf', './tmp');
             mkdir('./tmp');
-            cp('-R', paths.lib+'/.', 'tmp/');
-            log(paths.lib+'/*.ts', 'copied', 'to', 'tmp/*ts');
+            cp('-R', config.lib+'/.', 'tmp/');
+            log(config.lib+'/*.ts', 'copied', 'to', 'tmp/*ts');
         },
         paths: (p) => {
 
@@ -115,13 +115,77 @@ const utils = {
         }
 
     },
+    generate: {
+
+        replace: function(fileName, name) {
+
+            fs.readFile(fileName, 'utf8', function (err, data) {
+
+                if (err) {
+                    return console.log(err);
+                }
+
+                let result = data.replace(/new/g, name.toLowerCase());
+
+                if (config.classPrefix) {
+                    result = result.replace(/New/g, config.classPrefix + name);
+                }
+                else {
+                    result = result.replace(/New/g, name);
+                }
+
+                fs.writeFile(utils.generate.rename(fileName, name), result, 'utf8', function (err) {
+                    if (err) return console.log(err);
+                    rm(fileName);
+                });
+
+            });
+
+        },
+        rename: function(fileName, name) {
+            return fileName.replace(/new/g, name.toLowerCase());
+        },
+        class: function(options) {
+            cp('-Rn', config.rootDir+'/.new/class/*', options.path+'/');
+            ls(options.path).forEach((fileName, index) => {
+               utils.generate.replace(options.path+'/'+fileName, options.name);
+            });
+        },
+        component: function(options) {
+            cp('-Rn', config.rootDir+'/.new/component/*', options.path+'/');
+            ls(options.path).forEach((fileName, index) => {
+               utils.generate.replace(options.path+'/'+fileName, options.name);
+            });
+        },
+        directive: function() {
+
+        },
+        enum: function() {
+
+        },
+        guard: function() {
+
+        },
+        interface: function() {
+
+        },
+        module: function() {
+
+        },
+        pipe: function() {
+
+        },
+        service: function() {
+
+        }
+    },
     tslint : (path, env) => {
 
         if (!path) {
         return;
         }
 
-        let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+paths.src+'/');
+        let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+config.src+'/');
         let files = Linter.getFileNames(program);
         let results = files.map(file => {
 
