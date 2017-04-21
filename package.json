@@ -1,5 +1,5 @@
 {
-  "name": "ngrollup",
+  "name": "angular-rollup",
   "version": "4.0.2",
   "license": "MIT",
   "repository": "https://github.com/steveblue/angular2-rollup",
@@ -127,6 +127,6 @@
     "typescript": "^2.2.2"
   },
   "bin": {
-      "ngrollup": "cli.js"
+      "ngr": "cli.js"
   }
 }
