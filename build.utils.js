@@ -119,64 +119,48 @@ const utils = {
 
         replace: function(fileName, name) {
 
-            fs.readFile(fileName, 'utf8', function (err, data) {
+            return new Promise((res)=>{
+                fs.readFile(fileName, 'utf8', function (err, data) {
 
-                if (err) {
-                    return console.log(err);
-                }
+                    if (err) {
+                        return console.log(err);
+                    }
 
-                let result = data.replace(/new/g, name.toLowerCase());
+                    let result = data.replace(/new/g, name.toLowerCase());
 
-                if (config.classPrefix) {
-                    result = result.replace(/New/g, config.classPrefix + name);
-                }
-                else {
-                    result = result.replace(/New/g, name);
-                }
+                    if (config.classPrefix) {
+                        result = result.replace(/New/g, config.classPrefix + name);
+                    }
+                    else {
+                        result = result.replace(/New/g, name);
+                    }
 
-                fs.writeFile(utils.generate.rename(fileName, name), result, 'utf8', function (err) {
-                    if (err) return console.log(err);
-                    rm(fileName);
+                    fs.writeFile(utils.generate.rename(fileName, name), result, 'utf8', function (err) {
+                        if (err) return console.log(err);
+                        rm(fileName);
+                        res(utils.generate.rename(fileName, name));
+                    });
+
                 });
-
             });
+
 
         },
         rename: function(fileName, name) {
             return fileName.replace(/new/g, name.toLowerCase());
         },
-        class: function(options) {
-            cp('-Rn', config.rootDir+'/.new/class/*', options.path+'/');
-            ls(options.path).forEach((fileName, index) => {
-               utils.generate.replace(options.path+'/'+fileName, options.name);
+        copy: function(options) {
+
+            rm('-rf', config.rootDir+'/.tmp/');
+            mkdir(config.rootDir+'/.tmp/');
+
+            cp('-R', config.rootDir+'/.new/'+options.type+'/*', config.rootDir+'/.tmp');
+
+            ls(config.rootDir+'/.tmp').forEach((fileName, index) => {
+               utils.generate.replace(config.rootDir+'/.tmp/'+fileName, options.name).then((filePath)=>{
+                   mv((options.force ? '-f' : '-n'), filePath, options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
+               });
             });
-        },
-        component: function(options) {
-            cp('-Rn', config.rootDir+'/.new/component/*', options.path+'/');
-            ls(options.path).forEach((fileName, index) => {
-               utils.generate.replace(options.path+'/'+fileName, options.name);
-            });
-        },
-        directive: function() {
-
-        },
-        enum: function() {
-
-        },
-        guard: function() {
-
-        },
-        interface: function() {
-
-        },
-        module: function() {
-
-        },
-        pipe: function() {
-
-        },
-        service: function() {
-
         }
     },
     tslint : (path, env) => {

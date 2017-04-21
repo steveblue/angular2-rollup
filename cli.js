@@ -7,16 +7,20 @@ const fs          = require('fs');
 const program     = require('commander');
 const spawn       = require('child_process').spawn;
 const utils       = require('./build.utils.js');
+const package     = require('./package.json');
 
 
 let cliCommand = '';
 
 program
-    .version('4.0.2')
+    .version(package.version)
     .usage('<keywords>')
     .option('-b, --build [env]', 'Build the application by environment')
     .option('-w, --watch [bool]', 'Enable file watchers to detect changes and build')
     .option('-g, --generate [type]', 'Generates new code from templates')
+    .option('-f, --force [bool]', 'Force overwrite during code generate')
+    .option('-s, --spec [bool]', 'Include spec files in code generation')
+    .option('-r, --route [bool]', 'Include route files in code generation')
     .parse(process.argv);
 
 
@@ -41,45 +45,18 @@ if (program.generate) {
 
     // TODO: Make Boilerplate Templates and cp them here
 
-    if (program.generate === 'class') {
-        let options = {
-            path: process.cwd(),
-            name: 'Hello'
-        };
-        utils.generate.class(options);
-    }
-    if (program.generate === 'component') {
+    let options = {
+        path: process.cwd(),
+        name: 'Hello',
+        type: program.generate,
+        force: program.force ? true : false,
+        spec: program.spec ? true : false,
+        route: program.route ? true : false
+    };
 
-        let options = {
-            path: process.cwd(),
-            name: 'Hello'
-        };
-        utils.generate.component(options);
+    utils.generate.copy(options);
 
-    }
-    if (program.generate === 'directive') {
-
-    }
-    if (program.generate === 'enum') {
-
-    }
-    if (program.generate === 'guard') {
-
-    }
-    if (program.generate === 'interface') {
-
-    }
-    if (program.generate === 'module') {
-
-    }
-    if (program.generate === 'pipe') {
-
-    }
-    if (program.generate === 'service') {
-
-    }
-
-    spawn(cliCommand, { shell: true, stdio: 'inherit' });
+    //spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
     return;
 
