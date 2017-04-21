@@ -21,6 +21,7 @@ program
     .option('-f, --force [bool]', 'Force overwrite during code generate')
     .option('-s, --spec [bool]', 'Include spec files in code generation')
     .option('-r, --route [bool]', 'Include route files in code generation')
+    .option('-n, --name [string]', 'The name of the new code to be generated')
     .parse(process.argv);
 
 
@@ -47,7 +48,7 @@ if (program.generate) {
 
     let options = {
         path: process.cwd(),
-        name: 'Hello',
+        name: program.name || 'test',
         type: program.generate,
         force: program.force ? true : false,
         spec: program.spec ? true : false,

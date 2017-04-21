@@ -129,10 +129,10 @@ const utils = {
                     let result = data.replace(/new/g, name.toLowerCase());
 
                     if (config.classPrefix) {
-                        result = result.replace(/New/g, config.classPrefix + name);
+                        result = result.replace(/New/g, config.classPrefix + name.charAt(0).toUpperCase() + name.slice(1));
                     }
                     else {
-                        result = result.replace(/New/g, name);
+                        result = result.replace(/New/g, name.charAt(0).toUpperCase() + name.slice(1));
                     }
 
                     fs.writeFile(utils.generate.rename(fileName, name), result, 'utf8', function (err) {

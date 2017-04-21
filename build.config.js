@@ -21,5 +21,6 @@ module.exports = {
     dist: 'dist',
     lib: 'src/lib',
     libFilename: 'default-lib',
-    classPrefix: 'My'
+    classPrefix: 'My',
+    selectorPrefix: 'my'
 }
