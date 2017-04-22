@@ -104,15 +104,15 @@ const compile = {
 
               log('ngc', 'started', 'compiling', 'ngfactory');
 
-              let tsc = exec(scripts['compile:ngc'], function(code, output, error) {
+              let tsc = exec(scripts['compile:'+env], function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(scripts['bundle:src'], function(code, output, error) {
+                 let bundle = exec(scripts['bundle:'+env], function(code, output, error) {
                      log('Rollup', 'bundled', 'bundle.es2015.js in', './build');
                      log('Closure Compiler', 'is optimizing', 'bundle.js', 'for '+ colors.bold(colors.cyan(env)));
 
-                     let closure = exec(scripts['transpile:closure'], function(code, output, error){
+                     let closure = exec(scripts['transpile:'+env], function(code, output, error){
                           log('Closure Compiler', 'transpiled', './'+paths.build+'/bundle.es2015.js to', './'+paths.build+'/bundle.js');
                           if (canWatch === true) {
                             log(colors.green('Ready'), 'to', colors.green('serve'));
