@@ -32,8 +32,6 @@ We're also using Protractor for our end-to-end story and Karma for our unit test
 #### install the dependencies with npm
 `$ npm install`
 
-#### install the CLI globally
-`$ npm install -g angular2-rollup`
 
 * NOTE: This is NOT angular-cli, but a CLI developed for this starter code
 
@@ -164,10 +162,11 @@ You can now deploy the `/build` folder to your server!
 
 This starter code includes a CLI that allows you to build and start up an Express Server without `npm run`. The CLI also includes commands for generating new code snippets similar to Angular CLI.
 
-To use the CLI install the npm package globally. `webdriver-manager` should also be installed globally if it isn't already.
+To use the CLI run the command `npm install -g` while in the root directory of the project, then `npm link`.
+`webdriver-manager` should also be installed globally if it isn't already.
 
-`npm i -g webdriver-manager`
-`npm i -g angular2-rollup`
+`npm install -g`
+`npm link`
 
 ##CLI Commands
 
