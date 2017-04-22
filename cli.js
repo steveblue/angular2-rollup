@@ -57,8 +57,6 @@ if (program.unit) {
 
 if (program.generate) {
 
-    // TODO: Make Boilerplate Templates and cp them here
-
     let options = {
         path: program.dir ? process.cwd() + '/' + program.dir : process.cwd(),
         name: program.name || 'test',
