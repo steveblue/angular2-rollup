@@ -106,13 +106,13 @@ Once your work has been validated with the development build, you can also test 
 * `$ ngr --build prod --serve`
 
 
-### Developing Component libraries
+### Developing Component Libraries
 
 At ng-conf 2017 Jason Aden gave a presentation about [Packaging Angular](https://youtu.be/unICbsPGFIA). It is recommended to follow the standard outlined in this presentation and in the doc [Angular Package Format 4.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview). To help engineers, this starter code provides a library build that makes bootstrapping the Angular Package Format fast and efficient.
 
 Configure `build.config.js` with the path to the library and give the library build files a file name. You can develop Component libraries in the development environment.
 
-```    
+```
 
 lib: 'src/lib',
 libFilename: 'default-lib'
@@ -381,17 +381,6 @@ Copy the livereload `script` to the `build:remove:dev` comment near the end of t
 ```
 
 It is not recommended that you deploy the livereload script to production. If anyone has a clever workaround for this please submit a Pull Request with the change.
-
-
-#### Can I use this repository to package a library for distribution?
-
-- `ngr --build lib`
-
-With Angular 4.0, there is an established contract between the Angular team, library authors, and application developers that describes a format for Angular Component libraries.
-
-This project includes a build that produces a library based on the recommendation found here [Angular Package Format 4.0](https://goo.gl/AMOU5G). `npm run build:lib` supports AOT compile, treeshaking, and multiple bundlers. More more information, watch @jasonaden at ng-conf 2017 where presented a talk called [Packaging Angular](https://www.youtube.com/watch?v=unICbsPGFIA).
-
-Boilerplate library files are found in `src/lib/`.
 
 
 #### How do I take advantage of TypeScript in my IDE?
