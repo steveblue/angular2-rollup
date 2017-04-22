@@ -120,7 +120,7 @@ const compile = {
                           } else {
                             log(colors.green('Build'), 'is', colors.green('ready'));
                           }
-                          compile.clean();
+                          //compile.clean();
                           isCompiling = false;
                           hasInit = true;
                      });
@@ -241,7 +241,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
       else if ( path.indexOf('.html') > -1 && path.indexOf('src') > -1) {
 
         if(!isCompiling) {
-          clean.tmp();
+          cp(path, path.replace(paths.src, './tmp'));
           compile.src();
         }
 
@@ -252,7 +252,6 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
        log('File', path, 'triggered', 'transpile');
 
         if (!isCompiling) {
-            clean.tmp();
             compile.src();
         }
 
@@ -263,7 +262,6 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
         log('File', path, 'triggered', 'compile');
 
          hasCompletedFirstStylePass = true;
-         clean.tmp();
          style.file(path, true);
 
       }
