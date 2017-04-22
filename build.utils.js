@@ -117,22 +117,35 @@ const utils = {
     },
     generate: {
 
-        replace: function(fileName, name) {
+        replace: function (fileName, name) {
 
-            return new Promise((res)=>{
+            return new Promise((res) => {
                 fs.readFile(fileName, 'utf8', function (err, data) {
 
                     if (err) {
                         return console.log(err);
                     }
 
-                    let result = data.replace(/new/g, name.toLowerCase());
+                    let result = data;
+
+                    if (fileName.includes('component')) {
+
+                        if (config.classPrefix) {
+                           result = result.replace('selector: \'new\'', 'selector: \'' + config.selectorPrefix.toLowerCase() + '-' + name.toLowerCase() + '\'');
+                        }
+                        else {
+                           result = result.replace('selector: \'new\'', 'selector: \'' + name.toLowerCase() + '\'');
+                        }
+
+                    }
+
+                    result = result.replace(/new/g, name.toLowerCase());
 
                     if (config.classPrefix) {
-                        result = result.replace(/New/g, config.classPrefix + name.charAt(0).toUpperCase() + name.slice(1));
+                        result = result.replace(/New/g, config.classPrefix + utils.generate.kababToCamel(name).charAt(0).toUpperCase() + utils.generate.kababToCamel(name).slice(1));
                     }
                     else {
-                        result = result.replace(/New/g, name.charAt(0).toUpperCase() + name.slice(1));
+                        result = result.replace(/New/g, utils.generate.kababToCamel(name).charAt(0).toUpperCase() + utils.generate.kababToCamel(name).slice(1));
                     }
 
                     fs.writeFile(utils.generate.rename(fileName, name), result, 'utf8', function (err) {
@@ -146,10 +159,13 @@ const utils = {
 
 
         },
-        rename: function(fileName, name) {
+        rename: function (fileName, name) {
             return fileName.replace(/new/g, name.toLowerCase());
         },
-        copy: function(options) {
+        kababToCamel: function(s){
+            return s.replace(/(\-\w)/g, function(m){return m[1].toUpperCase();});
+        },
+        copy: function (options) {
 
             rm('-rf', config.rootDir+'/.tmp/');
             mkdir(config.rootDir+'/.tmp/');
@@ -157,8 +173,17 @@ const utils = {
             cp('-R', config.rootDir+'/.new/'+options.type+'/*', config.rootDir+'/.tmp');
 
             ls(config.rootDir+'/.tmp').forEach((fileName, index) => {
+               if ( options.spec === false && fileName.includes('spec') ) {
+                   return;
+               }
+               if ( options.route === false && fileName.includes('routes') ) {
+                   return;
+               }
                utils.generate.replace(config.rootDir+'/.tmp/'+fileName, options.name).then((filePath)=>{
+
                    mv((options.force ? '-f' : '-n'), filePath, options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
+                   //log('Generated', filePath, 'at', options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
+
                });
             });
         }
@@ -166,7 +191,7 @@ const utils = {
     tslint : (path, env) => {
 
         if (!path) {
-        return;
+            return;
         }
 
         let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+config.src+'/');

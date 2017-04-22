@@ -57,10 +57,6 @@ if (program.generate) {
 
     utils.generate.copy(options);
 
-    //spawn(cliCommand, { shell: true, stdio: 'inherit' });
-
-    return;
-
 }
 
 
