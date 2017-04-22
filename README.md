@@ -17,11 +17,13 @@ We're also using Protractor for our end-to-end story and Karma for our unit test
 * End-to-end Angular 2 code using [Protractor](https://angular.github.io/protractor/).
 * Stylesheets with [SASS](http://sass-lang.com/) and [PostCSS](http://postcss.org).
 * Error reporting with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer).
+* CLI Commands for running builds, Express server, and scaffolding Angular Components, etc
 
 >Warning: Make sure you're using the latest version of Node.js and NPM
 
+----------------------------------------------------------------------------------------------------
 
-### Quick start
+## Quick start
 
 > Clone/Download the repo then edit `app.ts` inside [`/src/app/app.component.ts`](/src/app/app.component.ts)
 
@@ -34,6 +36,11 @@ We're also using Protractor for our end-to-end story and Karma for our unit test
 
 #### install the dependencies with npm
 `$ npm install`
+
+#### install the CLI globally
+`$ npm install -g angular2-rollup`
+
+* NOTE: This is NOT angular-cli, but a CLI developed for this starter code
 
 #### Install the server config
 
@@ -48,18 +55,20 @@ Change the host and/or port in `/conf/config.local.js` if needed. This config is
 ```
 
 #### Build, start the server and watchers
-`$ npm run build:dev`
+`$ ngr --build dev`
 
 #### Optionally, set environment variables
 
-`$ npm run build:prod`
+`$ ngr --build prod`
 
 #### In a second tab, start the Express Server
 
-`$ npm run dev:server`
+`$ ngr --serve`
+`$ ngr --build dev --serve`
 
+----------------------------------------------------------------------------------------------------
 
-# Table of Contents
+## Table of Contents
 
 * [Getting Started](#getting-started)
     * [Dependencies](#dependencies)
@@ -67,9 +76,12 @@ Change the host and/or port in `/conf/config.local.js` if needed. This config is
     * [Developing](#developing)
     * [Testing](#testing)
     * [Production](#production)
+* [CLI](#cli)
 * [Frequently asked questions](#faq)
 * [TypeScript](#typescript)
 * [License](#license)
+
+----------------------------------------------------------------------------------------------------
 
 # Getting Started
 
@@ -77,7 +89,7 @@ Change the host and/or port in `/conf/config.local.js` if needed. This config is
 
 What you need to run this app:
 * `node` and `npm` (Use [NVM](https://github.com/creationix/nvm))
-* Ensure you're running Node (`v5.x.x`+) and NPM (`3.x.x`+)
+* Ensure you're running Node (`v6.5.x`+)
 
 ## Installing
 
@@ -85,7 +97,7 @@ What you need to run this app:
 * `clone` your fork
 * `npm install` to install all dependencies
 
-###Configure Server
+### Configure Server
 
 Server configuration happens per environment. Currently two environments are supported: `dev` and `prod`. Create config files for each environment in the  `conf/` directory called `config.local.js` and `config.prod.js`.
 
@@ -106,8 +118,7 @@ When everything is setup correctly, you should be able to visit  [http://localho
 
 After you have installed all dependencies you can now build the project:
 
-* `npm run build:dev`
-* `npm run dev:server`
+* `$ ngr --build dev --serve`
 
 `build.env.js` will build the application for development for the appropriate environment. `server.js` will start a local server using Express and `liveserver` will watch for changes in the `/build` directory. The development environment bootstraps Angular with JIT Compiler for fast and efficient development compared to AOT.
 
@@ -122,9 +133,8 @@ NOTE: If you find issues scaling the test environment, please submit a Pull Requ
 #### 2. End-to-End Tests (aka. e2e, integration)
 
 * single run:
-  * in a tab: `npm start`
+  * in a tab: `ngr --build dev --serve`
   * in a new tab *if not already running!*: `npm run webdriver:start`
-  * in a new tab: `npm run dev:server`
   * in another new tab: `npm run e2e`
 * interactive mode:
   * instead of the last command above, you can run: `npm run e2e:live`
@@ -135,7 +145,7 @@ NOTE: If you find issues scaling the test environment, please submit a Pull Requ
 
 The production build is quite different than development. While the development server uses Angular Just In Time (JIT) compilation in conjunction with `tsc`, the production build uses [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to compile the Angular 2 application Ahead of Time (AOT).
 
-1. `ngc` has compiles the files in `/src` to `/tmp`,
+1. `ngc` compiles the files in `/src` to `/tmp`,
 
 2. Rollup bundles the files and their dependencies into `build/bundle.es2015.js`.
 
@@ -149,9 +159,48 @@ To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.co
 
 To build an application for production, run the following command.
 
-* `npm run build:prod`
+* `$ ngr --build prod`
 
 You can now deploy the `/build` folder to your server!
+
+# CLI
+
+This starter code includes a CLI that allows you to build and start up an Express Server without `npm run`. The CLI also includes commands for generating new code snippets similar to Angular CLI.
+
+#### --help
+
+Displays the help documentation for using the `ngr` CLI.
+
+#### --build
+
+`ngr --build dev --watch` - Builds development environment, runs watcher
+`ngr --build prod` - Builds production environment
+
+#### --generate
+
+`ngr --generate component --name todo-list --spec` - Generate a `TodoListComponent` in the current directory with a spec file
+`ngr --generate component --name todo-list --dir path/to/folder` - Generate a `TodoListComponent` in a folder
+`ngr -g module -n todo-list -r` - Generate a `TodoListModule` in a folder with a routes.ts file
+
+You can pass the following types to `--generate`:
+
+- class
+- component
+- directive
+- enum
+- guard
+- interface
+- module
+- pipe
+- service
+
+Configure prefixes for Classes, Component and Directive selector in `build.config.js`.
+Omit the properties from the config to operate without prefixes.
+
+#### --serve
+
+`ngr --build dev --watch --serve` - Builds development environment, runs watcher and starts up Express Server
+
 
 # FAQ
 
@@ -182,12 +231,6 @@ or with SystemJS like so:
 
 - Install rimraf globally `npm i -g rimraf`
 - Run `npm run clean:install`
-
-### Can I build JIT without the watcher?
-
-By default the development build step enables a watcher that listens for file changes. This watcher can be disabled with by setting the `watch` argument to `false`.
-
-- `npm run build:dev watch=false`
 
 
 #### How to include external libraries?
@@ -241,7 +284,7 @@ It is not recommended that you deploy the livereload script to production. If an
 
 #### Can I use this repository to package a library for distribution?
 
-- `npm run build:lib`
+- `ngr --build lib`
 
 With Angular 4.0, there is an established contract between the Angular team, library authors, and application developers that describes a format for Angular Component libraries.
 
