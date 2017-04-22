@@ -242,6 +242,9 @@ If you import an entire library using `*` for instance, the entire library will 
 
 When bundling for production, you may need to also need to update the `rollup.env.js` file to properly bundle the third party library.
 
+
+
+
 ### Typings
 
 You may also need to inject `typings` for the `ngc` service to properly inject dependencies during AOT compilation.
@@ -255,6 +258,8 @@ You may also need to inject `typings` for the `ngc` service to properly inject d
   ]
 }
 ```
+
+
 
 ### Rollup Third Party Libraries
 
@@ -270,6 +275,8 @@ plugins: [
   })
 ]
 ```
+
+
 
 ### Other Third Party Libraries
 
@@ -344,6 +351,8 @@ If you are duplicating the production build and renaming the environment, you wi
 Configuration for these services are in the specific files, while the configuration for Closure Compiler is found in the script itself.
 
 
+
+
 #### How do I update my project from the latest starter code?
 
 If you alter configuration files or the `package.json`, then you will have to `diff` the files and make changes. If you duplicate the build you can avoid potential conflicts.
@@ -351,6 +360,8 @@ If you alter configuration files or the `package.json`, then you will have to `d
 After you have finished updating the `package.json`, run the following command:
 
 - `$ npm run clean:install`
+
+
 
 
 #### Can I run LiveReload with the Production build?
@@ -383,9 +394,13 @@ Copy the livereload `script` to the `build:remove:dev` comment near the end of t
 It is not recommended that you deploy the livereload script to production. If anyone has a clever workaround for this please submit a Pull Request with the change.
 
 
+
+
 #### How do I take advantage of TypeScript in my IDE?
 
 To take full advantage of TypeScript with autocomplete you would have to use an editor with the correct TypeScript plugins.
+
+
 
 
 ## Use a TypeScript-aware editor
