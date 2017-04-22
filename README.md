@@ -89,7 +89,7 @@ What you need to run this app:
 
 * `fork` this repo
 * `clone` your fork
-* `npm i -g webdriver-manager`
+* `npm i -g webdriver-manager rimraf`
 * `npm install`
 
 ### Configure Server
@@ -128,11 +128,11 @@ NOTE: If you find issues scaling the test environment, please submit a Pull Requ
 #### 2. End-to-End Tests (aka. e2e, integration)
 
 * single run:
-  * in a tab: `ngr --build dev --serve`
   * in a new tab *if not already running!*: `npm run webdriver:start`
-  * in another new tab: `npm run e2e`
+  * in a tab: `ngr --build dev --serve`
+  * in a tab: `ngr --test`
 * interactive mode:
-  * instead of the last command above, you can run: `npm run e2e:live`
+  * instead of the last command above, you can run: `ngr --live`
   * when debugging or first writing test suites, you may find it helpful to try out Protractor commands without starting up the entire test suite. You can do this with the element explorer.
   * you can learn more about [Protractor Interactive Mode here](https://github.com/angular/protractor/blob/master/docs/debugging.md#testing-out-protractor-interactively)
 
