@@ -90,7 +90,8 @@ What you need to run this app:
 
 * `fork` this repo
 * `clone` your fork
-* `npm install` to install all dependencies
+* `npm i -g webdriver-manager`
+* `npm install`
 
 ### Configure Server
 
@@ -161,6 +162,13 @@ You can now deploy the `/build` folder to your server!
 # CLI
 
 This starter code includes a CLI that allows you to build and start up an Express Server without `npm run`. The CLI also includes commands for generating new code snippets similar to Angular CLI.
+
+To use the CLI install the npm package globally. `webdriver-manager` should also be installed globally if it isn't already.
+
+`npm i -g webdriver-manager`
+`npm i -g angular2-rollup`
+
+##CLI Commands
 
 #### --help
 
