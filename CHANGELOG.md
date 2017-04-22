@@ -1,3 +1,39 @@
+
+##4.0.3
+
+- Updated to Angular 4.0.3
+- New CLI commands, run `npm i -g angular2-rollup` to use in your project
+
+```
+  $ ngr --help
+
+  Usage: ngr <keywords>
+
+  Options:
+
+    -h, --help             output usage information
+    -V, --version          output the version number
+    -b, --build [env]      Build the application by environment
+    -w, --watch [bool]     Enable file watchers to detect changes and build
+    -g, --generate [type]  Generates new code from templates
+    -n, --name [string]    The name of the new code to be generated (kebab-case)
+    -f, --force [bool]     Force overwrite during code generate
+    -d, --dir [path]       Path the code should be generated in (relative)
+    -s, --spec [bool]      Include spec files in code generation
+    -r, --route [bool]     Include route files in code generation
+    --serve                Run Express Server
+
+
+```
+
+----------------------------------------------------------------------------------------------------
+
+##4.0.2
+
+- Updated to Angular 4.0.2
+
+----------------------------------------------------------------------------------------------------
+
 ##4.0.1
 
 
