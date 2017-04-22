@@ -194,7 +194,7 @@ Omit the properties from the config to operate without prefixes.
 
 #### --serve
 
-`ngr --build dev --watch --serve` - Builds development environment, runs watcher and starts up Express Server
+- `ngr --build dev --watch --serve` Builds development environment, runs watcher and starts up Express Server
 
 
 # FAQ
