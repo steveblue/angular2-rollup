@@ -38,8 +38,10 @@ Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow f
 
 - Install dependencies
 
-`$ npm install -g webdriver-manager rimraf`
-`$ npm install`
+```
+$ npm install -g webdriver-manager rimraf
+$ npm install
+```
 
 - To use the CLI
 
