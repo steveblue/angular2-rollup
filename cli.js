@@ -23,8 +23,15 @@ program
     .option('-d, --dir [path]', 'Path the code should be generated in (relative)')
     .option('-s, --spec [bool]', 'Include spec files in code generation')
     .option('-r, --route [bool]', 'Include route files in code generation')
+    .option('--serve', 'Run Express Server')
     .parse(process.argv);
 
+
+if (program.serve) {
+
+     spawn('npm run dev:server', { shell: true, stdio: 'inherit' });
+
+}
 
 if (program.build) {
 
