@@ -141,9 +141,9 @@ When its time to build the Component Library so other projects can consume it, u
 * single run:
   * in a new tab *if not already running!*: `npm run webdriver:start`
   * in a tab: `ngr --build dev --serve`
-  * in a tab: `ngr --test`
+  * in a tab: `npm run e2e`
 * interactive mode:
-  * instead of the last command above, you can run: `ngr --live`
+  * instead of the last command above, you can run: `npm run e2e:live`
   * when debugging or first writing test suites, you may find it helpful to try out Protractor commands without starting up the entire test suite. You can do this with the element explorer.
   * you can learn more about [Protractor Interactive Mode here](https://github.com/angular/protractor/blob/master/docs/debugging.md#testing-out-protractor-interactively)
 

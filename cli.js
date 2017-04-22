@@ -24,9 +24,7 @@ program
     .option('-s, --spec [bool]', 'Include spec files in code generation')
     .option('-r, --route [bool]', 'Include route files in code generation')
     .option('--serve', 'Run Express Server')
-    .option('-u, --unit', 'Run unit tests')
-    .option('-t, --test', 'Run e2e tests')
-    .option('-l , --live', 'Run e2e tests in interactive mode')
+    .option('-t, --test', 'Run unit tests')
     .parse(process.argv);
 
 
@@ -54,16 +52,6 @@ if (program.build) {
 if (program.unit) {
 
     spawn(`npm run test`, { shell: true, stdio: 'inherit' });
-
-}
-
-if (program.test) {
-
-    if (program.live) {
-        spawn(`npm run e2e:live`, { shell: true, stdio: 'inherit' });
-    } else {
-        spawn(`npm run e2e`, { shell: true, stdio: 'inherit' });
-    }
 
 }
 
