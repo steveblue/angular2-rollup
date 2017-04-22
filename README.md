@@ -175,7 +175,7 @@ To use the CLI run the command `npm install -g` while in the root directory of t
 `npm install -g`
 `npm link`
 
-##CLI Commands
+## CLI Commands
 
 #### --help
 
@@ -219,7 +219,7 @@ You can configure prefixes for Classes, Component and Directive selector in `bui
 
 # FAQ
 
-#### How do I include third party libraries?
+## How do I include third party libraries?
 
 Since the production build bundles the application, it is a best practice to tree shake and bundle third party libraries, however this process only works if the third party library is packaged with ES2015 modules.
 
@@ -243,9 +243,7 @@ If you import an entire library using `*` for instance, the entire library will 
 When bundling for production, you may need to also need to update the `rollup.env.js` file to properly bundle the third party library.
 
 
-
-
-### Typings
+#### Typings
 
 You may also need to inject `typings` for the `ngc` service to properly inject dependencies during AOT compilation.
 
@@ -261,7 +259,7 @@ You may also need to inject `typings` for the `ngc` service to properly inject d
 
 
 
-### Rollup Third Party Libraries
+#### Rollup Third Party Libraries
 
 When your project requires third party libraries that are distributed with UMD modules, use `rollup-plugin-commonjs` to bundle the third party library.
 
@@ -278,7 +276,7 @@ plugins: [
 
 
 
-### Other Third Party Libraries
+#### Other Third Party Libraries
 
 If a third party dependency cannot be imported with an `import` statement, you can configure library dependencies in `build.config.js`. A script runs during the build that copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
 
@@ -309,7 +307,7 @@ You can also include third party dependencies with `SystemJS`.
 
 
 
-#### How can I write a custom build?
+## How can I write a custom build?
 
 You could create a custom build to fit the specific needs of your project. It is recommended to duplicate an existing build and start from there.
 
@@ -353,7 +351,7 @@ Configuration for these services are in the specific files, while the configurat
 
 
 
-#### How do I update my project from the latest starter code?
+## How do I update my project from the latest starter code?
 
 If you alter configuration files or the `package.json`, then you will have to `diff` the files and make changes. If you duplicate the build you can avoid potential conflicts.
 
@@ -363,8 +361,7 @@ After you have finished updating the `package.json`, run the following command:
 
 
 
-
-#### Can I run LiveReload with the Production build?
+## Can I run LiveReload with the Production build?
 
 Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using`npm run build:dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `npm run build:prod watch=true`
 
@@ -394,16 +391,12 @@ Copy the livereload `script` to the `build:remove:dev` comment near the end of t
 It is not recommended that you deploy the livereload script to production. If anyone has a clever workaround for this please submit a Pull Request with the change.
 
 
-
-
-#### How do I take advantage of TypeScript in my IDE?
+## How do I take advantage of TypeScript in my IDE?
 
 To take full advantage of TypeScript with autocomplete you would have to use an editor with the correct TypeScript plugins.
 
 
-
-
-## Use a TypeScript-aware editor
+#### Use a TypeScript-aware editor
 
 We have good experience using these editors:
 
