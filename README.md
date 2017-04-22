@@ -19,14 +19,9 @@ We're also using Protractor for our end-to-end story and Karma for our unit test
 * Error reporting with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer).
 * CLI Commands for running builds, Express server, and scaffolding Angular Components, etc
 
->Warning: Make sure you're using the latest version of Node.js and NPM
-
 ----------------------------------------------------------------------------------------------------
 
 ## Quick start
-
-> Clone/Download the repo then edit `app.ts` inside [`/src/app/app.component.ts`](/src/app/app.component.ts)
-
 
 #### clone the repo
 `$ git clone https://github.com/steveblue/angular2-rollup my-app`
