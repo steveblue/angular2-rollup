@@ -242,7 +242,7 @@ If you import an entire library using `*` for instance, the entire library will 
 
 When bundling for production, you may need to also need to update the `rollup.env.js` file to properly bundle the third party library.
 
-###Typings
+### Typings
 
 You may also need to inject `typings` for the `ngc` service to properly inject dependencies during AOT compilation.
 
@@ -256,7 +256,7 @@ You may also need to inject `typings` for the `ngc` service to properly inject d
 }
 ```
 
-###Rollup Third Party Libraries
+### Rollup Third Party Libraries
 
 When your project requires third party libraries that are distributed with UMD modules, use `rollup-plugin-commonjs` to bundle the third party library.
 
@@ -271,7 +271,7 @@ plugins: [
 ]
 ```
 
-###Other Third Party Libraries
+### Other Third Party Libraries
 
 If a third party dependency cannot be imported with an `import` statement, you can configure library dependencies in `build.config.js`. A script runs during the build that copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
 
