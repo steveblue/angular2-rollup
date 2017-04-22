@@ -130,12 +130,12 @@ const utils = {
 
                     if (fileName.includes('component')) {
 
-                        if (config.classPrefix) {
-                           result = result.replace('selector: \'new\'', 'selector: \'' + config.selectorPrefix.toLowerCase() + '-' + name.toLowerCase() + '\'');
-                        }
-                        else {
-                           result = result.replace('selector: \'new\'', 'selector: \'' + name.toLowerCase() + '\'');
-                        }
+                        result = result.replace('selector: \'new\'', 'selector: \'' + (config.componentPrefix.toLowerCase() || '') + '-' + name.toLowerCase() + '\'');
+                    }
+
+                    if (fileName.includes('directive')) {
+
+                       result = result.replace('selector: \'[new]\'', 'selector: \'[' + (config.directivePrefix.toLowerCase() || '') + utils.generate.kababToCamel(name.charAt(0).toUpperCase() + name.slice(1)) + ']\'');
 
                     }
 

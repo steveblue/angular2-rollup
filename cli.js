@@ -18,10 +18,11 @@ program
     .option('-b, --build [env]', 'Build the application by environment')
     .option('-w, --watch [bool]', 'Enable file watchers to detect changes and build')
     .option('-g, --generate [type]', 'Generates new code from templates')
+    .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
+    .option('-d, --dir [path]', 'Path the code should be generated in (relative)')
     .option('-s, --spec [bool]', 'Include spec files in code generation')
     .option('-r, --route [bool]', 'Include route files in code generation')
-    .option('-n, --name [string]', 'The name of the new code to be generated')
     .parse(process.argv);
 
 
@@ -47,7 +48,7 @@ if (program.generate) {
     // TODO: Make Boilerplate Templates and cp them here
 
     let options = {
-        path: process.cwd(),
+        path: program.dir ? process.cwd() + '/' + program.dir : process.cwd(),
         name: program.name || 'test',
         type: program.generate,
         force: program.force ? true : false,

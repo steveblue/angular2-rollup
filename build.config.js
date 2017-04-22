@@ -22,5 +22,6 @@ module.exports = {
     lib: 'src/lib',
     libFilename: 'default-lib',
     classPrefix: 'My',
-    selectorPrefix: 'my'
+    componentPrefix: 'cmp',
+    directivePrefix: 'dir'
 }
