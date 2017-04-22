@@ -41,7 +41,7 @@ Thumbs.db
 /tsd_typings/
 
 # Src #
-
+.tmp
 /tmp
 /ngfactory
 /src/app/*.js

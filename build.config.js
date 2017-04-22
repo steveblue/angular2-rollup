@@ -15,9 +15,13 @@ module.exports = {
       files:[],
       folders:[]
     },
+    rootDir: __dirname,
     src: 'src',
     build: 'build',
     dist: 'dist',
     lib: 'src/lib',
-    libFilename: 'default-lib'
+    libFilename: 'default-lib',
+    classPrefix: 'My',
+    componentPrefix: 'cmp',
+    directivePrefix: 'dir'
 }

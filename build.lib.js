@@ -256,6 +256,7 @@ let style = {
 
 let init = function() {
 
+    rm('-rf', paths.rootDir+'/.tmp/');
     rm('-rf', './ngfactory');
     mkdir('./ngfactory');
 

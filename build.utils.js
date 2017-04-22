@@ -7,7 +7,7 @@ const clim = require('clim');
 const cons = clim();
 const colors = require('chalk');
 const scripts = require('./package.json').scripts;
-const paths = require('./build.config.js');
+const config = require('./build.config.js');
 
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
@@ -69,7 +69,7 @@ const warn = function(action, noun) {
 
 
 const utils = {
-    paths: paths,
+    paths: config,
     scripts: scripts,
     console: cons,
     colors: colors,
@@ -86,14 +86,14 @@ const utils = {
         tmp: () => {
             rm('-rf', './tmp');
             mkdir('./tmp');
-            cp('-R', './'+paths.src+'/.', './tmp');
-            log(paths.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
+            cp('-R', './'+config.src+'/.', './tmp');
+            log(config.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
         },
         lib: () => {
             rm('-rf', './tmp');
             mkdir('./tmp');
-            cp('-R', paths.lib+'/.', 'tmp/');
-            log(paths.lib+'/*.ts', 'copied', 'to', 'tmp/*ts');
+            cp('-R', config.lib+'/.', 'tmp/');
+            log(config.lib+'/*.ts', 'copied', 'to', 'tmp/*ts');
         },
         paths: (p) => {
 
@@ -115,13 +115,86 @@ const utils = {
         }
 
     },
+    generate: {
+
+        replace: function (fileName, name) {
+
+            return new Promise((res) => {
+                fs.readFile(fileName, 'utf8', function (err, data) {
+
+                    if (err) {
+                        return console.log(err);
+                    }
+
+                    let result = data;
+
+                    if (fileName.includes('component')) {
+
+                        result = result.replace('selector: \'new\'', 'selector: \'' + (config.componentPrefix.toLowerCase() || '') + '-' + name.toLowerCase() + '\'');
+                    }
+
+                    if (fileName.includes('directive')) {
+
+                       result = result.replace('selector: \'[new]\'', 'selector: \'[' + (config.directivePrefix.toLowerCase() || '') + utils.generate.kababToCamel(name.charAt(0).toUpperCase() + name.slice(1)) + ']\'');
+
+                    }
+
+                    result = result.replace(/new/g, name.toLowerCase());
+
+                    if (config.classPrefix) {
+                        result = result.replace(/New/g, config.classPrefix + utils.generate.kababToCamel(name).charAt(0).toUpperCase() + utils.generate.kababToCamel(name).slice(1));
+                    }
+                    else {
+                        result = result.replace(/New/g, utils.generate.kababToCamel(name).charAt(0).toUpperCase() + utils.generate.kababToCamel(name).slice(1));
+                    }
+
+                    fs.writeFile(utils.generate.rename(fileName, name), result, 'utf8', function (err) {
+                        if (err) return console.log(err);
+                        rm(fileName);
+                        res(utils.generate.rename(fileName, name));
+                    });
+
+                });
+            });
+
+
+        },
+        rename: function (fileName, name) {
+            return fileName.replace(/new/g, name.toLowerCase());
+        },
+        kababToCamel: function(s){
+            return s.replace(/(\-\w)/g, function(m){return m[1].toUpperCase();});
+        },
+        copy: function (options) {
+
+            rm('-rf', config.rootDir+'/.tmp/');
+            mkdir(config.rootDir+'/.tmp/');
+
+            cp('-R', config.rootDir+'/.new/'+options.type+'/*', config.rootDir+'/.tmp');
+
+            ls(config.rootDir+'/.tmp').forEach((fileName, index) => {
+               if ( options.spec === false && fileName.includes('spec') ) {
+                   return;
+               }
+               if ( options.route === false && fileName.includes('routes') ) {
+                   return;
+               }
+               utils.generate.replace(config.rootDir+'/.tmp/'+fileName, options.name).then((filePath)=>{
+
+                   mv((options.force ? '-f' : '-n'), filePath, options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
+                   //log('Generated', filePath, 'at', options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
+
+               });
+            });
+        }
+    },
     tslint : (path, env) => {
 
         if (!path) {
-        return;
+            return;
         }
 
-        let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+paths.src+'/');
+        let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+config.src+'/');
         let files = Linter.getFileNames(program);
         let results = files.map(file => {
 
