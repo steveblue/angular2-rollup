@@ -23,8 +23,8 @@ program
     .option('-d, --dir [path]', 'Path the code should be generated in (relative)')
     .option('-s, --spec [bool]', 'Include spec files in code generation')
     .option('-r, --route [bool]', 'Include route files in code generation')
-    .option('--serve', 'Run Express Server')
-    .option('-t, --test', 'Run unit tests')
+    .option('-t, --test [bool]', 'Run unit tests')
+    .option('--serve [bool]', 'Run Express Server')
     .parse(process.argv);
 
 

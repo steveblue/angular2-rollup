@@ -2,7 +2,8 @@
 ##4.0.3
 
 - Updated to Angular 4.0.3
-- New CLI commands, run `npm i -g angular2-rollup` to use in your project
+- New CLI commands, run `npm i -g` to use in your project
+- Revised README
 
 ```
   $ ngr --help
@@ -21,8 +22,8 @@
     -d, --dir [path]       Path the code should be generated in (relative)
     -s, --spec [bool]      Include spec files in code generation
     -r, --route [bool]     Include route files in code generation
-    --serve                Run Express Server
-
+    -t, --test [bool]      Run unit tests
+    --serve [bool]         Run Express Server
 
 ```
 
