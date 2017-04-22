@@ -173,14 +173,14 @@ Displays the help documentation for using the `ngr` CLI.
 
 #### --build
 
-`ngr --build dev --watch` - Builds development environment, runs watcher
-`ngr --build prod` - Builds production environment
+- `ngr --build dev --watch` Builds development environment, runs watcher
+- `ngr --build prod` Builds production environment
 
 #### --generate
 
-`ngr --generate component --name todo-list --spec` - Generate a `TodoListComponent` in the current directory with a spec file
-`ngr --generate component --name todo-list --dir path/to/folder` - Generate a `TodoListComponent` in a folder
-`ngr -g module -n todo-list -r` - Generate a `TodoListModule` in a folder with a routes.ts file
+- `ngr --generate component --name todo-list --spec` Generate a `TodoListComponent` in the current directory with a spec file
+- `ngr --generate directive --name todo-list --dir path/to/folder` Generate a `TodoListDirective` in a folder
+- `ngr -g module -n todo-list -r` Generate a `TodoListModule` in a folder with a routes.ts file
 
 You can pass the following types to `--generate`:
 
