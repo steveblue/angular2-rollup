@@ -167,6 +167,8 @@ let style = {
                       if (canWatch === true) {
                             log(colors.green('Ready'), 'to', colors.green('serve'));
                             log(colors.green('Watcher'), 'listening for', colors.green('changes'));
+                      } else {
+                        log(colors.green('Ready'), 'to', colors.green('serve'));
                       }
                     }
                     if (hasCompletedFirstStylePass === true) {
