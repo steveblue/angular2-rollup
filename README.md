@@ -4,7 +4,6 @@
 
 A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup.
 
-This starter code provides an alternative method to Webpack for bundling Angular for production, while giving Engineers a fast and efficient development environment.
 
 - `ngr --build dev` compiles just in time (JIT) using Typescript and SystemJS.
 
@@ -23,7 +22,9 @@ Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow f
 * Error reporting with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer)
 * CLI commands for running builds, generating code, and more!
 
-----------------------------------------------------------------------------------------------------
+
+
+
 
 ## Quick start
 
@@ -52,7 +53,7 @@ Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow f
 When everything is setup correctly, you should be able to visit  [http://localhost:4200](http://localhost:4200) in your browser.
 
 
-----------------------------------------------------------------------------------------------------
+
 
 ## Table of Contents
 
@@ -63,11 +64,11 @@ When everything is setup correctly, you should be able to visit  [http://localho
     * [Testing](#testing)
     * [Production](#production)
 * [CLI](#cli)
-* [Frequently asked questions](#faq)
-* [TypeScript](#typescript)
+* [Frequently Asked Questions](#faq)
 * [License](#license)
 
-----------------------------------------------------------------------
+
+
 
 # Getting Started
 
