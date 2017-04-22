@@ -45,8 +45,10 @@ $ npm install
 
 - To use the CLI
 
-`$ npm install -g`
-`$ npm link`
+```
+$ npm install -g
+$ npm link
+```
 
 - Run development build, start up Express Server with LiveReload
 
