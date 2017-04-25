@@ -14,7 +14,6 @@ const config = {
 
 
 let env = process.env.NODE_ENV || 'dev';
-console.log(env);
 const port = config[env].port || process.env.PORT;
 const host = config[env].origin;
 let ssl = false;

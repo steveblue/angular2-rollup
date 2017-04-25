@@ -20,14 +20,6 @@ const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
 
-
-const linter = require('tslint').Linter;
-const tslintConfig = require('tslint').Configuration;
-const tslintOptions = {
-    formatter: 'json',
-    rulesDirectory: 'node_modules/codelyzer'
-};
-
 // Log Formatting
 clim.getTime = function(){
   let now = new Date();
@@ -188,35 +180,8 @@ const utils = {
             });
         }
     },
-    tslint : (path, env) => {
-
-        if (!path) {
-            return;
-        }
-
-        let program = Linter.createProgram('./tsconfig.'+env+'.json', path ? path.substring(0, path.lastIndexOf('/')) : './'+config.src+'/');
-        let files = Linter.getFileNames(program);
-        let results = files.map(file => {
-
-            let fileContents = fs.readFileSync(file, 'utf8');
-            let linter = new Linter(options);
-            console.log(file);
-            let configLoad = Configuration.findConfiguration('./tsconfig.'+env+'.json', file );
-            let results = linter.lint(file, fileContents, configLoad.results);
-
-            if (results && results.failureCount > 0) {
-                let failures = JSON.parse(results.output);
-                for (let i = 0; i < failures.length; i++) {
-                    log('tslint:',
-                        colors.red(failures[i].failure),
-                        colors.white('[' + failures[i].startPosition.line +
-                        ', ' + failures[i].startPosition.character + ']'),
-                        failures[i].name);
-                }
-
-            }
-
-        });
+    tslint : (path) => {
+        exec('tslint -c tslint.json '+path);
     },
     angular : function(options, source, dir) {
 

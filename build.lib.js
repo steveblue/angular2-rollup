@@ -300,11 +300,13 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
       else if ( path.indexOf('.ts') > -1 && hasInit === true) {
 
-       log('File', path, 'triggered', 'transpile');
+        log('File', path, 'triggered', 'transpile');
+
+        utils.tslint(path);
 
         if (!isCompiling) {
-            clean.lib();
-            compile.src();
+              clean.lib();
+              compile.src();
         }
 
       }

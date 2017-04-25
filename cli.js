@@ -24,6 +24,7 @@ program
     .option('-s, --spec [bool]', 'Include spec files in code generation')
     .option('-r, --route [bool]', 'Include route files in code generation')
     .option('-t, --test [bool]', 'Run unit tests')
+    .option('-l, --lint [bool]', 'Run Codelyzer on startup')
     .option('--serve [bool]', 'Run Express Server')
     .parse(process.argv);
 
@@ -54,6 +55,13 @@ if (program.unit) {
     spawn(`npm run test`, { shell: true, stdio: 'inherit' });
 
 }
+
+if (program.lint) {
+
+    spawn(`npm run lint`, { shell: true, stdio: 'inherit' });
+
+}
+
 
 if (program.generate) {
 

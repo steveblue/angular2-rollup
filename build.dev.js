@@ -249,7 +249,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
        log('File', path, 'triggered', 'transpile');
 
-
+        utils.tslint(path);
 
         if (!isCompiling) {
 

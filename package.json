@@ -86,7 +86,7 @@
     "chokidar": "^1.6.1",
     "clean-css": "^4.0.12",
     "clim": "^1.1.1",
-    "codelyzer": "^2.1.1",
+    "codelyzer": "^3.0.0",
     "concurrently": "^3.0.0",
     "core-js": "^2.4.1",
     "cssnano": "^3.8.0",
@@ -125,7 +125,7 @@
     "rollup-plugin-replace": "^1.1.1",
     "shelljs": "^0.7.7",
     "ts-helpers": "^1.1.2",
-    "tslint": "^4.0.0",
+    "tslint": "^5.0.0",
     "typescript": "^2.2.2"
   },
   "bin": {
