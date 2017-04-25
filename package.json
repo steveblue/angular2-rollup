@@ -129,6 +129,6 @@
     "typescript": "^2.2.2"
   },
   "bin": {
-      "ngr": "cli.js"
+    "ngr": "cli.js"
   }
 }
