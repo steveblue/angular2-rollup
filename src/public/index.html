@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="/style/style.css">
 
     <script src="/lib/core-js/client/shim.min.js"></script>
+    <script src="/lib/systemjs/dist/system-polyfills.js"></script>
+    <script src="/lib/angular-srcs/shims_for_IE.js"></script>
     <script src="/lib/zone.js/dist/zone.js"></script>
     <!-- build:remove:prod -->
     <script src="/lib/reflect-metadata/Reflect.js"></script>
@@ -33,8 +35,10 @@
 
     </script>
     <script>
-      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
-      ':35729/livereload.js?snipver=1"></' + 'script>')
+      if (!navigator.userAgent.indexOf("MSIE 9") > -1) {
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+        ':35729/livereload.js?snipver=1"></' + 'script>')
+      }
     </script>
     <!-- /build -->
     <!-- build:remove:dev -->

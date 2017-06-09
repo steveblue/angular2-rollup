@@ -4,7 +4,6 @@ const paths = require('./build.config.js');
 
 export default {
   entry: 'ngfactory/'+paths.libFilename+'.js',
-  format: 'iife',
   moduleName: paths.libFilename,
   dest: paths.dist+'/'+paths.libFilename+'.es5.js',
   sourceMap: false,

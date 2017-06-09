@@ -1,31 +1,30 @@
-(function (exports,_angular_core,_angular_common) {
-'use strict';
+import { Component, NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-class DefaultComponent {
-    constructor() {
-    }
-}
-DefaultComponent.decorators = [
-    { type: _angular_core.Component, args: [{
-                selector: 'default',
-                template: "<a href=\"#\">A Bundled Component Is A Happy Component</a>",
-                styles: [":host{font-family:Lato,sans-serif;background:red;color:#fff;padding:20px}"]
-            },] },
-];
-DefaultComponent.ctorParameters = () => [];
+var DefaultComponent = function DefaultComponent() {
+    babelHelpers.classCallCheck(this, DefaultComponent);
+};
 
-class DefaultModule {
-}
-DefaultModule.decorators = [
-    { type: _angular_core.NgModule, args: [{
-                imports: [_angular_common.CommonModule],
-                declarations: [DefaultComponent],
-                exports: [DefaultComponent]
-            },] },
-];
-DefaultModule.ctorParameters = () => [];
+DefaultComponent.decorators = [{ type: Component, args: [{
+        selector: 'default',
+        template: "<a href=\"#\">A Bundled Component Is A Happy Component</a>",
+        styles: [":host{font-family:Lato,sans-serif;background:red;color:#fff;padding:20px}"]
+    }] }];
+DefaultComponent.ctorParameters = function () {
+    return [];
+};
 
-exports.DefaultModule = DefaultModule;
-exports.DefaultComponent = DefaultComponent;
+var DefaultModule = function DefaultModule() {
+    babelHelpers.classCallCheck(this, DefaultModule);
+};
 
-}((this['default-lib'] = this['default-lib'] || {}),_angular_core,_angular_common));
+DefaultModule.decorators = [{ type: NgModule, args: [{
+        imports: [CommonModule],
+        declarations: [DefaultComponent],
+        exports: [DefaultComponent]
+    }] }];
+DefaultModule.ctorParameters = function () {
+    return [];
+};
+
+export { DefaultModule, DefaultComponent };

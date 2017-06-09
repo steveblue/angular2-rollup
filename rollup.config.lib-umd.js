@@ -4,7 +4,6 @@ const paths = require('./build.config.js');
 
 export default {
   entry: 'ngfactory/'+paths.libFilename+'.js',
-  format: 'umd',
   moduleName: paths.libFilename,
   dest: paths.dist+'/bundles/'+paths.libFilename+'.umd.js',
   sourceMap: false,

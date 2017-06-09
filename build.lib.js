@@ -135,14 +135,25 @@ const compile = {
 
                  let bundle = exec(scripts['rollup:umd'], function(code, output, error) {
 
-                    log('Rollup', 'bundled', paths.libFilename+'.umd.js in', './'+paths.dist);
-                    compile.es5Lib();
+                     log('Rollup', 'bundled', paths.libFilename+'.umd.js in', './'+paths.dist+'/bundles');
+
+                     log('Babel', 'is transpiling', paths.libFilename+'.umd.js');
+
+                     let transpile = exec(scripts['transpile:umd'], function(code, output, error){
+                          log('Babel', 'transpiled', './'+paths.dist+'/bundles/'+paths.libFilename+' to', './'+paths.dist+'/bundles/'+paths.libFilename+'.umd.js');
+                          compile.es5Lib();
+                     });
+
+                  
 
                  });
               });
     },
 
+
     es5Lib : () => {
+
+      
 
          let tsc = exec(scripts['compile:es5'], function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
@@ -160,13 +171,19 @@ const compile = {
 
                       find('./'+paths.dist).filter(function(file) {
 
-                        if ( file.match(/component.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
+                        if ( file.match(/component.ts$/) || file.match(/directive.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
                           rm(file);
                         }
 
                       });
 
                     });
+
+                    log('Babel', 'is transpiling', paths.libFilename+'.es5.js');
+
+                     let transpile = exec(scripts['transpile:lib'], function(code, output, error){
+                          log('Babel', 'transpiled', './'+paths.dist+'/'+paths.libFilename+' to', './'+paths.dist+'/'+paths.libFilename+'.es5.js');
+                     });
 
                     exec(scripts['copy:package'], function() {
 
@@ -189,10 +206,10 @@ let style = {
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.dist+'/style/style.css' : path.replace('.scss','.css').replace(paths.src, 'tmp').replace('lib/', '');
+        let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.dist+'/style/style.css' : path.replace('.scss','.css').replace(paths.src, 'tmp').replace(paths.lib.replace('src/', ''), '');
 
         sass.render({
-          file: path,
+          file: path.indexOf(paths.src+'/style') > -1 ? 'src/style/style.scss' : path,
           outFile: outFile,
           includePaths: [ paths.src+'/style/' ],
           outputStyle: 'expanded',

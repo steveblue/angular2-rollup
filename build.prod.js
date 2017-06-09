@@ -55,11 +55,20 @@ const copy = {
         mkdir('-p', __dirname + '/' + paths.dep.dist);
 
         for( var i=0;  i < paths.dep.lib.length; i++ ) {
+        
+            if (paths.dep.lib[i].split('/').pop().split('.').length > 1) { // file
+              let path = paths.dep.dist + '/' + paths.dep.lib[i];
+              if (!fs.existsSync(path.substring(0, path.lastIndexOf('/')))) {
+                mkdir(path.substring(0, path.lastIndexOf('/')));
+              } // catch folders 
+              cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
+            } else { // folder
+              cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
+            }
 
-            cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
             log(paths.dep.lib[i], 'copied', 'to',  paths.dep.dist + '/' + paths.dep.lib[i]);
-
-        }
+            
+       }
     }
 };
 
@@ -143,7 +152,7 @@ let style = {
         let filename = path.replace(/^.*[\\\/]/, '');
         let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.build+'/style/style.css' : path.replace('.scss','.css').replace(paths.src, 'tmp');
         sass.render({
-          file: path,
+          file: path.indexOf(paths.src+'/style') > -1 ? 'src/style/style.scss' : path,
           outFile: outFile,
           includePaths: [ paths.src+'/style/' ],
           outputStyle: 'expanded',

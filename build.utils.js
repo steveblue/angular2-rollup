@@ -13,6 +13,7 @@ const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
 const escape = require('js-string-escape');
 const moduleIdRegex = /moduleId\s*:(.*)/g;
+const directiveRegex = /@Directive\(\s?{([\s\S]*)}\s?\)$/gm;
 const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
 const templateUrlRegex = /templateUrl\s*:(.*)/g;
 const styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
@@ -68,6 +69,7 @@ const utils = {
     log : log,
     warn : warn,
     moduleIdRegex: moduleIdRegex,
+    directiveRegex: directiveRegex,
     componentRegex: componentRegex,
     templateUrlRegex: templateUrlRegex,
     styleUrlsRegex: styleUrlsRegex,
@@ -123,6 +125,7 @@ const utils = {
                     if (fileName.includes('component')) {
 
                         result = result.replace('selector: \'new\'', 'selector: \'' + (config.componentPrefix.toLowerCase() || '') + '-' + name.toLowerCase() + '\'');
+                    
                     }
 
                     if (fileName.includes('directive')) {

@@ -1,6 +1,7 @@
 module.exports = {
     dep: {
         lib: [
+            'angular-srcs/shims_for_IE.js',
             'core-js',
             'reflect-metadata',
             'zone.js',
