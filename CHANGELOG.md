@@ -1,4 +1,15 @@
 
+##4.2.0
+
+- Updated to Angular 4.2.0
+- Fixed issue when updating global SASS, livereload and CSS would not update when editing certain files
+- Fixed an issue when users move library build to another location
+- Updated library build, ES5 and UMD builds are now correctly transpiled
+- Updated support for external libraries, now you can specify single file instead of just folders
+- Updated boilerplate to support IE9
+
+----------------------------------------------------------------------------------------------------
+
 ##4.0.3
 
 - Updated to Angular 4.0.3
