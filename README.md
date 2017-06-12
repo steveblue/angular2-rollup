@@ -46,7 +46,6 @@ $ npm install
 - To use the CLI
 
 ```
-$ npm install -g
 $ npm link
 ```
 
