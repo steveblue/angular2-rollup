@@ -62,19 +62,19 @@ const copy = {
         mkdir('-p', __dirname + '/' + paths.dep.dist);
 
         for( var i=0;  i < paths.dep.lib.length; i++ ) {
-        
+
             if (paths.dep.lib[i].split('/').pop().split('.').length > 1) { // file
               let path = paths.dep.dist + '/' + paths.dep.lib[i];
               if (!fs.existsSync(path.substring(0, path.lastIndexOf('/')))) {
                 mkdir(path.substring(0, path.lastIndexOf('/')));
-              } // catch folders 
+              } // catch folders
               cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
             } else { // folder
               cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
             }
 
             log(paths.dep.lib[i], 'copied', 'to',  paths.dep.dist + '/' + paths.dep.lib[i]);
-            
+
        }
     }
 };
@@ -166,7 +166,7 @@ let style = {
 
                 if (watch === true) log('node-sass', 'compiled', 'component style at', outFile);
 
-                let postcss = exec('postcss -c postcss.'+env+'.json -r '+outFile, function(code, output, error) {
+                let postcss = exec('postcss -c postcss.'+env+'.js -r '+outFile, function(code, output, error) {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));

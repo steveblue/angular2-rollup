@@ -144,7 +144,7 @@ const compile = {
                           compile.es5Lib();
                      });
 
-                  
+
 
                  });
               });
@@ -153,7 +153,7 @@ const compile = {
 
     es5Lib : () => {
 
-      
+
 
          let tsc = exec(scripts['compile:es5'], function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
@@ -224,7 +224,7 @@ let style = {
 
             fs.writeFile(outFile, result.css, function(err){
 
-                let postcss = exec('postcss -c postcss.'+env+'.json -r '+outFile, function(code, output, error) {
+                let postcss = exec('postcss -c postcss.'+env+'.js -r '+outFile, function(code, output, error) {
                    if( !watch ) {
 
                       if( hasCompletedFirstStylePass === true || styleFiles.indexOf(path) === styleFiles.length - 1) {
