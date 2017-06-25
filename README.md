@@ -24,8 +24,6 @@ Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow f
 
 
 
-
-
 ## Quick start
 
 - Fork / Clone the repository
@@ -56,8 +54,6 @@ $ npm link
 When everything is setup correctly, you should be able to visit  [http://localhost:4200](http://localhost:4200) in your browser.
 
 
-
-
 ## Table of Contents
 
 * [Getting Started](#getting-started)
@@ -69,8 +65,6 @@ When everything is setup correctly, you should be able to visit  [http://localho
 * [CLI](#cli)
 * [Frequently Asked Questions](#faq)
 * [License](#license)
-
-
 
 
 # Getting Started
