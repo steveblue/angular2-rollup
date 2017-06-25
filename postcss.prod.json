@@ -1,7 +1,0 @@
-{
-    "use": ["autoprefixer", "cssnano"],
-    "local-plugins": true,
-    "autoprefixer": {
-        "browsers": "> 5%"
-    }
-}

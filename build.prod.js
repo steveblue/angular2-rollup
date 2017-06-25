@@ -2,10 +2,15 @@
 
 require('shelljs/global');
 
+const env       = 'prod';
+
 const fs        = require('fs');
 const utils     = require('./build.utils.js');
 const chokidar  = require('chokidar');
 const sass      = require('node-sass');
+const postcss   = require('./postcss.'+env+'.js');
+
+/* References to shared tools are found in build.utils.js */
 
 const console   = utils.console;
 const colors    = utils.colors;
@@ -15,12 +20,15 @@ const log       = utils.log;
 const warn      = utils.warn;
 const clean     = utils.clean;
 
-const env       = 'prod';
+
 let canWatch    = false;
 let isCompiling = false;
 let hasInit     = false;
 let styleFiles  = [];
 let hasCompletedFirstStylePass = false;
+let postcssConfig = ' -u';
+
+/* Test for arguments the ngr cli spits out */
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
@@ -28,7 +36,21 @@ process.argv.forEach((arg)=>{
   }
 });
 
-/* Copy */
+/* Process PostCSS CLI plugins for the --use argument */
+
+for (let cssProp in postcss.plugins) {
+  postcssConfig += ' '+cssProp;
+}
+
+/*
+
+  Copy Tasks
+
+- public: Copies the contents of the src/public folder
+- file: Copies a file to /build
+- lib: Copies files and folders from /node_modules to /build/lib
+
+*/
 
 const copy = {
     public: (path) => {
@@ -73,7 +95,15 @@ const copy = {
 };
 
 
-/* Compile */
+/*
+
+  Compile Tasks
+
+- clean: Removes source code comments
+- ts: Compiles AOT for production using ngc, Rollup, and ClosureCompiler
+
+*/
+
 
 const compile = {
 
@@ -141,7 +171,21 @@ const compile = {
 }
 
 
-/* Styling */
+/*
+
+  Style Tasks
+
+  - file: Styles a single file.
+         - If the file is in the /src/styles folder it will compile /src/styles/style.scss
+         - If the file is elsewhere, like part of a Component, it will compile into the
+          appropriate folder in the /tmp directory, then ngc will run and compile for AOT
+  - src: Compiles the global styles
+
+  SASS render method is called and fs writes the files to appropriate folder
+  PostCSS processes the file in place, using the --replace argument
+
+
+*/
 
 let style = {
 
@@ -168,7 +212,7 @@ let style = {
             fs.writeFile(outFile, result.css, function(err){
               if(!err){
 
-                let postcss = exec('postcss -c postcss.'+env+'.js -r '+outFile, function(code, output, error) {
+                let postcss = exec('postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
@@ -206,16 +250,23 @@ let style = {
 };
 
 
-/* Init */
+
+/*
+
+  Init Tasks
+
+  A sequence of commands needed to clean and start the prod build
+
+*/
+
 
 let init = function() {
 
     rm('-rf', paths.rootDir+'/.tmp/');
-
     rm('-rf', './ngfactory');
-    mkdir('./ngfactory');
-
     rm('-rf', './'+paths.build);
+
+    mkdir('./ngfactory');
     mkdir('./'+paths.build);
     mkdir('./'+paths.build+'/lib');
 
@@ -226,7 +277,13 @@ let init = function() {
 
 };
 
-/* Watcher */
+/*
+
+  Watcher
+
+  Chokidar is used to watch files, run the above methods.
+
+*/
 
 
 let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {

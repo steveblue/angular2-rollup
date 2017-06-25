@@ -1,6 +1,43 @@
 "use strict";
 
+/*
+
+    utils
+
+    Global set of utility methods used in various build tasks.
+
+    - paths   : build.config.js Object
+    - scripts : package.json scripts Object
+    - console : Direct access to clim()
+    - colors  : Direct access to chalk
+    - log     : Used to pretty print log messages in the Terminal
+    - warn    : Used to pretty print warnings in the Terminal
+    - regex   : Used to test the following Strings in soruce code
+                    - moduleIdRegex: moduleId: module.id
+                    - directiveRegex: @Directive,
+                    - componentRegex: @Component,
+                    - templateUrlRegex: templateUrl,
+                    - styleUrlsRegex: styleUrls,
+                    - multilineComment: Multi line comment
+                    - singleLineComment: Single line comment
+    - clean    : Various methods used to reset parts of the build
+                    - tmp: Removes the /tmp directory, makes it again, copies source files to /tmp
+                    - lib: Cleans the /tmp directory  for the library build
+                    - paths: Removes an Array of files or folders
+    - generate : Various methods used for the --generate command the cli uses to boilerplate code
+                    - replace: Replaces 'New' and 'new-' with user defined prefixes
+                    - rename: Forces lowercase filenames when user specifies CamelCase args
+                    - kababToCamel: Transforms kabab-case to camelCase
+                    - copy: Copies generated files to desired path
+    - tslint   : Runs the tslint cli
+    - angular  : Inlines templateUrl and styleUrls as template and styles in @Component
+
+
+ */
+
+
 require('shelljs/global');
+
 const fs   = require('fs');
 const path = require('path');
 const clim = require('clim');
@@ -21,7 +58,8 @@ const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
 
-// Log Formatting
+/* Format time each LOG displays in the Terminal */
+
 clim.getTime = function(){
   let now = new Date();
   return colors.gray(colors.dim('['+
@@ -30,7 +68,8 @@ clim.getTime = function(){
          now.getSeconds() + ']'));
 };
 
-// Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz
+/* Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz */
+
 function insertText(str, dir, preprocessor = res => res, processFilename = false) {
   return str.replace(stringRegex, function (match, quote, url) {
     const includePath = path.join(dir, url);
@@ -46,6 +85,9 @@ function insertText(str, dir, preprocessor = res => res, processFilename = false
   });
 }
 
+/* LOG Method used in the build tasks.
+   Pretty prints LOG, magenta, green, blue, grey message */
+
 const log = function (action, noun, verb, next) {
     let a = action ? colors.magenta(action) : '';
     let n = noun ? colors.green(noun) : '';
@@ -53,6 +95,9 @@ const log = function (action, noun, verb, next) {
     let x = next ? colors.dim(colors.white(next)) : '';
     cons.log(a + ' ' + n + ' ' + v + ' ' + x );
 };
+
+/* WARN Method used in the build tasks.
+   Pretty prints LOG, red, white message */
 
 const warn = function(action, noun) {
     let a = action ? colors.red(action) : '';
@@ -125,7 +170,7 @@ const utils = {
                     if (fileName.includes('component')) {
 
                         result = result.replace('selector: \'new\'', 'selector: \'' + (config.componentPrefix.toLowerCase() || '') + '-' + name.toLowerCase() + '\'');
-                    
+
                     }
 
                     if (fileName.includes('directive')) {

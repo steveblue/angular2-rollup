@@ -2,10 +2,13 @@
 
 require('shelljs/global');
 
+const env         = 'prod';
+
 const fs          = require('fs');
 const utils       = require('./build.utils.js');
 const chokidar    = require('chokidar');
 const sass        = require('node-sass');
+const postcss     = require('./postcss.'+env+'.js');
 const minifyHtml  = require('html-minifier').minify;
 
 const console   = utils.console;
@@ -17,13 +20,16 @@ const warn      = utils.warn;
 const clean     = utils.clean;
 const angular   = utils.angular;
 
-const env = 'prod';
 
 let canWatch = false;
 let isCompiling = false;
 let hasInit = false;
 let styleFiles = [];
 let hasCompletedFirstStylePass = false;
+let postcssConfig = ' -u';
+
+
+/* Test for arguments the ngr cli spits out */
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
@@ -31,8 +37,20 @@ process.argv.forEach((arg)=>{
   }
 });
 
+/* Process PostCSS CLI plugins for the --use argument */
 
-/* Copy */
+for (let cssProp in postcss.plugins) {
+  postcssConfig += ' '+cssProp;
+}
+
+
+/*
+
+  Copy Tasks
+
+- file: Copies a file to /dist
+
+*/
 
 const copy = {
     file: (path) => {
@@ -42,7 +60,18 @@ const copy = {
 };
 
 
-/* Compile */
+/*
+
+  Compile Tasks
+
+- clean: Removes source code comments
+- src: Compiles library components and formats for AOT,
+       using `ngc` and Rollup, according to Angular Package Format 4.0 spec
+- umdLib: Formats the bundle according to the UMD module pattern in /dist/bundles/
+- es5Lib: Transpiles the bundle down to ES5 in /dist
+
+*/
+
 
 const compile = {
 
@@ -196,8 +225,22 @@ const compile = {
     }
 };
 
+/*
 
-/* Styling */
+  Style Tasks
+
+  - file: Styles a single file.
+         - If the file is in the /src/styles folder it will compile /src/styles/style.scss
+         - If the file is elsewhere, like part of a Component, it will compile into the
+          appropriate folder in the /tmp directory, then ngc will run and compile for AOT
+  - src: Compiles the global styles
+
+  SASS render method is called and fs writes the files to appropriate folder
+  PostCSS processes the file in place, using the --replace argument
+
+
+*/
+
 
 let style = {
 
@@ -269,15 +312,22 @@ let style = {
     }
 };
 
-/* Init */
+/*
+
+  Init Tasks
+
+  A sequence of commands needed to clean and start the lib build
+
+*/
+
 
 let init = function() {
 
     rm('-rf', paths.rootDir+'/.tmp/');
     rm('-rf', './ngfactory');
-    mkdir('./ngfactory');
-
     rm('-rf', './'+paths.dist);
+
+    mkdir('./ngfactory');
     mkdir('./'+paths.dist);
     mkdir('./'+paths.dist+'/bundles');
 
@@ -286,7 +336,13 @@ let init = function() {
 
 };
 
-/* Watcher */
+/*
+
+  Watcher
+
+  Chokidar is used to watch files, run the above methods.
+
+*/
 
 
 let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {

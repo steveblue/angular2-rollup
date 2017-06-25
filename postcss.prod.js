@@ -1,10 +1,10 @@
 module.exports = {
   plugins: {
     'autoprefixer': {
-        'browsers': '> 5%'
+        browsers: 'last 20 versions'
     },
     'cssnano': {
-        'zindex': false
+        zindex: false
     }
   }
 }

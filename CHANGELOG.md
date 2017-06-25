@@ -1,4 +1,53 @@
 
+##4.3.0-beta.0
+
+- Updated to Angular 4.3.0-beta.0
+- Updated packages to latest compatible versions
+- Commented and cleaned up build scripts
+- PostCSS now defaults `autoprefixer` to `last 20 versions` for better IE support
+
+BREAKING CHANGES
+
+- postcss-cli config files must be migrated from pre 2.6.0 format to post 2.6.0 format
+
+EXAMPLE:
+
+BEFORE:
+
+```
+{
+    "use": ["autoprefixer"],
+    "local-plugins": true,
+    "autoprefixer": {
+        "browsers": "> 5%"
+    }
+}
+
+```
+
+AFTER:
+
+```
+module.exports = {
+  plugins: {
+    'autoprefixer': {
+        browsers: '> 5%'
+    }
+  }
+}
+
+```
+
+NOTE: Only the Object format is supported currently NOT the Array format. The build tools will parse the Object properties for the `--use` option.
+
+For more information: https://github.com/postcss/postcss-cli/wiki/Migrating-from-v2-to-v3
+
+
+
+
+----------------------------------------------------------------------------------------------------
+
+
 ##4.2.0
 
 - Updated to Angular 4.2.0

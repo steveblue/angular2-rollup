@@ -1,7 +1,0 @@
-{
-    "use": ["autoprefixer"],
-    "local-plugins": true,
-    "autoprefixer": {
-        "browsers": "> 5%"
-    }
-}
