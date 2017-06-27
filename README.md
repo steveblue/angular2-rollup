@@ -156,7 +156,7 @@ Here's how is works:
 
 In order to build for production, install [Closure Compiler](https://developers.google.com/closure/compiler/). Closure Compiler is the only tool that we found would transpile the ES2015 Rollup Bundle to ES5 with 100% reliability after it was processed with `ngc`. Closure Compiler is also a great solution because it provides further optimizations to the bundle after `ngc` and `Rollup` tree shakes the application. Google uses Closure Compiler internally to optimize JavaScript files for production.
 
-To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and the application file found [at the bottom of this page](https://developers.google.com/closure/compiler/). Rename the .jar file (ex: closure-compiler-v20160822.jar ) to `compiler.jar` and copy it into the project root directory (`./compiler.jar`). This file is in the `.gitignore`, which is why you have to manually install it. We tested the JavaScript version of Closure Compiler and found it resulted in `out of process memory` issues with multiple versions of `node`, so we opted to use the `Java` implementation.
+To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). We tested the JavaScript version of Closure Compiler and found it resulted in `out of process memory` issues with multiple versions of `node`, so we opted to use the `Java` implementation. The .jar is installed via npm.
 
 To build an application for production, run the following command.
 
