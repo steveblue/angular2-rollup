@@ -31,7 +31,16 @@ program
 
 if (program.serve) {
 
-     spawn('npm run dev:server', { shell: true, stdio: 'inherit' });
+    let serverCommand = 'npm run dev:server';
+
+    if (program.watch === true) {
+        serverCommand += ' watch=true';
+    }
+    else {
+        serverCommand += ' watch=false';
+    }
+
+    spawn(serverCommand, { shell: true, stdio: 'inherit' });
 
 }
 

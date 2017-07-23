@@ -52,21 +52,22 @@
     "build:lib": "rimraf dist && node build.lib.js",
     "build:prod": "rimraf build && node build.prod.js",
     "serve": "node server.js",
-    "postinstall": "npm run webdriver:update"
+    "postinstall": "npm run webdriver:update",
+    "webpack": "webpack-dev-server"
   },
   "dependencies": {
     "angular": "git+https://github.com/angular/angular",
-    "@angular/animations": "4.3.0-beta.0",
-    "@angular/common": "4.3.0-beta.0",
-    "@angular/compiler": "4.3.0-beta.0",
-    "@angular/compiler-cli": "4.3.0-beta.0",
-    "@angular/core": "4.3.0-beta.0",
-    "@angular/forms": "4.3.0-beta.0",
-    "@angular/http": "4.3.0-beta.0",
-    "@angular/platform-browser": "4.3.0-beta.0",
-    "@angular/platform-browser-dynamic": "4.3.0-beta.0",
-    "@angular/platform-server": "4.3.0-beta.0",
-    "@angular/router": "4.3.0-beta.0",
+    "@angular/animations": "4.3.0",
+    "@angular/common": "4.3.0",
+    "@angular/compiler": "4.3.0",
+    "@angular/compiler-cli": "4.3.0",
+    "@angular/core": "4.3.0",
+    "@angular/forms": "4.3.0",
+    "@angular/http": "4.3.0",
+    "@angular/platform-browser": "4.3.0",
+    "@angular/platform-browser-dynamic": "4.3.0",
+    "@angular/platform-server": "4.3.0",
+    "@angular/router": "4.3.0",
     "angular-in-memory-web-api": "~0.3.2",
     "commander": "^2.10.0",
     "core-js": "^2.4.1",
@@ -74,7 +75,7 @@
     "http": "^0.0.0",
     "https": "^1.0.0",
     "reflect-metadata": "~0.1.10",
-    "rxjs": "~5.4.1",
+    "rxjs": "~5.4.2",
     "systemjs": "0.20.14",
     "zone.js": "^0.8.12"
   },
@@ -131,7 +132,7 @@
     "shelljs": "^0.7.8",
     "ts-helpers": "^1.1.2",
     "tslint": "^5.4.3",
-    "typescript": "^2.2.2"
+    "typescript": "^2.4.0"
   },
   "bin": {
     "ngr": "cli.js"

@@ -9,6 +9,13 @@ module.exports = {
             '@angular',
             'rxjs'
         ],
+        prodLib: [
+            'angular-srcs/shims_for_IE.js',
+            'core-js/client/shim.min.js',
+            'core-js/client/shim.min.js.map',
+            'systemjs/dist/system.js',
+            'zone.js/dist/zone.js'
+        ],
         src: './node_modules',
         dist: './build/lib'
     },

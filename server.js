@@ -70,8 +70,14 @@ if ( env === 'prod' ) {
 }
 
 if ( env === 'dev' ) {
-   server = http.createServer(app);
-   live();
+
+  server = http.createServer(app);
+
+  if (canWatch === true) {
+    live();
+  }
+
+
 }
 
 

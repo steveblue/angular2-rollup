@@ -181,10 +181,11 @@ Displays the help documentation for using `ngr`
 
 #### --build
 
-- `ngr --build dev --watch` Builds development environment, runs watcher
+- `ngr --build dev` Builds development environment
 - `ngr --build prod` Builds production environment
 
 NOTE: Use `-b` instead of `--build`
+
 
 #### --generate
 
@@ -210,9 +211,18 @@ EXAMPLE: `ngr --generate service --name todo-list --dir path/to/folder`
 
 You can configure prefixes for Classes, Component and Directive selector in `build.config.js`. Omit the properties from the config to operate without prefixes. Defaults are included that follow the Angular Style Guide.
 
-#### --serve
 
-- `ngr --build dev --watch --serve` Builds development environment, runs watcher and starts up Express Server
+#### --serve & --watch
+
+You can choose to run an Express server in parallel with build tasks, with or without Livereload enabled
+
+- `ngr --build dev --watch --serve` Builds development environment, runs Express server with livereload
+- `ngr --serve` Runs Express server, make sure you have built beforehand!
+
+Production builds do not require the CLI, just the package.json
+
+- `NODE_ENV=prod node server.js --https` Run Express server with SSL for production, requires `./conf/ssl/key.pem` and `./conf/ssl/cert.pem`.
+
 
 
 # FAQ

@@ -1,4 +1,39 @@
 
+##4.3.0
+
+- Updated to Angular 4.3.0
+- Updated RxJs to ~5.4.2 and TypeScript to ^4.2.0, included TypeScript fix in RxJs
+- Fixed an issue that prevented the Express Server from running without LiveReload
+- Production builds now include only the specific library files production requires instead of entire library packages
+- Fixed an issue copying library files with deep directory structures
+- Removed system.js polyfills from index.html because they were deprecated in the package
+
+BREAKING CHANGES
+
+
+The production build now requires a new Object in build.config.js with the property name `prodLib`.
+
+```
+    dep: {
+        lib: [
+            'angular-srcs/shims_for_IE.js',
+            'core-js',
+            'reflect-metadata',
+            'zone.js',
+            'systemjs',
+            '@angular',
+            'rxjs'
+        ],
+        prodLib: [
+            'angular-srcs/shims_for_IE.js',
+            'core-js/client/shim.min.js',
+            'core-js/client/shim.min.js.map',
+            'systemjs/dist/system.js',
+            'zone.js/dist/zone.js'
+        ]
+```
+
+
 ##4.3.0-beta.0
 
 - Updated to Angular 4.3.0-beta.0

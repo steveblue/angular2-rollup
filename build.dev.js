@@ -88,7 +88,7 @@ const copy = {
             if (paths.dep.lib[i].split('/').pop().split('.').length > 1) { // file
               let path = paths.dep.dist + '/' + paths.dep.lib[i];
               if (!fs.existsSync(path.substring(0, path.lastIndexOf('/')))) {
-                mkdir(path.substring(0, path.lastIndexOf('/')));
+                mkdir('-p', path.substring(0, path.lastIndexOf('/')));
               } // catch folders
               cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
             } else { // folder
@@ -97,7 +97,7 @@ const copy = {
 
             log(paths.dep.lib[i], 'copied', 'to',  paths.dep.dist + '/' + paths.dep.lib[i]);
 
-       }
+        }
     }
 };
 
