@@ -1,3 +1,8 @@
+##4.3.5
+
+- Updated to Angular 4.3.5
+- Deprecated `@types/core-js` and instead configured `compilerOptions.lib` for the dev build
+
 
 ##4.3.0
 
