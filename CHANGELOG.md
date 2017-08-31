@@ -1,3 +1,9 @@
+##4.3.6
+
+- Updated to Angular 4.3.6
+- Fixed issue in library build that prevented global CSS form compiling minified
+
+
 ##4.3.5
 
 - Updated to Angular 4.3.5
