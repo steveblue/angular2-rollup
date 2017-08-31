@@ -2,13 +2,12 @@
 
 require('shelljs/global');
 
-
+const path        = require('path');
 const fs          = require('fs');
 const program     = require('commander');
 const spawn       = require('child_process').spawn;
 const utils       = require('./build.utils.js');
 const package     = require('./package.json');
-
 
 let cliCommand = '';
 
@@ -26,6 +25,7 @@ program
     .option('-t, --test [bool]', 'Run unit tests')
     .option('-l, --lint [bool]', 'Run Codelyzer on startup')
     .option('--serve [bool]', 'Run Express Server')
+    .option('--scaffold [bool]', 'Scaffold a new project')
     .parse(process.argv);
 
 
@@ -84,6 +84,14 @@ if (program.generate) {
     };
 
     utils.generate.copy(options);
+
+}
+
+
+if (program.scaffold) {
+
+    cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
+    spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
 }
 

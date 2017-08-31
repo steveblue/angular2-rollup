@@ -53,7 +53,7 @@
     "build:prod": "rimraf build && node build.prod.js",
     "serve": "node server.js",
     "postinstall": "npm run webdriver:update",
-    "webpack": "webpack-dev-server"
+    "scaffold": "node build.scaffold.js"
   },
   "dependencies": {
     "@angular/animations": "4.3.6",

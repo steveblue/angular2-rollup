@@ -105,6 +105,8 @@ const warn = function(action, noun) {
     cons.warn(a + ' ' + n);
 };
 
+config.cliRoot = path.dirname(fs.realpathSync(__filename));
+config.projectRoot = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
 
 const utils = {
     paths: config,
