@@ -67,7 +67,7 @@
     "@angular/platform-browser-dynamic": "4.3.6",
     "@angular/platform-server": "4.3.6",
     "@angular/router": "4.3.6",
-    "angular": "git+https://github.com/angular/angular@4.3.6",
+    "angular": "git+https://github.com/angular/angular",
     "angular-in-memory-web-api": "~0.3.2",
     "commander": "^2.10.0",
     "core-js": "^2.4.1",
