@@ -36,6 +36,7 @@ const files     = [
     'server.js',
     'tsconfig.dev.json',
     'tsconfig.prod.json',
+    'tsconfig.lib.json',
     'tslint.json'
 ];
 

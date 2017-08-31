@@ -48,6 +48,8 @@ if (program.build) {
 
     cliCommand += 'npm run build:'+program.build;
 
+    cliCommand = 'rimraf build && node '+path.dirname(fs.realpathSync(__filename))+'/build.'+program.build+'.js'
+
     if (program.watch === true) {
         cliCommand += ' watch=true';
     }

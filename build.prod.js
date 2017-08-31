@@ -57,7 +57,7 @@ const copy = {
 
         cp('-R', paths.src+'/public/.', paths.build+'/');
 
-        exec(scripts['replace:html-prod'], function(code, output, error){
+        exec(scripts[paths.projectRoot+'/node_modules/.bin/htmlprocessor ./build/index.html -o ./build/index.html -e prod'], function(code, output, error){
                log('index.html','formatted', 'for',  colors.bold(colors.cyan(env)));
         });
 
@@ -143,11 +143,11 @@ const compile = {
 
               log('ngc', 'started', 'compiling', 'ngfactory');
 
-              let tsc = exec(scripts['compile:'+env], function(code, output, error) {
+              let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p ./tsconfig.prod.json', function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(scripts['bundle:'+env], function(code, output, error) {
+                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c rollup.config.js', function(code, output, error) {
                      log('Rollup', 'bundled', 'bundle.es2015.js in', './build');
                      log('Closure Compiler', 'is optimizing', 'bundle.js', 'for '+ colors.bold(colors.cyan(env)));
 
@@ -212,7 +212,7 @@ let style = {
             fs.writeFile(outFile, result.css, function(err){
               if(!err){
 
-                let postcss = exec('postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
+                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));

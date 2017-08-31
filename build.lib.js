@@ -126,7 +126,7 @@ const compile = {
 
 
         // remove moduleId prior to ngc build. TODO: look for another method.
-        ls('tmp/**/*.ts').forEach(function(file) {
+        ls('./tmp/**/*.ts').forEach(function(file) {
 
           compile.clean(file);
           sed('-i', /^.*moduleId: module.id,.*$/, '', file);
@@ -137,13 +137,13 @@ const compile = {
 
               log('ngc', 'started', 'compiling', 'ngfactory');
 
-              let tsc = exec(scripts['compile:lib'], function(code, output, error) {
+              let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p ./tsconfig.lib.json', function(code, output, error) {
 
                   log('ngc', 'compiled', '/ngfactory');
                   cp('-R', paths.lib+'/.', 'ngfactory/');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(scripts['rollup:lib'], function(code, output, error) {
+                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.cliRoot+'/rollup.config.lib.js', function(code, output, error) {
 
                      log('Rollup', 'bundled', paths.libFilename+'.js in', './'+paths.dist);
                      compile.umdLib();
@@ -158,17 +158,17 @@ const compile = {
 
     umdLib : () => {
 
-         let tsc = exec(scripts['compile:umd'], function(code, output, error) {
+         let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p '+paths.cliRoot+'/tsconfig.lib.es5.json', function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(scripts['rollup:umd'], function(code, output, error) {
+                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.cliRoot+'/rollup.config.lib-umd.js', function(code, output, error) {
 
                      log('Rollup', 'bundled', paths.libFilename+'.umd.js in', './'+paths.dist+'/bundles');
 
                      log('Babel', 'is transpiling', paths.libFilename+'.umd.js');
 
-                     let transpile = exec(scripts['transpile:umd'], function(code, output, error){
+                     let transpile = exec(paths.projectRoot+'/node_modules/.bin/babel --plugins=transform-es2015-modules-commonjs ./dist/bundles/default-lib.umd.js --out-file ./dist/bundles/default-lib.umd.js', function(code, output, error){
                           log('Babel', 'transpiled', './'+paths.dist+'/bundles/'+paths.libFilename+' to', './'+paths.dist+'/bundles/'+paths.libFilename+'.umd.js');
                           compile.es5Lib();
                      });
@@ -184,11 +184,12 @@ const compile = {
 
 
 
-         let tsc = exec(scripts['compile:es5'], function(code, output, error) {
-                  log('ngc', 'compiled', '/ngfactory');
+         let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p '+paths.cliRoot+'/tsconfig.lib.es5.json', function(code, output, error) {
+
+          log('ngc', 'compiled', '/ngfactory');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(scripts['rollup:es5'], function(code, output, error) {
+                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.cliRoot+'/rollup.config.lib-es5.js', function(code, output, error) {
 
                     log('Rollup', 'bundled', paths.libFilename+'.es5.js in', './'+paths.dist);
 
@@ -210,7 +211,7 @@ const compile = {
 
                     log('Babel', 'is transpiling', paths.libFilename+'.es5.js');
 
-                     let transpile = exec(scripts['transpile:lib'], function(code, output, error){
+                     let transpile = exec(paths.projectRoot+'/node_modules/.bin/babel --presets=es2015-rollup ./dist/default-lib.es5.js --out-file ./dist/default-lib.es5.js', function(code, output, error){
                           log('Babel', 'transpiled', './'+paths.dist+'/'+paths.libFilename+' to', './'+paths.dist+'/'+paths.libFilename+'.es5.js');
                      });
 
@@ -267,7 +268,7 @@ let style = {
 
             fs.writeFile(outFile, result.css, function(err){
 
-                let postcss = exec('postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
+                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
                    if( !watch ) {
 
                       if( hasCompletedFirstStylePass === true || styleFiles.indexOf(path) === styleFiles.length - 1) {

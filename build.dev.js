@@ -28,6 +28,7 @@ let styleFiles = [];
 let hasCompletedFirstStylePass = false;
 let postcssConfig = ' -u';
 
+
 /* Test for arguments the ngr cli spits out */
 
 process.argv.forEach((arg)=>{
@@ -58,7 +59,7 @@ const copy = {
 
         cp('-R', paths.src+'/public/.', 'build/');
 
-        exec(scripts['replace:html-dev'], function(code, output, error){
+        exec(paths.projectRoot+'/node_modules/.bin/htmlprocessor ./build/index.html -o ./build/index.html -e dev', function(code, output, error){
               log('index.html', 'formatted',  'for',  colors.bold(colors.cyan(env)));
         });
 
@@ -123,7 +124,7 @@ const compile = {
                log('typescript', 'started', 'transpiling', paths.src+'/*ts');
             }
 
-            let tsc = exec(scripts['transpile:src'], function(code, output, error) {
+            let tsc = exec(paths.projectRoot+'/node_modules/.bin/tsc -p ./tsconfig.dev.json', function(code, output, error) {
                 if (path) {
                   log('typescript', 'transpiled', path+' to', 'build/'+path.replace('.ts','.js'));
                   cp(path, 'build/'+path);
@@ -183,7 +184,7 @@ let style = {
 
                 if (watch === true) log('node-sass', 'compiled', 'component style at', outFile);
 
-                let postcss = exec('postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function() {
+                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function() {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
