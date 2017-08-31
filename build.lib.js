@@ -267,7 +267,7 @@ let style = {
 
             fs.writeFile(outFile, result.css, function(err){
 
-                let postcss = exec('postcss -c postcss.'+env+'.js -r '+outFile, function(code, output, error) {
+                let postcss = exec('postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
                    if( !watch ) {
 
                       if( hasCompletedFirstStylePass === true || styleFiles.indexOf(path) === styleFiles.length - 1) {

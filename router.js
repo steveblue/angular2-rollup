@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = require('express').Router();
+const compression = require('shrink-ray');
 const paths = require('./build.config.js');
 
 module.exports = function(app) {
@@ -28,6 +29,8 @@ module.exports = function(app) {
 
 
 // ROUTES
+
+  app.use(compression());
 
   app.use('/', express.static(process.cwd() + '/'+paths.build));
 
