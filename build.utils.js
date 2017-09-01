@@ -44,7 +44,17 @@ const clim = require('clim');
 const cons = clim();
 const colors = require('chalk');
 const scripts = require('./package.json').scripts;
-const config = require('./build.config.js');
+
+const cliRoot = path.dirname(fs.realpathSync(__filename));
+const projectRoot = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
+
+fs.writeFile(projectRoot + '/cli.config.js', 'module.exports = { cliRoot: "'+ cliRoot +'"}', function (err) {
+    if (err) {
+        return console.log(err);
+    }
+}); 
+
+const config = require(projectRoot+'/build.config.js');
 
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
@@ -57,6 +67,7 @@ const styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
 const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
+
 
 /* Format time each LOG displays in the Terminal */
 
@@ -105,8 +116,8 @@ const warn = function(action, noun) {
     cons.warn(a + ' ' + n);
 };
 
-config.cliRoot = path.dirname(fs.realpathSync(__filename));
-config.projectRoot = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
+config.cliRoot = cliRoot;
+config.projectRoot = projectRoot;
 
 const utils = {
     paths: config,
@@ -164,7 +175,7 @@ const utils = {
                 fs.readFile(fileName, 'utf8', function (err, data) {
 
                     if (err) {
-                        return console.log(err);
+                        return warn(err);
                     }
 
                     let result = data;

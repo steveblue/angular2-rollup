@@ -11,6 +11,14 @@ const sass        = require('node-sass');
 const postcss     = require('./postcss.'+env+'.js');
 const minifyHtml  = require('html-minifier').minify;
 
+if (utils.paths.preLibraryBuild) {
+  const preBuild = utils.paths.preLibraryBuild;
+}
+
+if (utils.paths.postLibraryBuild) {
+  const postBuild = utils.paths.postLibraryBuild;
+}
+
 const console   = utils.console;
 const colors    = utils.colors;
 const scripts   = utils.scripts;
@@ -137,13 +145,13 @@ const compile = {
 
               log('ngc', 'started', 'compiling', 'ngfactory');
 
-              let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p ./tsconfig.lib.json', function(code, output, error) {
+              let tsc = exec(paths.rootDir+'/node_modules/.bin/ngc -p ./tsconfig.lib.json', function(code, output, error) {
 
                   log('ngc', 'compiled', '/ngfactory');
                   cp('-R', paths.lib+'/.', 'ngfactory/');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.cliRoot+'/rollup.config.lib.js', function(code, output, error) {
+                 let bundle = exec(paths.rootDir+'/node_modules/.bin/rollup -c '+paths.rootDir+'/rollup.config.lib.js', function(code, output, error) {
 
                      log('Rollup', 'bundled', paths.libFilename+'.js in', './'+paths.dist);
                      compile.umdLib();
@@ -158,17 +166,17 @@ const compile = {
 
     umdLib : () => {
 
-         let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p '+paths.cliRoot+'/tsconfig.lib.es5.json', function(code, output, error) {
+         let tsc = exec(paths.rootDir+'/node_modules/.bin/ngc -p ./tsconfig.lib.es5.json', function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.cliRoot+'/rollup.config.lib-umd.js', function(code, output, error) {
+                 let bundle = exec(paths.rootDir+'/node_modules/.bin/rollup -c '+paths.rootDir+'/rollup.config.lib-umd.js', function(code, output, error) {
 
                      log('Rollup', 'bundled', paths.libFilename+'.umd.js in', './'+paths.dist+'/bundles');
 
                      log('Babel', 'is transpiling', paths.libFilename+'.umd.js');
-
-                     let transpile = exec(paths.projectRoot+'/node_modules/.bin/babel --plugins=transform-es2015-modules-commonjs ./dist/bundles/default-lib.umd.js --out-file ./dist/bundles/default-lib.umd.js', function(code, output, error){
+       
+                     let transpile = exec(paths.rootDir + '/node_modules/.bin/babel --plugins=transform-es2015-modules-commonjs ./dist/bundles/' + paths.libFilename + '.umd.js --out-file ./dist/bundles/' + paths.libFilename +'.umd.js', function(code, output, error){
                           log('Babel', 'transpiled', './'+paths.dist+'/bundles/'+paths.libFilename+' to', './'+paths.dist+'/bundles/'+paths.libFilename+'.umd.js');
                           compile.es5Lib();
                      });
@@ -184,16 +192,16 @@ const compile = {
 
 
 
-         let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p '+paths.cliRoot+'/tsconfig.lib.es5.json', function(code, output, error) {
+         let tsc = exec(paths.rootDir+'/node_modules/.bin/ngc -p ./tsconfig.lib.es5.json', function(code, output, error) {
 
           log('ngc', 'compiled', '/ngfactory');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.cliRoot+'/rollup.config.lib-es5.js', function(code, output, error) {
+                 let bundle = exec(paths.rootDir+'/node_modules/.bin/rollup -c '+paths.rootDir+'/rollup.config.lib-es5.js', function(code, output, error) {
 
                     log('Rollup', 'bundled', paths.libFilename+'.es5.js in', './'+paths.dist);
 
-                    exec(scripts['copy:lib'], function() {
+                    exec(require(utils.paths.rootDir + '/package.json').scripts['copy:lib'], function() {
 
                       log('Copied', 'd.ts, metadata.json', ' to ', './'+paths.dist);
 
@@ -201,8 +209,12 @@ const compile = {
 
                       find('./'+paths.dist).filter(function(file) {
 
-                        if ( file.match(/component.ts$/) || file.match(/directive.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
-                          rm(file);
+                        if (utils.paths.buildHooks && utils.paths.buildHooks.lib && utils.paths.buildHooks.lib.clean) {
+                          utils.paths.buildHooks.lib.clean(file);
+                        } else {
+                          if (file.match(/component.ts$/) || file.match(/directive.ts$/) || file.match(/injectable.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
+                            rm(file);
+                          }
                         }
 
                       });
@@ -211,13 +223,17 @@ const compile = {
 
                     log('Babel', 'is transpiling', paths.libFilename+'.es5.js');
 
-                     let transpile = exec(paths.projectRoot+'/node_modules/.bin/babel --presets=es2015-rollup ./dist/default-lib.es5.js --out-file ./dist/default-lib.es5.js', function(code, output, error){
+                    let transpile = exec(paths.rootDir + '/node_modules/.bin/babel --presets=es2015-rollup ./dist/' + paths.libFilename + '.es5.js --out-file ./dist/' + paths.libFilename +'.es5.js', function(code, output, error){
                           log('Babel', 'transpiled', './'+paths.dist+'/'+paths.libFilename+' to', './'+paths.dist+'/'+paths.libFilename+'.es5.js');
                      });
 
-                    exec(scripts['copy:package'], function() {
+                    exec( require(utils.paths.rootDir + '/package.json').scripts['copy:package'], function() {
 
                       log('Copied', 'package.json', ' to ', './'+paths.dist);
+
+                      if (utils.paths.buildHooks && utils.paths.buildHooks.lib && utils.paths.buildHooks.lib.post) {
+                        utils.paths.buildHooks.lib.post();
+                      }
 
                     });
 
@@ -268,7 +284,7 @@ let style = {
 
             fs.writeFile(outFile, result.css, function(err){
 
-                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
+                let postcss = exec(paths.rootDir+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
                    if( !watch ) {
 
                       if( hasCompletedFirstStylePass === true || styleFiles.indexOf(path) === styleFiles.length - 1) {
@@ -293,22 +309,27 @@ let style = {
         mkdir(paths.dist+'/style');
 
         style.file(paths.src+'/style/style.scss');
+      
+        if (ls('./' + paths.lib + '/**/*.scss').length > 0) {
 
-        ls('./'+paths.lib+'/**/*.scss').forEach(function(file, index) {
+          ls('./' + paths.lib + '/**/*.scss').forEach(function (file, index) {
 
-          if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
-             styleFiles.push(file);
-          }
+            if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+              styleFiles.push(file);
+            }
 
-        });
+          });
 
-        ls('./'+paths.lib+'/**/*.scss').forEach(function(file, index) {
+          ls('./' + paths.lib + '/**/*.scss').forEach(function (file, index) {
 
-          if( file.replace(/^.*[\\\/]/, '')[0] !== '_' ) {
-            style.file(file);
-          }
+            if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+              style.file(file);
+            }
 
-        });
+          });
+
+        }
+
 
     }
 };
@@ -331,6 +352,10 @@ let init = function() {
     mkdir('./ngfactory');
     mkdir('./'+paths.dist);
     mkdir('./'+paths.dist+'/bundles');
+
+    if (utils.paths.buildHooks && utils.paths.buildHooks.lib &&  utils.paths.buildHooks.lib.pre) {
+      utils.paths.buildHooks.lib.pre();
+    }
 
     clean.lib();
     style.src();

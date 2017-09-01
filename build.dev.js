@@ -4,7 +4,6 @@ require('shelljs/global');
 
 const env       = 'dev';
 
-
 const fs        = require('fs');
 const chokidar  = require('chokidar');
 const sass      = require('node-sass');
@@ -59,7 +58,7 @@ const copy = {
 
         cp('-R', paths.src+'/public/.', 'build/');
 
-        exec(paths.projectRoot+'/node_modules/.bin/htmlprocessor ./build/index.html -o ./build/index.html -e dev', function(code, output, error){
+        exec(paths.rootDir+'/node_modules/.bin/htmlprocessor ./build/index.html -o ./build/index.html -e dev', function(code, output, error){
               log('index.html', 'formatted',  'for',  colors.bold(colors.cyan(env)));
         });
 
@@ -124,7 +123,14 @@ const compile = {
                log('typescript', 'started', 'transpiling', paths.src+'/*ts');
             }
 
-            let tsc = exec(paths.projectRoot+'/node_modules/.bin/tsc -p ./tsconfig.dev.json', function(code, output, error) {
+            // let tsConfigPath = fs.existsSync(paths.rootDir + '/tsconfig.dev.json') ? paths.rootDir : paths.cliRoot;
+
+            // let tsc = exec(paths.rootDir + '/node_modules/.bin/tsc -p ' + tsConfigPath + '/tsconfig.dev.json', function (code, output, error) {
+
+            //let tsConfigPath = fs.existsSync(paths.rootDir + '/conf/tsconfig.dev.json') ? paths.rootDir : paths.cliRoot;
+
+            let tsc = exec(paths.rootDir + '/node_modules/.bin/tsc -p ./tsconfig.dev.json', function(code, output, error) {
+
                 if (path) {
                   log('typescript', 'transpiled', path+' to', 'build/'+path.replace('.ts','.js'));
                   cp(path, 'build/'+path);
@@ -133,11 +139,12 @@ const compile = {
                 }
 
                 if(hasInit === false) {
-                    copy.html();
-                    style.src();
+                  copy.html();
+                  style.src();
                 }
 
                 isCompiling = false;
+                
 
             });
        });
@@ -184,7 +191,7 @@ let style = {
 
                 if (watch === true) log('node-sass', 'compiled', 'component style at', outFile);
 
-                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function() {
+                let postcss = exec(paths.rootDir+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function() {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
@@ -224,6 +231,10 @@ let style = {
         });
 
         hasInit = true;
+        
+        if (utils.paths.buildHooks && utils.paths.buildHooks[env] && utils.paths.buildHooks[env].post) {
+          utils.paths.buildHooks[env].post();
+        }
 
     }
 };
@@ -244,6 +255,10 @@ let init = function() {
 
     mkdir('./'+paths.build);
     mkdir('./'+paths.build+'/lib');
+
+    if (utils.paths.buildHooks && utils.paths.buildHooks[env] && utils.paths.buildHooks[env].pre) {
+      utils.paths.buildHooks[env].pre();
+    }
 
     copy.lib();
     copy.public();

@@ -8,6 +8,13 @@ const program     = require('commander');
 const spawn       = require('child_process').spawn;
 const utils       = require('./build.utils.js');
 const package     = require('./package.json');
+const paths        = utils.paths;
+
+fs.writeFile(paths.projectRoot + '/cli.config.js', 'module.exports = { cliRoot: "' + paths.cliRoot + '"}', function (err) {
+    if (err) {
+        return console.log(err);
+    }
+}); 
 
 let cliCommand = '';
 
@@ -46,9 +53,9 @@ if (program.serve) {
 
 if (program.build) {
 
-    cliCommand += 'npm run build:'+program.build;
+    let buildRoot = fs.existsSync(paths.projectRoot + '/build.' + program.build + '.js') ? paths.projectRoot : paths.cliRoot;
 
-    cliCommand = 'rimraf build && node '+path.dirname(fs.realpathSync(__filename))+'/build.'+program.build+'.js'
+    cliCommand = 'rimraf build && node ' + buildRoot + '/build.'+program.build+'.js';
 
     if (program.watch === true) {
         cliCommand += ' watch=true';

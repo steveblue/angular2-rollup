@@ -32,11 +32,16 @@ const files     = [
     'postcss.prod.js',
     'protractor.config.js',
     'rollup.config.js',
+    'rollup.config.lib.js',
+    'rollup.config.lib-es5.js',
+    'rollup.config.lib-umd.js',
     'router.js',
     'server.js',
     'tsconfig.dev.json',
     'tsconfig.prod.json',
     'tsconfig.lib.json',
+    'tsconfig.lib-es5.json',
+    'tsconfig.json',
     'tslint.json'
 ];
 
