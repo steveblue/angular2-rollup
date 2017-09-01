@@ -8,8 +8,8 @@ const fs = require('fs');
 const app = express();
 const paths = require('./build.config.js');
 const config = {
-  dev: require('./conf/config.local.js'),
-  prod: require('./conf/config.prod.js')
+  dev: require('./server.config.dev.js'),
+  prod: require('./server.config.prod.js')
 };
 
 

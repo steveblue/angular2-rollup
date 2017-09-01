@@ -8,6 +8,8 @@ const colors      = require('colors');
 const clim = require('clim');
 const cons = clim();
 
+let noLib = false;
+
 const log = function (action, noun, verb, next) {
     let a = action ? colors.magenta(action) : '';
     let n = noun ? colors.green(noun) : '';
@@ -18,7 +20,6 @@ const log = function (action, noun, verb, next) {
 
 
 const files     = [
-    'conf',
     'src',
     '.editorconfig',
     '.gitignore',
@@ -36,6 +37,8 @@ const files     = [
     'rollup.config.lib-es5.js',
     'rollup.config.lib-umd.js',
     'router.js',
+    'server.config.dev.js',
+    'server.config.prod.js',
     'server.js',
     'tsconfig.dev.json',
     'tsconfig.prod.json',
@@ -49,9 +52,11 @@ const files     = [
 
 /* Test for arguments the ngr cli spits out */
 
-// process.argv.forEach((arg)=>{
-//   if (arg.includes('no-lib')) {}
-// });
+process.argv.forEach((arg)=>{
+  if (arg.includes('noLib')) {
+      noLib = true;
+  }
+});
 
 
 /*
@@ -78,9 +83,19 @@ const copy = {
 
 let init = function() {
 
-    // console.log('GLOBAL ', paths.cliRoot);
-    // console.log('LOCAL ', paths.projectRoot);
-    copy.scaffold(files);
+
+
+    if (noLib) {
+
+        copy.scaffold(files.filter((filename)=>{
+            return filename.includes('lib') === false;
+        }));
+
+        rm('-rf', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/src/lib');
+
+    } else {
+        copy.scaffold(files);
+    }
 
     cp(path.dirname(fs.realpathSync(__filename)) + '/package.scaffold.json', path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json');
 

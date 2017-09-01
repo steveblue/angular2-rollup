@@ -33,6 +33,7 @@ program
     .option('-l, --lint [bool]', 'Run Codelyzer on startup')
     .option('--serve [bool]', 'Run Express Server')
     .option('--scaffold [bool]', 'Scaffold a new project')
+    .option('--noLib [bool]', 'Scaffold a new project without support for library builds')
     .parse(process.argv);
 
 
@@ -99,7 +100,12 @@ if (program.generate) {
 
 if (program.scaffold) {
 
-    cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
+    if (program.noLib) {
+        cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js --noLib';
+    } else {
+        cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
+    }
+
     cp(path.dirname(fs.realpathSync(__filename))+'/build.config.js', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()));
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 

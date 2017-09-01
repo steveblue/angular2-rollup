@@ -1,3 +1,83 @@
+##5.0.0
+
+- Updated to Angular 5.0.0
+- CLI must now be installed globally `npm i -g angular2-rollup`
+- Scaffold a new app with `ngr --scaffold --noLib`
+- Scaffold a new app with support for library builds with `ngr --scaffold`
+- Added pre and post hooks to builds.
+    Users can now add the property `buildHooks` to `build.config.js`.
+    To do something at the end of the production build:
+
+```
+buildHooks: {
+    prod: {
+        pre: function() {
+            // do something here before the app compiles
+        },
+        post: function() {
+            // do something here after the app compiles
+        }
+    }
+}
+```
+
+Note: New hooks may be added on a case by base basis in the future.
+
+
+MAJOR BREAKING CHANGES
+
+New apps built with this CLI should use the new command `ngr --scaffold --noLib`
+
+MIGRATING from 4.3.6
+
+If you have augmented the builds, the new pre and post hooks will help fullfill use cases where a custom script needs to run prior to compilation and after. It is recommended that you migrate any tasks to these new methods.
+
+If a build has diverged significantly, you can include the build file in your local project and it will override the original. This is not recommended.
+
+Remove all build files except `build.config.js` unless the use cases above apply to your situation.
+
+-  build.dev.js
+-  build.lib.js
+-  build.prod.js
+-  build.scaffold.js
+-  build.utils.js
+
+Remove `cli.js`
+
+Rename `./conf/config.local.js` to `./server.config.dev.js`
+Rename `./conf/config.prod.js` to `./server.config.prod.js`
+
+Update `package.json`
+
+The necessary scripts in the `package.json` have been greatly reduced. Below is an example of the package.json shipped with 5.0.0. Remove any deprecated scripts.
+
+```
+"scripts": {
+      "clean": "rimraf node_modules ngfactory doc build && npm cache clean",
+      "clean:install": "npm run clean && npm install",
+      "clean:build": "rimraf build",
+      "clean:tmp": "rimraf tmp",
+      "clean:ngfactory": "rimraf ngfactory && mkdir ngfactory",
+      "copy:lib": "rsync -a --exclude=*.js ngfactory/ dist",
+      "copy:package": "cp ./src/lib/package.json ./dist/package.json",
+      "transpile:prod": "java -jar node_modules/google-closure-compiler/compiler.jar --warning_level=QUIET --language_in=ES6 --language_out=ES5 --js ./build/bundle.es2015.js --js_output_file ./build/bundle.js",
+      "dev:server": "node server.js",
+      "webdriver:update": "webdriver-manager update",
+      "webdriver:start": "webdriver-manager start",
+      "lint": "tslint --force \"src/app/**/*.ts\"",
+      "e2e": "protractor protractor.config.js",
+      "e2e:live": "protractor protractor.config.js --elementExplorer",
+      "pretest": "",
+      "test": "karma start karma.conf.js",
+      "test:watch": "karma start karma.conf.js --no-single-run --auto-watch",
+      "ci": "npm run e2e && npm run test",
+      "ci:watch": "npm run e2e && npm run test:watch",
+      "start": "ngr --build dev --watch --serve",
+      "serve": "node server.js",
+      "postinstall": "npm run webdriver:update"
+    }
+```
+
 ##4.3.6
 
 - Updated to Angular 4.3.6
