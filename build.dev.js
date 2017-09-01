@@ -81,6 +81,8 @@ const copy = {
     },
     lib: () => {
 
+
+
         mkdir('-p', __dirname + '/' + paths.dep.dist);
 
         for( var i=0;  i < paths.dep.lib.length; i++ ) {
@@ -144,7 +146,7 @@ const compile = {
                 }
 
                 isCompiling = false;
-                
+
 
             });
        });
@@ -231,7 +233,7 @@ let style = {
         });
 
         hasInit = true;
-        
+
         if (utils.paths.buildHooks && utils.paths.buildHooks[env] && utils.paths.buildHooks[env].post) {
           utils.paths.buildHooks[env].post();
         }

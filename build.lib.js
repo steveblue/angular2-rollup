@@ -175,7 +175,7 @@ const compile = {
                      log('Rollup', 'bundled', paths.libFilename+'.umd.js in', './'+paths.dist+'/bundles');
 
                      log('Babel', 'is transpiling', paths.libFilename+'.umd.js');
-       
+
                      let transpile = exec(paths.rootDir + '/node_modules/.bin/babel --plugins=transform-es2015-modules-commonjs ./dist/bundles/' + paths.libFilename + '.umd.js --out-file ./dist/bundles/' + paths.libFilename +'.umd.js', function(code, output, error){
                           log('Babel', 'transpiled', './'+paths.dist+'/bundles/'+paths.libFilename+' to', './'+paths.dist+'/bundles/'+paths.libFilename+'.umd.js');
                           compile.es5Lib();
@@ -201,6 +201,7 @@ const compile = {
 
                     log('Rollup', 'bundled', paths.libFilename+'.es5.js in', './'+paths.dist);
 
+                    // loop over all files in ngfactory, remove js files, copy to dist
                     exec(require(utils.paths.rootDir + '/package.json').scripts['copy:lib'], function() {
 
                       log('Copied', 'd.ts, metadata.json', ' to ', './'+paths.dist);
@@ -309,7 +310,7 @@ let style = {
         mkdir(paths.dist+'/style');
 
         style.file(paths.src+'/style/style.scss');
-      
+
         if (ls('./' + paths.lib + '/**/*.scss').length > 0) {
 
           ls('./' + paths.lib + '/**/*.scss').forEach(function (file, index) {

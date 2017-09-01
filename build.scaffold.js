@@ -4,17 +4,17 @@ require('shelljs/global');
 
 const fs          = require('fs');
 const path        = require('path');
-const utils       = require(path.dirname(fs.realpathSync(__filename))+'/build.utils.js');
+const colors      = require('colors');
+const clim = require('clim');
+const cons = clim();
 
-
-const console   = utils.console;
-const colors    = utils.colors;
-const scripts   = utils.scripts;
-const paths     = utils.paths;
-const log       = utils.log;
-const warn      = utils.warn;
-const clean     = utils.clean;
-
+const log = function (action, noun, verb, next) {
+    let a = action ? colors.magenta(action) : '';
+    let n = noun ? colors.green(noun) : '';
+    let v = verb ? colors.cyan(verb) : '';
+    let x = next ? colors.dim(colors.white(next)) : '';
+    cons.log(a + ' ' + n + ' ' + v + ' ' + x );
+};
 
 
 const files     = [
@@ -23,11 +23,11 @@ const files     = [
     '.editorconfig',
     '.gitignore',
     '.npmignore',
+    'build.config.js',
     'karma-test-shim.js',
     'karma.conf.js',
     'main.prod.ts',
     'main.ts',
-    'package.json',
     'postcss.dev.js',
     'postcss.prod.js',
     'protractor.config.js',
@@ -40,7 +40,7 @@ const files     = [
     'tsconfig.dev.json',
     'tsconfig.prod.json',
     'tsconfig.lib.json',
-    'tsconfig.lib-es5.json',
+    'tsconfig.lib.es5.json',
     'tsconfig.json',
     'tslint.json'
 ];
@@ -50,7 +50,7 @@ const files     = [
 /* Test for arguments the ngr cli spits out */
 
 // process.argv.forEach((arg)=>{
-//   if (arg.includes('watch')) {}
+//   if (arg.includes('no-lib')) {}
 // });
 
 
@@ -63,13 +63,13 @@ const files     = [
 */
 
 const copy = {
-    file: (path) => {
-        cp('-R', path, paths.projectRoot+'/');
-        log(path, 'copied', 'to', paths.projectRoot+'/');
+    file: (p) => {
+        cp('-R', p, path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/');
+        log(p.split('/')[p.split('/').length - 1], 'copied', 'to', path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/');
     },
     scaffold: (files) => {
         files.forEach((filename)=>{
-            copy.file(paths.cliRoot + '/' + filename);
+            copy.file(path.dirname(fs.realpathSync(__filename)) + '/' + filename);
         })
     }
 };
@@ -81,6 +81,21 @@ let init = function() {
     // console.log('GLOBAL ', paths.cliRoot);
     // console.log('LOCAL ', paths.projectRoot);
     copy.scaffold(files);
+
+    cp(path.dirname(fs.realpathSync(__filename)) + '/package.scaffold.json', path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json');
+
+    fs.readFile(path.dirname(fs.realpathSync(__filename)) + '/package.scaffold.json', (err, script) => {
+
+        if (err) throw err;
+
+        script = JSON.parse(script);
+        script.name = path.basename(process.cwd());
+
+        fs.writeFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json', JSON.stringify(script, null, 4), function (err) {
+            if (err) log(err);
+        });
+
+      });
 
 
 };

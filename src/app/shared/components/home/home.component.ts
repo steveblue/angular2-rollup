@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
+
 @Component({
   moduleId: module.id,
   selector: 'cmp-prefix1-app-home',

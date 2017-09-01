@@ -70,3 +70,4 @@ _test-output/
 *.swp
 .vscode
 build/
+cli.config.js

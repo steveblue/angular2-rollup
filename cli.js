@@ -14,7 +14,7 @@ fs.writeFile(paths.projectRoot + '/cli.config.js', 'module.exports = { cliRoot: 
     if (err) {
         return console.log(err);
     }
-}); 
+});
 
 let cliCommand = '';
 
@@ -100,6 +100,7 @@ if (program.generate) {
 if (program.scaffold) {
 
     cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
+    cp(path.dirname(fs.realpathSync(__filename))+'/build.config.js', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()));
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
 }
