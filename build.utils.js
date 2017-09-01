@@ -54,8 +54,7 @@ fs.writeFile(projectRoot + '/cli.config.js', 'module.exports = { cliRoot: "'+ cl
     }
 });
 
-const config = require('./build.config.js');
-
+const config = require(projectRoot+'/build.config.js');
 
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;

@@ -25,7 +25,7 @@ process.argv.forEach(function(arg){
   if(arg === '--https') {
     ssl = true;
   }
-  console.log(arg);
+
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
   }

@@ -48,8 +48,7 @@ if (program.serve) {
         serverCommand += ' watch=false';
     }
 
-    spawn(serverCommand, { shell: true, stdio: 'inherit' });
-
+    spawn(serverCommand, { shell: true, stdio: false });
 }
 
 if (program.build) {
