@@ -58,7 +58,7 @@ const copy = {
 
         cp('-R', paths.src+'/public/.', 'build/');
 
-        exec(paths.rootDir+'/node_modules/.bin/htmlprocessor ./build/index.html -o ./build/index.html -e dev', function(code, output, error){
+        exec(paths.cliRoot+'/node_modules/.bin/htmlprocessor ./build/index.html -o ./build/index.html -e dev', function(code, output, error){
               log('index.html', 'formatted',  'for',  colors.bold(colors.cyan(env)));
         });
 
