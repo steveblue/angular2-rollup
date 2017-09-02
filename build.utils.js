@@ -143,6 +143,8 @@ config.cliRoot = cliRoot;
 config.processRoot = processRoot;
 config.projectRoot = projectRoot;
 
+// warn(JSON.stringify(config, null, 4));
+
 const utils = {
     paths: config,
     scripts: scripts,
