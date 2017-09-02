@@ -2,8 +2,9 @@
 
 - Updated to Angular 5.0.0
 - CLI must now be installed globally `npm i -g angular2-rollup`
-- Scaffold a new app with `ngr --scaffold --noLib`
-- Scaffold a new app with support for library builds with `ngr --scaffold`
+- `--build` is deprecated for `build` command, made little sense in argument syntax
+- Scaffold a new app with `ngr scaffold`
+- Scaffold a new app with support for library builds with `ngr scaffold --lib`
 - Added pre and post hooks to builds.
     Users can now add the property `buildHooks` to `build.config.js`.
     To do something at the end of the production build:
@@ -26,7 +27,7 @@ Note: New hooks may be added on a case by base basis in the future.
 
 MAJOR BREAKING CHANGES
 
-New apps built with this CLI should use the new command `ngr --scaffold --noLib`
+New apps built with this CLI should use the new command `ngr scaffold`
 
 MIGRATING from 4.3.6
 
@@ -47,6 +48,8 @@ Remove `cli.js`
 Rename `./conf/config.local.js` to `./server.config.dev.js`
 Rename `./conf/config.prod.js` to `./server.config.prod.js`
 
+The only file referencing these files is `server.js`. Change the paths in the `require()` lines at the top of the file.
+
 Update `package.json`
 
 The necessary scripts in the `package.json` have been greatly reduced. Below is an example of the package.json shipped with 5.0.0. Remove any deprecated scripts.
@@ -61,7 +64,6 @@ The necessary scripts in the `package.json` have been greatly reduced. Below is 
       "copy:lib": "rsync -a --exclude=*.js ngfactory/ dist",
       "copy:package": "cp ./src/lib/package.json ./dist/package.json",
       "transpile:prod": "java -jar node_modules/google-closure-compiler/compiler.jar --warning_level=QUIET --language_in=ES6 --language_out=ES5 --js ./build/bundle.es2015.js --js_output_file ./build/bundle.js",
-      "dev:server": "node server.js",
       "webdriver:update": "webdriver-manager update",
       "webdriver:start": "webdriver-manager start",
       "lint": "tslint --force \"src/app/**/*.ts\"",

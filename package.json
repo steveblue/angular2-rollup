@@ -16,7 +16,6 @@
     "clean:ngfactory": "rimraf ngfactory && mkdir ngfactory",
     "copy:lib": "rsync -a --exclude=*.js ngfactory/ dist",
     "copy:package": "cp ./src/lib/package.json ./dist/package.json",
-    "dev:server": "node server.js",
     "lint": "tslint --force \"src/app/**/*.ts\"",
     "e2e": "protractor protractor.config.js",
     "e2e:live": "protractor protractor.config.js --elementExplorer",
@@ -35,10 +34,12 @@
     "scaffold": "node build.scaffold.js"
   },
   "dependencies": {
-    "commander": "^2.10.0",
     "chalk": "^1.1.3",
     "chokidar": "^1.7.0",
     "clim": "^1.1.1",
+    "colors": "^1.1.2",
+    "commander": "^2.10.0",
+    "find-up": "^2.1.0",
     "html-minifier": "^3.5.2",
     "htmlprocessor": "^0.2.4",
     "js-string-escape": "^1.0.1",

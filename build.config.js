@@ -23,7 +23,6 @@ module.exports = {
       files:[],
       folders:[]
     },
-    rootDir: __dirname,
     src: 'src',
     build: 'build',
     dist: 'dist',

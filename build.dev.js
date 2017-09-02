@@ -125,13 +125,13 @@ const compile = {
                log('typescript', 'started', 'transpiling', paths.src+'/*ts');
             }
 
-            // let tsConfigPath = fs.existsSync(paths.rootDir + '/tsconfig.dev.json') ? paths.rootDir : paths.cliRoot;
+            // let tsConfigPath = fs.existsSync(paths.projectRoot + '/tsconfig.dev.json') ? paths.projectRoot : paths.cliRoot;
 
-            // let tsc = exec(paths.rootDir + '/node_modules/.bin/tsc -p ' + tsConfigPath + '/tsconfig.dev.json', function (code, output, error) {
+            // let tsc = exec(paths.projectRoot + '/node_modules/.bin/tsc -p ' + tsConfigPath + '/tsconfig.dev.json', function (code, output, error) {
 
-            //let tsConfigPath = fs.existsSync(paths.rootDir + '/conf/tsconfig.dev.json') ? paths.rootDir : paths.cliRoot;
+            //let tsConfigPath = fs.existsSync(paths.projectRoot + '/conf/tsconfig.dev.json') ? paths.projectRoot : paths.cliRoot;
 
-            let tsc = exec(paths.rootDir + '/node_modules/.bin/tsc -p ./tsconfig.dev.json', function(code, output, error) {
+            let tsc = exec(paths.projectRoot + '/node_modules/.bin/tsc -p ./tsconfig.dev.json', function(code, output, error) {
 
                 if (path) {
                   log('typescript', 'transpiled', path+' to', 'build/'+path.replace('.ts','.js'));
@@ -193,7 +193,7 @@ let style = {
 
                 if (watch === true) log('node-sass', 'compiled', 'component style at', outFile);
 
-                let postcss = exec(paths.rootDir+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function() {
+                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function() {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
@@ -251,7 +251,7 @@ let style = {
 
 let init = function() {
 
-    rm('-rf', paths.rootDir+'/.tmp/');
+    rm('-rf', paths.projectRoot+'/.tmp/');
     rm('-rf', './'+paths.build);
     rm('-rf', './ngfactory');
 

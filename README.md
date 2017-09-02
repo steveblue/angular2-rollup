@@ -375,7 +375,7 @@ Livereload is still available in this mode, however you have to go an extra step
 
 Then, start up the production server
 
-`NODE_ENV=prod npm run dev:server watch=true`
+`NODE_ENV=prod npm run serve watch=true`
 
 For livereload to work in the browser for the production build you currently you have to edit `src/public/index.html`.
 

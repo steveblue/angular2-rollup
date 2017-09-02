@@ -43,22 +43,23 @@ const path = require('path');
 const clim = require('clim');
 const cons = clim();
 const colors = require('chalk');
+const findUp = require('find-up');
 const scripts = require('./package.json').scripts;
-
-const cliRoot = path.dirname(fs.realpathSync(__filename));
-const projectRoot = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
-
-fs.writeFile(projectRoot + '/cli.config.js', 'module.exports = { cliRoot: "'+ cliRoot +'"}', function (err) {
-    if (err) {
-        return console.log(err);
-    }
-});
-
-const config = require(projectRoot+'/build.config.js');
-
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
 const escape = require('js-string-escape');
+
+const cliRoot = path.dirname(fs.realpathSync(__filename));
+const processRoot = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
+const cliConfigPath = findUp.sync('cli.config.js');
+let projectRoot;
+
+if(!cliConfigPath) {
+    projectRoot = './';
+} else {
+    projectRoot = cliConfigPath.substring(0, cliConfigPath.lastIndexOf("/"));
+}
+
 const moduleIdRegex = /moduleId\s*:(.*)/g;
 const directiveRegex = /@Directive\(\s?{([\s\S]*)}\s?\)$/gm;
 const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
@@ -68,6 +69,7 @@ const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
 
+let config = require(projectRoot+'/build.config.js');
 
 /* Format time each LOG displays in the Terminal */
 
@@ -116,7 +118,29 @@ const warn = function(action, noun) {
     cons.warn(a + ' ' + n);
 };
 
+
+
+process.argv.forEach((arg)=>{
+    if (arg.includes('scaffold')) {
+        if (!fs.existsSync(processRoot + '/build.config.js')) {
+            cp(cliRoot + '/build.config.js', processRoot + '/build.config.js');
+            config = require(cliRoot + '/build.config.js');
+        }
+
+        if (!fs.existsSync(processRoot + '/cli.config.js')) {
+
+            fs.writeFile(processRoot + '/cli.config.js', 'module.exports = { cliRoot: "'+ cliRoot +'"}', function (err) {
+                if (err) {
+                    return console.log(err);
+                }
+            });
+
+        }
+    }
+});
+
 config.cliRoot = cliRoot;
+config.processRoot = processRoot;
 config.projectRoot = projectRoot;
 
 const utils = {
@@ -171,6 +195,8 @@ const utils = {
 
         replace: function (fileName, name) {
 
+            //console.log(JSON.stringify(config, null, 4));
+
             return new Promise((res) => {
                 fs.readFile(fileName, 'utf8', function (err, data) {
 
@@ -220,19 +246,20 @@ const utils = {
         },
         copy: function (options) {
 
-            rm('-rf', config.rootDir+'/.tmp/');
-            mkdir(config.rootDir+'/.tmp/');
+            rm('-rf', config.cliRoot+'/.tmp/');
+            mkdir(config.cliRoot+'/.tmp/');
 
-            cp('-R', config.rootDir+'/.new/'+options.type+'/*', config.rootDir+'/.tmp');
+            cp('-R', config.cliRoot+'/.new/'+options.type+'/*', config.cliRoot+'/.tmp');
 
-            ls(config.rootDir+'/.tmp').forEach((fileName, index) => {
+            ls(config.cliRoot+'/.tmp').forEach((fileName, index) => {
                if ( options.spec === false && fileName.includes('spec') ) {
                    return;
                }
                if ( options.route === false && fileName.includes('routes') ) {
                    return;
                }
-               utils.generate.replace(config.rootDir+'/.tmp/'+fileName, options.name).then((filePath)=>{
+               log(config.cliRoot+'/.tmp/'+fileName, options.name);
+               utils.generate.replace(config.cliRoot+'/.tmp/'+fileName, options.name).then((filePath)=>{
 
                    mv((options.force ? '-f' : '-n'), filePath, options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
                    //log('Generated', filePath, 'at', options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));

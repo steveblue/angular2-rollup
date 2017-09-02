@@ -10,12 +10,6 @@ const utils       = require('./build.utils.js');
 const package     = require('./package.json');
 const paths        = utils.paths;
 
-fs.writeFile(paths.projectRoot + '/cli.config.js', 'module.exports = { cliRoot: "' + paths.cliRoot + '"}', function (err) {
-    if (err) {
-        return console.log(err);
-    }
-});
-
 let cliCommand = '';
 
 program
@@ -33,13 +27,13 @@ program
     .option('-l, --lint [bool]', 'Run Codelyzer on startup')
     .option('--serve [bool]', 'Run Express Server')
     .option('--scaffold [bool]', 'Scaffold a new project')
-    .option('--noLib [bool]', 'Scaffold a new project without support for library builds')
+    .option('--lib [bool]', 'Scaffold a new project with support for library builds')
     .parse(process.argv);
 
 
 if (program.serve) {
 
-    let serverCommand = 'npm run dev:server';
+    let serverCommand = 'npm run serve';
 
     if (program.watch === true) {
         serverCommand += ' watch=true';
@@ -49,11 +43,12 @@ if (program.serve) {
     }
 
     spawn(serverCommand, { shell: true, stdio: 'inherit' });
-    
+
 
 }
 
 if (program.build) {
+
 
     let buildRoot = fs.existsSync(paths.projectRoot + '/build.' + program.build + '.js') ? paths.projectRoot : paths.cliRoot;
 
@@ -101,8 +96,8 @@ if (program.generate) {
 
 if (program.scaffold) {
 
-    if (program.noLib) {
-        cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js --noLib';
+    if (program.lib) {
+        cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js --lib';
     } else {
         cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
     }

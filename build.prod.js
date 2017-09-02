@@ -144,15 +144,15 @@ const compile = {
 
               log('ngc', 'started', 'compiling', 'ngfactory');
 
-              let tsc = exec(paths.rootDir+'/node_modules/.bin/ngc -p ./tsconfig.prod.json', function(code, output, error) {
+              let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p ./tsconfig.prod.json', function(code, output, error) {
                   log('ngc', 'compiled', '/ngfactory');
                   log('Rollup', 'started', 'bundling', 'ngfactory');
 
-                 let bundle = exec(paths.rootDir+'/node_modules/.bin/rollup -c rollup.config.js', function(code, output, error) {
+                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c rollup.config.js', function(code, output, error) {
                      log('Rollup', 'bundled', 'bundle.es2015.js in', './build');
                      log('Closure Compiler', 'is optimizing', 'bundle.js', 'for '+ colors.bold(colors.cyan(env)));
 
-                     let closure = exec(require(utils.paths.rootDir + '/package.json').scripts['transpile:'+env], function(code, output, error){
+                     let closure = exec(require(utils.paths.projectRoot + '/package.json').scripts['transpile:'+env], function(code, output, error){
                           log('Closure Compiler', 'transpiled', './'+paths.build+'/bundle.es2015.js to', './'+paths.build+'/bundle.js');
                           if (canWatch === true) {
                             log(colors.green('Ready'), 'to', colors.green('serve'));
@@ -162,7 +162,7 @@ const compile = {
                           }
                           //compile.clean();
                           isCompiling = false;
-                         
+
                           if (utils.paths.buildHooks && utils.paths.buildHooks[env] && utils.paths.buildHooks[env].post && hasInit === false) {
                             utils.paths.buildHooks[env].post();
                           }
@@ -218,7 +218,7 @@ let style = {
             fs.writeFile(outFile, result.css, function(err){
               if(!err){
 
-                let postcss = exec(paths.rootDir+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
+                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
@@ -268,7 +268,7 @@ let style = {
 
 let init = function() {
 
-    rm('-rf', paths.rootDir+'/.tmp/');
+    rm('-rf', paths.projectRoot+'/.tmp/');
     rm('-rf', './ngfactory');
     rm('-rf', './'+paths.build);
 

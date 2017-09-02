@@ -8,7 +8,7 @@ const colors      = require('colors');
 const clim = require('clim');
 const cons = clim();
 
-let noLib = false;
+let lib = false;
 
 const log = function (action, noun, verb, next) {
     let a = action ? colors.magenta(action) : '';
@@ -53,8 +53,8 @@ const files     = [
 /* Test for arguments the ngr cli spits out */
 
 process.argv.forEach((arg)=>{
-  if (arg.includes('noLib')) {
-      noLib = true;
+  if (arg.includes('lib')) {
+      lib = true;
   }
 });
 
@@ -83,9 +83,7 @@ const copy = {
 
 let init = function() {
 
-
-
-    if (noLib) {
+    if (lib == false) {
 
         copy.scaffold(files.filter((filename)=>{
             return filename.includes('lib') === false;
