@@ -24,6 +24,7 @@ const colors    = utils.colors;
 const scripts   = utils.scripts;
 const paths     = utils.paths;
 const log       = utils.log;
+const alert     = utils.alert;
 const warn      = utils.warn;
 const clean     = utils.clean;
 const angular   = utils.angular;
@@ -63,7 +64,7 @@ for (let cssProp in postcss.plugins) {
 const copy = {
     file: (path) => {
         cp('-R', path, paths.dist+'/');
-        log(path, 'copied', 'to', paths.dist+'/');
+        log(path, 'copied to', paths.dist+'/');
     }
 };
 
@@ -105,7 +106,7 @@ const compile = {
                 }
               }, contents, path.substring(0, path.lastIndexOf('/')));
 
-              log('Inline', 'template and styles', 'for', path);
+              alert('ngr', 'inline', 'template and styles for', path);
 
               if (inline) {
                 contents = inline.code;
@@ -143,17 +144,17 @@ const compile = {
 
         let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
 
-              log('ngc', 'started', 'compiling', 'ngfactory');
+              alert('ngc', 'started', 'compiling', 'ngfactory');
 
-              let tsc = exec(paths.rootDir+'/node_modules/.bin/ngc -p ./tsconfig.lib.json', function(code, output, error) {
+              let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p ./tsconfig.lib.json', function(code, output, error) {
 
-                  log('ngc', 'compiled', '/ngfactory');
+                  alert('ngc', 'compiled', '/ngfactory');
                   cp('-R', paths.lib+'/.', 'ngfactory/');
-                  log('Rollup', 'started', 'bundling', 'ngfactory');
+                  alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(paths.rootDir+'/node_modules/.bin/rollup -c '+paths.rootDir+'/rollup.config.lib.js', function(code, output, error) {
+                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.projectRoot+'/rollup.config.lib.js', function(code, output, error) {
 
-                     log('Rollup', 'bundled', paths.libFilename+'.js in', './'+paths.dist);
+                     alert('Rollup', 'bundled', paths.libFilename+'.js in', './'+paths.dist);
                      compile.umdLib();
 
                  });
@@ -166,18 +167,18 @@ const compile = {
 
     umdLib : () => {
 
-         let tsc = exec(paths.rootDir+'/node_modules/.bin/ngc -p ./tsconfig.lib.es5.json', function(code, output, error) {
-                  log('ngc', 'compiled', '/ngfactory');
-                  log('Rollup', 'started', 'bundling', 'ngfactory');
+         let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p ./tsconfig.lib.es5.json', function(code, output, error) {
+                  alert('ngc', 'compiled', '/ngfactory');
+                  alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(paths.rootDir+'/node_modules/.bin/rollup -c '+paths.rootDir+'/rollup.config.lib-umd.js', function(code, output, error) {
+                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.projectRoot+'/rollup.config.lib-umd.js', function(code, output, error) {
 
-                     log('Rollup', 'bundled', paths.libFilename+'.umd.js in', './'+paths.dist+'/bundles');
+                     alert('Rollup', 'bundled', paths.libFilename+'.umd.js in', './'+paths.dist+'/bundles');
 
-                     log('Babel', 'is transpiling', paths.libFilename+'.umd.js');
+                     alert('Babel', 'started transpiling', paths.libFilename+'.umd.js');
 
-                     let transpile = exec(paths.rootDir + '/node_modules/.bin/babel --plugins=transform-es2015-modules-commonjs ./dist/bundles/' + paths.libFilename + '.umd.js --out-file ./dist/bundles/' + paths.libFilename +'.umd.js', function(code, output, error){
-                          log('Babel', 'transpiled', './'+paths.dist+'/bundles/'+paths.libFilename+' to', './'+paths.dist+'/bundles/'+paths.libFilename+'.umd.js');
+                     let transpile = exec(paths.projectRoot + '/node_modules/.bin/babel --plugins=transform-es2015-modules-commonjs ./dist/bundles/' + paths.libFilename + '.umd.js --out-file ./dist/bundles/' + paths.libFilename +'.umd.js', function(code, output, error){
+                          alert('Babel', 'transpiled', './'+paths.dist+'/bundles/'+paths.libFilename+' to', './'+paths.dist+'/bundles/'+paths.libFilename+'.umd.js');
                           compile.es5Lib();
                      });
 
@@ -192,19 +193,19 @@ const compile = {
 
 
 
-         let tsc = exec(paths.rootDir+'/node_modules/.bin/ngc -p ./tsconfig.lib.es5.json', function(code, output, error) {
+         let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p ./tsconfig.lib.es5.json', function(code, output, error) {
 
           log('ngc', 'compiled', '/ngfactory');
-                  log('Rollup', 'started', 'bundling', 'ngfactory');
+                  alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(paths.rootDir+'/node_modules/.bin/rollup -c '+paths.rootDir+'/rollup.config.lib-es5.js', function(code, output, error) {
+                 let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c '+paths.projectRoot+'/rollup.config.lib-es5.js', function(code, output, error) {
 
-                    log('Rollup', 'bundled', paths.libFilename+'.es5.js in', './'+paths.dist);
+                    alert('Rollup', 'bundled', paths.libFilename+'.es5.js in', './'+paths.dist);
 
                     // loop over all files in ngfactory, remove js files, copy to dist
-                    exec(require(utils.paths.rootDir + '/package.json').scripts['copy:lib'], function() {
+                    exec(require(utils.paths.projectRoot + '/package.json').scripts['copy:lib'], function() {
 
-                      log('Copied', 'd.ts, metadata.json', ' to ', './'+paths.dist);
+                      log('d.ts, metadata.json', 'copied to', './'+paths.dist);
 
                       rm(paths.dist + '/index.ts');
 
@@ -222,15 +223,15 @@ const compile = {
 
                     });
 
-                    log('Babel', 'is transpiling', paths.libFilename+'.es5.js');
+                    alert('Babel', 'started transpiling', paths.libFilename+'.es5.js');
 
-                    let transpile = exec(paths.rootDir + '/node_modules/.bin/babel --presets=es2015-rollup ./dist/' + paths.libFilename + '.es5.js --out-file ./dist/' + paths.libFilename +'.es5.js', function(code, output, error){
-                          log('Babel', 'transpiled', './'+paths.dist+'/'+paths.libFilename+' to', './'+paths.dist+'/'+paths.libFilename+'.es5.js');
+                    let transpile = exec(paths.projectRoot + '/node_modules/.bin/babel --presets=es2015-rollup ./dist/' + paths.libFilename + '.es5.js --out-file ./dist/' + paths.libFilename +'.es5.js', function(code, output, error){
+                          alert('Babel', 'transpiled', './'+paths.dist+'/'+paths.libFilename+' to', './'+paths.dist+'/'+paths.libFilename+'.es5.js');
                      });
 
-                    exec( require(utils.paths.rootDir + '/package.json').scripts['copy:package'], function() {
+                    exec( require(utils.paths.projectRoot + '/package.json').scripts['copy:package'], function() {
 
-                      log('Copied', 'package.json', ' to ', './'+paths.dist);
+                      log('package.json', 'copied to', './'+paths.dist);
 
                       if (utils.paths.buildHooks && utils.paths.buildHooks.lib && utils.paths.buildHooks.lib.post) {
                         utils.paths.buildHooks.lib.post();
@@ -266,8 +267,9 @@ let style = {
 
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
+        let globalCSSFilename = paths.globalCSSFilename !== undefined ? paths.globalCSSFilename : 'style.css';
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.dist+'/style/style.css' : path.replace('.scss','.css').replace(paths.src, 'tmp').replace(paths.lib.replace('src/', ''), '');
+        let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.dist+'/style/'+globalCSSFilename  : path.replace('.scss','.css').replace(paths.src, 'tmp').replace(paths.lib.replace('src/', ''), '');
 
         sass.render({
           file: path.indexOf(paths.src+'/style') > -1 ? 'src/style/style.scss' : path,
@@ -285,12 +287,12 @@ let style = {
 
             fs.writeFile(outFile, result.css, function(err){
 
-              let postcss = exec(paths.rootDir+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
+              let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c '+paths.projectRoot+'/postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
                    if( !watch ) {
 
                       if( hasCompletedFirstStylePass === true || styleFiles.indexOf(path) === styleFiles.length - 1) {
 
-                        log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
+                        alert('libsass and postcss', 'compiled');
                         hasCompletedFirstStylePass === true;
                         compile.src();
 
@@ -346,7 +348,7 @@ let style = {
 
 let init = function() {
 
-    rm('-rf', paths.rootDir+'/.tmp/');
+    rm('-rf', paths.projectRoot+'/.tmp/');
     rm('-rf', './ngfactory');
     rm('-rf', './'+paths.dist);
 
@@ -377,8 +379,6 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
   persistent: canWatch
 }).on('change', path => {
 
-      log('File', path, 'has been', 'changed');
-
       if ( path.indexOf(paths.src+'/public') > -1 ) {
 
           if ( path.indexOf(paths.src+'/index.html') ) {
@@ -391,6 +391,8 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
       else if ( path.indexOf('.html') > -1 && path.indexOf('src') > -1) {
 
+        alert('CHANGE DETECTED', path, 'triggered', 'transpile');
+
         if(!isCompiling) {
           clean.lib();
           compile.src();
@@ -400,7 +402,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
       else if ( path.indexOf('.ts') > -1 && hasInit === true) {
 
-        log('File', path, 'triggered', 'transpile');
+        alert('CHANGE DETECTED', path, 'triggered', 'transpile');
 
         utils.tslint(path);
 
@@ -413,7 +415,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
       else if ( path.indexOf('.scss') > -1 ) {
 
-        log('File', path, 'triggered', 'compile');
+        alert('CHANGE DETECTED', path, 'triggered', 'sass and postcss');
         clean.lib();
         style.file(path, true);
 
@@ -426,7 +428,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    log('Initial scan complete.', 'Building', 'for', colors.bold(colors.cyan(env)));
+    alert('INITIAL SCAN COMPLETE', 'building for', env);
 
     init();
 });

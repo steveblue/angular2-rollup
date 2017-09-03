@@ -18,6 +18,7 @@ const scripts   = utils.scripts;
 const paths     = utils.paths;
 const log       = utils.log;
 const warn      = utils.warn;
+const alert     = utils.alert;
 const clean     = utils.clean;
 
 let canWatch = true;
@@ -59,10 +60,10 @@ const copy = {
         cp('-R', paths.src+'/public/.', 'build/');
 
         exec(paths.cliRoot+'/node_modules/.bin/htmlprocessor ./build/index.html -o ./build/index.html -e dev', function(code, output, error){
-              log('index.html', 'formatted',  'for',  colors.bold(colors.cyan(env)));
+              alert('index.html', 'formatted');
         });
 
-        log(path || paths.src+'/public/', 'copied', 'to', 'build/');
+        log(path || paths.src+'/public/', 'copied to', 'build/');
 
         if(paths && paths.clean) {
           clean.paths(paths);
@@ -71,12 +72,12 @@ const copy = {
     },
     file: (path) => {
         cp('-R', path, 'build/');
-        log(path, 'copied', 'to', 'build/');
+        log(path, 'copied to', 'build/');
     },
     html: (path) => {
         ls(paths.src+'/app/**/*.html').forEach(function(file) {
           cp(file, 'build/'+file);
-          log(file.replace(/^.*[\\\/]/, ''), 'copied', 'to',  'build/'+file.substring(0, file.lastIndexOf("/")));
+          log(file.replace(/^.*[\\\/]/, ''), 'copied to', 'build/'+file.substring(0, file.lastIndexOf("/")));
         });
     },
     lib: () => {
@@ -97,7 +98,7 @@ const copy = {
               cp('-R', paths.dep.src + '/' + paths.dep.lib[i], paths.dep.dist + '/' + paths.dep.lib[i]);
             }
 
-            log(paths.dep.lib[i], 'copied', 'to',  paths.dep.dist + '/' + paths.dep.lib[i]);
+            log(paths.dep.lib[i], 'copied to', paths.dep.dist + '/' + paths.dep.lib[i]);
 
         }
     }
@@ -120,9 +121,9 @@ const compile = {
         let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
 
             if (path) {
-               log('typescript', 'started', 'transpiling', path);
+               alert('typescript', 'started transpiling', path);
             } else {
-               log('typescript', 'started', 'transpiling', paths.src+'/*ts');
+               alert('typescript', 'started transpiling', paths.src+'/*ts');
             }
 
             // let tsConfigPath = fs.existsSync(paths.projectRoot + '/tsconfig.dev.json') ? paths.projectRoot : paths.cliRoot;
@@ -134,10 +135,10 @@ const compile = {
             let tsc = exec(paths.projectRoot + '/node_modules/.bin/tsc -p ./tsconfig.dev.json', function(code, output, error) {
 
                 if (path) {
-                  log('typescript', 'transpiled', path+' to', 'build/'+path.replace('.ts','.js'));
+                  alert('typescript', 'transpiled', path);
                   cp(path, 'build/'+path);
                 } else {
-                  log('typescript', 'transpiled', paths.src+'/*ts to', 'build/'+paths.src+'/*ts');
+                  alert('typescript', 'transpiled', paths.src+'/*ts');
                 }
 
                 if(hasInit === false) {
@@ -175,8 +176,9 @@ let style = {
     file: (path, watch) => {
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
+        let globalCSSFilename = paths.globalCSSFilename !== undefined ? paths.globalCSSFilename : 'style.css';
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf(paths.src+'/style') > -1 ? 'build/style/style.css' : 'build/'+srcPath+'/'+filename.replace('.scss','.css');
+        let outFile = path.indexOf(paths.src+'/style') > -1 ? 'build/style/'+ globalCSSFilename : 'build/'+srcPath+'/'+filename.replace('.scss','.css');
         sass.render({
           file: path.indexOf(paths.src+'/style') > -1 ? 'src/style/style.scss' : path,
           outFile: outFile,
@@ -191,17 +193,17 @@ let style = {
             fs.writeFile(outFile, result.css, function(err){
               if(!err){
 
-                if (watch === true) log('node-sass', 'compiled', 'component style at', outFile);
+                if (watch === true) alert('node-sass', 'compiled', 'component style at', outFile);
 
-                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function() {
+                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c '+paths.projectRoot+'/postcss.'+env+'.js -r'+postcssConfig, function() {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
-                      log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
+                      alert('libsass and postcss', 'compiled');
                       if (canWatch === true) {
-                            log(colors.green('Ready'), 'to', colors.green('serve'));
-                            log(colors.green('Watcher'), 'listening for', colors.green('changes'));
+                            alert(colors.green('Ready to serve'));
+                            alert(colors.green('Watcher listening for changes'));
                       } else {
-                        log(colors.green('Ready'), 'to', colors.green('serve'));
+                        alert(colors.green('Build is ready'));
                       }
                     }
                     if (hasCompletedFirstStylePass === true) {
@@ -282,7 +284,6 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
   persistent: canWatch
 }).on('change', path => {
 
-      log('File', path, 'has been', 'changed');
 
       if ( path.indexOf(paths.src+'/public') > -1 ) {
 
@@ -296,13 +297,15 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
       else if ( path.indexOf('.html') > -1 && path.indexOf(paths.src) > -1) {
 
+      alert('CHANGE DETECTED', path, 'triggered', 'copy');
+
        copy.html(path);
 
       }
 
       else if ( path.indexOf('.ts') > -1 && hasInit === true) {
 
-       log('File', path, 'triggered', 'transpile');
+       alert('CHANGE DETECTED', path, 'triggered', 'transpile');
 
         utils.tslint(path);
 
@@ -316,7 +319,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
       }
       else if ( path.indexOf('.scss') > -1 ) {
 
-        log('File', path, 'triggered', 'compile');
+        alert('CHANGE DETECTED', path, 'triggered', 'sass and postcss');
 
         hasCompletedFirstStylePass = true;
         style.file(path, true);
@@ -332,7 +335,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    log('Initial scan complete.', 'Building', 'for', colors.bold(colors.cyan(env)));
+    alert('INITIAL SCAN COMPLETE', 'building for', env);
     init();
 
 });

@@ -18,6 +18,7 @@ const scripts   = utils.scripts;
 const paths     = utils.paths;
 const log       = utils.log;
 const warn      = utils.warn;
+const alert     = utils.alert;
 const clean     = utils.clean;
 
 
@@ -62,7 +63,7 @@ const copy = {
                log('index.html','formatted', 'for',  colors.bold(colors.cyan(env)));
         });
 
-        log(path || paths.src+'/public/', 'copied', 'to', paths.build+'/');
+        log(path || paths.src+'/public/', 'copied to', paths.build+'/');
 
         if(paths && paths.clean) {
           clean.paths(paths);
@@ -71,7 +72,7 @@ const copy = {
     },
     file: (path) => {
         cp('-R', path, paths.build+'/');
-        log(path, 'copied', 'to', paths.build+'/');
+        log(path, 'copied to', paths.build+'/');
     },
     lib: () => {
 
@@ -89,7 +90,7 @@ const copy = {
               cp('-R', paths.dep.src + '/' + paths.dep.prodLib[i], paths.dep.dist + '/' + paths.dep.prodLib[i]);
             }
 
-            log(paths.dep.prodLib[i], 'copied', 'to',  paths.dep.dist + '/' + paths.dep.prodLib[i]);
+            log(paths.dep.prodLib[i], 'copied to',  paths.dep.dist + '/' + paths.dep.prodLib[i]);
 
         }
     }
@@ -142,23 +143,23 @@ const compile = {
 
         let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
 
-              log('ngc', 'started', 'compiling', 'ngfactory');
+              alert ('ngc', 'started compiling', 'ngfactory');
 
               let tsc = exec(paths.projectRoot+'/node_modules/.bin/ngc -p ./tsconfig.prod.json', function(code, output, error) {
-                  log('ngc', 'compiled', '/ngfactory');
-                  log('Rollup', 'started', 'bundling', 'ngfactory');
+                  alert('ngc', 'compiled', '/ngfactory');
+                  alert('Rollup', 'started bundling', 'ngfactory');
 
                  let bundle = exec(paths.projectRoot+'/node_modules/.bin/rollup -c rollup.config.js', function(code, output, error) {
-                     log('Rollup', 'bundled', 'bundle.es2015.js in', './build');
-                     log('Closure Compiler', 'is optimizing', 'bundle.js', 'for '+ colors.bold(colors.cyan(env)));
+                     alert('Rollup', 'bundled bundle.es2015.js in', './build');
+                     alert('Closure Compiler', 'started optimizing', 'bundle.js');
 
                      let closure = exec(require(utils.paths.projectRoot + '/package.json').scripts['transpile:'+env], function(code, output, error){
-                          log('Closure Compiler', 'transpiled', './'+paths.build+'/bundle.es2015.js to', './'+paths.build+'/bundle.js');
+                          alert('Closure Compiler', 'transpiled', './'+paths.build+'/bundle.es2015.js to', './'+paths.build+'/bundle.js');
                           if (canWatch === true) {
-                            log(colors.green('Ready'), 'to', colors.green('serve'));
-                            log(colors.green('Watcher'), 'listening for', colors.green('changes'));
+                            alert(colors.green('Ready to serve'));
+                            alert(colors.green('Watcher listening for changes'));
                           } else {
-                            log(colors.green('Build'), 'is', colors.green('ready'));
+                            alert(colors.green('Build is ready'));
                           }
                           //compile.clean();
                           isCompiling = false;
@@ -199,8 +200,9 @@ let style = {
 
 
         let srcPath = path.substring(0, path.lastIndexOf("/"));
+        let globalCSSFilename = paths.globalCSSFilename !== undefined ? paths.globalCSSFilename : 'style.css';
         let filename = path.replace(/^.*[\\\/]/, '');
-        let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.build+'/style/style.css' : path.replace('.scss','.css').replace(paths.src, 'tmp');
+        let outFile = path.indexOf(paths.src+'/style') > -1 ? paths.build+'/style/'+globalCSSFilename : path.replace('.scss','.css').replace(paths.src, 'tmp');
         sass.render({
           file: path.indexOf(paths.src+'/style') > -1 ? 'src/style/style.scss' : path,
           outFile: outFile,
@@ -209,19 +211,16 @@ let style = {
           sourceComments: false
         }, function(error, result) {
           if (error) {
-            warn(error.status);
-            warn(error.column);
-            warn(error.message);
-            warn(error.line);
+            warn(error.message, 'LINE: '+error.line);
           } else {
 
             fs.writeFile(outFile, result.css, function(err){
               if(!err){
 
-                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c ./postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
+                let postcss = exec(paths.projectRoot+'/node_modules/.bin/postcss ./'+outFile+' -c '+paths.projectRoot+'/postcss.'+env+'.js -r'+postcssConfig, function(code, output, error) {
 
                     if ( (styleFiles.indexOf(path) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
-                      log('libsass and postcss', 'compiled', 'for', colors.bold(colors.cyan(env)));
+                      alert('libsass and postcss', 'compiled');
                       setTimeout(compile.src,2000);
                     }
                     if (hasCompletedFirstStylePass === true) {
@@ -302,7 +301,6 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
   persistent: canWatch
 }).on('change', path => {
 
-      log('File', path, 'has been', 'changed');
 
       if ( path.indexOf(paths.src+'/public') > -1 ) {
 
@@ -318,6 +316,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
       else if ( path.indexOf('.html') > -1 && path.indexOf('src') > -1) {
 
         if(!isCompiling) {
+          alert('CHANGE DETECTED', path, 'triggered', 'compile');
           cp(path, path.replace(paths.src, './tmp'));
           compile.src();
         }
@@ -326,7 +325,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
 
       else if ( path.indexOf('.ts') > -1 && hasInit === true) {
 
-       log('File', path, 'triggered', 'transpile');
+        alert('CHANGE DETECTED', path, 'triggered', 'compile');
 
         utils.tslint(path);
 
@@ -338,7 +337,7 @@ let watcher = chokidar.watch('./'+paths.src+'/**/*.*', {
       }
       else if ( path.indexOf('.scss') > -1 ) {
 
-        log('File', path, 'triggered', 'compile');
+        alert('CHANGE DETECTED', path, 'triggered', 'compile');
 
          hasCompletedFirstStylePass = true;
          style.file(path, true);
@@ -352,7 +351,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    log('Initial scan complete.', 'Building', 'for', colors.bold(colors.cyan(env)));
+    alert('INITIAL SCAN COMPLETE', 'building for', env);
 
     init();
 

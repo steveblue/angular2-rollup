@@ -106,6 +106,11 @@ let init = function() {
 
         fs.writeFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json', JSON.stringify(script, null, 4), function (err) {
             if (err) log(err);
+            log('Copied', 'files and folders', 'to', 'project directory');
+            log('npm install', 'to', 'install project dependencies');
+            log('ngr --build dev --watch --serve', 'to', 'start up Express server, enable a watcher, and build Angular for development');
+            log('ngr --build prod --serve', 'to', 'compile your project AOT for production, start up Express server');
+            log('ngr --help', 'for', 'more CLI commands' );
         });
 
       });

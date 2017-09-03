@@ -5,6 +5,7 @@
 - `--build` is deprecated for `build` command, made little sense in argument syntax
 - Scaffold a new app with `ngr scaffold`
 - Scaffold a new app with support for library builds with `ngr scaffold --lib`
+- CLI output has new look and feel, dimmed from original
 - Added pre and post hooks to builds.
     Users can now add the property `buildHooks` to `build.config.js`.
     To do something at the end of the production build:
@@ -34,6 +35,10 @@ MIGRATING from 4.3.6
 If you have augmented the builds, the new pre and post hooks will help fullfill use cases where a custom script needs to run prior to compilation and after. It is recommended that you migrate any tasks to these new methods.
 
 If a build has diverged significantly, you can include the build file in your local project and it will override the original. This is not recommended.
+
+Another option is to rename the custom build. The CLI will attempt to execute the custom build script based on the filename.
+
+`build.customname.js` can be executed with `ngr --build customname`.
 
 Remove all build files except `build.config.js` unless the use cases above apply to your situation.
 
