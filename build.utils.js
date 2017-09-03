@@ -274,13 +274,23 @@ const utils = {
             cp('-R', config.cliRoot+'/.new/'+options.type+'/*', config.cliRoot+'/.tmp');
 
             ls(config.cliRoot+'/.tmp').forEach((fileName, index) => {
-               if ( options.spec === false && fileName.includes('spec') ) {
+                console.log(options.type, fileName);
+               if ( options.type !== 'component' && fileName.includes('component') ) {
+                  return;
+               }
+               if ( options.type !== 'module' && fileName.includes('module') ) {
+                 return;
+               }
+               if ( options.spec == false && fileName.includes('spec') == true && fileName.includes('e2e-spec') == false) {
                    return;
                }
-               if ( options.route === false && fileName.includes('routes') ) {
+               if ( options.type !== 'e2e' && options.e2e === false && fileName.includes('e2e-spec') ) {
                    return;
                }
-               log(config.cliRoot+'/.tmp/'+fileName, options.name);
+               if ( options.route == false && fileName.includes('routes') ) {
+                   return;
+               }
+               log(fileName.replace('new', options.name), 'copied to', options.name);
                utils.generate.replace(config.cliRoot+'/.tmp/'+fileName, options.name).then((filePath)=>{
 
                    mv((options.force ? '-f' : '-n'), filePath, options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));

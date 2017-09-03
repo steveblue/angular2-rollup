@@ -26,32 +26,28 @@ Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow f
 
 ## Quick start
 
-- Fork / Clone the repository
+- Install the cli and global dependencies
 
-`$ git clone https://github.com/steveblue/angular2-rollup my-new-app`
+`$ npm install -g ngr webdriver-manager codelyzer`
 
-- Change directory to app
+- Make a new directory to app
 
-`$ cd my-new-app`
+`$ mkdir my-new-app
+ $ cd my-new-app`
 
 - Install dependencies
 
 ```
-$ npm install -g webdriver-manager rimraf codelyzer
 $ npm install
 ```
 
-- To use the CLI
-
-```
-$ npm link
-```
 
 - Run development build, start up Express Server with LiveReload
 
 `$ ngr --build dev --serve --watch`
 
 When everything is setup correctly, you should be able to visit  [http://localhost:4200](http://localhost:4200) in your browser.
+
 
 
 ## Table of Contents
@@ -81,7 +77,7 @@ What you need to run this app:
 
 ### Configure Server
 
-Change the host and/or port in `/conf/config.local.js` if needed. This config is used for the Express Server. `/conf/config.prod.js` is used for production, however we expect most teams to have a more sophisticated setup for production.
+Change the host and/or port in `/server.config.dev.js` if needed. This config is used for the Express Server. `/server.config.prod.js` is used for production.
 
 ```
 {
@@ -91,33 +87,62 @@ Change the host and/or port in `/conf/config.local.js` if needed. This config is
 
 ```
 
-## Developing
+## Scaffold
 
-After you have installed all dependencies you can now build the project:
+To scaffold a new app run `ngr --scaffold`. This will copy required files into the same directory.
+
+## Configuration
+
+
+`ngr` is built on a few scripts that handle building Angular using JIT or AOT compilation. The CLI also provides a build used to distrbute Angular libraries.
+
+`build.config.js` is the main configuration for the builds
+
+`karma.conf.js` is the main configuration for Karma
+
+`rollup.config.js` configures Rollup for production
+
+Rollup bundles the app for production. You can configure Rollup for the production build in`rollup.config.js`. Rollup also bundles the library build. If you scaffold the app with `--lib` flag you will see addition config files for the library build.
+
+`server.config.dev.js` and `server.config.prod.js` configure the Express server
+
+`tsconfig.json` is boilerplate for VSCode and is not used for production
+
+`tsconfig.dev.json` configures Typescript in the development (JIT) build
+
+`tsconfig.prod.json` configures `ngc` in the production build
+
+
+## Server
+
+Express is used mainly to provide a development server, but it could also be configured for production to run over `https`.
+
+`node server.js` is run as a parallel process to the build when using the `--serve` flag
+
+`router.js` configures the routes of the Express server
+
+
+
+## Build
+
+To build the app for development, enable livereload, and start up the server:
 
 * `$ ngr --build dev --watch --serve`
 
-`build.env.js` will build the application for development for the appropriate environment. `chodikar` watches for changes in the `/build` directory, while another process spawns to start a local `Express` server. The development environment bootstraps Angular with JIT Compiler for fast and efficient development compared to AOT.
+`ngr` will build the application for development. The dev environment bootstraps Angular with JIT Compiler for fast and efficient development.
 
-Once your work has been validated with the development build, you can also test the production build locally.
+Once your work has been validated with the development build, you can also test the production build .
 
 * `$ ngr --build prod --serve`
 
 
 ### Developing Component Libraries
 
-At ng-conf 2017 Jason Aden gave a presentation about [Packaging Angular](https://youtu.be/unICbsPGFIA). It is recommended to follow the standard outlined in this presentation and in the doc [Angular Package Format 4.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview). To help engineers, this starter code provides a library build that makes bootstrapping the Angular Package Format fast and efficient.
+`ngr` provides a build for developing Angular libraries that conforms to the Angular Package Spec 4.0 Jason Aden gave a presentation about at ng-conf. [Packaging Angular](https://youtu.be/unICbsPGFIA).
 
-Configure `build.config.js` with the path to the library and give the library build files a file name. You can develop Component libraries in the development environment.
+To develop component libraries, scaffold an app with the `--lib` flag.
 
-```
-
-lib: 'src/lib',
-libFilename: 'default-lib'
-
-```
-
-When its time to build the Component Library so other projects can consume it, use the following command.
+The name of the library and more is configured in `build.config.js`.
 
 * `$ ngr --build lib`
 
@@ -127,9 +152,14 @@ When its time to build the Component Library so other projects can consume it, u
 
 ### 1. Unit Tests
 
-* single run: `ngr --unit`
+Unit tests use Karma and can be run with the `--watch` flag.
+
+For single run `ngr --test`
+
 
 ### 2. End-to-End Tests (aka. e2e, integration)
+
+e2e tests use Protractor and Selenium Webdriver. The process requires multiple tabs to run locally.
 
 * single run:
   * in a new tab *if not already running!*: `npm run webdriver:start`
@@ -140,7 +170,7 @@ When its time to build the Component Library so other projects can consume it, u
   * when debugging or first writing test suites, you may find it helpful to try out Protractor commands without starting up the entire test suite. You can do this with the element explorer.
   * you can learn more about [Protractor Interactive Mode here](https://github.com/angular/protractor/blob/master/docs/debugging.md#testing-out-protractor-interactively)
 
-## Production
+## AOT Production Build
 
 While the development build uses Angular Just In Time (JIT) compilation in conjunction with `tsc`, the production build uses [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to compile the Angular 2 application Ahead of Time (AOT). AOT is inherently more secure than JIT and should always be used in a production environment.
 
@@ -192,8 +222,8 @@ NOTE: Use `-b` instead of `--build`
 - `ngr --generate component --name todo-list --spec` Generate a `TodoListComponent` in the current directory with a spec file
 - `ngr --generate directive --name todo-list --dir path/to/folder` Generate a `TodoListDirective` in a folder
 - `ngr -g module -n todo-list -r` Generate a `TodoListModule` in a folder with a routes.ts file
+- `ngr -g e2e -n todo-list` Generate e2e test
 
-NOTE: Use `-g` instead of `--generate`
 
 You can pass the following types to `--generate`:
 
@@ -201,6 +231,7 @@ You can pass the following types to `--generate`:
 - component
 - directive
 - enum
+- e2e
 - guard
 - interface
 - module
@@ -209,7 +240,7 @@ You can pass the following types to `--generate`:
 
 EXAMPLE: `ngr --generate service --name todo-list --dir path/to/folder`
 
-You can configure prefixes for Classes, Component and Directive selector in `build.config.js`. Omit the properties from the config to operate without prefixes. Defaults are included that follow the Angular Style Guide.
+You can configure prefixes for Classes, Component and Directive selector in `build.config.js`. Omit the properties from the config to operate without prefixes. Defaults are included that follow the Angular Styleguide.
 
 
 #### --serve & --watch
@@ -229,78 +260,53 @@ Production builds do not require the CLI, just the package.json
 
 ## How do I include third party libraries?
 
-Since the production build bundles the application, it is a best practice to tree shake and bundle third party libraries, however this process only works if the third party library is packaged with ES2015 modules.
+Follow this step by step questionaire to figure out which method to use.
 
-`import Rx from "rxjs/Rx";`
+- Does the library conform to Angular Package Spec 4.0?
+    YES: Will be bundled by `ngc`, inject the NgModule into your application
+    NO: See next question
 
+- Is the library written in ES2015?
+    YES: Can most likely be bundled with `Rollup`
+    NO: See next question
 
-While you could do this, it is a best practice to only import the methods of the library your app requires.
-
-```
-import "rxjs/add/observable/interval";
-import "rxjs/add/operator/take";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/bufferCount"
-
-```
-
-If you import an entire library using `*` for instance, the entire library will be bundled in your application, so importing ONLY the methods your application requires is crucial for an optimal bundle.
-
-`import` will only work with libraries packaged with ES2015 modules.
-
-When bundling for production, you may need to also need to update the `rollup.env.js` file to properly bundle the third party library.
+- Is the library formatted with UMD modules?
+    YES: Edit `rollup.config.js` so Rollup can bundle the library
+    NO: You must include the library globally via `<head>` or `SystemJS`. Examples of both are in    `/src/public/index.html`
 
 
-#### Typings
+RxJS is bundled as UMD module. In `rollup.config.js`, use the `rollup-plugin-commonjs` to bundle it via the Rollup build step.
 
-You may also need to inject `typings` for the `ngc` service to properly inject dependencies during AOT compilation.
-
-```
-"compilerOptions": {
-  "typeRoots": [ "node_modules/@types" ],
-  "types": [
-     "node",
-     "jquery"
-  ]
-}
+ ```
+    commonjs({
+     include: 'node_modules/rxjs/**'
+    }),
 ```
 
-
-
-#### Rollup Third Party Libraries
-
-When your project requires third party libraries that are distributed with UMD modules, use `rollup-plugin-commonjs` to bundle the third party library.
+NOTE: You must configure `system.config.js` in order to inject third party libaries for development. An example is below:
 
 ```
-import commonjs from 'rollup-plugin-commonjs';
-...
-
-plugins: [
-  commonjs({
-   include: 'node_modules/rxjs/**'
-  })
-]
-```
-
-
-
-#### Other Third Party Libraries
-
-If a third party dependency cannot be imported with an `import` statement, you can configure library dependencies in `build.config.js`. A script runs during the build that copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in the config). You can then reference the library in `src/public/index.html` like so:
-
-```
-    <script src="/lib/core-js/client/shim.min.js"></script>
-    <script src="/lib/zone.js/dist/zone.js"></script>
-    <!-- build:remove:prod -->
-      <script src="/lib/reflect-metadata/Reflect.js"></script>
-    <!-- /build -->
-```
+   map: {
+      // angular bundles
+      '@angular/core': 'lib:@angular/core/bundles/core.umd.js',
+      '@angular/common': 'lib:@angular/common/bundles/common.umd.js',
+      '@angular/compiler': 'lib:@angular/compiler/bundles/compiler.umd.js',
+      '@angular/platform-browser': 'lib:@angular/platform-browser/bundles/platform-browser.umd.js',
+      '@angular/platform-browser-dynamic': 'lib:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
+      '@angular/http': 'lib:@angular/http/bundles/http.umd.js',
+      '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
+      '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
+      // other libraries
+      'rxjs': 'lib:rxjs',
+      'firebase': 'lib:firebase/firebase.js',
+      'firebase/app': 'lib:firebase/firebase.js',
+      'firebase/database': 'lib:firebase/firebase.js',
+      'firebase/auth': 'lib:firebase/firebase.js'
+    },
+    ```
 
 
-The typical Angular 2 dependencies are already included in the `<head>` tag in `index.html`. Comments like in the example above in `index.html` can also exclude certain portions of the file in particular builds.
-
-
-You can also include third party dependencies with `SystemJS`.
+You can include third party dependencies with `SystemJS` instead of the `<head>`.
 
 ```
 <script>
@@ -312,6 +318,90 @@ You can also include third party dependencies with `SystemJS`.
 
 </script>
 ```
+
+
+If a library must be loaded prior to bootstrap, add the folder name in `build.config.js` to have it copied into `build/lib`. It is optimal to only include the library files you need for production, not entire folders.
+
+You must also edit `public/index.html` and the systemjs config files to load libraries prior to the app bootstrapping.
+
+
+```
+module.exports = {
+    dep: {
+        lib: [
+          'core-js',
+          'reflect-metadata',
+          'zone.js',
+          'systemjs',
+          '@angular',
+          'rxjs'
+        ],
+        prodLib: [
+          'angular-srcs/shims_for_IE.js',
+          'core-js/client/shim.min.js',
+          'core-js/client/shim.min.js.map',
+          'systemjs/dist/system.js',
+          'zone.js/dist/zone.js'
+        ],
+        src: './node_modules',
+        dist: './build/lib'
+    },
+```
+
+
+#### Bundling libraries written in ES2105 Modules
+
+It is a best practice to tree shake and bundle third party libraries for production, however this process only works with Rollup if the third party library is packaged with ES2015 modules. It is also not recommended to import an entire library that is treeshakable like so:
+
+`import Rx from "rxjs/Rx";`
+
+While you could do this, it is a best practice to only import the methods of the library your app requires.
+
+```
+import "rxjs/add/observable/interval";
+import "rxjs/add/operator/take";
+import "rxjs/add/operator/map";
+import "rxjs/add/operator/bufferCount"
+
+```
+
+If you import an entire library using `*` for instance, the entire library will be bundled in your application, so import ONLY the methods your application requires for an optimal bundle.
+
+`import` will only work with libraries packaged with ES2015 modules.
+
+When bundling for production, you may need to also need to update the `rollup.config.js` file to properly bundle the third party library.
+
+
+
+#### Typings
+
+You may also need to inject `typings` for the `ngc` service to properly inject dependencies during AOT compilation.
+
+```
+"compilerOptions": {
+  "typeRoots": [ "node_modules/@types" ],
+  "types": [
+     "node"
+  ]
+}
+```
+
+
+Editing index.html
+
+`ngr` copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in `build.config.js`). You can then reference the library in `src/public/index.html` like so:
+
+```
+    <script src="/lib/core-js/client/shim.min.js"></script>
+    <script src="/lib/zone.js/dist/zone.js"></script>
+    <!-- build:remove:prod -->
+      <script src="/lib/reflect-metadata/Reflect.js"></script>
+    <!-- /build -->
+```
+
+`ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build.
+
+The typical Angular 2 dependencies are already included in the `<head>` tag in `index.html`.
 
 
 
@@ -340,42 +430,29 @@ postcss.env.json
 
 ```
 
-You will need to update package.json with a new script to run for the new environment.
+Configuration for build services are in the specific files, while the config for Closure Compiler is found in `package.json`. If you are duplicating the production build and renaming the environment, you can augment the options for ClosureCompiler:
 
 ```
-"build:env": "rimraf build && node build.env.js"
-```
-
-If you are duplicating the production build and renaming the environment, you will also have to create variants of the compile, bundle, and transpile scripts:
-
-```
-"compile:env": "ngc -p ./tsconfig.env.json",
-"bundle:env": "rollup -c rollup.env.js",
 "transpile:env": "java -jar ./compiler.jar --warning_level=QUIET --language_in=ES6 --language_out=ES5 --js ./build/bundle.es2015.js --js_output_file ./build/bundle.js",
 ```
 
-Configuration for these services are in the specific files, while the configuration for Closure Compiler is found in the script itself.
+
+## How do I update my project to the latest CLI?
+
+`npm install -g ngr@latest`
 
 
-
-
-## How do I update my project from the latest starter code?
-
-If you alter configuration files or the `package.json`, then you will have to `diff` the files and make changes. If you duplicate the build you can avoid potential conflicts.
+## How do I update my project to the latest versions of Angular?
 
 After you have finished updating the `package.json`, run the following command:
 
 - `$ npm run clean:install`
 
 
-
 ## Can I run LiveReload with the Production build?
 
-Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using`npm run build:dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `npm run build:prod watch=true`
+Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr --build dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr --build dev --watch --serve`
 
-Then, start up the production server
-
-`NODE_ENV=prod npm run serve watch=true`
 
 For livereload to work in the browser for the production build you currently you have to edit `src/public/index.html`.
 
@@ -396,7 +473,8 @@ Copy the livereload `script` to the `build:remove:dev` comment near the end of t
     <!-- /build -->
 ```
 
-It is not recommended that you deploy the livereload script to production. If anyone has a clever workaround for this please submit a Pull Request with the change.
+It is not recommended that you deploy the livereload script to production.
+
 
 
 ## How do I take advantage of TypeScript in my IDE?

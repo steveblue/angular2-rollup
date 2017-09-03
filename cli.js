@@ -21,7 +21,8 @@ program
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
     .option('-d, --dir [path]', 'Path the code should be generated in (relative)')
-    .option('-s, --spec [bool]', 'Include spec files in code generation')
+    .option('--spec [bool]', 'Include spec files in code generation')
+    .option('--e2e [bool]', 'Include e2e spec files in code generation')
     .option('-r, --route [bool]', 'Include route files in code generation')
     .option('-t, --test [bool]', 'Run unit tests')
     .option('-l, --lint [bool]', 'Run Codelyzer on startup')
@@ -86,6 +87,7 @@ if (program.generate) {
         type: program.generate,
         force: program.force ? true : false,
         spec: program.spec ? true : false,
+        e2e: program.e2e ? true : false,
         route: program.route ? true : false
     };
 
@@ -107,5 +109,16 @@ if (program.scaffold) {
 
 }
 
+
+if (program.test) {
+
+    if (program.watch === true) {
+        spawn('npm run test:watch', { shell: true, stdio: 'inherit' });
+    }
+    else {
+        spawn('npm run test', { shell: true, stdio: 'inherit' });
+    }
+
+}
 
 
