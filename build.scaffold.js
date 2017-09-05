@@ -9,6 +9,7 @@ const clim = require('clim');
 const cons = clim();
 
 let lib = false;
+let useVersion = '4.3.6'; 
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
@@ -84,6 +85,9 @@ process.argv.forEach((arg)=>{
   if (arg.includes('lib')) {
       lib = true;
   }
+  if (arg.includes('version')) {
+      useVersion = arg.toString().split('=')[1];
+  }
 });
 
 
@@ -132,9 +136,22 @@ let init = function() {
         script = JSON.parse(script);
         script.name = path.basename(process.cwd());
 
+        
+        Object.keys(script.dependencies).forEach((dep) => {
+            if (dep.includes('@angular')) {
+                script.dependencies[dep] = useVersion;
+            }
+        });
+
+        Object.keys(script.devDependencies).forEach((dep) => {
+            if (dep.includes('@angular')) {
+                script.devDependencies[dep] = useVersion;
+            }
+        });
+
         fs.writeFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json', JSON.stringify(script, null, 4), function (err) {
             if (err) log(err);
-            alert('ngr', 'scaffolded new app in project directory');
+            alert('ngr', 'scaffolded ' + path.basename(process.cwd()), 'for '+ useVersion);
             alert('npm install', 'to install project dependencies');
             alert('ngr build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
             alert('ngr build prod --serve', 'to compile your project AOT for production, start up Express server');

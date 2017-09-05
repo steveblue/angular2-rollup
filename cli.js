@@ -29,6 +29,7 @@ program
     .option('serve, --serve [bool]', 'Run Express Server')
     .option('scaffold, --scaffold [bool]', 'Scaffold a new project')
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
+    .option('--angularVersion [string]', 'Scaffold a new project with a specific @angular version')
     .parse(process.argv);
 
 
@@ -102,6 +103,10 @@ if (program.scaffold) {
         cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js --lib';
     } else {
         cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
+    }
+
+    if (program.angularVersion) {
+        cliCommand += ' version=' + program.angularVersion
     }
 
     cp(path.dirname(fs.realpathSync(__filename))+'/build.config.js', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()));
