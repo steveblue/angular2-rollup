@@ -136,9 +136,9 @@ let init = function() {
             if (err) log(err);
             alert('ngr', 'scaffolded new app in project directory');
             alert('npm install', 'to install project dependencies');
-            alert('ngr --build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
-            alert('ngr --build prod --serve', 'to compile your project AOT for production, start up Express server');
-            alert('ngr --help', 'for more CLI commands' );
+            alert('ngr build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
+            alert('ngr build prod --serve', 'to compile your project AOT for production, start up Express server');
+            alert('ngr help', 'for more CLI commands' );
         });
 
       });

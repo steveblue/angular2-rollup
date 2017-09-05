@@ -1,19 +1,18 @@
-##5.0.0
+##4.4.0-RC.0
 
-MAJOR BREAKING CHANGES in this release.
+MAJOR BREAKING CHANGES in this release. This release is primarily to improve the CLI, make writing custom builds easier. This release decouples the CLI from project code.
 
-- Updated to Angular 5.0.0
 - CLI must now be installed globally `npm i -g angular2-rollup`
 - Project dependencies are now decoupled from CLI dependencies
-- Scaffold a new app with `ngr --scaffold`, with `--lib` for library builds
+- Scaffold a new app with `ngr scaffold`, with `--lib` for library builds
 - CLI output has new look and feel in terminal
-- Added ability to write custom builds easier
 - Added build hooks so users can insert custom logic into parts of each build
 - e2e spec files can now be generated with `ngr --generate e2e`
 - Project dependencies are now decoupled from CLI dependencies
+- Normalized CLI commands, use build instead of --build or generate instead of --generate
 
 
-###MIGRATING from 4.3.6 to 5.0.0
+###MIGRATING from 4.3.6 to 4.4.0-RC.0
 
 Install the CLI globally. `npm install -g angular2-rollup`
 
@@ -70,20 +69,20 @@ Update `@angular` dependencies in `package.json`
 
 ```
     "dependencies": {
-      "@angular/animations": "5.0.0-beta.6",
-      "@angular/common": "5.0.0-beta.6",
-      "@angular/core": "5.0.0-beta.6",
-      "@angular/forms": "5.0.0-beta.6",
-      "@angular/http": "5.0.0-beta.6",
-      "@angular/platform-browser": "5.0.0-beta.6",
-      "@angular/platform-browser-dynamic": "5.0.0-beta.6",
-      "@angular/platform-server": "5.0.0-beta.6",
-      "@angular/router": "5.0.0-beta.6",
+      "@angular/animations": "4.4.0-RC.0",
+      "@angular/common": "4.4.0-RC.0",
+      "@angular/core": "4.4.0-RC.0",
+      "@angular/forms": "4.4.0-RC.0",
+      "@angular/http": "4.4.0-RC.0",
+      "@angular/platform-browser": "4.4.0-RC.0",
+      "@angular/platform-browser-dynamic": "4.4.0-RC.0",
+      "@angular/platform-server": "4.4.0-RC.0",
+      "@angular/router": "4.4.0-RC.0",
 
     "devDependencies": {
-      "@angular/compiler": "5.0.0-beta.6",
-      "@angular/compiler-cli": "5.0.0-beta.6",
-      "@angular/language-service": "5.0.0-beta.6",
+      "@angular/compiler": "4.4.0-RC.0",
+      "@angular/compiler-cli": "4.4.0-RC.0",
+      "@angular/language-service": "4.4.0-RC.0",
 ```
 
 

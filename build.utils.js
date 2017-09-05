@@ -274,7 +274,7 @@ const utils = {
             cp('-R', config.cliRoot+'/.new/'+options.type+'/*', config.cliRoot+'/.tmp');
 
             ls(config.cliRoot+'/.tmp').forEach((fileName, index) => {
-                console.log(options.type, fileName);
+
                if ( options.type !== 'component' && fileName.includes('component') ) {
                   return;
                }

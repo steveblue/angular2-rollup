@@ -5,11 +5,11 @@
 A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup.
 
 
-- `ngr --build dev` compiles just in time (JIT) using Typescript and SystemJS.
+- `ngr build dev` compiles just in time (JIT) using Typescript and SystemJS.
 
-- `ngr --build prod` uses  [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to compile ahead of time (AOT), bundles with [Rollup](http://rollupjs.org) and optimizes the build with [Closure Compiler](https://developers.google.com/closure/compiler/).
+- `ngr build prod` uses  [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to compile ahead of time (AOT), bundles with [Rollup](http://rollupjs.org) and optimizes the build with [Closure Compiler](https://developers.google.com/closure/compiler/).
 
-- `ngr --build lib` runs a build script for component libraries. It uses  [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to make distributed components compatible with (AOT).
+- `ngr build lib` runs a build script for component libraries. It uses  [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to make distributed components compatible with (AOT).
 
 Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow for cross platform support. A boilerplate [Express](http://expressjs.com) server is also included with support for LiveReload. We chose this method so anyone could write their own build that fit the needs of their project and use this starter as an example of how to do it.
 
@@ -28,25 +28,21 @@ Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow f
 
 - Install the cli and global dependencies
 
-`$ npm install -g angular2-rollup webdriver-manager codelyzer`
+`$ npm install -g angular2-rollup webdriver-manager codelyzer rimraf`
 
-- Make a new directory to app
+- Scaffold a new project and install dependencies
 
 ```
+
 $ mkdir my-new-app && cd my-new-app
-$ ngr --scaffold
-```
+$ ngr scaffold && npm install
 
-- Install dependencies
-
-```
-$ npm install
 ```
 
 
 - Run development build, start up Express Server with LiveReload
 
-`$ ngr --build dev --serve --watch`
+`$ ngr build dev --serve --watch`
 
 When everything is setup correctly, you should be able to visit  [http://localhost:4200](http://localhost:4200) in your browser.
 
@@ -129,13 +125,13 @@ Express is used mainly to provide a development server, but it could also be con
 
 To build the app for development, enable livereload, and start up the server:
 
-* `$ ngr --build dev --watch --serve`
+* `$ ngr build dev --watch --serve`
 
 `ngr` will build the application for development. The dev environment bootstraps Angular with JIT Compiler for fast and efficient development.
 
 Once your work has been validated with the development build, you can also test the production build .
 
-* `$ ngr --build prod --serve`
+* `$ ngr build prod --serve`
 
 
 ### Developing Component Libraries
@@ -146,7 +142,7 @@ To develop component libraries, scaffold an app with the `--lib` flag.
 
 The name of the library and more is configured in `build.config.js`.
 
-* `$ ngr --build lib`
+* `$ ngr build lib`
 
 
 ## Testing
@@ -165,7 +161,7 @@ e2e tests use Protractor and Selenium Webdriver. The process requires multiple t
 
 * single run:
   * in a new tab *if not already running!*: `npm run webdriver:start`
-  * in a tab: `ngr --build dev --serve`
+  * in a tab: `ngr build dev --serve`
   * in a tab: `npm run e2e`
 * interactive mode:
   * instead of the last command above, you can run: `npm run e2e:live`
@@ -192,7 +188,7 @@ To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.co
 
 To build an application for production, run the following command.
 
-* `$ ngr --build prod`
+* `$ ngr build prod`
 
 You can now deploy the `/build` folder to your server!
 
@@ -211,23 +207,23 @@ To use the CLI run the command `npm install -g` while in the root directory of t
 
 Displays the help documentation for using `ngr`
 
-#### --build
+#### build
 
-- `ngr --build dev` Builds development environment
-- `ngr --build prod` Builds production environment
+- `ngr build dev` Builds development environment
+- `ngr build prod` Builds production environment
 
-NOTE: Use `-b` instead of `--build`
-
-
-#### --generate
-
-- `ngr --generate component --name todo-list --spec` Generate a `TodoListComponent` in the current directory with a spec file
-- `ngr --generate directive --name todo-list --dir path/to/folder` Generate a `TodoListDirective` in a folder
-- `ngr -g module -n todo-list -r` Generate a `TodoListModule` in a folder with a routes.ts file
-- `ngr -g e2e -n todo-list` Generate e2e test
+NOTE: Use `b` instead of `build`
 
 
-You can pass the following types to `--generate`:
+#### generate
+
+- `ngr generate component --name todo-list --spec` Generate a `TodoListComponent` in the current directory with a spec file
+- `ngr generate directive --name todo-list --dir path/to/folder` Generate a `TodoListDirective` in a folder
+- `ngr g module -n todo-list -r` Generate a `TodoListModule` in a folder with a routes.ts file
+- `ngr g e2e -n todo-list` Generate e2e test
+
+
+You can pass the following types to `generate`:
 
 - class
 - component
@@ -240,7 +236,7 @@ You can pass the following types to `--generate`:
 - pipe
 - service
 
-EXAMPLE: `ngr --generate service --name todo-list --dir path/to/folder`
+EXAMPLE: `ngr generate service --name todo-list --dir path/to/folder`
 
 You can configure prefixes for Classes, Component and Directive selector in `build.config.js`. Omit the properties from the config to operate without prefixes. Defaults are included that follow the Angular Styleguide.
 
@@ -249,8 +245,8 @@ You can configure prefixes for Classes, Component and Directive selector in `bui
 
 You can choose to run an Express server in parallel with build tasks, with or without Livereload enabled
 
-- `ngr --build dev --watch --serve` Builds development environment, runs Express server with livereload
-- `ngr --serve` Runs Express server, make sure you have built beforehand!
+- `ngr build dev --watch --serve` Builds development environment, runs Express server with livereload
+- `ngr serve` Runs Express server, make sure you have built beforehand!
 
 Production builds do not require the CLI, just the package.json
 
@@ -453,7 +449,7 @@ After you have finished updating the `package.json`, run the following command:
 
 ## Can I run LiveReload with the Production build?
 
-Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr --build dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr --build dev --watch --serve`
+Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr build dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr build dev --watch --serve`
 
 
 For livereload to work in the browser for the production build you currently you have to edit `src/public/index.html`.
