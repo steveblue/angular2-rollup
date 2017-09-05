@@ -28,12 +28,14 @@ Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow f
 
 - Install the cli and global dependencies
 
-`$ npm install -g ngr webdriver-manager codelyzer`
+`$ npm install -g angular2-rollup webdriver-manager codelyzer`
 
 - Make a new directory to app
 
-`$ mkdir my-new-app
- $ cd my-new-app`
+```
+$ mkdir my-new-app && cd my-new-app
+$ ngr --scaffold
+```
 
 - Install dependencies
 

@@ -1,52 +1,33 @@
 ##5.0.0
 
+MAJOR BREAKING CHANGES in this release.
+
 - Updated to Angular 5.0.0
 - CLI must now be installed globally `npm i -g angular2-rollup`
-- `--build` is deprecated for `build` command, made little sense in argument syntax
-- Scaffold a new app with `ngr scaffold`
-- Scaffold a new app with support for library builds with `ngr scaffold --lib`
-- CLI output has new look and feel, dimmed from original
-- Added pre and post hooks to builds.
-    Users can now add the property `buildHooks` to `build.config.js`.
-    To do something at the end of the production build:
-
-```
-buildHooks: {
-    prod: {
-        pre: function() {
-            // do something here before the app compiles
-        },
-        post: function() {
-            // do something here after the app compiles
-        }
-    }
-}
-```
-
-Note: New hooks may be added on a case by base basis in the future.
+- Project dependencies are now decoupled from CLI dependencies
+- Scaffold a new app with `ngr --scaffold`, with `--lib` for library builds
+- CLI output has new look and feel in terminal
+- Added ability to write custom builds easier
+- Added build hooks so users can insert custom logic into parts of each build
+- e2e spec files can now be generated with `ngr --generate e2e`
+- Project dependencies are now decoupled from CLI dependencies
 
 
-MAJOR BREAKING CHANGES
+###MIGRATING from 4.3.6 to 5.0.0
 
-New apps built with this CLI should use the new command `ngr scaffold`
+Install the CLI globally. `npm install -g angular2-rollup`
 
-MIGRATING from 4.3.6
-
-If you have augmented the builds, the new pre and post hooks will help fullfill use cases where a custom script needs to run prior to compilation and after. It is recommended that you migrate any tasks to these new methods.
-
-If a build has diverged significantly, you can include the build file in your local project and it will override the original. This is not recommended.
-
-Another option is to rename the custom build. The CLI will attempt to execute the custom build script based on the filename.
-
-`build.customname.js` can be executed with `ngr --build customname`.
-
-Remove all build files except `build.config.js` unless the use cases above apply to your situation.
+Remove all build files except `build.config.js` unless you have made changes to the build.
 
 -  build.dev.js
 -  build.lib.js
 -  build.prod.js
 -  build.scaffold.js
 -  build.utils.js
+
+If you have changed the builds, it is recommended that you migrate any tasks to the new build hooks included with this update.
+
+If a build has diverged significantly, you can include the build file in your local project and it will override the original. This is not recommended and results may vary.
 
 Remove `cli.js`
 
@@ -84,6 +65,29 @@ The necessary scripts in the `package.json` have been greatly reduced. Below is 
       "postinstall": "npm run webdriver:update"
     }
 ```
+
+Update `@angular` dependencies in `package.json`
+
+```
+    "dependencies": {
+      "@angular/animations": "5.0.0-beta.6",
+      "@angular/common": "5.0.0-beta.6",
+      "@angular/core": "5.0.0-beta.6",
+      "@angular/forms": "5.0.0-beta.6",
+      "@angular/http": "5.0.0-beta.6",
+      "@angular/platform-browser": "5.0.0-beta.6",
+      "@angular/platform-browser-dynamic": "5.0.0-beta.6",
+      "@angular/platform-server": "5.0.0-beta.6",
+      "@angular/router": "5.0.0-beta.6",
+
+    "devDependencies": {
+      "@angular/compiler": "5.0.0-beta.6",
+      "@angular/compiler-cli": "5.0.0-beta.6",
+      "@angular/language-service": "5.0.0-beta.6",
+```
+
+
+
 
 ##4.3.6
 
@@ -313,5 +317,4 @@ module.exports = {
     lib: 'src/lib',
     libFilename: 'default-lib'
 }
-
 
