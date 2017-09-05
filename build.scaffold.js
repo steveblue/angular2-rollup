@@ -9,7 +9,7 @@ const clim = require('clim');
 const cons = clim();
 
 let lib = false;
-let useVersion = '4.3.6'; 
+let useVersion = '5.0.0-beta.6'; 
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
@@ -56,6 +56,7 @@ const files     = [
     'build.config.js',
     'karma-test-shim.js',
     'karma.conf.js',
+    'main.prod.js',
     'main.prod.ts',
     'main.ts',
     'postcss.dev.js',

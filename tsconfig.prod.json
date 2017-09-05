@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./ngfactory",
     "target": "es2015",
     "module": "es2015",
     "emitDecoratorMetadata": true,
@@ -15,13 +16,10 @@
     ]
   },
   "angularCompilerOptions": {
-   "genDir": "./ngfactory",
-   "annotateForClosureCompiler": true,
-   "debug": false
+   "annotateForClosureCompiler": true
   },
   "files": [
-    "./tmp/app/app.module.ts",
-    "main.prod.ts"
+    "./main.prod.ts"
   ],
   "compileOnSave": false,
   "buildOnSave": false
