@@ -18,11 +18,10 @@
     ]
   },
   "angularCompilerOptions": {
+    "annotateForClosureCompiler": true,
     "skipMetadataEmit": false
   },
   "files": [
     "./tmp/app/app.module.ts"
-  ],
-  "compileOnSave": false,
-  "buildOnSave": false
+  ]
 }

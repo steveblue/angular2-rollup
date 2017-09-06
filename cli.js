@@ -17,6 +17,7 @@ program
     .usage('<keywords>')
     .option('build, --build, b [env]', 'Build the application by environment')
     .option('-w, --watch [bool]', 'Enable file watchers to detect changes and build')
+    .option('--postcss [bool]', 'Enable postcss for dev build, default is false')
     .option('generate, --generate, g [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -61,6 +62,13 @@ if (program.build) {
     }
     else {
         cliCommand += ' watch=false';
+    }
+
+    if (program.postcss === true) {
+        cliCommand += ' postcss=true';
+    }
+    else {
+        cliCommand += ' postcss=false';
     }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });

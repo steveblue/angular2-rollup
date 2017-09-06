@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "./build",
     "target": "es5",
     "module": "commonjs",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
-    "removeComments": true,
+    "removeComments": false,
     "allowUnreachableCode": false,
     "moduleResolution": "node",
+    "outDir": "./build",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -23,10 +22,10 @@
       "dom"
     ]
   },
-  "angularCompilerOptions": {
-    "skipMetadataEmit": true
-  },
   "files": [
-    "./src/app/app.module.ts"
-  ]
+    "./src/app/**/*.ts",
+    "./main.ts"
+  ],
+  "compileOnSave": false,
+  "buildOnSave": false
 }
