@@ -4,15 +4,13 @@
 
 A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup.
 
-
-
 - `ngr build jit` compiles just in time (JIT) using [Typescript](https://www.typescriptlang.org).
 
-- `ngr build dev` compiles ahead of time (AOT) using [@angular/compiler](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) in `--watch` mode.
+- `ngr build dev` compiles ahead of time (AOT) using [ngc](https://github.com/angular/angular/tree/master/packages/compiler-cli) in `--watch` mode.
 
-- `ngr build prod` compiles ahead of time (AOT) using [@angular/compiler](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli), bundles with [Rollup](http://rollupjs.org) and optimizes the build with [Closure Compiler](https://developers.google.com/closure/compiler/).
+- `ngr build prod` compiles ahead of time (AOT) using [ngc](https://github.com/angular/angular/tree/master/packages/compiler-cli), bundles with [Rollup](http://rollupjs.org) and optimizes the build with [Closure Compiler](https://developers.google.com/closure/compiler/).
 
-- `ngr build lib` runs a build script for component libraries. It uses  [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to make distributed components compatible with (AOT).
+- `ngr build lib` runs a build script for component libraries. It uses  [ngc](https://github.com/angular/angular/tree/master/packages/compiler-cli) to make distributed components compatible with (AOT).
 
 Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow for cross platform support. A boilerplate [Express](http://expressjs.com) server is also included with support for LiveReload. We chose this method so anyone could write their own build that fit the needs of their project and use this starter as an example of how to do it.
 
