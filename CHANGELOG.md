@@ -31,17 +31,14 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
   ]
 ```
 
-`main.prod.ts`
 
 ###After 5.0.0
 
-```
-import { platformBrowser } from '@angular/platform-browser';
-import { enableProdMode } from '@angular/core';
-import { AppModule } from './tmp/app/app.module';
-enableProdMode();
-platformBrowser().bootstrapModuleFactory(AppModule);
-```
+`main.prod.ts`
+
+This file is unecessary. 
+
+Prior to 5.0.0 `main.prod.ts` needed to be included for `ngc`. After 5.0.0 `ngc` can use just `app.module.ts` as an entry point. Rollup still uses `main.prod.js` as an entry point.
 
 
 `tsconfig.prod.json`
