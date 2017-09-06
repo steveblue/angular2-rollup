@@ -36,7 +36,7 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
 
 `main.prod.ts`
 
-This file is unecessary. 
+This file is unnecessary. 
 
 Prior to 5.0.0 `main.prod.ts` needed to be included for `ngc`. After 5.0.0 `ngc` can use just `app.module.ts` as an entry point. Rollup still uses `main.prod.js` as an entry point.
 
