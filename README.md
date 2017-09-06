@@ -6,9 +6,9 @@ A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup.
 
 
 
-- `ngr build jit` compiles just in time (JIT) using Typescript.
+- `ngr build jit` compiles just in time (JIT) using [Typescript](https://www.typescriptlang.org).
 
-- `ngr build dev` compiles ahead of time (AOT) using `@angular/compiler` in `--watch` mode.
+- `ngr build dev` compiles ahead of time (AOT) using [@angular/compiler](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) in `--watch` mode.
 
 - `ngr build prod` compiles ahead of time (AOT) using [@angular/compiler](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli), bundles with [Rollup](http://rollupjs.org) and optimizes the build with [Closure Compiler](https://developers.google.com/closure/compiler/).
 
