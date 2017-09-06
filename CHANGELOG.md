@@ -1,9 +1,11 @@
 ##5.0.0-beta.6
 
 - Migrated `tsconfig.prod.json` to 5.0.0-beta.6. 
-- Scaffold new projects with a specific `@angular` version using `ngr scaffold --angularVersion 5.0.0-beta.6`
+- Scaffold new projects with a specific `@angular` version using `--angularVersion`
 
 To update existing projects, migrate `main.prod.ts` and `tsconfig.prod.json`. The `ngr` CLI by default will now include the configurations for `>5.0.0`. Use the examples below to downgrade to `4.0.0-4.4.0`. Further changes are required to downgrade to `2.0.0` but it is possible.
+
+NOTE: `ngr build lib` is broken in `5.0.0-beta.4-5.0.0-beta.6`. If you want to test this build use `ngr scaffold --angularVersion 5.0.0-beta.3` to scaffold your app.
 
 ###Prior to 5.0.0
 
