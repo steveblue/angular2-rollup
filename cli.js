@@ -99,13 +99,14 @@ if (program.generate) {
 
 if (program.scaffold) {
 
+ 
     if (program.lib) {
         cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js --lib';
     } else {
         cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
     }
 
-    if (program.angularVersion) {
+    if (program.angularVersion !== undefined) {
         cliCommand += ' version=' + program.angularVersion
     }
 

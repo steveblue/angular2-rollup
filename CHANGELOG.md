@@ -1,3 +1,65 @@
+##5.0.0-beta.6
+
+- Migrated `main.prod.ts` and `tsconfig.prod.json` to 5.0.0-beta.6. 
+- Scaffold new projects with a specific `@angular` version using `ngr scaffold --angularVersion 5.0.0-beta.6
+
+To update existing projects, migrate `main.prod.ts` and `tsconfig.prod.json`. The `ngr` CLI by default will now include the configurations for `>5.0.0`. Use the examples below to downgrade to `4.0.0-4.4.0`. Further changes are required to downgrade to `2.0.0` but it is possible.
+
+###Prior to 5.0.0
+
+`main.prod.ts`
+
+```
+import { platformBrowser } from '@angular/platform-browser';
+import { enableProdMode } from '@angular/core';
+import { AppModuleNgFactory } from './ngfactory/tmp/app/app.module.ngfactory';
+enableProdMode();
+platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
+```
+
+`tsconfig.prod.json`
+
+```
+  "angularCompilerOptions": {
+    "genDir": "./ngfactory",
+    "annotateForClosureCompiler": true,
+    "skipMetadataEmit": false
+  },
+  "files": [
+    "./tmp/app/app.module.ts",
+    "main.prod.ts"
+  ]
+```
+
+`main.prod.ts`
+
+###After 5.0.0
+
+```
+import { platformBrowser } from '@angular/platform-browser';
+import { enableProdMode } from '@angular/core';
+import { AppModule } from './tmp/app/app.module';
+enableProdMode();
+platformBrowser().bootstrapModuleFactory(AppModule);
+```
+
+
+`tsconfig.prod.json`
+
+```
+  "compilerOptions": {
+    "outDir": "./ngfactory"
+  },
+  "angularCompilerOptions": {
+    "annotateForClosureCompiler": true,
+    "skipMetadataEmit": false
+  },
+  "files": [
+    "./tmp/app/app.module.ts"
+  ],
+```
+
+
 ##4.4.0-RC.0
 
 MAJOR BREAKING CHANGES in this release. This release is primarily to improve the CLI, make writing custom builds easier. This release decouples the CLI from project code.

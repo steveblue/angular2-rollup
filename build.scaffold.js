@@ -152,7 +152,7 @@ let init = function() {
 
         fs.writeFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json', JSON.stringify(script, null, 4), function (err) {
             if (err) log(err);
-            alert('ngr', 'scaffolded ' + path.basename(process.cwd()), 'for '+ useVersion);
+            log('ngr scaffolded ' + path.basename(process.cwd()), 'angular@'+ useVersion);
             alert('npm install', 'to install project dependencies');
             alert('ngr build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
             alert('ngr build prod --serve', 'to compile your project AOT for production, start up Express server');
