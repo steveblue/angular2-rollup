@@ -60,7 +60,7 @@ const copy = {
         cp('-R', paths.src+'/public/.', paths.build+'/');
 
         exec(paths.cliRoot +'/node_modules/.bin/htmlprocessor ./build/index.html -o ./build/index.html -e prod', function(code, output, error){
-               log('index.html','formatted', 'for',  colors.bold(colors.cyan(env)));
+               log('index.html','formatted');
         });
 
         log(path || paths.src+'/public/', 'copied to', paths.build+'/');
@@ -75,8 +75,6 @@ const copy = {
         log(path, 'copied to', paths.build+'/');
     },
     lib: () => {
-
-        mkdir('-p', __dirname + '/' + paths.dep.dist);
 
         for( var i=0;  i < paths.dep.prodLib.length; i++ ) {
 
@@ -267,7 +265,7 @@ let style = {
 
 let init = function() {
 
-    rm('-rf', paths.projectRoot+'/.tmp/');
+    rm('-rf', './tmp');
     rm('-rf', './ngfactory');
     rm('-rf', './'+paths.build);
 

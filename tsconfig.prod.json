@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./ngfactory",
     "target": "es2015",
     "module": "es2015",
     "emitDecoratorMetadata": true,
@@ -9,20 +10,18 @@
     "removeComments": true,
     "allowUnreachableCode": false,
     "moduleResolution": "node",
-    "typeRoots": [ "node_modules/@types" ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "types": [
-       "node"
+      "node"
     ]
   },
   "angularCompilerOptions": {
-   "genDir": "./ngfactory",
-   "annotateForClosureCompiler": true,
-   "debug": false
+    "annotateForClosureCompiler": true,
+    "skipMetadataEmit": false
   },
   "files": [
-    "./tmp/app/app.module.ts",
-    "main.prod.ts"
-  ],
-  "compileOnSave": false,
-  "buildOnSave": false
+    "./tmp/app/app.module.ts"
+  ]
 }

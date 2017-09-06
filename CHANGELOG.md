@@ -1,3 +1,224 @@
+##5.0.0-beta.6
+
+BREAKING CHANGES
+
+- New dev build uses AOT in `--watch` mode, JIT has been deprecated for development environment but is still available with `ngr build jit`
+- Migrated `tsconfig.prod.json` to 5.0.0-beta.6. 
+- Scaffold new projects with a specific `@angular` version using `--angularVersion`
+
+If your project is < 5.0.0 use `ngr build jit` instead of `ngr build dev`.
+
+To update existing projects, migrate `main.prod.ts`, `tsconfig.dev.json` and `tsconfig.prod.json`. The `ngr` CLI by default will now include the configurations for `>5.0.0`. Use the examples below to downgrade to `4.0.0-4.4.0`. Further changes are required to downgrade to `2.0.0` but it is possible.
+
+NOTE: `ngr build lib` is broken in `5.0.0-beta.4-5.0.0-beta.6`. If you want to test this build use `ngr scaffold --angularVersion 5.0.0-beta.3` to scaffold your app.
+
+###Prior to 5.0.0
+
+`main.prod.ts`
+
+```
+import { platformBrowser } from '@angular/platform-browser';
+import { enableProdMode } from '@angular/core';
+import { AppModuleNgFactory } from './ngfactory/tmp/app/app.module.ngfactory';
+enableProdMode();
+platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
+```
+
+`tsconfig.prod.json`
+
+```
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "es2015",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "allowUnreachableCode": false,
+    "moduleResolution": "node",
+    "typeRoots": [ 
+      "node_modules/@types" 
+    ],
+    "types": [
+       "node"
+    ]
+  },
+  "angularCompilerOptions": {
+    "genDir": "./ngfactory",
+    "annotateForClosureCompiler": true,
+    "skipMetadataEmit": false
+  },
+  "files": [
+    "./tmp/app/app.module.ts",
+    "main.prod.ts"
+  ]
+}
+
+```
+
+
+`tsconfig.dev.json`  / `tsconfig.jit.json`. < 5.0.0 dev and jit builds are the same
+
+```
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "removeComments": false,
+        "allowUnreachableCode": false,
+        "moduleResolution": "node",
+        "outDir": "./build",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "types": [
+            "node",
+            "jasmine",
+            "karma"
+        ],
+        "lib": [
+            "es2017",
+            "dom"
+        ]
+    },
+    "exclude": [
+        "build",
+        "dist",
+        "tmp",
+        "node_modules",
+        "main.prod.ts"
+    ],
+    "compileOnSave": false,
+    "buildOnSave": false
+}
+```
+
+
+###After 5.0.0
+
+`main.prod.ts`
+
+This file is unnecessary. 
+
+Prior to 5.0.0 `main.prod.ts` needed to be included for `ngc`. After 5.0.0 `ngc` can use just `app.module.ts` as an entry point. Rollup still uses `main.prod.js` as an entry point.
+
+`tsconfig.dev.json` 
+
+```
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "target": "es5",
+    "module": "commonjs",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "allowUnreachableCode": false,
+    "moduleResolution": "node",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+      "node",
+      "jasmine",
+      "karma"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  },
+  "angularCompilerOptions": {
+    "skipMetadataEmit": true
+  },
+  "files": [
+    "./src/app/app.module.ts"
+  ]
+}
+
+```
+
+`tsconfig.jit.json`
+
+```
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "removeComments": false,
+        "allowUnreachableCode": false,
+        "moduleResolution": "node",
+        "outDir": "./build",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "types": [
+            "node",
+            "jasmine",
+            "karma"
+        ],
+        "lib": [
+            "es2017",
+            "dom"
+        ]
+    },
+    "exclude": [
+        "build",
+        "dist",
+        "tmp",
+        "node_modules",
+        "main.prod.ts"
+    ],
+    "compileOnSave": false,
+    "buildOnSave": false
+}
+```
+
+
+`tsconfig.prod.json`
+
+```
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "target": "es2015",
+    "module": "es2015",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "allowUnreachableCode": false,
+    "moduleResolution": "node",
+    "typeRoots": [ 
+      "node_modules/@types" 
+    ],
+    "types": [
+       "node"
+    ]
+  },
+  "angularCompilerOptions": {
+   "annotateForClosureCompiler": true,
+   "skipMetadataEmit": false
+  },
+  "files": [
+    "./src/app/app.module.ts"
+  ]
+}
+
+```
+
+
 ##4.4.0-RC.0
 
 MAJOR BREAKING CHANGES in this release. This release is primarily to improve the CLI, make writing custom builds easier. This release decouples the CLI from project code.

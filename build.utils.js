@@ -301,7 +301,7 @@ const utils = {
         }
     },
     tslint : (path) => {
-        exec('tslint -c tslint.json '+path);
+        exec(projectRoot + '/node_modules/.bin/tslint -c '+ projectRoot +'/tslint.json '+path);
     },
     angular : function(options, source, dir) {
 

@@ -9,6 +9,7 @@ const clim = require('clim');
 const cons = clim();
 
 let lib = false;
+let useVersion = '5.0.0-beta.6'; 
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
@@ -55,9 +56,11 @@ const files     = [
     'build.config.js',
     'karma-test-shim.js',
     'karma.conf.js',
+    'main.prod.js',
     'main.prod.ts',
     'main.ts',
     'postcss.dev.js',
+    'postcss.jit.js',
     'postcss.prod.js',
     'protractor.config.js',
     'rollup.config.js',
@@ -69,6 +72,7 @@ const files     = [
     'server.config.prod.js',
     'server.js',
     'tsconfig.dev.json',
+    'tsconfig.jit.json',
     'tsconfig.prod.json',
     'tsconfig.lib.json',
     'tsconfig.lib.es5.json',
@@ -83,6 +87,9 @@ const files     = [
 process.argv.forEach((arg)=>{
   if (arg.includes('lib')) {
       lib = true;
+  }
+  if (arg.includes('version')) {
+      useVersion = arg.toString().split('=')[1];
   }
 });
 
@@ -132,9 +139,22 @@ let init = function() {
         script = JSON.parse(script);
         script.name = path.basename(process.cwd());
 
+        
+        Object.keys(script.dependencies).forEach((dep) => {
+            if (dep.includes('@angular')) {
+                script.dependencies[dep] = useVersion;
+            }
+        });
+
+        Object.keys(script.devDependencies).forEach((dep) => {
+            if (dep.includes('@angular')) {
+                script.devDependencies[dep] = useVersion;
+            }
+        });
+
         fs.writeFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json', JSON.stringify(script, null, 4), function (err) {
             if (err) log(err);
-            alert('ngr', 'scaffolded new app in project directory');
+            log('ngr scaffolded ' + path.basename(process.cwd()), 'angular@'+ useVersion);
             alert('npm install', 'to install project dependencies');
             alert('ngr build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
             alert('ngr build prod --serve', 'to compile your project AOT for production, start up Express server');

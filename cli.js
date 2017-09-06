@@ -17,6 +17,7 @@ program
     .usage('<keywords>')
     .option('build, --build, b [env]', 'Build the application by environment')
     .option('-w, --watch [bool]', 'Enable file watchers to detect changes and build')
+    .option('--postcss [bool]', 'Enable postcss for dev build, default is false')
     .option('generate, --generate, g [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -29,6 +30,7 @@ program
     .option('serve, --serve [bool]', 'Run Express Server')
     .option('scaffold, --scaffold [bool]', 'Scaffold a new project')
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
+    .option('--angularVersion [string]', 'Scaffold a new project with a specific @angular version')
     .parse(process.argv);
 
 
@@ -60,6 +62,13 @@ if (program.build) {
     }
     else {
         cliCommand += ' watch=false';
+    }
+
+    if (program.postcss === true) {
+        cliCommand += ' postcss=true';
+    }
+    else {
+        cliCommand += ' postcss=false';
     }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
@@ -98,10 +107,15 @@ if (program.generate) {
 
 if (program.scaffold) {
 
+ 
     if (program.lib) {
         cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js --lib';
     } else {
         cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
+    }
+
+    if (program.angularVersion !== undefined) {
+        cliCommand += ' version=' + program.angularVersion
     }
 
     cp(path.dirname(fs.realpathSync(__filename))+'/build.config.js', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()));

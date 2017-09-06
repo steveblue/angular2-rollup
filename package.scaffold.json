@@ -89,7 +89,7 @@
       "rollup": "^0.43.0",
       "rollup-plugin-cleanup": "^1.0.1",
       "rollup-plugin-commonjs": "^8.0.2",
-      "rollup-plugin-node-resolve-angular": "^2.0.3",
+      "rollup-plugin-node-resolve": "^3.0.0",
       "rollup-plugin-replace": "^1.1.1",
       "ts-helpers": "^1.1.2",
       "tslint": "^5.4.3",
