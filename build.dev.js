@@ -9,6 +9,7 @@ const utils = require('./build.utils.js');
 const chokidar = require('chokidar');
 const sass = require('node-sass');
 const postcss = require('./postcss.' + env + '.js');
+const spawn = require('child_process').spawn;
 
 /* References to shared tools are found in build.utils.js */
 
@@ -171,16 +172,13 @@ const compile = {
 
     let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
 
-      alert('ngc', 'started compiling');
+      // alert('ngc', 'started compiling');
       
-      if (canWatch === true) {
-        let tsc = exec(paths.projectRoot + '/node_modules/.bin/ngc -p ./tsconfig.dev.json --watch');
-      } else {
-        let tsc = exec(paths.projectRoot + '/node_modules/.bin/ngc -p ./tsconfig.dev.json', function (code, output, error) {
-          alert('ngc', 'compiled');
-          alert(colors.green('Build is ready'));
-        });
-      }
+      // if (canWatch === true) {
+      //   let tsc = exec(paths.projectRoot + '/node_modules/.bin/ngc -p ./tsconfig.dev.json --watch');
+      // } else {
+      //   let tsc = spawn(paths.projectRoot + '/node_modules/.bin/ngc -p ./tsconfig.dev.json', { shell: true, stdio: 'inherit' });
+      // }
       
       
     });
@@ -354,7 +352,7 @@ let watcher = chokidar.watch('./' + paths.src + '/**/*.*', {
   // }
   else if (path.indexOf('.scss') > -1) {
 
-    alert('CHANGE DETECTED', path, 'triggered', 'compile');
+    alert('CHANGE DETECTED', path, 'triggered', 'libsass');
 
     hasCompletedFirstStylePass = true;
     style.file(path, true);

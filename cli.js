@@ -73,6 +73,14 @@ if (program.build) {
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
+    if (program.build === 'dev' && program.watch === true) {
+        let tsc = spawn(paths.projectRoot + '/node_modules/.bin/ngc -p ./tsconfig.dev.json --watch', { shell: true, stdio: 'inherit' });
+    }
+
+    if (program.build === 'dev' && program.watch === undefined) {
+        let tsc = spawn(paths.projectRoot + '/node_modules/.bin/ngc -p ./tsconfig.dev.json', { shell: true, stdio: 'inherit' });
+    }
+
 }
 
 if (program.unit) {
