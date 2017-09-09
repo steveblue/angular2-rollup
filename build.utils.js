@@ -44,22 +44,25 @@ const clim = require('clim');
 const cons = clim();
 const colors = require('chalk');
 const findUp = require('find-up');
-const scripts = require('./package.json').scripts;
+
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
 const escape = require('js-string-escape');
 
 const cliRoot = path.dirname(fs.realpathSync(__filename));
-const processRoot = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
+const processRoot = path.join(path.dirname(process.cwd()) , path.basename(process.cwd()));
 const cliConfigPath = findUp.sync('cli.config.js');
 let projectRoot;
 
 if(!cliConfigPath) {
-    projectRoot = './';
+    projectRoot =  path.normalize('./');
 } else {
-    projectRoot = cliConfigPath.substring(0, cliConfigPath.lastIndexOf("/"));
+    projectRoot = path.normalize(cliConfigPath.substring(0, cliConfigPath.replace(/\\/g,"/").lastIndexOf("/")));
 }
 
+const scripts = require(projectRoot+'/package.json').scripts;
+let config = require(projectRoot+'/build.config.js');
+ 
 const moduleIdRegex = /moduleId\s*:(.*)/g;
 const directiveRegex = /@Directive\(\s?{([\s\S]*)}\s?\)$/gm;
 const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
@@ -69,7 +72,7 @@ const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
 
-let config = require(projectRoot+'/build.config.js');
+
 
 /* Format time each LOG displays in the Terminal */
 
@@ -121,7 +124,7 @@ const log = function (action, noun, next) {
 };
 
 const alert = function (noun, verb, action, next) {
-    let n = noun ?colors.magenta(noun) : '';
+    let n = noun ? colors.bold(noun) : '';
     let v = verb ? colors.green(verb) : '';
     let a = action ? colors.cyan(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
@@ -182,16 +185,16 @@ const utils = {
     singleLineComment: singleLineComment,
     clean : {
         tmp: () => {
-            rm('-rf', './tmp');
-            mkdir('./tmp');
-            cp('-R', './'+config.src+'/.', './tmp');
-            log(config.src+'/*.ts', 'copied', 'to', 'tmp/*ts');
+            rm('-rf', path.normalize('./tmp'));
+            mkdir( path.normalize('./tmp'));
+            cp('-R', path.normalize('./'+config.src+'/')+'.', path.normalize('./tmp'));
+            log(config.src+'/*.ts', 'copied to', 'tmp/*ts');
         },
         lib: () => {
-            rm('-rf', './tmp');
-            mkdir('./tmp');
-            cp('-R', config.lib+'/.', 'tmp/');
-            log(config.lib+'/*.ts', 'copied', 'to', 'tmp/*ts');
+            rm('-rf', path.normalize('./tmp'));
+            mkdir(path.normalize('./tmp'));
+            cp('-R', path.normalize('./'+config.lib+'/')+'.', path.normalize('./tmp'));
+            log(config.lib+'/*.ts', 'copied to', 'tmp/*ts');
         },
         paths: (p) => {
 
@@ -268,12 +271,12 @@ const utils = {
         },
         copy: function (options) {
 
-            rm('-rf', config.cliRoot+'/.tmp/');
-            mkdir(config.cliRoot+'/.tmp/');
+            rm('-rf', path.normalize(config.cliRoot+'/.tmp/'));
+            mkdir(path.normalize(config.cliRoot+'/.tmp/'));
 
-            cp('-R', config.cliRoot+'/.new/'+options.type+'/*', config.cliRoot+'/.tmp');
+            cp('-R', path.normalize(config.cliRoot+'/.new/'+options.type+'/*'), path.normalize(config.cliRoot+'/.tmp'));
 
-            ls(config.cliRoot+'/.tmp').forEach((fileName, index) => {
+            ls(path.normalize(config.cliRoot+'/.tmp')).forEach((fileName, index) => {
 
                if ( options.type !== 'component' && fileName.includes('component') ) {
                   return;
@@ -291,17 +294,17 @@ const utils = {
                    return;
                }
                log(fileName.replace('new', options.name), 'copied to', options.name);
-               utils.generate.replace(config.cliRoot+'/.tmp/'+fileName, options.name).then((filePath)=>{
+               utils.generate.replace(path.normalize(config.cliRoot+'/.tmp/'+fileName), options.name).then((filePath)=>{
 
-                   mv((options.force ? '-f' : '-n'), filePath, options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
+                   mv((options.force ? '-f' : '-n'), filePath, path.normalize(options.path+'/'+filePath.replace(/^.*[\\\/]/, '')));
                    //log('Generated', filePath, 'at', options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
 
                });
             });
         }
     },
-    tslint : (path) => {
-        exec(projectRoot + '/node_modules/.bin/tslint -c '+ projectRoot +'/tslint.json '+path);
+    tslint : (filePath) => {
+        exec(path.normalize(projectRoot + '/node_modules/.bin/tslint')+' -c '+ path.normalize(projectRoot +'/tslint.json')+' '+filePath);
     },
     angular : function(options, source, dir) {
 

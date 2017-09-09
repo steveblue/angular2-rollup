@@ -6,8 +6,8 @@ const path        = require('path');
 const fs          = require('fs');
 const program     = require('commander');
 const spawn       = require('child_process').spawn;
-const utils       = require('./build.utils.js');
-const package     = require('./package.json');
+const utils       = require(__dirname + '/build.utils.js');
+const package     = require(__dirname + '/package.json');
 const paths        = utils.paths;
 
 let cliCommand = '';
@@ -53,9 +53,9 @@ if (program.serve) {
 if (program.build) {
 
 
-    let buildRoot = fs.existsSync(paths.projectRoot + '/build.' + program.build + '.js') ? paths.projectRoot : paths.cliRoot;
+    let buildRoot = fs.existsSync(path.join(paths.projectRoot , 'build.' + program.build + '.js')) ? paths.projectRoot : paths.cliRoot;
 
-    cliCommand = 'rimraf build && node ' + buildRoot + '/build.'+program.build+'.js';
+    cliCommand = 'rimraf build && node ' + path.join(buildRoot , 'build.'+program.build+'.js');
 
     if (program.watch === true) {
         cliCommand += ' watch=true';
@@ -74,11 +74,11 @@ if (program.build) {
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
     if (program.build === 'dev' && program.watch === true) {
-        let tsc = spawn(paths.projectRoot + '/node_modules/.bin/ngc -p ./tsconfig.dev.json --watch', { shell: true, stdio: 'inherit' });
+        let tsc = spawn(path.normalize(paths.projectRoot + '/node_modules/.bin/ngc') +' -p tsconfig.dev.json --watch', { shell: true, stdio: 'inherit' });
     }
 
     if (program.build === 'dev' && program.watch === undefined) {
-        let tsc = spawn(paths.projectRoot + '/node_modules/.bin/ngc -p ./tsconfig.dev.json', { shell: true, stdio: 'inherit' });
+        let tsc = spawn(path.normalize(paths.projectRoot + '/node_modules/.bin/ngc') +' -p tsconfig.dev.json', { shell: true, stdio: 'inherit' });
     }
 
 }
@@ -117,16 +117,16 @@ if (program.scaffold) {
 
  
     if (program.lib) {
-        cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js --lib';
+        cliCommand = 'node '+path.normalize(path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js')+' --lib';
     } else {
-        cliCommand = 'node '+path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js';
+        cliCommand = 'node '+path.normalize(path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js');
     }
 
     if (program.angularVersion !== undefined) {
         cliCommand += ' version=' + program.angularVersion
     }
 
-    cp(path.dirname(fs.realpathSync(__filename))+'/build.config.js', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()));
+    cp(path.join(path.dirname(fs.realpathSync(__filename)), 'build.config.js'), path.join(path.dirname(process.cwd()) , path.basename(process.cwd())));
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
 }
