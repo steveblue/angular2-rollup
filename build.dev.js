@@ -186,7 +186,7 @@ let style = {
     let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
     let globalCSSFilename = paths.globalCSSFilename !== undefined ? paths.globalCSSFilename : 'style.css';
     let filename = filePath.replace(/^.*[\\\/]/, '');
-    let outFile = filePath.indexOf(paths.src+'/style') > -1 ? paths.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css').replace(paths.src, 'tmp');
+    let outFile = filePath.indexOf(paths.src+'/style') > -1 ? paths.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css');//.replace(paths.src, 'tmp');
     sass.render({
       file: filePath.indexOf(path.normalize(paths.src+'/style')) > -1 ? path.normalize(paths.src+'/style/style.scss') : filePath,
       outFile: outFile,

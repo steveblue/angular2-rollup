@@ -32,6 +32,9 @@ export default {
     if (/at the top level of an ES module, and has been rewritten/.test(message)) {
       return;
     }
+    if(/The final argument to magicString.overwrite/.test(message)) {
+      return;
+    }
     console.error(message);
   }
 }
