@@ -203,17 +203,23 @@ const compile = {
 
                     alert('Rollup', 'bundled', paths.libFilename+'.es5.js in', './'+paths.dist);
 
-                    var rsync = new Rsync()
-                    .flags('a')
-                    .patterns([ '-.js', { action: '-', pattern: '*.js' }])              
-                    .source(path.normalize('ngfactory/'))
-                    .destination('dist');
-
-                    rsync.execute(function(error, code, cmd) {
+         
+                    find(path.normalize('./ngfactory/'))
+                              .filter(function (file) { return file.match(/\.d.ts$/); })
+                              .forEach((filePath)=>{
+                                let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
+                                let fileName = filePath.replace(/^.*[\\\/]/, '');
+                                if (!fs.existsSync(dir)) {
+                                  mkdir('-p', dir);
+                                }
+                                cp(filePath, path.join(dir, fileName));
+                              });
 
                       log('d.ts, metadata.json', 'copied to', './'+paths.dist);
 
-                      rm(path.normalize(paths.dist + '/index.ts'));
+                      cp(path.normalize(path.join('./ngfactory', paths.libFilename + '.metadata.json')), path.normalize(paths.dist));
+
+                      //rm(path.normalize(paths.dist + '/index.ts'));
 
                       find(path.normalize('./'+paths.dist)).filter(function(file) {
 
@@ -226,8 +232,6 @@ const compile = {
                         }
 
                       });
-
-                    });
 
                     alert('Babel', 'started transpiling', paths.libFilename+'.es5.js');
 
