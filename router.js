@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = require('express').Router();
-const compression = require('shrink-ray');
+const compression = require('compression');
 const paths = require('./build.config.js');
 
 module.exports = function(app) {
