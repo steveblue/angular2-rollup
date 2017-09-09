@@ -11,6 +11,7 @@ const package     = require(__dirname + '/package.json');
 const paths        = utils.paths;
 
 let cliCommand = '';
+let useVersion = '5.0.0-beta.6';
 
 program
     .version(package.version)
@@ -18,6 +19,7 @@ program
     .option('build, --build, b [env]', 'Build the application by environment')
     .option('-w, --watch [bool]', 'Enable file watchers to detect changes and build')
     .option('--postcss [bool]', 'Enable postcss for dev build, default is false')
+    .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
     .option('generate, --generate, g [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -52,6 +54,9 @@ if (program.serve) {
 
 if (program.build) {
 
+    if (program.build === 'dev' && program.jit === true) { // override dev build with --jit argument
+        program.build = 'jit';
+    }
 
     let buildRoot = fs.existsSync(path.join(paths.projectRoot , 'build.' + program.build + '.js')) ? paths.projectRoot : paths.cliRoot;
 
@@ -114,8 +119,10 @@ if (program.scaffold) {
         cliCommand = 'node '+path.normalize(path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js');
     }
 
-    if (program.angularVersion !== undefined) {
-        cliCommand += ' version=' + program.angularVersion
+    if (program.angularVersion === undefined) {
+        cliCommand += ' version=' + useVersion;
+    } else {
+        cliCommand += ' version=' + program.angularVersion;
     }
 
     cp(path.join(path.dirname(fs.realpathSync(__filename)), 'build.config.js'), path.join(path.dirname(process.cwd()) , path.basename(process.cwd())));

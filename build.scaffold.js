@@ -9,7 +9,7 @@ const clim = require('clim');
 const cons = clim();
 
 let lib = false;
-let useVersion = '5.0.0-beta.6'; 
+let useVersion = '5.0.0';
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
@@ -139,7 +139,7 @@ let init = function() {
         script = JSON.parse(script);
         script.name = path.basename(process.cwd());
 
-        
+
         Object.keys(script.dependencies).forEach((dep) => {
             if (dep.includes('@angular')) {
                 script.dependencies[dep] = useVersion;

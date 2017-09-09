@@ -1,13 +1,20 @@
 ##1.0.0-beta.0
 
-- New npm package name `angular-rollup`
+- Updated npm package name to `angular-rollup`, `angular2-rollup` is deprecated
 - Cross platform support including MacOS, Windows and Linux for the CLI
-- Minor bugfixes and improvments to the builds
 - Updated CLI to support `@angular` 5.0.0+
 - `ngr build dev --watch` will trigger `ngc` in `--watch` mode
 - `ngr build jit` triggers JIT build, use for `@angular` 4.0.0 development
 - Backwards compatible to 4.0.0 with minor adjustments to config, 2.0.0 by downgrading `@angular` boilerplate
 
+NOTE: While in BETA this package is EXPERIMENTAL
+
+If you want to build an app with this project now it is recommended you use the `angular2-rollup` npm package instead.
+Minimal changes will be required to upgrade to `angular-rollup`.
+
+`npm install angular2-rollup@4.4.0-RC.0`
+
+-------------------------------------------------------------------------------------------------------------
 
 ##5.0.0-beta.6
 

@@ -271,12 +271,13 @@ const compile = {
 
 let style = {
 
-    file: (filePath, watch) => {
+    file: (filePath) => {
 
           let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
           let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
           let filename = filePath.replace(/^.*[\\\/]/, '');
-          let outFile = filePath.indexOf(config.src+'/style') > -1 ? config.dist+'/style/'+globalCSSFilename : filePath.replace('.scss','.css').replace(config.src, 'tmp');
+          let outFile = filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.dist+'/style/'+globalCSSFilename) : filePath.replace('.scss','.css').replace(config.src, 'tmp').replace(config.lib.replace('src/', ''), '');
+
           sass.render({
             file: filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.src+'/style/style.scss') : filePath,
             outFile: outFile,
@@ -293,13 +294,14 @@ let style = {
 
                   let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
 
-                      if ( (styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
+                      if( hasCompletedFirstStylePass === true || styleFiles.indexOf(filePath) === styleFiles.length - 1) {
+
                         alert('libsass and postcss', 'compiled');
-                        setTimeout(compile.src,2000);
-                      }
-                      if (hasCompletedFirstStylePass === true) {
+                        hasCompletedFirstStylePass === true;
                         compile.src();
+
                       }
+
 
                   });
                 }
@@ -313,17 +315,21 @@ let style = {
 
         mkdir(path.join(config.dist , 'style'));
 
-        ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
-          if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-            styleFiles.push(file);
-          }
-        });
+        style.file(path.normalize(config.src+'/style/style.scss'));
 
-        ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
-          if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-            style.file(file);
-          }
-        });
+        if (ls(path.normalize(config.lib + '/**/*.scss')).length > 0) {
+          ls(path.normalize(config.lib + '/**/*.scss')).forEach(function (file, index) {
+            if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+              styleFiles.push(file);
+            }
+          });
+
+          ls(path.normalize(config.lib + '/**/*.scss')).forEach(function (file, index) {
+            if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+              style.file(file);
+            }
+          });
+        }
 
       }
     };

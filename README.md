@@ -27,9 +27,11 @@ Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow f
 
 ## Quick start
 
+NOTE: This package requires `python` and `java JDK` to be installed prior to installion. Several dependencies require these services.
+
 - Install the cli and global dependencies
 
-`$ npm install -g angular2-rollup webdriver-manager codelyzer rimraf`
+`$ npm install -g angular-rollup webdriver-manager codelyzer rimraf`
 
 - Scaffold a new project and install dependencies
 

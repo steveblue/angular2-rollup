@@ -5,7 +5,6 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-const opn = require('opn');
 const app = express();
 const config = require('./build.config.js');
 const serverConfig = {
@@ -20,7 +19,6 @@ const host = serverConfig[env].origin;
 let ssl = false;
 let canWatch = false;
 let server;
-let openBrowser = false;
 
 process.argv.forEach(function(arg){
 
@@ -30,7 +28,6 @@ process.argv.forEach(function(arg){
 
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
-    openBrowser = true;
   }
 
 
@@ -99,8 +96,5 @@ server.listen(port);
 
 console.log('Express available at '+host+':'+port);
 
-if (openBrowser === true) {
-  opn('http://'+host+':'+port, config.browser || {app: ['google chrome', '--incognito']});
-}
 
 module.exports = app;
