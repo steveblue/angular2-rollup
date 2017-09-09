@@ -324,7 +324,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
   }
 
    })
-  .on('unlink', path => log('File', path, 'has been', 'removed'));
+   .on('unlink', filePath => log(filePath, 'has been removed'));
 
 watcher
   .on('error', error =>  warn('ERROR:', error))
