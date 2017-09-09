@@ -1,9 +1,20 @@
+##1.0.0-beta.0
+
+- New npm package name `angular-rollup`
+- Cross platform support including MacOS, Windows and Linux for the CLI
+- Minor bugfixes and improvments to the builds
+- Updated CLI to support `@angular` 5.0.0+
+- `ngr build dev --watch` will trigger `ngc` in `--watch` mode
+- `ngr build jit` triggers JIT build, use for `@angular` 4.0.0 development
+- Backwards compatible to 4.0.0 with minor adjustments to config, 2.0.0 by downgrading `@angular` boilerplate
+
+
 ##5.0.0-beta.6
 
 BREAKING CHANGES
 
 - New dev build uses AOT in `--watch` mode, JIT has been deprecated for development environment but is still available with `ngr build jit`
-- Migrated `tsconfig.prod.json` to 5.0.0-beta.6. 
+- Migrated `tsconfig.prod.json` to 5.0.0-beta.6.
 - Scaffold new projects with a specific `@angular` version using `--angularVersion`
 
 If your project is < 5.0.0 use `ngr build jit` instead of `ngr build dev`.
@@ -38,8 +49,8 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
     "removeComments": true,
     "allowUnreachableCode": false,
     "moduleResolution": "node",
-    "typeRoots": [ 
-      "node_modules/@types" 
+    "typeRoots": [
+      "node_modules/@types"
     ],
     "types": [
        "node"
@@ -103,11 +114,11 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
 
 `main.prod.ts`
 
-This file is unnecessary. 
+This file is unnecessary.
 
 Prior to 5.0.0 `main.prod.ts` needed to be included for `ngc`. After 5.0.0 `ngc` can use just `app.module.ts` as an entry point. Rollup still uses `main.prod.js` as an entry point.
 
-`tsconfig.dev.json` 
+`tsconfig.dev.json`
 
 ```
 {
@@ -200,8 +211,8 @@ Prior to 5.0.0 `main.prod.ts` needed to be included for `ngc`. After 5.0.0 `ngc`
     "removeComments": true,
     "allowUnreachableCode": false,
     "moduleResolution": "node",
-    "typeRoots": [ 
-      "node_modules/@types" 
+    "typeRoots": [
+      "node_modules/@types"
     ],
     "types": [
        "node"

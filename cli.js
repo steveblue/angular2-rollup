@@ -73,14 +73,6 @@ if (program.build) {
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
-    if (program.build === 'dev' && program.watch === true) {
-        let tsc = spawn(path.normalize(paths.projectRoot + '/node_modules/.bin/ngc') +' -p tsconfig.dev.json --watch', { shell: true, stdio: 'inherit' });
-    }
-
-    if (program.build === 'dev' && program.watch === undefined) {
-        let tsc = spawn(path.normalize(paths.projectRoot + '/node_modules/.bin/ngc') +' -p tsconfig.dev.json', { shell: true, stdio: 'inherit' });
-    }
-
 }
 
 if (program.unit) {
@@ -115,7 +107,7 @@ if (program.generate) {
 
 if (program.scaffold) {
 
- 
+
     if (program.lib) {
         cliCommand = 'node '+path.normalize(path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js')+' --lib';
     } else {
