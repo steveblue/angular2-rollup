@@ -45,6 +45,7 @@
     "js-string-escape": "^1.0.1",
     "magic-string": "^0.22.4",
     "node-sass": "^4.5.3",
+    "opn": "^5.1.0",
     "rimraf": "^2.6.1",
     "shelljs": "^0.7.8"
   },

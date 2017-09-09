@@ -62,7 +62,7 @@ if(!cliConfigPath) {
 
 const scripts = require(projectRoot+'/package.json').scripts;
 let config = require(projectRoot+'/build.config.js');
- 
+
 const moduleIdRegex = /moduleId\s*:(.*)/g;
 const directiveRegex = /@Directive\(\s?{([\s\S]*)}\s?\)$/gm;
 const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
@@ -168,10 +168,11 @@ config.projectRoot = projectRoot;
 // warn(JSON.stringify(config, null, 4));
 
 const utils = {
+    colors: colors,
+    config: config,
+    console: cons,
     paths: config,
     scripts: scripts,
-    console: cons,
-    colors: colors,
     log : log,
     warn : warn,
     alert: alert,
@@ -349,7 +350,6 @@ const utils = {
         return result;
 
     }
-
 };
 
 module.exports = utils;

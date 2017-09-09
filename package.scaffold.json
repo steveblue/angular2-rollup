@@ -80,6 +80,7 @@
       "karma-verbose-reporter": "^0.0.6",
       "livereload": "^0.6.2",
       "node-sass": "^4.5.3",
+      "opn": "^5.1.0",
       "phantomjs-prebuilt": "^2.1.14",
       "postcss": "^6.0.3",
       "postcss-cli": "^4.1.0",

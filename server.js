@@ -5,20 +5,22 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const opn = require('opn');
 const app = express();
-const paths = require('./build.config.js');
-const config = {
+const config = require('./build.config.js');
+const serverConfig = {
   dev: require('./server.config.dev.js'),
   prod: require('./server.config.prod.js')
 };
 
 
 let env = process.env.NODE_ENV || 'dev';
-const port = config[env].port || process.env.PORT;
-const host = config[env].origin;
+const port = serverConfig[env].port || process.env.PORT;
+const host = serverConfig[env].origin;
 let ssl = false;
 let canWatch = false;
 let server;
+let openBrowser = false;
 
 process.argv.forEach(function(arg){
 
@@ -28,7 +30,9 @@ process.argv.forEach(function(arg){
 
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+    openBrowser = true;
   }
+
 
 });
 
@@ -40,11 +44,11 @@ let live = function() {
    let liveserver = livereload.createServer({
      port: 35729
    });
-   liveserver.watch([__dirname + '/'+paths.build+'/assets',
-                     __dirname + '/'+paths.build+'/src',
-                     __dirname + '/'+paths.build+'/style',
-                     __dirname + '/'+paths.build+'/*.html',
-                     __dirname + '/'+paths.build+'/*.js']);
+   liveserver.watch([__dirname + '/'+config.build+'/assets',
+                     __dirname + '/'+config.build+'/src',
+                     __dirname + '/'+config.build+'/style',
+                     __dirname + '/'+config.build+'/*.html',
+                     __dirname + '/'+config.build+'/*.js']);
    console.log('Livereload available at '+host+':'+35729);
 };
 
@@ -94,5 +98,9 @@ const routes = require('./router')(app);
 server.listen(port);
 
 console.log('Express available at '+host+':'+port);
+
+if (openBrowser === true) {
+  opn('http://'+host+':'+port, config.browser || {app: ['google chrome', '--incognito']});
+}
 
 module.exports = app;

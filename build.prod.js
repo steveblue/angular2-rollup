@@ -15,7 +15,7 @@ const postcss   = require('./postcss.' + env  + '.js');
 const console   = utils.console;
 const colors    = utils.colors;
 const scripts   = utils.scripts;
-const paths     = utils.paths;
+const config     = utils.config;
 const log       = utils.log;
 const warn      = utils.warn;
 const alert     = utils.alert;
@@ -56,41 +56,42 @@ for (let cssProp in postcss.plugins) {
 
 const copy = {
     public: (filePath) => {
-      
-      log ( path.normalize(paths.src + '/public/')+'.', path.normalize(path.join(paths.build)) );
-      cp('-R', path.normalize(paths.src + '/public/')+'.', path.normalize(path.join(paths.build)));
 
-      exec(path.join(paths.cliRoot , path.normalize('node_modules/.bin/htmlprocessor'))  + ' '+ path.normalize(path.join(paths.build , '/')+ 'index.html') + ' -o '+ path.normalize(path.join(paths.build , '/')+ 'index.html') +' -e prod', function (code, output, error) {
+      cp('-R', path.normalize(config.src + '/public/')+'.', path.normalize(path.join(config.build)));
+
+      exec(path.join(config.cliRoot , path.normalize('node_modules/.bin/htmlprocessor'))  + ' '+ path.normalize(path.join(config.build , '/')+ 'index.html') + ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html') +' -e '+env, function (code, output, error) {
         log('index.html', 'formatted');
       });
 
-      log(filePath || path.join(paths.src , 'public/'), 'copied to', path.join(paths.build , '/'));
+      log(filePath || path.join(config.src , 'public/'), 'copied to', path.join(config.build , '/'));
 
-      if (paths && paths.clean) {
-        clean.paths(paths);
+      if (config && config.clean) {
+        clean.paths(config);
       }
 
     },
     file: (filePath) => {
-      cp('-R', filePath, path.join(paths.build , '/'));
-      log(filePath, 'copied to',  path.join(paths.build , '/'));
+
+      cp('-R', filePath, path.join(config.build , '/'));
+      log(filePath, 'copied to',  path.join(config.build , '/'));
+
     },
     lib: () => {
-      
-      for (var i = 0; i < paths.dep.prodLib.length; i++) {
-  
-        if (paths.dep.prodLib[i].split('/').pop().split('.').length > 1) { // file
-          let filePath = path.join(paths.dep.dist , paths.dep.prodLib[i]);
+
+      for (var i = 0; i < config.dep.prodLib.length; i++) {
+
+        if (config.dep.prodLib[i].split('/').pop().split('.').length > 1) { // file
+          let filePath = path.join(config.dep.dist , config.dep.prodLib[i]);
           if (!fs.existsSync(path.normalize(filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'))))) {
             mkdir('-p', path.normalize(filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'))));
           } // catch folders
-          cp('-R',  path.join(path.normalize(paths.dep.src) , path.normalize(paths.dep.prodLib[i])),  path.join(path.normalize(paths.dep.dist), path.normalize(paths.dep.prodLib[i])));
+          cp('-R',  path.join(path.normalize(config.dep.src) , path.normalize(config.dep.prodLib[i])),  path.join(path.normalize(config.dep.dist), path.normalize(config.dep.prodLib[i])));
         } else { // folder
-          cp('-R', path.join(path.normalize(paths.dep.src) , path.normalize(paths.dep.prodLib[i])), path.join(path.normalize(paths.dep.dist) , path.normalize(paths.dep.prodLib[i])));
+          cp('-R', path.join(path.normalize(config.dep.src) , path.normalize(config.dep.prodLib[i])), path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.prodLib[i])));
         }
-  
-        log(paths.dep.prodLib[i], 'copied to', path.join(path.normalize(paths.dep.dist) , path.normalize(paths.dep.prodLib[i])));
-  
+
+        log(config.dep.prodLib[i], 'copied to', path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.prodLib[i])));
+
       }
     }
   };
@@ -108,9 +109,9 @@ const copy = {
 const compile = {
 
     clean: (filePath) => {
-    
-        const outFile = filePath ? filePath : path.join(paths.projectRoot, paths.build , 'bundle.js');
-    
+
+        const outFile = filePath ? filePath : path.join(config.projectRoot, config.build , 'bundle.js');
+
         fs.readFile(outFile, 'utf8', function (err, contents) {
           if (!err) {
             contents = contents.replace(utils.multilineComment, '');
@@ -125,11 +126,11 @@ const compile = {
           } else {
             warn(err);
           }
-    
+
         });
-    
+
     },
-    
+
     src : () => {
 
         isCompiling = true;
@@ -143,16 +144,16 @@ const compile = {
 
               alert ('ngc', 'started compiling', 'ngfactory');
 
-              let tsc = exec(path.normalize(paths.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.prod.json'), function(code, output, error) {
+              let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.prod.json'), function(code, output, error) {
                   alert('ngc', 'compiled', '/ngfactory');
                   alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(path.normalize(paths.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.js', function(code, output, error) {
+                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.js', function(code, output, error) {
                      alert('Rollup', 'bundled bundle.es2015.js in', './build');
                      alert('Closure Compiler', 'started optimizing', 'bundle.js');
-    
-                     let closure = exec(require(paths.projectRoot+'/package.json').scripts['transpile:'+env], function(code, output, error){
-                          alert('Closure Compiler', 'transpiled', './'+paths.build+'/bundle.es2015.js to', './'+paths.build+'/bundle.js');
+
+                     let closure = exec(require(config.projectRoot+'/package.json').scripts['transpile:'+env], function(code, output, error){
+                          alert('Closure Compiler', 'transpiled', './'+config.build+'/bundle.es2015.js to', './'+config.build+'/bundle.js');
                           if (canWatch === true) {
                             alert(colors.green('Ready to serve'));
                             alert(colors.green('Watcher listening for changes'));
@@ -162,8 +163,8 @@ const compile = {
                           //compile.clean();
                           isCompiling = false;
 
-                          if (utils.paths.buildHooks && utils.paths.buildHooks[env] && utils.paths.buildHooks[env].post && hasInit === false) {
-                            utils.paths.buildHooks[env].post();
+                          if (utils.config.buildHooks && utils.config.buildHooks[env] && utils.config.buildHooks[env].post && hasInit === false) {
+                            utils.config.buildHooks[env].post();
                           }
 
                           hasInit = true;
@@ -195,15 +196,15 @@ const compile = {
 let style = {
 
   file: (filePath, watch) => {
-    
+
         let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
-        let globalCSSFilename = paths.globalCSSFilename !== undefined ? paths.globalCSSFilename : 'style.css';
+        let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
         let filename = filePath.replace(/^.*[\\\/]/, '');
-        let outFile = filePath.indexOf(paths.src+'/style') > -1 ? paths.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css').replace(paths.src, 'tmp');
+        let outFile = filePath.indexOf(config.src+'/style') > -1 ? config.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css');//.replace(config.src, 'tmp');
         sass.render({
-          file: filePath.indexOf(path.normalize(paths.src+'/style')) > -1 ? path.normalize(paths.src+'/style/style.scss') : filePath,
+          file: filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.src+'/style/style.scss') : filePath,
           outFile: outFile,
-          includePaths: [ paths.src+'/style/' ],
+          includePaths: [ config.src+'/style/' ],
           outputStyle: 'expanded',
           sourceComments: false
         }, function(error, result) {
@@ -214,11 +215,14 @@ let style = {
             fs.writeFile(outFile, result.css, function(err){
               if(!err){
 
-                let postcss = exec(path.normalize(path.join(paths.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(paths.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
+                let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
 
+                    if (!outFile.includes('style/style.css')) {
+                      cp(outFile, outFile.replace(config.src, 'tmp'));
+                    }
                     if ( (styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       alert('libsass and postcss', 'compiled');
-                      setTimeout(compile.src,2000);
+                      setTimeout(compile.src,1000);
                     }
                     if (hasCompletedFirstStylePass === true) {
                       compile.src();
@@ -233,21 +237,21 @@ let style = {
 
     },
     src: () => {
-      
-      mkdir(path.join(paths.build , 'style'));
-  
-      ls(path.normalize(paths.src + '/**/*.scss')).forEach(function (file, index) {
+
+      mkdir(path.join(config.build , 'style'));
+
+      ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
         if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
           styleFiles.push(file);
         }
       });
-  
-      ls(path.normalize(paths.src + '/**/*.scss')).forEach(function (file, index) {
+
+      ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
         if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
           style.file(file);
         }
       });
-      
+
     }
   };
 
@@ -263,23 +267,23 @@ let style = {
 
 let init = function() {
 
-    rm('-rf', path.normalize('./tmp/'));
-    rm('-rf',  path.normalize('./ngfactory'));
-    rm('-rf', path.normalize(path.join('./' , paths.build)));
+  rm('-rf', path.normalize('./tmp/'));
+  rm('-rf',  path.normalize('./ngfactory'));
+  rm('-rf', path.normalize(path.join('./' , config.build)));
 
-    clean.tmp();
+  clean.tmp();
 
-    mkdir(path.normalize('./ngfactory'));
-    mkdir(path.normalize('./' + paths.build));
-    mkdir(path.normalize('./' + paths.build + '/lib'));
+  mkdir(path.normalize('./ngfactory'));
+  mkdir(path.normalize('./' + config.build));
+  mkdir(path.normalize('./' + config.build + '/lib'));
 
-    if (utils.paths.buildHooks && utils.paths.buildHooks[env] && utils.paths.buildHooks[env].pre) {
-      utils.paths.buildHooks[env].pre();
-    }
+  if (utils.config.buildHooks && utils.config.buildHooks[env] && utils.config.buildHooks[env].pre) {
+    utils.config.buildHooks[env].pre();
+  }
 
-    copy.lib();
-    copy.public();
-    style.src();
+  copy.lib();
+  copy.public();
+  style.src();
 
 };
 
@@ -292,52 +296,52 @@ let init = function() {
 */
 
 
-let watcher = chokidar.watch(path.normalize('./' + paths.src + '/**/*.*'), {
+let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
   ignored: /[\/\\]\./,
   persistent: canWatch
 }).on('change', filePath => {
 
 
-      if (filePath.indexOf(path.join(paths.src , 'public')) > -1) {
-    
-        if (filePath.indexOf(path.join(paths.src , 'index.html'))) {
-          copy.public();
-        } else {
-          copy.file(filePath);
-        }
-    
+    if (filePath.indexOf(path.join(config.src , 'public')) > -1) {
+
+      if (filePath.indexOf(path.join(config.src , 'index.html'))) {
+        copy.public();
+      } else {
+        copy.file(filePath);
       }
 
-      else if ( filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
+    }
 
-        if(!isCompiling) {
-          alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
-          cp(filePath, filePath.replace(path.normalize(paths.src), path.normalize('./tmp')));
+    else if ( filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
+
+      if(!isCompiling) {
+        alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
+        cp(filePath, filePath.replace(path.normalize(config.src), path.normalize('./tmp')));
+        compile.src();
+      }
+
+    }
+
+    else if ( filePath.indexOf('.ts') > -1 && hasInit === true) {
+
+      alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
+
+      utils.tslint(filePath);
+
+      if (!isCompiling) {
           compile.src();
-        }
-
       }
 
-      else if ( filePath.indexOf('.ts') > -1 && hasInit === true) {
 
-        alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
+    }
+    else if ( filePath.indexOf('.scss') > -1 ) {
 
-        utils.tslint(filePath);
+      alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
 
-        if (!isCompiling) {
-            compile.src();
-        }
+        hasCompletedFirstStylePass = true;
+        style.file(filePath, true);
 
-
-      }
-      else if ( filePath.indexOf('.scss') > -1 ) {
-
-        alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
-
-         hasCompletedFirstStylePass = true;
-         style.file(filePath, true);
-
-      }
+    }
 
    })
   .on('unlink', filePath => log('File', filePath, 'has been', 'removed'));

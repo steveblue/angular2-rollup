@@ -5,31 +5,29 @@ require('shelljs/global');
 const env         = 'prod';
 const path        = require('path');
 const fs          = require('fs');
-const Rsync       = require('rsync');
 const utils       = require('./build.utils.js');
 const chokidar    = require('chokidar');
 const sass        = require('node-sass');
 const postcss     = require('./postcss.'+env+'.js');
 const minifyHtml  = require('html-minifier').minify;
 
-if (utils.paths.preLibraryBuild) {
-  const preBuild = utils.paths.preLibraryBuild;
-}
-
-if (utils.paths.postLibraryBuild) {
-  const postBuild = utils.paths.postLibraryBuild;
-}
-
 const console   = utils.console;
 const colors    = utils.colors;
 const scripts   = utils.scripts;
-const paths     = utils.paths;
+const config    = utils.config;
 const log       = utils.log;
 const alert     = utils.alert;
 const warn      = utils.warn;
 const clean     = utils.clean;
 const angular   = utils.angular;
 
+if (config.preLibraryBuild) {
+  const preBuild = config.preLibraryBuild;
+}
+
+if (config.postLibraryBuild) {
+  const postBuild = config.postLibraryBuild;
+}
 
 let canWatch = false;
 let isCompiling = false;
@@ -64,8 +62,8 @@ for (let cssProp in postcss.plugins) {
 
 const copy = {
     file: (filePath) => {
-        cp('-R', path.normalize(filePath), path.normalize(paths.dist+'/'));
-        log(filePath, 'copied to', path.normalize(paths.dist+'/'));
+        cp('-R', path.normalize(filePath), path.normalize(config.dist+'/'));
+        log(filePath, 'copied to', path.normalize(config.dist+'/'));
     }
 };
 
@@ -87,7 +85,7 @@ const compile = {
 
     clean: (filePath) => {
 
-      const outFile = filePath ? filePath : path.normalize('./'+paths.dist+'/bundle.js');
+      const outFile = filePath ? filePath : path.normalize('./'+config.dist+'/bundle.js');
       let inline = '';
 
       fs.readFile(outFile, 'utf8', function(err, contents) {
@@ -147,15 +145,15 @@ const compile = {
 
               alert('ngc', 'started', 'compiling', 'ngfactory');
 
-              let tsc = exec(path.normalize(paths.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.json'), function(code, output, error) {
+              let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.json'), function(code, output, error) {
 
                   alert('ngc', 'compiled', '/ngfactory');
-                  cp('-R', path.normalize(paths.lib+'/')+'.', path.normalize('ngfactory/'));
+                  cp('-R', path.normalize(config.lib+'/')+'.', path.normalize('ngfactory/'));
                   alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(path.normalize(paths.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib.js', function(code, output, error) {
+                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib.js', function(code, output, error) {
 
-                     alert('Rollup', 'bundled', paths.libFilename+'.js in', './'+paths.dist);
+                     alert('Rollup', 'bundled', config.libFilename+'.js in', './'+config.dist);
                      compile.umdLib();
 
                  });
@@ -168,18 +166,18 @@ const compile = {
 
     umdLib : () => {
 
-         let tsc = exec(path.normalize(paths.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
+         let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
                   alert('ngc', 'compiled', '/ngfactory');
                   alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(path.normalize(paths.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib-umd.js', function(code, output, error) {
+                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib-umd.js', function(code, output, error) {
 
-                     alert('Rollup', 'bundled', paths.libFilename+'.umd.js in', './'+paths.dist+'/bundles');
+                     alert('Rollup', 'bundled', config.libFilename+'.umd.js in', './'+config.dist+'/bundles');
 
-                     alert('Babel', 'started transpiling', paths.libFilename+'.umd.js');
+                     alert('Babel', 'started transpiling', config.libFilename+'.umd.js');
 
-                     let transpile = exec(path.normalize(paths.projectRoot + '/node_modules/.bin/babel')+' --plugins=transform-es2015-modules-commonjs ' + path.normalize('./dist/bundles/') + paths.libFilename + '.umd.js --out-file '+path.normalize('./dist/bundles/') + paths.libFilename +'.umd.js', function(code, output, error){
-                          alert('Babel', 'transpiled', './'+paths.dist+'/bundles/'+paths.libFilename+' to', './'+paths.dist+'/bundles/'+paths.libFilename+'.umd.js');
+                     let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+' --plugins=transform-es2015-modules-commonjs ' + path.normalize('./dist/bundles/') + config.libFilename + '.umd.js --out-file '+path.normalize('./dist/bundles/') + config.libFilename +'.umd.js', function(code, output, error){
+                          alert('Babel', 'transpiled', './'+config.dist+'/bundles/'+config.libFilename+' to', './'+config.dist+'/bundles/'+config.libFilename+'.umd.js');
                           compile.es5Lib();
                      });
 
@@ -194,16 +192,16 @@ const compile = {
 
 
 
-         let tsc = exec(path.normalize(paths.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
+         let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
 
           log('ngc', 'compiled', '/ngfactory');
                   alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(path.normalize(paths.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib-es5.js', function(code, output, error) {
+                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib-es5.js', function(code, output, error) {
 
-                    alert('Rollup', 'bundled', paths.libFilename+'.es5.js in', './'+paths.dist);
+                    alert('Rollup', 'bundled', config.libFilename+'.es5.js in', './'+config.dist);
 
-         
+
                     find(path.normalize('./ngfactory/'))
                               .filter(function (file) { return file.match(/\.d.ts$/); })
                               .forEach((filePath)=>{
@@ -215,16 +213,16 @@ const compile = {
                                 cp(filePath, path.join(dir, fileName));
                               });
 
-                      log('d.ts, metadata.json', 'copied to', './'+paths.dist);
+                      log('d.ts, metadata.json', 'copied to', './'+config.dist);
 
-                      cp(path.normalize(path.join('./ngfactory', paths.libFilename + '.metadata.json')), path.normalize(paths.dist));
+                      cp(path.normalize(path.join('./ngfactory', config.libFilename + '.metadata.json')), path.normalize(config.dist));
 
-                      //rm(path.normalize(paths.dist + '/index.ts'));
+                      //rm(path.normalize(config.dist + '/index.ts'));
 
-                      find(path.normalize('./'+paths.dist)).filter(function(file) {
+                      find(path.normalize('./'+config.dist)).filter(function(file) {
 
-                        if (utils.paths.buildHooks && utils.paths.buildHooks.lib && utils.paths.buildHooks.lib.clean) {
-                          utils.paths.buildHooks.lib.clean(file);
+                        if (config.buildHooks && config.buildHooks.lib && config.buildHooks.lib.clean) {
+                          config.buildHooks.lib.clean(file);
                         } else {
                           if (file.match(/component.ts$/) || file.match(/directive.ts$/) || file.match(/injectable.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
                             rm(file);
@@ -233,18 +231,18 @@ const compile = {
 
                       });
 
-                    alert('Babel', 'started transpiling', paths.libFilename+'.es5.js');
+                    alert('Babel', 'started transpiling', config.libFilename+'.es5.js');
 
-                    let transpile = exec(path.normalize(paths.projectRoot + '/node_modules/.bin/babel')+' --presets=es2015-rollup '+ path.normalize('./dist/') + paths.libFilename + '.es5.js --out-file '+ path.normalize('./dist/') + paths.libFilename +'.es5.js', function(code, output, error){
-                          alert('Babel', 'transpiled', './'+paths.dist+'/'+paths.libFilename+' to', './'+paths.dist+'/'+paths.libFilename+'.es5.js');
+                    let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+' --presets=es2015-rollup '+ path.normalize('./dist/') + config.libFilename + '.es5.js --out-file '+ path.normalize('./dist/') + config.libFilename +'.es5.js', function(code, output, error){
+                          alert('Babel', 'transpiled', './'+config.dist+'/'+config.libFilename+' to', './'+config.dist+'/'+config.libFilename+'.es5.js');
                      });
 
-                    exec( require(utils.paths.projectRoot + '/package.json').scripts['copy:package'], function() {
+                    exec( require(config.projectRoot + '/package.json').scripts['copy:package'], function() {
 
-                      log('package.json', 'copied to', './'+paths.dist);
+                      log('package.json', 'copied to', './'+config.dist);
 
-                      if (utils.paths.buildHooks && utils.paths.buildHooks.lib && utils.paths.buildHooks.lib.post) {
-                        utils.paths.buildHooks.lib.post();
+                      if (config.buildHooks && config.buildHooks.lib && config.buildHooks.lib.post) {
+                        config.buildHooks.lib.post();
                       }
 
                     });
@@ -272,29 +270,29 @@ const compile = {
 
 
 let style = {
-  
+
     file: (filePath, watch) => {
-      
+
           let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
-          let globalCSSFilename = paths.globalCSSFilename !== undefined ? paths.globalCSSFilename : 'style.css';
+          let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
           let filename = filePath.replace(/^.*[\\\/]/, '');
-          let outFile = filePath.indexOf(paths.src+'/style') > -1 ? paths.dist+'/style/'+globalCSSFilename : filePath.replace('.scss','.css').replace(paths.src, 'tmp');
+          let outFile = filePath.indexOf(config.src+'/style') > -1 ? config.dist+'/style/'+globalCSSFilename : filePath.replace('.scss','.css').replace(config.src, 'tmp');
           sass.render({
-            file: filePath.indexOf(path.normalize(paths.src+'/style')) > -1 ? path.normalize(paths.src+'/style/style.scss') : filePath,
+            file: filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.src+'/style/style.scss') : filePath,
             outFile: outFile,
-            includePaths: [ paths.src+'/style/' ],
+            includePaths: [ config.src+'/style/' ],
             outputStyle: 'expanded',
             sourceComments: false
           }, function(error, result) {
             if (error) {
               warn(error.message, 'LINE: '+error.line);
             } else {
-  
+
               fs.writeFile(outFile, result.css, function(err){
                 if(!err){
-  
-                  let postcss = exec(path.normalize(path.join(paths.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(paths.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
-  
+
+                  let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
+
                       if ( (styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                         alert('libsass and postcss', 'compiled');
                         setTimeout(compile.src,2000);
@@ -302,34 +300,34 @@ let style = {
                       if (hasCompletedFirstStylePass === true) {
                         compile.src();
                       }
-  
+
                   });
                 }
               });
-  
+
             }
           });
-  
+
       },
       src: () => {
-        
-        mkdir(path.join(paths.dist , 'style'));
-    
-        ls(path.normalize(paths.src + '/**/*.scss')).forEach(function (file, index) {
+
+        mkdir(path.join(config.dist , 'style'));
+
+        ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
           if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
             styleFiles.push(file);
           }
         });
-    
-        ls(path.normalize(paths.src + '/**/*.scss')).forEach(function (file, index) {
+
+        ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
           if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
             style.file(file);
           }
         });
-        
+
       }
     };
-  
+
 
 /*
 
@@ -342,16 +340,16 @@ let style = {
 
 let init = function() {
 
-    rm('-rf', path.normalize( paths.projectRoot+'/.tmp/'));
+    rm('-rf', path.normalize( config.projectRoot+'/.tmp/'));
     rm('-rf',  path.normalize('./ngfactory'));
-    rm('-rf',  path.normalize('./'+paths.dist));
+    rm('-rf',  path.normalize('./'+config.dist));
 
     mkdir( path.normalize('./ngfactory'));
-    mkdir( path.normalize('./'+paths.dist));
-    mkdir( path.normalize('./'+paths.dist+'/bundles'));
+    mkdir( path.normalize('./'+config.dist));
+    mkdir( path.normalize('./'+config.dist+'/bundles'));
 
-    if (utils.paths.buildHooks && utils.paths.buildHooks.lib &&  utils.paths.buildHooks.lib.pre) {
-      utils.paths.buildHooks.lib.pre();
+    if (config.buildHooks && config.buildHooks.lib &&  config.buildHooks.lib.pre) {
+      config.buildHooks.lib.pre();
     }
 
     clean.lib();
@@ -368,19 +366,19 @@ let init = function() {
 */
 
 
-let watcher = chokidar.watch(path.normalize('./' + paths.src + '/**/*.*'), {
+let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
   ignored: /[\/\\]\./,
   persistent: canWatch
 }).on('change', filePath => {
 
-      if (filePath.indexOf(path.join(paths.src , 'public')) > -1) {
-    
-        if (filePath.indexOf(path.join(paths.src , 'index.html'))) {
+      if (filePath.indexOf(path.join(config.src , 'public')) > -1) {
+
+        if (filePath.indexOf(path.join(config.src , 'index.html'))) {
           copy.public();
         } else {
           copy.file(filePath);
         }
-    
+
       }
 
       else if ( filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
