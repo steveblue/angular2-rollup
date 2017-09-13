@@ -20,6 +20,7 @@ program
     .option('-w, --watch [bool]', 'Enable file watchers to detect changes and build')
     .option('--postcss [bool]', 'Enable postcss for dev build, default is false')
     .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
+    .option('--closure [bool]', 'Bypass Rollup and bundle with ClosureCompiler')
     .option('generate, --generate, g [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -74,6 +75,13 @@ if (program.build) {
     }
     else {
         cliCommand += ' postcss=false';
+    }
+
+    if (program.closure === true) {
+        cliCommand += ' closure=true';
+    }
+    else {
+        cliCommand += ' closure=false';
     }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });

@@ -54,6 +54,7 @@ const files     = [
     '.gitignore',
     '.npmignore',
     'build.config.js',
+    'closure.conf',
     'karma-test-shim.js',
     'karma.conf.js',
     'main.prod.js',

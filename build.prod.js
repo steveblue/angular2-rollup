@@ -28,12 +28,16 @@ let hasInit     = false;
 let styleFiles  = [];
 let hasCompletedFirstStylePass = false;
 let postcssConfig = ' -u';
+let bundleWithClosure = false;
 
 /* Test for arguments the ngr cli spits out */
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if(arg.includes('closure')) {
+    bundleWithClosure = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -131,47 +135,86 @@ const compile = {
 
     },
 
+    bundleRollup: () => {
+
+      alert('Rollup', 'started bundling', 'ngfactory');
+
+      let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.js', function(code, output, error) {
+        alert('Rollup', 'bundled bundle.es2015.js in', './build');
+        alert('ClosureCompiler', 'started optimizing', 'bundle.js');
+
+        let closure = exec(require(config.projectRoot+'/package.json').scripts['transpile:'+env], function(code, output, error){
+            alert('ClosureCompiler', 'transpiled', './'+config.build+'/bundle.es2015.js to', './'+config.build+'/bundle.js');
+            if (canWatch === true) {
+              alert(colors.green('Ready to serve'));
+              alert(colors.green('Watcher listening for changes'));
+            } else {
+              alert(colors.green('Build is ready'));
+            }
+            //compile.clean();
+            isCompiling = false;
+
+            if (utils.config.buildHooks && utils.config.buildHooks[env] && utils.config.buildHooks[env].post && hasInit === false) {
+              utils.config.buildHooks[env].post();
+            }
+
+            hasInit = true;
+        });
+      });
+
+    },
+
+    bundleClosure: () => {
+
+      alert('ClosureCompiler', 'started bundling', 'ngfactory');
+
+      let closure = exec(require(config.projectRoot+'/package.json').scripts['bundle:closure'], function(code, output, error){
+          alert('ClosureCompiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.closure.js');
+
+          if (canWatch === true) {
+            alert(colors.green('Ready to serve'));
+            alert(colors.green('Watcher listening for changes'));
+          } else {
+            alert(colors.green('Build is ready'));
+          }
+          //compile.clean();
+          isCompiling = false;
+
+          if (utils.config.buildHooks && utils.config.buildHooks[env] && utils.config.buildHooks[env].post && hasInit === false) {
+            utils.config.buildHooks[env].post();
+          }
+
+          hasInit = true;
+      });
+
+    },
+
     src : () => {
 
         isCompiling = true;
+
+        clean.tmp();
 
         // remove moduleId prior to ngc build. TODO: look for another method.
         ls(path.normalize('ngfactory/**/*.ts')).forEach(function(file) {
           sed('-i', /^.*moduleId: module.id,.*$/, '', file);
         });
 
-        //let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
 
-              alert ('ngc', 'started compiling', 'ngfactory');
+        alert ('ngc', 'started compiling', 'ngfactory');
 
-              let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.prod.json'), function(code, output, error) {
-                  alert('ngc', 'compiled', '/ngfactory');
-                  alert('Rollup', 'started bundling', 'ngfactory');
+        let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.prod.json'), function(code, output, error) {
 
-                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.js', function(code, output, error) {
-                     alert('Rollup', 'bundled bundle.es2015.js in', './build');
-                     alert('Closure Compiler', 'started optimizing', 'bundle.js');
+          alert('ngc', 'compiled', '/ngfactory');
 
-                     let closure = exec(require(config.projectRoot+'/package.json').scripts['transpile:'+env], function(code, output, error){
-                          alert('Closure Compiler', 'transpiled', './'+config.build+'/bundle.es2015.js to', './'+config.build+'/bundle.js');
-                          if (canWatch === true) {
-                            alert(colors.green('Ready to serve'));
-                            alert(colors.green('Watcher listening for changes'));
-                          } else {
-                            alert(colors.green('Build is ready'));
-                          }
-                          //compile.clean();
-                          isCompiling = false;
+            if( bundleWithClosure === true ) {
+              compile.bundleClosure();
+            } else {
+              compile.bundleRollup();
+            }
 
-                          if (utils.config.buildHooks && utils.config.buildHooks[env] && utils.config.buildHooks[env].post && hasInit === false) {
-                            utils.config.buildHooks[env].post();
-                          }
+        });
 
-                          hasInit = true;
-                     });
-                 });
-              });
-       //});
 
     }
 }
@@ -267,12 +310,11 @@ let style = {
 
 let init = function() {
 
-  // rm('-rf',  path.normalize('./ngfactory'));
+
   rm('-rf', path.normalize(path.join('./' , config.build)));
 
   clean.tmp();
 
-  // mkdir(path.normalize('./ngfactory'));
   mkdir(path.normalize('./' + config.build));
   mkdir(path.normalize('./' + config.build + '/lib'));
 

@@ -186,8 +186,10 @@ const utils = {
     singleLineComment: singleLineComment,
     clean : {
         tmp: () => {
+            rm('-rf', path.normalize('./closure'));
             rm('-rf', path.normalize('./ngfactory'));
             mkdir( path.normalize('./ngfactory'));
+            mkdir( path.normalize('./closure'));
             cp('-R', path.normalize('./'+config.src+'/'), path.normalize('./ngfactory'));
             log(config.src+'/*.ts', 'copied to', 'ngfactory/*.ts');
         },

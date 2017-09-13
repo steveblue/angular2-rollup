@@ -3,10 +3,9 @@
     "baseUrl": "./src",
     "experimentalDecorators": true,
     "moduleResolution": "node",
+    "allowJs": true,
     "rootDir": "./src",
     "lib": ["es2015", "dom"],
-    "skipLibCheck": true,
-    // don't auto-discover @types/node, it results in a ///<reference in the .d.ts output
-    "types": []
+    "skipLibCheck": true
   }
 }
