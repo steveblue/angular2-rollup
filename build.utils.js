@@ -186,16 +186,16 @@ const utils = {
     singleLineComment: singleLineComment,
     clean : {
         tmp: () => {
-            rm('-rf', path.normalize('./tmp'));
-            mkdir( path.normalize('./tmp'));
-            cp('-R', path.normalize('./'+config.src+'/')+'.', path.normalize('./tmp'));
-            log(config.src+'/*.ts', 'copied to', 'tmp/*ts');
+            rm('-rf', path.normalize('./ngfactory'));
+            mkdir( path.normalize('./ngfactory'));
+            cp('-R', path.normalize('./'+config.src+'/'), path.normalize('./ngfactory'));
+            log(config.src+'/*.ts', 'copied to', 'ngfactory/*.ts');
         },
         lib: () => {
             rm('-rf', path.normalize('./tmp'));
             mkdir(path.normalize('./tmp'));
             cp('-R', path.normalize('./'+config.lib+'/')+'.', path.normalize('./tmp'));
-            log(config.lib+'/*.ts', 'copied to', 'tmp/*ts');
+            log(config.lib+'/*.ts', 'copied to', 'tmp/*.ts');
         },
         paths: (p) => {
 

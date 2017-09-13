@@ -40,6 +40,8 @@
     "colors": "^1.1.2",
     "commander": "^2.10.0",
     "find-up": "^2.1.0",
+    "glob": "^7.1.2",
+    "google-closure-compiler": "^20170806.0.0",
     "html-minifier": "^3.5.2",
     "htmlprocessor": "^0.2.4",
     "js-string-escape": "^1.0.1",

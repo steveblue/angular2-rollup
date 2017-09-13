@@ -136,11 +136,11 @@ const compile = {
         isCompiling = true;
 
         // remove moduleId prior to ngc build. TODO: look for another method.
-        ls(path.normalize('tmp/**/*.ts')).forEach(function(file) {
+        ls(path.normalize('ngfactory/**/*.ts')).forEach(function(file) {
           sed('-i', /^.*moduleId: module.id,.*$/, '', file);
         });
 
-        let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
+        //let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
 
               alert ('ngc', 'started compiling', 'ngfactory');
 
@@ -171,7 +171,7 @@ const compile = {
                      });
                  });
               });
-       });
+       //});
 
     }
 }
@@ -184,7 +184,7 @@ const compile = {
   - file: Styles a single file.
          - If the file is in the /src/styles folder it will compile /src/styles/style.scss
          - If the file is elsewhere, like part of a Component, it will compile into the
-          appropriate folder in the /tmp directory, then ngc will run and compile for AOT
+          appropriate folder in the /ngfactory directory, then ngc will run and compile for AOT
   - src: Compiles the global styles
 
   SASS render method is called and fs writes the files to appropriate folder
@@ -200,7 +200,7 @@ let style = {
         let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
         let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
         let filename = filePath.replace(/^.*[\\\/]/, '');
-        let outFile = filePath.indexOf(config.src+'/style') > -1 ? config.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css');//.replace(config.src, 'tmp');
+        let outFile = filePath.indexOf(config.src+'/style') > -1 ? config.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css');//.replace(config.src, 'ngfactory');
         sass.render({
           file: filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.src+'/style/style.scss') : filePath,
           outFile: outFile,
@@ -218,7 +218,7 @@ let style = {
                 let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
 
                     if (!outFile.includes('style/style.css')) {
-                      cp(outFile, outFile.replace(config.src, 'tmp'));
+                      cp(outFile, outFile.replace(config.src, 'ngfactory/src'));
                     }
                     if ( (styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                       alert('libsass and postcss', 'compiled');
@@ -267,13 +267,12 @@ let style = {
 
 let init = function() {
 
-  rm('-rf', path.normalize('./tmp/'));
-  rm('-rf',  path.normalize('./ngfactory'));
+  // rm('-rf',  path.normalize('./ngfactory'));
   rm('-rf', path.normalize(path.join('./' , config.build)));
 
   clean.tmp();
 
-  mkdir(path.normalize('./ngfactory'));
+  // mkdir(path.normalize('./ngfactory'));
   mkdir(path.normalize('./' + config.build));
   mkdir(path.normalize('./' + config.build + '/lib'));
 
