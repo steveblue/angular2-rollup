@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
-    "outDir": "./ngfactory",
     "target": "es2015",
     "module": "es2015",
+    "declaration": true,
+    "stripInternal": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
@@ -18,10 +22,12 @@
     ]
   },
   "angularCompilerOptions": {
+    "annotationsAs": "static fields",
     "annotateForClosureCompiler": true,
-    "skipMetadataEmit": false
+    "skipMetadataEmit": false,
+    "entryModule": "./ngfactory/src/app/app.module#AppModule"
   },
   "files": [
-    "./tmp/app/app.module.ts"
+    "./ngfactory/src/app/app.module.ts"
   ]
 }
