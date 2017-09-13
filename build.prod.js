@@ -169,7 +169,7 @@ const compile = {
       alert('ClosureCompiler', 'started bundling', 'ngfactory');
 
       let closure = exec(require(config.projectRoot+'/package.json').scripts['bundle:closure'], function(code, output, error){
-          alert('ClosureCompiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.closure.js');
+          alert('ClosureCompiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.js');
 
           if (canWatch === true) {
             alert(colors.green('Ready to serve'));
