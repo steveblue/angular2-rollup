@@ -34,10 +34,6 @@ module.exports = function(app) {
 
   app.use('/', express.static(process.cwd() + '/'+paths.build));
 
-  app.get('*', function(req, res) {
-     res.sendFile('index.html', { root: process.cwd() + '/'+paths.build });
-  });
-
   return router;
 
 };

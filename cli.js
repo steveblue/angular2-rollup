@@ -21,6 +21,7 @@ program
     .option('--postcss [bool]', 'Enable postcss for dev build, default is false')
     .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
     .option('--closure [bool]', 'Bypass Rollup and bundle with ClosureCompiler')
+    .option('--lazy [bool]', 'Bypass Rollup and bundle with ClosureCompiler with support for lazyloaded modules')
     .option('generate, --generate, g [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -82,6 +83,13 @@ if (program.build) {
     }
     else {
         cliCommand += ' closure=false';
+    }
+
+    if (program.lazy === true) {
+        cliCommand += ' lazy=true';
+    }
+    else {
+        cliCommand += ' lazy=false';
     }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });

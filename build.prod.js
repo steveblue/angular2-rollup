@@ -29,6 +29,7 @@ let styleFiles  = [];
 let hasCompletedFirstStylePass = false;
 let postcssConfig = ' -u';
 let bundleWithClosure = false;
+let isLazy = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -39,6 +40,9 @@ process.argv.forEach((arg)=>{
   if(arg.includes('closure')) {
     bundleWithClosure = arg.split('=')[1].trim() === 'true' ? true : false;
   }
+  if(arg.includes('lazy')) {
+    isLazy = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
 });
 
 /* Process PostCSS CLI plugins for the --use argument */
@@ -46,6 +50,7 @@ process.argv.forEach((arg)=>{
 for (let cssProp in postcss.plugins) {
   postcssConfig += ' '+cssProp;
 }
+
 
 /*
 
@@ -164,6 +169,108 @@ const compile = {
 
     },
 
+    formatManifest: (conf, main, bundles) => {
+
+      let out = '';
+      let finalExec = '';
+      out += main.join('\n');
+      out += '--module=main:' + (main.length - 1 + 3) + '\n\n'; //Remove empty line, add the 3 externs
+
+      bundles.forEach((bundle)=>{
+        utils.bundle.removeDuplicates(main, bundle.fileContent);
+        out += bundle.fileContent.join('\n');
+        out += '\n--module='+bundle.fileName.replace('ngfactory', 'bundle')+':' + bundle.fileContent.length + ':main\n\n';
+      });
+
+      conf = conf.replace('#LIST_OF_FILES#', out);
+
+      fs.writeFile(path.normalize(config.projectRoot+'/tmp/closure.lazy.conf'), conf, 'utf-8', ()=>{
+        log('Manifest built');
+
+        finalExec += 'java -jar node_modules/google-closure-compiler/compiler.jar --flagfile ./tmp/closure.lazy.conf \\\n'
+        finalExec += '--entry_point=./main.prod \\\n';
+
+        bundles.forEach((bundle)=>{
+          utils.bundle.injectCustomExport(bundle.filePath.replace('.ts', '.js'), bundle.ngFactoryClassName);
+          finalExec += '--entry_point=./'+bundle.filePath.replace('.js', '').replace('.ts', '')+' \\\n';
+        });
+
+        finalExec += '--output_manifest=closure/manifest.MF \\\n';
+        finalExec += '--module_output_path_prefix=build/ \\\n';
+
+        log('Preparing bundles');
+
+        bundles.forEach((bundle)=>{
+          finalExec += '"--module_wrapper='+bundle.fileName.replace('ngfactory', 'bundle')+':(self._S=self._S||[]).push((function(){%s})); //# sourceMappingURL=%basename%.map" \\\n';
+        });
+
+        exec(finalExec, () => {
+          alert('Build is ready');
+        });
+
+      });
+
+
+    },
+
+    bundleLazy: () => {
+
+      let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.prod.lazy.json'), function(code, output, error) {
+
+          let lazyBundles = [];
+          let main;
+          let conf = fs.readFileSync(path.normalize(config.projectRoot+'/closure.lazy.conf'), 'utf-8');
+
+          alert('ngc', 'compiled', 'ngfactory');
+
+          rm('-rf', path.normalize('./tmp'));
+          mkdir(path.normalize('./tmp'));
+
+          exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf --entry_point=./main.prod --output_manifest=./tmp/main.prod.MF --js_output_file=./tmp/main.prod.waste.js', function(){
+            main = fs.readFileSync('./tmp/main.prod.MF', 'utf-8').split('\n');
+
+            log('Compiling ngfactory data for manifest');
+
+            config.lazyModulePaths.forEach((filePath)=>{
+              let fileName = filePath.replace(/^.*[\\\/]/, '');
+              let modulePath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'));
+
+              fs.readFile(filePath, 'utf8', function (err, contents) {
+                if (!err) {
+                  let ngFactoryClassName = '';
+                  let ngFactoryNameRegex = new RegExp('(export)( )(const)( )((?:[a-z][a-z0-9_]*))(:)',["i"]);
+                  let m = ngFactoryNameRegex.exec(contents);
+                  if (m != null) {
+                    ngFactoryClassName = m[5];
+                  }
+                  exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf --entry_point='+filePath.replace('.js', '').replace('.ts', '')+' --output_manifest=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.MF')+' --js_output_file=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.waste.js'), ()=>{
+                    lazyBundles.push({
+                      ngFactoryFile: fileName,
+                      ngFactoryClassName: ngFactoryClassName,
+                      fileName: fileName.replace('.js', '').replace('.ts', ''),
+                      filePath: filePath,
+                      fileContent: fs.readFileSync('./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n')
+                    });
+
+                    if (lazyBundles.length === config.lazyModulePaths.length) {
+                      log('Building manifest');
+                      compile.formatManifest(conf, main, lazyBundles);
+                    }
+
+                  });
+                } else {
+                  warn(err);
+                }
+
+              });
+
+            });
+
+          });
+
+      });
+    },
+
     bundleClosure: () => {
 
       alert('ClosureCompiler', 'started bundling', 'ngfactory');
@@ -205,10 +312,12 @@ const compile = {
 
         let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.prod.json'), function(code, output, error) {
 
-          alert('ngc', 'compiled', '/ngfactory');
+          alert('ngc', 'compiled', 'ngfactory');
 
-            if( bundleWithClosure === true ) {
+            if ( bundleWithClosure === true && isLazy === false) {
               compile.bundleClosure();
+            } else if ( bundleWithClosure === true && isLazy === true) {
+              compile.bundleLazy();
             } else {
               compile.bundleRollup();
             }
@@ -310,7 +419,6 @@ let style = {
 
 let init = function() {
 
-
   rm('-rf', path.normalize(path.join('./' , config.build)));
 
   clean.tmp();
@@ -393,6 +501,21 @@ watcher
 
     alert('INITIAL SCAN COMPLETE', 'building for', env);
 
-    init();
+    if(isLazy === true) {
+
+      fs.readFile(config.projectRoot+'/tsconfig.prod.lazy.json', 'utf8', function (err, contents) {
+
+        if (!err) {
+          config.lazyModulePaths = JSON.parse(contents).files;
+          init();
+        } else {
+          warn('tsconfig.prod.lazy.json does not exist in project folder. Cannot extrapolate lazyloaded modules.');
+        }
+
+      });
+
+    } else {
+      init();
+    }
 
   });

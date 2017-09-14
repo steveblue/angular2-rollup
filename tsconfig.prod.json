@@ -24,8 +24,7 @@
   "angularCompilerOptions": {
     "annotationsAs": "static fields",
     "annotateForClosureCompiler": true,
-    "skipMetadataEmit": false,
-    "entryModule": "./ngfactory/src/app/app.module#AppModule"
+    "skipMetadataEmit": false
   },
   "files": [
     "./ngfactory/src/app/app.module.ts"

@@ -219,6 +219,26 @@ const utils = {
         }
 
     },
+    bundle: {
+        removeDuplicates: (reference, bundle) => {
+            const refLength = bundle.length;
+            for (let i = 0; i < refLength; i++) {
+              const item = bundle[refLength - i -1];
+              if (reference.includes(item)) {
+                bundle.splice(refLength - i - 1, 1)
+              }
+            }
+        },
+        injectCustomExport: (filePath, moduleFactoryName) => {
+            let source = fs.readFileSync(filePath, 'utf-8');
+            if (source.indexOf(`self['_S']`) == -1) {
+              source = source.replace('//# sourceMappingURL',
+              `(self['_S']=self['_S']||[])["//${filePath.replace('./ngfactory/src/app/', '')}"]= {"${moduleFactoryName}": ${moduleFactoryName}};
+          //# sourceMappingURL`);
+              fs.writeFileSync(filePath, source, 'utf-8');
+            }
+        }
+    },
     generate: {
 
         replace: function (fileName, name) {
