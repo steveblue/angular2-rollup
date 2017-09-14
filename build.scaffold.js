@@ -13,7 +13,7 @@ let useVersion = '5.0.0';
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
-    let n = noun ? colors.dim(colors.green(noun)) : '';
+    let n = noun ? colors.dim(colors.blue(noun)) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
     cons.log(a + ' ' + n + ' ' + x );
 };
