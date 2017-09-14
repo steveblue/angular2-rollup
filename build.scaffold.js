@@ -27,25 +27,25 @@ const alert = function (noun, verb, action, next) {
 };
 
 
-clim.getTime = function(){
+clim.getTime = function () {
     let now = new Date();
-    return colors.gray(colors.dim('['+
-           now.getHours() + ':' +
-           now.getMinutes() + ':' +
-           now.getSeconds() + ']'));
-  };
+    return colors.gray(colors.dim('[' +
+        (now.getHours() < 10 ? '0' : '') + now.getHours() + ':' +
+        (now.getMinutes() < 10 ? '0' : '') + now.getMinutes() + ':' +
+        (now.getSeconds() < 10 ? '0' : '') + now.getSeconds() + ']'));
+};
 
-  clim.logWrite = function(level, prefixes, msg) {
-      // Default implementation writing to stderr
-      var line = clim.getTime() + " " + level;
-      if (prefixes.length > 0) line += " " + prefixes.join(" ");
+clim.logWrite = function(level, prefixes, msg) {
+    // Default implementation writing to stderr
+    var line = clim.getTime() + " " + level;
+    if (prefixes.length > 0) line += " " + prefixes.join(" ");
 
-      line = colors.dim(line);
-      line += " " + msg;
-      process.stderr.write(line + "\n");
+    line = colors.dim(line);
+    line += " " + msg;
+    process.stderr.write(line + "\n");
 
-      // or post it web service, save to database etc...
-    };
+    // or post it web service, save to database etc...
+};
 
 
 const files     = [
