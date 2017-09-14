@@ -79,9 +79,9 @@ const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
 clim.getTime = function(){
   let now = new Date();
   return colors.gray(colors.dim('['+
-         now.getHours() + ':' +
-         now.getMinutes() + ':' +
-         now.getSeconds() + ']'));
+        (now.getHours() < 10 ? '0' : '') + now.getHours() + ':' +
+        (now.getMinutes() < 10 ? '0' : '') + now.getMinutes() + ':' +
+        (now.getSeconds() < 10 ? '0' : '') + now.getSeconds() + ']'));
 };
 
 clim.logWrite = function(level, prefixes, msg) {
@@ -118,14 +118,14 @@ function insertText(str, dir, preprocessor = res => res, processFilename = false
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
-    let n = noun ? colors.dim(colors.green(noun)) : '';
+    let n = noun ? colors.dim(colors.blue(noun)) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
     cons.log(a + ' ' + n + ' ' + x );
 };
 
 const alert = function (noun, verb, action, next) {
     let n = noun ? colors.bold(noun) : '';
-    let v = verb ? colors.green(verb) : '';
+    let v = verb ? colors.blue(verb) : '';
     let a = action ? colors.cyan(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
     cons.log(n + ' ' + v + ' ' + a + ' ' + x );

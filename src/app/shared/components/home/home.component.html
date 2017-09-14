@@ -1,5 +1,8 @@
-<img [@intro]="stealthMode"
-     src="/assets/ng2-stealth.png"
-     class="app__icon"
-     [ngClass]="{'is--active' : stealthMode === 'active',
-                 'is--inactive' : stealthMode === 'inactive'}">
+<div class="is--center">
+    <a [routerLink]="['lazy']" class="app__icon">
+        <img [@intro]="stealthMode"
+        src="/assets/ng2-stealth.png" 
+        [ngClass]="{'is--active' : stealthMode === 'active',
+                    'is--inactive' : stealthMode === 'inactive'}">
+    </a>
+</div>

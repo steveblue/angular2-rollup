@@ -60,7 +60,10 @@ const copy = {
 
     cp('-R', path.normalize(config.src + '/public/')+'.', path.normalize(path.join(config.build , '/')));
 
-    exec(path.join(config.cliRoot , path.normalize('node_modules/.bin/htmlprocessor'))  + ' '+ path.normalize(path.join(config.build , '/')+ 'index.html') + ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html') +' -e '+env, function (code, output, error) {
+    exec(path.join(config.cliRoot , path.normalize('node_modules/.bin/htmlprocessor'))+
+         ' '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
+         ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
+         ' -e '+env, function (code, output, error) {
       log('index.html', 'formatted');
     });
 
@@ -144,7 +147,11 @@ const compile = {
         contents = contents.replace("enableProdMode();", "");
         fs.writeFile(outFile, contents, function (err) {
           if (!err) {
-            let transpile = exec(path.join(config.projectRoot, 'node_modules/.bin/tsc') + ' ' + outFile + ' --target es5 --module commonjs --emitDecoratorMetadata true --experimentalDecorators true --noImplicitAny false --allowUnreachableCode false --moduleResolution node --typeRoots node --lib dom,es2017',
+            let transpile = exec(path.join(config.projectRoot, 'node_modules/.bin/tsc')+
+                                 ' ' + outFile + ' --target es5 --module commonjs'+
+                                 ' --emitDecoratorMetadata true --experimentalDecorators true'+
+                                 ' --noImplicitAny false --allowUnreachableCode false --moduleResolution node'+ 
+                                 ' --typeRoots node --lib dom,es2017',
               function (code, output, error) {
                 alert('tsc', 'transpiled', outFile);
               });
@@ -166,9 +173,13 @@ const compile = {
         let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
 
           if (canWatch === true) {
-            spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.dev.json')+ ' --watch', { shell: true, stdio: 'inherit' });
+            spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+
+                  path.normalize('./tsconfig.dev.json')+
+                  ' --watch', { shell: true, stdio: 'inherit' });
           } else {
-            spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.dev.json')+ ' --watch', { shell: true, stdio: 'inherit' });
+            spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+                  ' -p '+path.normalize('./tsconfig.dev.json')+
+                  ' --watch', { shell: true, stdio: 'inherit' });
           }
 
         });
@@ -216,7 +227,10 @@ let style = {
 
         fs.writeFile(outFile, result.css, function (err) {
           if (!err && allowPostCSS === true) {
-            let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
+            let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss'))+
+                               ' ' + outFile+ 
+                               ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+
+                               ' -r ' + postcssConfig, function (code, output, error) {
               if ((styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
                 alert('libsass and postcss', 'compiled');
                 setTimeout(compile.src, 1000);

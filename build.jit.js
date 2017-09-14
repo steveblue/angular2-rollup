@@ -59,7 +59,10 @@ const copy = {
 
     cp('-R', path.normalize(config.src + '/public/')+'.', path.normalize(path.join(config.build)));
 
-    exec(path.join(config.cliRoot , path.normalize('node_modules/.bin/htmlprocessor'))  + ' '+ path.normalize(path.join(config.build , '/')+ 'index.html') + ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html') +' -e dev', function (code, output, error) {
+    exec(path.join(config.cliRoot , path.normalize('node_modules/.bin/htmlprocessor'))+
+         ' '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
+         ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
+         ' -e dev', function (code, output, error) {
       log('index.html', 'formatted');
     });
 
@@ -123,7 +126,8 @@ const compile = {
           alert('typescript', 'started transpiling', config.src+'/*ts');
       }
 
-      let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/tsc')+' -p '+path.normalize('./tsconfig.jit.json'), function(code, output, error) {
+      let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/tsc')+
+                     ' -p '+path.normalize('./tsconfig.jit.json'), function(code, output, error) {
 
           if (filePath) {
             alert('typescript', 'transpiled', filePath);
@@ -187,7 +191,10 @@ let style = {
 
                 if (watch === true) alert('node-sass', 'compiled', 'component style at', outFile);
 
-                let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
+                let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss'))+
+                                   ' ' + outFile + 
+                                   ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+
+                                   ' -r ' + postcssConfig, function (code, output, error) {
 
                   if (!outFile.includes('style/style.css')) {
                     cp(outFile, outFile.replace(config.src, 'build/src'));

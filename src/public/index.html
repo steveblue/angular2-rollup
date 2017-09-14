@@ -1,48 +1,90 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <base href="/">
 
-    <title>Angular / Rollup</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="/">
 
-    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
-    <link rel="stylesheet" href="/style/style.css">
+  <title>Angular / Rollup</title>
 
-    <script src="/lib/core-js/client/shim.min.js"></script>
-    <script src="/lib/angular-srcs/shims_for_IE.js"></script>
-    <script src="/lib/zone.js/dist/zone.js"></script>
-    <!-- build:remove:prod -->
-    <script src="/lib/reflect-metadata/Reflect.js"></script>
-    <!-- /build -->
-    <script src="/lib/systemjs/dist/system.js"></script>
-  </head>
-  <body>
+  <link rel="stylesheet" href="/style/style.css">
 
-    <cmp-prefix1-app-root>
-        <div class="loading__icon is--large is--center"></div>
-    </cmp-prefix1-app-root>
+  <script src="/lib/core-js/client/shim.min.js"></script>
+  <script src="/lib/angular-srcs/shims_for_IE.js"></script>
+  <script src="/lib/zone.js/dist/zone.js"></script>
+  <!-- build:remove:prod -->
+  <script src="/lib/reflect-metadata/Reflect.js"></script>
+  <!-- /build -->
+  <script src="/lib/systemjs/dist/system.js"></script>
+</head>
 
-    <!-- build:remove:prod -->
-    <script src="system.config.js"></script>
-    <script>
+<body>
 
-       Promise.all([
-          System.import('app')
-       ]);
+  <cmp-prefix1-app-root>
+    <div class="loading__icon is--large is--center"></div>
+  </cmp-prefix1-app-root>
 
-    </script>
-    <script>
-      if (!navigator.userAgent.indexOf("MSIE 9") > -1) {
-        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+  <!-- build:remove:prod -->
+  <script src="system.config.js"></script>
+  <script>
+    Promise.all([
+      System.import('app')
+    ]);
+  </script>
+  <script>
+    if (!navigator.userAgent.indexOf("MSIE 9") > -1) {
+      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
         ':35729/livereload.js?snipver=1"></' + 'script>')
-      }
-    </script>
-    <!-- /build -->
-    <!-- build:remove:dev -->
-    <script src="system.import.js"></script>
-    <!-- /build -->
+    }
+  </script>
+  <!-- /build -->
+  <!-- build:remove:dev -->
+  <script>
+    // Polyfill and/or monkey patch System.import.
+    // Credits go to https://github.com/cramforce/splittable
+    (self.System = self.System || {}).import = function (n) {
+      if (n.length == 0) return;
+      // Always end names in .js
+      n = n.replace(/\.js$/g, "") + ".js";
+      // Short circuit if the bundle is already loaded.
+      return (self._S["//" + n] && Promise.resolve(self._S["//" + n]))
+        // Short circuit if we are already loadind, otherwise create
+        // a promise (that will short circuit subsequent requests)
+        // and start loading.
+        ||
+        self._S[n] || (self._S[n] = new Promise(function (r, t) {
+          // Load via a script
+          var s = document.createElement("script");
+          // Calculate the source URL using the same algorithms as used
+          // during bundle generation.
+          s.src = (self.System.baseURL || ".") + "/" + (self._S._map[n] ? self._S._map[n] : n);
+          // Fail promise on any error.
+          s.onerror = t;
+          // On success the trailing module in every bundle will have created
+          // the _S global representing the module object that is the root
+          // of the bundle. Resolve the promise with it.
+          s.onload = function () {
+            r(self._S["//" + n])
+          };
+          // Append the script tag.
+          (document.head || document.documentElement).appendChild(s);
+        }))
+    }
+    // Runs scheduled non-base bundles in the _S array and overrides
+    // .push to immediately execute incoming bundles.
+    self._S = self._S || [];
+    self._S._map = {
+      'shared/components/lazy/lazy.module.ngfactory.js': 'lazy.module.bundle.js'
+    };
+    self._S.push = function (f) {
+      f.call(self)
+    };
+  </script>
+  <script src="bundle.js"></script>
 
-  </body>
+  <!-- /build -->
+
+</body>
+
 </html>

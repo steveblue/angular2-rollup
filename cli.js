@@ -8,7 +8,7 @@ const program     = require('commander');
 const spawn       = require('child_process').spawn;
 const utils       = require(__dirname + '/build.utils.js');
 const package     = require(__dirname + '/package.json');
-const paths        = utils.paths;
+const config      = utils.config;
 
 let cliCommand = '';
 let useVersion = '5.0.0-beta.6';
@@ -22,6 +22,7 @@ program
     .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
     .option('--closure [bool]', 'Bypass Rollup and bundle with ClosureCompiler')
     .option('--lazy [bool]', 'Bypass Rollup and bundle with ClosureCompiler with support for lazyloaded modules')
+    .option('--verbose [bool]', 'Log additional messages in build')
     .option('generate, --generate, g [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -56,11 +57,18 @@ if (program.serve) {
 
 if (program.build) {
 
+    let projectPackage = JSON.parse(JSON.stringify(require(config.projectRoot + '/package.json')));
+   
+    if (program.build === 'dev' && program.jit === undefined && parseInt(projectPackage.dependencies['@angular/core'].split('.')[0]) < 5) {
+        utils.warn('Project version is ' + projectPackage.dependencies['@angular/core'] + '. Use ngr build dev --jit or ngr build jit < 5.0.0');
+        return;
+    }
+
     if (program.build === 'dev' && program.jit === true) { // override dev build with --jit argument
         program.build = 'jit';
     }
 
-    let buildRoot = fs.existsSync(path.join(paths.projectRoot , 'build.' + program.build + '.js')) ? paths.projectRoot : paths.cliRoot;
+    let buildRoot = fs.existsSync(path.join(config.projectRoot , 'build.' + program.build + '.js')) ? config.projectRoot : config.cliRoot;
 
     cliCommand = 'rimraf build && node ' + path.join(buildRoot , 'build.'+program.build+'.js');
 
@@ -90,6 +98,13 @@ if (program.build) {
     }
     else {
         cliCommand += ' lazy=false';
+    }
+
+    if (program.verbose === true) {
+        cliCommand += ' verbose=true';
+    }
+    else {
+        cliCommand += ' verbose=false';
     }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });

@@ -24,6 +24,6 @@
       "skipMetadataEmit": false
     },
     "files": [
-
+      "./ngfactory/src/app/shared/components/lazy/lazy.module.ngfactory.ts"
     ]
   }

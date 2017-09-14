@@ -143,11 +143,12 @@ const compile = {
 
         let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
 
-              alert('ngc', 'started', 'compiling', 'ngfactory');
+              alert('ngc', 'started compiling', 'ngfactory');
 
-              let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.json'), function(code, output, error) {
+              let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+                             ' -p '+path.normalize('./tsconfig.lib.json'), function(code, output, error) {
 
-                  alert('ngc', 'compiled', '/ngfactory');
+                  alert('ngc', 'compiled', 'ngfactory');
                   cp('-R', path.normalize(config.lib+'/')+'.', path.normalize('ngfactory/'));
                   alert('Rollup', 'started bundling', 'ngfactory');
 
@@ -166,19 +167,27 @@ const compile = {
 
     umdLib : () => {
 
-         let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
-                  alert('ngc', 'compiled', '/ngfactory');
+         let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+                        ' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
+                  alert('ngc', 'compiled', 'ngfactory');
                   alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib-umd.js', function(code, output, error) {
+                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+
+                                   ' -c rollup.config.lib-umd.js', function(code, output, error) {
 
                      alert('Rollup', 'bundled', config.libFilename+'.umd.js in', './'+config.dist+'/bundles');
 
                      alert('Babel', 'started transpiling', config.libFilename+'.umd.js');
 
-                     let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+' --plugins=transform-es2015-modules-commonjs ' + path.normalize('./dist/bundles/') + config.libFilename + '.umd.js --out-file '+path.normalize('./dist/bundles/') + config.libFilename +'.umd.js', function(code, output, error){
+                     let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+
+                                         ' --plugins=transform-es2015-modules-commonjs '+ 
+                                         ' --module umd ' + 
+                                         path.normalize('./dist/bundles/') + config.libFilename + '.umd.js'+
+                                         ' --out-file '+path.normalize('./dist/bundles/') + config.libFilename +'.umd.js', function(code, output, error){
+
                           alert('Babel', 'transpiled', './'+config.dist+'/bundles/'+config.libFilename+' to', './'+config.dist+'/bundles/'+config.libFilename+'.umd.js');
                           compile.es5Lib();
+
                      });
 
 
@@ -192,12 +201,14 @@ const compile = {
 
 
 
-         let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
+         let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+                        ' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
 
-          log('ngc', 'compiled', '/ngfactory');
+          log('ngc', 'compiled', 'ngfactory');
                   alert('Rollup', 'started bundling', 'ngfactory');
 
-                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib-es5.js', function(code, output, error) {
+                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+
+                                   ' -c rollup.config.lib-es5.js', function(code, output, error) {
 
                     alert('Rollup', 'bundled', config.libFilename+'.es5.js in', './'+config.dist);
 
@@ -205,12 +216,16 @@ const compile = {
                     find(path.normalize('./ngfactory/'))
                               .filter(function (file) { return file.match(/\.d.ts$/); })
                               .forEach((filePath)=>{
+
                                 let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
                                 let fileName = filePath.replace(/^.*[\\\/]/, '');
+
                                 if (!fs.existsSync(dir)) {
                                   mkdir('-p', dir);
                                 }
+                                
                                 cp(filePath, path.join(dir, fileName));
+
                               });
 
                       log('d.ts, metadata.json', 'copied to', './'+config.dist);
@@ -233,7 +248,9 @@ const compile = {
 
                     alert('Babel', 'started transpiling', config.libFilename+'.es5.js');
 
-                    let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+' --presets=es2015-rollup '+ path.normalize('./dist/') + config.libFilename + '.es5.js --out-file '+ path.normalize('./dist/') + config.libFilename +'.es5.js', function(code, output, error){
+                    let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+
+                                    ' --presets=es2015-rollup '+ path.normalize('./dist/') + config.libFilename + '.es5.js'+
+                                    ' --out-file '+ path.normalize('./dist/') + config.libFilename +'.es5.js', function(code, output, error){
                           alert('Babel', 'transpiled', './'+config.dist+'/'+config.libFilename+' to', './'+config.dist+'/'+config.libFilename+'.es5.js');
                      });
 
@@ -292,7 +309,9 @@ let style = {
               fs.writeFile(outFile, result.css, function(err){
                 if(!err){
 
-                  let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss')) + ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+' -r ' + postcssConfig, function (code, output, error) {
+                  let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss'))+
+                                     ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+
+                                     ' -r ' + postcssConfig, function (code, output, error) {
 
                       if( hasCompletedFirstStylePass === true || styleFiles.indexOf(filePath) === styleFiles.length - 1) {
 

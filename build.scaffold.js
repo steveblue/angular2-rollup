@@ -20,7 +20,7 @@ const log = function (action, noun, next) {
 
 const alert = function (noun, verb, action, next) {
     let n = noun ?colors.bold(noun) : '';
-    let v = verb ? colors.green(verb) : '';
+    let v = verb ? colors.blue(verb) : '';
     let a = action ? colors.cyan(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
     cons.log(n + ' ' + v + ' ' + a + ' ' + x );
