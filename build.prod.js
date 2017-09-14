@@ -174,7 +174,7 @@ const compile = {
       let out = '';
       let finalExec = '';
       out += main.join('\n');
-      out += '--module=main:' + (main.length - 1 + 3) + '\n\n'; //Remove empty line, add the 3 externs
+      out += '--module=main:' + (main.length - 1 + config.lazyModulePaths.length) + '\n\n'; //Remove empty line, add the number of externs
 
       bundles.forEach((bundle)=>{
         utils.bundle.removeDuplicates(main, bundle.fileContent);
