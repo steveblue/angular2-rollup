@@ -1,3 +1,24 @@
+##1.0.0-beta.1
+
+- Bypass Rollup and build for production with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode
+- EXPERIMENTAL Support for lazyloading routes with ClosureCompiler, requires additional high level API coming soon
+- Bugfixes and improvements for existing builds
+
+NOTE: While in BETA this package is EXPERIMENTAL
+
+Closure builds are only available for < 5.0.0 at the moment.
+
+To build for production with ClosureCompiler use the following flags:
+
+`ngr build prod --closure`
+
+To build for production with support for lazyloaded routes:
+
+`ngr build prod --closure --lazy`
+
+
+
+-------------------------------------------------------------------------------------------------------------
 ##1.0.0-beta.0
 
 - Updated npm package name to `angular-rollup`, `angular2-rollup` is deprecated
