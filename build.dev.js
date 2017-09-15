@@ -142,7 +142,7 @@ const compile = {
 
     fs.readFile(path.join(config.projectRoot, 'main.prod.js'), 'utf8', function (err, contents) {
       if (!err) {
-        contents = contents.replace("./ngfactory/tmp/app/app.module.ngfactory", "src/app/app.module.ngfactory");
+        contents = contents.replace("./ngfactory/src/app/app.module.ngfactory", "src/app/app.module.ngfactory");
         contents = contents.replace("import { enableProdMode } from '@angular/core';", "");
         contents = contents.replace("enableProdMode();", "");
         fs.writeFile(outFile, contents, function (err) {
@@ -178,8 +178,7 @@ const compile = {
                   ' --watch', { shell: true, stdio: 'inherit' });
           } else {
             spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
-                  ' -p '+path.normalize('./tsconfig.dev.json')+
-                  ' --watch', { shell: true, stdio: 'inherit' });
+                  ' -p '+path.normalize('./tsconfig.dev.json'), { shell: true, stdio: 'inherit' });
           }
 
         });
@@ -280,9 +279,8 @@ let style = {
 
 let init = function () {
 
-  rm('-rf', path.normalize('./tmp/'));
-  rm('-rf',  path.normalize('./ngfactory'));
-  rm('-rf', path.normalize(path.join('./' , config.build)));
+
+  rm('-rf', path.normalize(path.join('./', config.build)));
 
   clean.tmp();
 
