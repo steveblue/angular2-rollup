@@ -221,28 +221,28 @@ const utils = {
     },
     style: {
         files: [],
-        file: (filePath, sassConfig, env, allowPostCSS, dist, res, rej) => {
+        file : (filePath, cssConfig, res, rej) => {
 
-            const postcss = require(config.projectRoot+'/postcss.' + env + '.js');
+            const postcss = require(config.projectRoot + '/postcss.' + cssConfig.env + '.js');
             let postcssConfig = ' -u';
             let srcPath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf("/"));
             let filename = filePath.replace(/^.*[\\\/]/, '');
-            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(dist + '/style/' + filename.replace('.scss', '.css')) : filePath.replace('.scss', '.css');//.replace(config.src, 'ngfactory');
-            sassConfig.file = filePath.indexOf(path.normalize(config.src + '/style')) > -1 ? path.normalize(config.src + '/style/'+filename) : filePath;
-            sassConfig.outFile = outFile;
+            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(cssConfig.dist + '/style/' + filename.replace('.scss', '.css')) : filePath.replace('.scss', '.css');//.replace(config.src, 'ngfactory');
+            cssConfig.sassConfig.file = filePath.indexOf(path.normalize(config.src + '/style')) > -1 ? path.normalize(config.src + '/style/' + filename) : filePath;
+            cssConfig.sassConfig.outFile = outFile;
             for (let cssProp in postcss.plugins) {
                 postcssConfig += ' ' + cssProp;
             }
-            sass.render(sassConfig, function (error, result) {
+            sass.render(cssConfig.sassConfig, function (error, result) {
                 if (error) {
                     warn(error.message, 'LINE: ' + error.line);
                 } else {
 
                     fs.writeFile(outFile, result.css, function (err) {
-                        if (!err && allowPostCSS === true) {
+                        if (!err && cssConfig.allowPostCSS === true) {
 
                             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
-                                ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + env + '.js')) +
+                                ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cssConfig.env + '.js')) +
                                 ' -r ' + postcssConfig, function (code, output, error) {
 
                                     res(filePath, outFile);
@@ -262,42 +262,33 @@ const utils = {
             });
 
         },
-        src: (sassConfig, env, allowPostCSS, src, dist, styleSrc, res, rej, initCb) => {
+        src: (cssConfig, res, rej, init) => {
 
             utils.style.files = [];
 
-            mkdir(path.join(dist, 'style'));
+            mkdir(path.join(cssConfig.dist, 'style'));
 
-            if (styleSrc) {
-                ls(path.normalize(src + '/style/*.scss')).forEach(function (file, index) {
-                    let filename = filePath.replace(/^.*[\\\/]/, '');
-                    if (filename[0] !== '_') {
-                        utils.style.file(path.normalize(config.src + '/style/' + filename), sassConfig, env, allowPostCSS, dist, res, rej);
-                    }
-                });
-            }
-
-            if (ls(path.normalize(src + '/**/*.scss')).length > 0) {
-                ls(path.normalize(src + '/**/*.scss')).forEach(function (file, index) {
+            if (ls(path.normalize(cssConfig.src + '/**/*.scss')).length > 0) {
+                ls(path.normalize(cssConfig.src + '/**/*.scss')).forEach(function(file, index){
 
                     if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
                         utils.style.files.push(file);
                     }
 
                 });
-
-                ls(path.normalize(src + '/**/*.scss')).forEach(function (file, index) {
-
-                    if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-                        log(file);
-                        utils.style.file(file, sassConfig, env, allowPostCSS, dist, res, rej);
-                    }
-
-                });
             }
+            
+            ls(path.normalize(config.src + '/**/*.scss')).forEach(function(file, index){
 
-            if(initCb) {
-                initCb();
+                if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+                    utils.style.file(file, cssConfig, res, rej);
+                }
+
+            });
+     
+
+            if(init) {
+                init();
             }
 
         }

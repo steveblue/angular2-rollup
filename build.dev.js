@@ -236,10 +236,13 @@ let init = function () {
   copy.public();
 
   style.src({
-    includePaths: [config.src + '/style/'],
-    outputStyle: 'expanded',
-    sourceComments: true
-  }, env, true, config.src, config.build, false,
+    sassConfig: config.style.sass.dev,
+    env: env,
+    allowPostCSS: true,
+    src: config.src,
+    dist: config.build,
+    styleSrcOnInit: false
+  },
   function(filePath){
     if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
       alert('libsass and postcss', 'compiled');

@@ -133,10 +133,13 @@ const compile = {
             copy.html();
 
             style.src({
-              includePaths: [config.src + '/style/'],
-              outputStyle: 'expanded',
-              sourceComments: true
-            }, 'dev', true, config.src, config.build, false,
+                sassConfig: config.style.sass.dev,
+                env: 'dev',
+                allowPostCSS: true,
+                src: config.src,
+                dist: config.build,
+                styleSrcOnInit: false
+              },
               function (filePath, outFile) {
 
                 if (!outFile.includes('style/')) {

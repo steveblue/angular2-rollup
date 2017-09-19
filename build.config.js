@@ -23,6 +23,25 @@ module.exports = {
       files:[],
       folders:[]
     },
+    style: {
+        sass: {
+            dev: {
+                includePaths: ['src/style/'],
+                outputStyle: 'expanded',
+                sourceComments: true
+            },
+            lib: {
+                includePaths: ['src/style/'],
+                outputStyle: 'expanded',
+                sourceComments: false
+            },
+            prod: {
+                includePaths: ['src/style/'],
+                outputStyle: 'expanded',
+                sourceComments: false
+            }
+        }
+    },
     src: 'src',
     build: 'build',
     dist: 'dist',

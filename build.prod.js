@@ -398,11 +398,15 @@ let init = function() {
 
   copy.lib();
   copy.public();
+  
   style.src({
-    includePaths: [config.src + '/style/'],
-    outputStyle: 'expanded',
-    sourceComments: false
-  }, env, true, config.src, config.build, false,
+      sassConfig: config.style.sass.prod,
+      env: env,
+      allowPostCSS: true,
+      src: config.src,
+      dist: config.build,
+      styleSrcOnInit: false
+  },
   function(filePath, outFile) {
 
     if (!outFile.includes('style/')) {

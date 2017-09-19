@@ -313,24 +313,25 @@ let init = function() {
 
     clean.lib();
 
+   
     style.src({
-      includePaths: [config.src + '/style/'],
-      outputStyle: 'expanded',
-      sourceComments: true
-    }, 'prod', true, config.lib, config.dist, true,
-      function (filePath) {
-        if (hasCompletedFirstStylePass === true || styleFiles.indexOf(filePath) === styleFiles.length - 1) {
-          alert('libsass and postcss', 'compiled');
-          hasCompletedFirstStylePass === true;
-          compile.src();
-        }
-      },
-      function (filePath, outFile, err) {
+      sassConfig: config.style.sass.prod,
+      env: 'prod',
+      allowPostCSS: true,
+      src: config.lib,
+      dist: config.dist,
+      styleSrcOnInit: false
+    },
+    function (filePath) {
+      if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
+        alert('libsass and postcss', 'compiled');
+        hasCompletedFirstStylePass === true;
+        compile.src();
+      }
+    },
+    function (filePath, outFile, err) {
 
-      },
-      function() {
-        utils.style.file(path.normalize(config.src + '/style/style.scss'));
-      });
+    });
 
 };
 
