@@ -7,9 +7,8 @@ const env       = 'jit';
 const fs        = require('fs');
 const path      = require('path');
 const chokidar  = require('chokidar');
-const sass      = require('node-sass');
 const utils     = require('./build.utils.js');
-const postcss   = require('./postcss.' + env + '.js');
+
 
 /* References to shared tools are found in build.utils.js */
 
@@ -27,7 +26,6 @@ let isCompiling = false;
 let hasInit = false;
 let styleFiles = [];
 let hasCompletedFirstStylePass = false;
-let postcssConfig = ' -u';
 
 /* Test for arguments the ngr cli spits out */
 
@@ -36,12 +34,6 @@ process.argv.forEach((arg)=>{
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
-
-/* Process PostCSS CLI plugins for the --use argument */
-
-for (let cssProp in postcss.plugins) {
-  postcssConfig += ' '+cssProp;
-}
 
 /*
 
@@ -139,7 +131,52 @@ const compile = {
           if(hasInit === false) {
 
             copy.html();
-            style.src();
+
+            style.src({
+              includePaths: [config.src + '/style/'],
+              outputStyle: 'expanded',
+              sourceComments: true
+            }, 'dev', true, config.src, config.build, false,
+              function (filePath, outFile) {
+
+                if (!outFile.includes('style/')) {
+
+                  cp(outFile, outFile.replace(config.src, 'build/src'));
+
+                }
+
+                if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+
+                  alert('libsass and postcss', 'compiled');
+                  if (canWatch === true) {
+                    alert(colors.green('Ready to serve'));
+                    alert(colors.green('Watcher listening for changes'));
+                  } else {
+                    alert(colors.green('Build is ready'));
+                  }
+
+                } else if(hasCompletedFirstStylePass === true) {
+                  compile.ts();
+                }
+
+              },
+              function (filePath, outFile, err) {
+                if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+                  if (!err) {
+                    alert('libsass', 'compiled');
+                    setTimeout(compile.src, 1000);
+                  }
+                }
+              },
+              function(){
+
+                hasInit = true;
+
+                if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].post) {
+                  config.buildHooks[env].post();
+                }
+
+              });
 
           }
 
@@ -167,84 +204,7 @@ const compile = {
 
 */
 
-let style = {
-
-    file: (filePath, watch) => {
-
-        let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
-        let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
-        let filename = filePath.replace(/^.*[\\\/]/, '');
-        let outFile = filePath.indexOf(config.src+'/style') > -1 ? config.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css');
-        sass.render({
-          file: filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.src+'/style/style.scss') : filePath,
-          outFile: outFile,
-          includePaths: [ config.src+'/style/' ],
-          outputStyle: 'expanded',
-          sourceComments: false
-        }, function(error, result) {
-          if (error) {
-            warn(error.message, 'LINE: '+error.line);
-          } else {
-
-            fs.writeFile(outFile, result.css, function(err){
-              if(!err){
-
-                if (watch === true) alert('node-sass', 'compiled', 'component style at', outFile);
-
-                let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss'))+
-                                   ' ' + outFile + 
-                                   ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+
-                                   ' -r ' + postcssConfig, function (code, output, error) {
-
-                  if (!outFile.includes('style/style.css')) {
-                    cp(outFile, outFile.replace(config.src, 'build/src'));
-                  }
-
-                  if ((styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
-                      alert('libsass and postcss', 'compiled');
-                      if (canWatch === true) {
-                            alert(colors.green('Ready to serve'));
-                            alert(colors.green('Watcher listening for changes'));
-                      } else {
-                        alert(colors.green('Build is ready'));
-                      }
-                    }
-                    if (hasCompletedFirstStylePass === true) {
-                      compile.ts();
-                    }
-
-                });
-              }
-            });
-
-          }
-        });
-
-    },
-    src:() =>{
-
-        mkdir(path.join(config.build , 'style'));
-
-        ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
-          if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-            styleFiles.push(file);
-          }
-        });
-
-        ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
-          if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-            style.file(file);
-          }
-        });
-
-        hasInit = true;
-
-        if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].post) {
-          config.buildHooks[env].post();
-        }
-
-    }
-};
+let style = utils.style;
 
 /*
 

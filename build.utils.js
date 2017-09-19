@@ -44,7 +44,7 @@ const clim = require('clim');
 const cons = clim();
 const colors = require('chalk');
 const findUp = require('find-up');
-
+const sass = require('node-sass');
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
 const escape = require('js-string-escape');
@@ -218,6 +218,81 @@ const utils = {
 
         }
 
+    },
+    style: {
+        files: [],
+        file: (filePath, sassConfig, env, allowPostCSS, dist, res, rej) => {
+
+            const postcss = require(config.projectRoot+'/postcss.' + env + '.js');
+            let postcssConfig = ' -u';
+            let srcPath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf("/"));
+            let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
+            let filename = filePath.replace(/^.*[\\\/]/, '');
+            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(dist + '/style/' + globalCSSFilename) : filePath.replace('.scss', '.css');//.replace(config.src, 'ngfactory');
+            sassConfig.file = filePath.indexOf(path.normalize(config.src + '/style')) > -1 ? path.normalize(config.src + '/style/style.scss') : filePath;
+            sassConfig.outFile = outFile;
+            for (let cssProp in postcss.plugins) {
+                postcssConfig += ' ' + cssProp;
+            }
+            sass.render(sassConfig, function (error, result) {
+                if (error) {
+                    warn(error.message, 'LINE: ' + error.line);
+                } else {
+
+                    fs.writeFile(outFile, result.css, function (err) {
+                        if (!err && allowPostCSS === true) {
+
+                            let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
+                                ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + env + '.js')) +
+                                ' -r ' + postcssConfig, function (code, output, error) {
+
+                                    res(filePath, outFile);
+
+                                });
+                        } else {
+                            if (err) {
+                                warn(err);
+                            }
+                            if (rej && utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
+                                rej(filePath, outFile, err);
+                            }
+                        }
+                    });
+
+                }
+            });
+
+        },
+        src: (sassConfig, env, allowPostCSS, src, dist, styleSrc, res, rej, initCb) => {
+
+            utils.style.files = [];
+
+            mkdir(path.join(dist, 'style'));
+
+            if (styleSrc) {
+                utils.style.file(path.normalize(config.src + '/style/style.scss'), sassConfig, env, allowPostCSS, dist, res, rej);
+            }
+
+            if (ls(path.normalize(src + '/**/*.scss')).length > 0) {
+                ls(path.normalize(src + '/**/*.scss')).forEach(function (file, index) {
+                    if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+                        utils.style.files.push(file);
+                    }
+                });
+
+                ls(path.normalize(src + '/**/*.scss')).forEach(function (file, index) {
+
+                    if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+                        utils.style.file(file, sassConfig, env, allowPostCSS, dist, res, rej);
+                    }
+                });
+            }
+
+            if(initCb) {
+                initCb();
+            }
+
+        }
     },
     bundle: {
         removeDuplicates: (reference, bundle) => {

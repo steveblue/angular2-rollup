@@ -180,8 +180,8 @@ const compile = {
                      alert('Babel', 'started transpiling', config.libFilename+'.umd.js');
 
                      let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+
-                                         ' --plugins=transform-es2015-modules-commonjs '+ 
-                                         ' --module umd ' + 
+                                         ' --plugins=transform-es2015-modules-commonjs '+
+                                         ' --module umd ' +
                                          path.normalize('./dist/bundles/') + config.libFilename + '.umd.js'+
                                          ' --out-file '+path.normalize('./dist/bundles/') + config.libFilename +'.umd.js', function(code, output, error){
 
@@ -223,7 +223,7 @@ const compile = {
                                 if (!fs.existsSync(dir)) {
                                   mkdir('-p', dir);
                                 }
-                                
+
                                 cp(filePath, path.join(dir, fileName));
 
                               });
@@ -286,73 +286,7 @@ const compile = {
 */
 
 
-let style = {
-
-    file: (filePath) => {
-
-          let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
-          let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
-          let filename = filePath.replace(/^.*[\\\/]/, '');
-          let outFile = filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.dist+'/style/'+globalCSSFilename) : filePath.replace('.scss','.css').replace(config.src, 'tmp').replace(config.lib.replace('src/', ''), '');
-
-          sass.render({
-            file: filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.src+'/style/style.scss') : filePath,
-            outFile: outFile,
-            includePaths: [ config.src+'/style/' ],
-            outputStyle: 'expanded',
-            sourceComments: false
-          }, function(error, result) {
-            if (error) {
-              warn(error.message, 'LINE: '+error.line);
-            } else {
-
-              fs.writeFile(outFile, result.css, function(err){
-                if(!err){
-
-                  let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss'))+
-                                     ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+
-                                     ' -r ' + postcssConfig, function (code, output, error) {
-
-                      if( hasCompletedFirstStylePass === true || styleFiles.indexOf(filePath) === styleFiles.length - 1) {
-
-                        alert('libsass and postcss', 'compiled');
-                        hasCompletedFirstStylePass === true;
-                        compile.src();
-
-                      }
-
-
-                  });
-                }
-              });
-
-            }
-          });
-
-      },
-      src: () => {
-
-        mkdir(path.join(config.dist , 'style'));
-
-        style.file(path.normalize(config.src+'/style/style.scss'));
-
-        if (ls(path.normalize(config.lib + '/**/*.scss')).length > 0) {
-          ls(path.normalize(config.lib + '/**/*.scss')).forEach(function (file, index) {
-            if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-              styleFiles.push(file);
-            }
-          });
-
-          ls(path.normalize(config.lib + '/**/*.scss')).forEach(function (file, index) {
-            if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-              style.file(file);
-            }
-          });
-        }
-
-      }
-    };
-
+let style = utils.style;
 
 /*
 
@@ -378,7 +312,25 @@ let init = function() {
     }
 
     clean.lib();
-    style.src();
+
+    style.src({
+      includePaths: [config.src + '/style/'],
+      outputStyle: 'expanded',
+      sourceComments: true
+    }, 'prod', true, config.lib, config.dist, true,
+      function (filePath) {
+        if (hasCompletedFirstStylePass === true || styleFiles.indexOf(filePath) === styleFiles.length - 1) {
+          alert('libsass and postcss', 'compiled');
+          hasCompletedFirstStylePass === true;
+          compile.src();
+        }
+      },
+      function (filePath, outFile, err) {
+
+      },
+      function() {
+        utils.style.file(path.normalize(config.src + '/style/style.scss'));
+      });
 
 };
 

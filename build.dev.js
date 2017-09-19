@@ -150,7 +150,7 @@ const compile = {
             let transpile = exec(path.join(config.projectRoot, 'node_modules/.bin/tsc')+
                                  ' ' + outFile + ' --target es5 --module commonjs'+
                                  ' --emitDecoratorMetadata true --experimentalDecorators true'+
-                                 ' --noImplicitAny false --allowUnreachableCode false --moduleResolution node'+ 
+                                 ' --noImplicitAny false --allowUnreachableCode false --moduleResolution node'+
                                  ' --typeRoots node --lib dom,es2017',
               function (code, output, error) {
                 alert('tsc', 'transpiled', outFile);
@@ -204,67 +204,8 @@ const compile = {
 
 */
 
-let style = {
 
-  file: (filePath, watch) => {
-
-    let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
-    let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
-    let filename = filePath.replace(/^.*[\\\/]/, '');
-    let outFile = filePath.indexOf(config.src+'/style') > -1 ? config.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css');//.replace(config.src, 'tmp');
-    sass.render({
-      file: filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.src+'/style/style.scss') : filePath,
-      outFile: outFile,
-      includePaths: [ config.src+'/style/' ],
-      outputStyle: 'expanded',
-      sourceComments: false
-    }, function(error, result) {
-
-      if (error) {
-        warn(error.message, 'LINE: ' + error.line);
-      } else {
-
-        fs.writeFile(outFile, result.css, function (err) {
-          if (!err && allowPostCSS === true) {
-            let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss'))+
-                               ' ' + outFile+ 
-                               ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+
-                               ' -r ' + postcssConfig, function (code, output, error) {
-              if ((styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
-                alert('libsass and postcss', 'compiled');
-                setTimeout(compile.src, 1000);
-              }
-            });
-          } else {
-            if ((styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
-              alert('libsass', 'compiled');
-              setTimeout(compile.src, 1000);
-            }
-          }
-        });
-
-      }
-    });
-
-  },
-  src: () => {
-
-    mkdir(path.join(config.build , 'style'));
-
-    ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
-      if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-        styleFiles.push(file);
-      }
-    });
-
-    ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
-      if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-        style.file(file);
-      }
-    });
-
-  }
-};
+let style = utils.style;
 
 
 
@@ -293,8 +234,28 @@ let init = function () {
 
   copy.lib();
   copy.public();
+
+  style.src({
+    includePaths: [config.src + '/style/'],
+    outputStyle: 'expanded',
+    sourceComments: true
+  }, env, true, config.src, config.build, false,
+  function(filePath){
+    if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+      alert('libsass and postcss', 'compiled');
+      setTimeout(compile.src, 1000);
+    }
+  },
+  function(filePath, outFile, err){
+    if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+      if (!err) {
+        alert('libsass', 'compiled');
+        setTimeout(compile.src, 1000);
+      }
+    }
+  });
+
   compile.main();
-  style.src();
 
 };
 

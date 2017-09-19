@@ -70,3 +70,4 @@ _test-output/
 .vscode
 build/
 cli.config.js
+closure/

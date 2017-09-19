@@ -195,7 +195,7 @@ const compile = {
       conf = conf.replace('#LIST_OF_FILES#', out);
 
       fs.writeFile(path.normalize(config.projectRoot+'/tmp/closure.lazy.conf'), conf, 'utf-8', () => {
-        
+
         if (isVerbose) log('manifest built');
         if (isVerbose) log('\n'+conf);
 
@@ -229,7 +229,7 @@ const compile = {
 
     bundleLazy: () => {
 
-      let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+ 
+      let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
                      ' -p '+path.normalize('./tsconfig.prod.lazy.json'), function(code, output, error) {
 
           let lazyBundles = [];
@@ -265,7 +265,7 @@ const compile = {
                        ' --entry_point='+filePath.replace('.js', '').replace('.ts', '')+
                        ' --output_manifest=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.MF')+
                        ' --js_output_file=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.waste.js'), () => {
-                    
+
                     let bundle = {
                       ngFactoryFile: fileName,
                       ngFactoryClassName: ngFactoryClassName,
@@ -372,70 +372,7 @@ const compile = {
 
 */
 
-let style = {
-
-  file: (filePath, watch) => {
-
-        let srcPath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf("/"));
-        let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
-        let filename = filePath.replace(/^.*[\\\/]/, '');
-        let outFile = filePath.indexOf(config.src+'/style') > -1 ? config.build+'/style/'+globalCSSFilename : filePath.replace('.scss','.css');//.replace(config.src, 'ngfactory');
-        sass.render({
-          file: filePath.indexOf(path.normalize(config.src+'/style')) > -1 ? path.normalize(config.src+'/style/style.scss') : filePath,
-          outFile: outFile,
-          includePaths: [ config.src+'/style/' ],
-          outputStyle: 'expanded',
-          sourceComments: false
-        }, function(error, result) {
-          if (error) {
-            warn(error.message, 'LINE: '+error.line);
-          } else {
-
-            fs.writeFile(outFile, result.css, function(err){
-              if(!err){
-
-                let postcss = exec(path.normalize(path.join(config.projectRoot , 'node_modules/.bin/postcss'))+
-                                   ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot , 'postcss.' + env + '.js'))+
-                                   ' -r ' + postcssConfig, function (code, output, error) {
-
-                    if (!outFile.includes('style/style.css')) {
-                      cp(outFile, outFile.replace(config.src, 'ngfactory/src'));
-                    }
-                    if ( (styleFiles.indexOf(filePath) === styleFiles.length - 1) && hasCompletedFirstStylePass === false) {
-                      alert('libsass and postcss', 'compiled');
-                      setTimeout(compile.src,1000);
-                    }
-                    if (hasCompletedFirstStylePass === true) {
-                      compile.src();
-                    }
-
-                });
-              }
-            });
-
-          }
-        });
-
-    },
-    src: () => {
-
-      mkdir(path.join(config.build , 'style'));
-
-      ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
-        if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-          styleFiles.push(file);
-        }
-      });
-
-      ls(path.normalize(config.src + '/**/*.scss')).forEach(function (file, index) {
-        if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
-          style.file(file);
-        }
-      });
-
-    }
-  };
-
+let style = utils.style;
 
 /*
 
@@ -461,9 +398,28 @@ let init = function() {
 
   copy.lib();
   copy.public();
-  style.src();
+  style.src({
+    includePaths: [config.src + '/style/'],
+    outputStyle: 'expanded',
+    sourceComments: false
+  }, env, true, config.src, config.build, false,
+  function(filePath, outFile) {
 
-};
+    if (!outFile.includes('style/')) {
+      cp(outFile, outFile.replace(config.src, 'ngfactory/src'));
+    }
+
+    if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+      alert('libsass and postcss', 'compiled');
+      setTimeout(compile.src, 1000);
+    }
+    if (hasCompletedFirstStylePass === true) {
+      compile.src();
+    }
+
+  });
+
+}
 
 /*
 
