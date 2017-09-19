@@ -226,10 +226,9 @@ const utils = {
             const postcss = require(config.projectRoot+'/postcss.' + env + '.js');
             let postcssConfig = ' -u';
             let srcPath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf("/"));
-            let globalCSSFilename = config.globalCSSFilename !== undefined ? config.globalCSSFilename : 'style.css';
             let filename = filePath.replace(/^.*[\\\/]/, '');
-            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(dist + '/style/' + globalCSSFilename) : filePath.replace('.scss', '.css');//.replace(config.src, 'ngfactory');
-            sassConfig.file = filePath.indexOf(path.normalize(config.src + '/style')) > -1 ? path.normalize(config.src + '/style/style.scss') : filePath;
+            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(dist + '/style/' + filename.replace('.scss', '.css')) : filePath.replace('.scss', '.css');//.replace(config.src, 'ngfactory');
+            sassConfig.file = filePath.indexOf(path.normalize(config.src + '/style')) > -1 ? path.normalize(config.src + '/style/'+filename) : filePath;
             sassConfig.outFile = outFile;
             for (let cssProp in postcss.plugins) {
                 postcssConfig += ' ' + cssProp;
@@ -270,21 +269,30 @@ const utils = {
             mkdir(path.join(dist, 'style'));
 
             if (styleSrc) {
-                utils.style.file(path.normalize(config.src + '/style/style.scss'), sassConfig, env, allowPostCSS, dist, res, rej);
+                ls(path.normalize(src + '/style/*.scss')).forEach(function (file, index) {
+                    let filename = filePath.replace(/^.*[\\\/]/, '');
+                    if (filename[0] !== '_') {
+                        utils.style.file(path.normalize(config.src + '/style/' + filename), sassConfig, env, allowPostCSS, dist, res, rej);
+                    }
+                });
             }
 
             if (ls(path.normalize(src + '/**/*.scss')).length > 0) {
                 ls(path.normalize(src + '/**/*.scss')).forEach(function (file, index) {
+
                     if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
                         utils.style.files.push(file);
                     }
+
                 });
 
                 ls(path.normalize(src + '/**/*.scss')).forEach(function (file, index) {
 
                     if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+                        log(file);
                         utils.style.file(file, sassConfig, env, allowPostCSS, dist, res, rej);
                     }
+
                 });
             }
 
