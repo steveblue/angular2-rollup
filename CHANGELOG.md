@@ -3,7 +3,9 @@
 - Refactored SASS / PostCSS build steps, removed duplicate code
 - Added config for the `libsass` compiler
 - Added support for multiple global CSS files in the `src/style` directory to be deployed to `/build` or `/dist`
-- Deprecated `config.globalCSSFilename` property.
+- Deprecated `config.globalCSSFilename` property
+- Optimized TypeScript compilation for JIT mode, compiles single file as opposed to every file now
+- Optimized styling Components, triggers livereload after associated TS file is compiled
 
 The build will default to the following configuration for SASS if you do not provide one:
 
