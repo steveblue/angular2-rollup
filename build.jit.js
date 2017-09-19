@@ -132,12 +132,20 @@ const compile = {
 
             copy.html();
 
+            if (!config.style || !config.style.sass || !config.style.sass.dev) {
+              config.style = {
+                sass: {
+                  dev: {
+                    includePaths: ['src/style/'],
+                    outputStyle: 'expanded',
+                    sourceComments: true
+                  }
+                }
+              }
+            }
+
             style.src({
-              sassConfig: config.style.sass.dev || {
-                  includePaths: ['src/style/'],
-                  outputStyle: 'expanded',
-                  sourceComments: true
-                },
+                sassConfig: config.style.sass.dev,
                 env: 'dev',
                 allowPostCSS: true,
                 src: config.src,

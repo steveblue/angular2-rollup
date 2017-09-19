@@ -399,12 +399,20 @@ let init = function() {
   copy.lib();
   copy.public();
 
+  if (!config.style || !config.style.sass || !config.style.sass.prod) {
+    config.style = {
+      sass: {
+        prod: {
+          includePaths: ['src/style/'],
+          outputStyle: 'expanded',
+          sourceComments: false
+        }
+      }
+    }
+  }
+
   style.src({
-      sassConfig: config.style.sass.prod || {
-        includePaths: ['src/style/'],
-        outputStyle: 'expanded',
-        sourceComments: false
-      },
+      sassConfig: config.style.sass.prod,
       env: env,
       allowPostCSS: true,
       src: config.src,

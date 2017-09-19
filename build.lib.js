@@ -313,13 +313,21 @@ let init = function() {
 
     clean.lib();
 
+    if (!config.style || !config.style.sass || !config.style.sass.prod) {
+      config.style = {
+        sass: {
+          prod: {
+            includePaths: ['src/style/'],
+            outputStyle: 'expanded',
+            sourceComments: false
+          }
+        }
+      }
+    }
+
    
     style.src({
-      sassConfig: config.style.sass.prod || {
-        includePaths: ['src/style/'],
-        outputStyle: 'expanded',
-        sourceComments: false
-      },
+      sassConfig: config.style.sass.prod,
       env: 'prod',
       allowPostCSS: true,
       src: config.lib,

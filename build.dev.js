@@ -235,12 +235,20 @@ let init = function () {
   copy.lib();
   copy.public();
 
+  if (!config.style || !config.style.sass || !config.style.sass.dev) {
+    config.style = {
+      sass: {
+        dev: {
+          includePaths: ['src/style/'],
+          outputStyle: 'expanded',
+          sourceComments: true
+        }
+      }
+    }
+  }
+
   style.src({
-    sassConfig: config.style.sass.dev || {
-      includePaths: ['src/style/'],
-      outputStyle: 'expanded',
-      sourceComments: true
-    },
+    sassConfig: config.style.sass.dev,
     env: env,
     allowPostCSS: true,
     src: config.src,
