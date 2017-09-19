@@ -315,7 +315,11 @@ let init = function() {
 
    
     style.src({
-      sassConfig: config.style.sass.prod,
+      sassConfig: config.style.sass.prod || {
+        includePaths: ['src/style/'],
+        outputStyle: 'expanded',
+        sourceComments: false
+      },
       env: 'prod',
       allowPostCSS: true,
       src: config.lib,

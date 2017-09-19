@@ -133,7 +133,11 @@ const compile = {
             copy.html();
 
             style.src({
-                sassConfig: config.style.sass.dev,
+              sassConfig: config.style.sass.dev || {
+                  includePaths: ['src/style/'],
+                  outputStyle: 'expanded',
+                  sourceComments: true
+                },
                 env: 'dev',
                 allowPostCSS: true,
                 src: config.src,

@@ -398,9 +398,13 @@ let init = function() {
 
   copy.lib();
   copy.public();
-  
+
   style.src({
-      sassConfig: config.style.sass.prod,
+      sassConfig: config.style.sass.prod || {
+        includePaths: ['src/style/'],
+        outputStyle: 'expanded',
+        sourceComments: false
+      },
       env: env,
       allowPostCSS: true,
       src: config.src,

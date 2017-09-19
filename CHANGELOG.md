@@ -1,3 +1,50 @@
+##1.0.0-beta.2
+
+- Refactored SASS / PostCSS build steps, removed duplicate code
+- Added config for the `libsass` compiler
+- Added support for multiple global CSS files in the `src/style` directory to be deployed to `/build` or `/dist`
+- Deprecated `config.globalCSSFilename` property.
+
+The build will default to the following configuration for SASS if you do not provide one:
+
+```
+{
+    includePaths: ['src/style/'],
+    outputStyle: 'expanded',
+    sourceComments: false
+}
+```
+
+Configure SASS in `build.config.js` for each build like in the following example. The configuration takes any options [node-sass](https://github.com/sass/node-sass) can be configured with, except `file` and `outFile` which is handled by the build scripts.
+
+```
+style: {
+        sass: {
+            dev: {
+                includePaths: ['src/style/'],
+                outputStyle: 'expanded',
+                sourceComments: true
+            },
+            lib: {
+                includePaths: ['src/style/'],
+                outputStyle: 'expanded',
+                sourceComments: false
+            },
+            prod: {
+                includePaths: ['src/style/'],
+                outputStyle: 'expanded',
+                sourceComments: false
+            }
+        }
+    }
+
+```
+
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
 ##1.0.0-beta.1
 
 - Bypass Rollup and build for production with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode

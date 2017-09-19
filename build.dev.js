@@ -236,7 +236,11 @@ let init = function () {
   copy.public();
 
   style.src({
-    sassConfig: config.style.sass.dev,
+    sassConfig: config.style.sass.dev || {
+      includePaths: ['src/style/'],
+      outputStyle: 'expanded',
+      sourceComments: true
+    },
     env: env,
     allowPostCSS: true,
     src: config.src,
