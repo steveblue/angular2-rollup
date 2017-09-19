@@ -45,12 +45,17 @@ process.argv.forEach((arg)=>{
   }
 });
 
-/* Process PostCSS CLI plugins for the --use argument */
-
-for (let cssProp in postcss.plugins) {
-  postcssConfig += ' '+cssProp;
+if (!config.style || !config.style.sass || !config.style.sass.prod) {
+  config.style = {
+    sass: {
+      prod: {
+        includePaths: ['src/style/'],
+        outputStyle: 'expanded',
+        sourceComments: false
+      }
+    }
+  }
 }
-
 
 /*
 
@@ -312,19 +317,6 @@ let init = function() {
     }
 
     clean.lib();
-
-    if (!config.style || !config.style.sass || !config.style.sass.prod) {
-      config.style = {
-        sass: {
-          prod: {
-            includePaths: ['src/style/'],
-            outputStyle: 'expanded',
-            sourceComments: false
-          }
-        }
-      }
-    }
-
    
     style.src({
       sassConfig: config.style.sass.prod,
@@ -335,9 +327,10 @@ let init = function() {
       styleSrcOnInit: false
     },
     function (filePath) {
-      if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
+      
+      if (hasCompletedFirstStylePass === false) {
         alert('libsass and postcss', 'compiled');
-        hasCompletedFirstStylePass === true;
+        hasCompletedFirstStylePass = true;
         compile.src();
       }
     },
@@ -399,7 +392,25 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
         alert('CHANGE DETECTED', filePath, 'triggered', 'sass and postcss');
         clean.lib();
-        style.file(filePath, true);
+        style.file(filePath, {
+          sassConfig: config.style.sass.prod,
+          env: 'prod',
+          allowPostCSS: true,
+          src: config.lib,
+          dist: config.dist,
+          styleSrcOnInit: false
+        },
+          function (filePath) {
+            if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
+              alert('libsass and postcss', 'compiled');
+              hasCompletedFirstStylePass = true;
+              compile.src();
+            }
+          },
+          function (filePath, outFile, err) {
+
+          });
+
 
       }
 

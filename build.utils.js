@@ -230,14 +230,29 @@ const utils = {
             let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(cssConfig.dist + '/style/' + filename.replace('.scss', '.css')) : filePath.replace('.scss', '.css');//.replace(config.src, 'ngfactory');
             cssConfig.sassConfig.file = filePath.indexOf(path.normalize(config.src + '/style')) > -1 ? path.normalize(config.src + '/style/' + filename) : filePath;
             cssConfig.sassConfig.outFile = outFile;
+            
             for (let cssProp in postcss.plugins) {
                 postcssConfig += ' ' + cssProp;
             }
+
+            if (!fs.existsSync(path.normalize(outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))))) {
+                mkdir('-p', path.normalize(outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))));
+            }
+
+            if (cssConfig.env === 'prod' && filePath.indexOf(config.src + '/style') === -1) {
+
+                if (!fs.existsSync(path.normalize('ngfactory/' + outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))))) {
+                    mkdir('-p', path.normalize('ngfactory/' + outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))));
+                }
+
+            }
+
             sass.render(cssConfig.sassConfig, function (error, result) {
                 if (error) {
                     warn(error.message, 'LINE: ' + error.line);
                 } else {
-
+      
+           
                     fs.writeFile(outFile, result.css, function (err) {
                         if (!err && cssConfig.allowPostCSS === true) {
 

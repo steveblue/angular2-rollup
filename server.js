@@ -45,7 +45,8 @@ let live = function() {
                      __dirname + '/'+config.build+'/src',
                      __dirname + '/'+config.build+'/style',
                      __dirname + '/'+config.build+'/*.html',
-                     __dirname + '/'+config.build+'/*.js']);
+                     __dirname + '/'+config.build+'/*.js',
+                     __dirname + '/'+config.build+'/*.css']);
    console.log('Livereload available at '+host+':'+35729);
 };
 
@@ -75,7 +76,9 @@ if ( env === 'dev' ) {
   server = http.createServer(app);
 
   if (canWatch === true) {
-    live();
+
+    setTimeout(live,5000)
+
   }
 
 

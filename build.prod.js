@@ -49,12 +49,18 @@ process.argv.forEach((arg)=>{
   }
 });
 
-/* Process PostCSS CLI plugins for the --use argument */
 
-for (let cssProp in postcss.plugins) {
-  postcssConfig += ' '+cssProp;
+if (!config.style || !config.style.sass || !config.style.sass.prod) {
+  config.style = {
+    sass: {
+      prod: {
+        includePaths: ['src/style/'],
+        outputStyle: 'expanded',
+        sourceComments: false
+      }
+    }
+  }
 }
-
 
 /*
 
@@ -399,18 +405,6 @@ let init = function() {
   copy.lib();
   copy.public();
 
-  if (!config.style || !config.style.sass || !config.style.sass.prod) {
-    config.style = {
-      sass: {
-        prod: {
-          includePaths: ['src/style/'],
-          outputStyle: 'expanded',
-          sourceComments: false
-        }
-      }
-    }
-  }
-
   style.src({
       sassConfig: config.style.sass.prod,
       env: env,
@@ -489,7 +483,30 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
       alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
 
         hasCompletedFirstStylePass = true;
-        style.file(filePath, true);
+
+        style.file(filePath, {
+          sassConfig: config.style.sass.prod,
+          env: env,
+          allowPostCSS: true,
+          src: config.src,
+          dist: config.build,
+          styleSrcOnInit: false
+        },
+          function (filePath, outFile) {
+
+            if (!outFile.includes('style/')) {
+              cp(outFile, outFile.replace(config.src, 'ngfactory/src'));
+            }
+
+            if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+              alert('libsass and postcss', 'compiled');
+              setTimeout(compile.src, 1000);
+            }
+            if (hasCompletedFirstStylePass === true) {
+              compile.src();
+            }
+
+          });
 
     }
 

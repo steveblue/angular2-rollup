@@ -35,6 +35,20 @@ process.argv.forEach((arg)=>{
   }
 });
 
+
+
+if (!config.style || !config.style.sass || !config.style.sass.dev) {
+  config.style = {
+    sass: {
+      dev: {
+        includePaths: ['src/style/'],
+        outputStyle: 'expanded',
+        sourceComments: true
+      }
+    }
+  }
+}
+
 /*
 
   Copy Tasks
@@ -108,97 +122,117 @@ const copy = {
 
 const compile = {
 
-    ts : (filePath) => {
+    file: (execCmd, filePath) => {
 
-      isCompiling = true;
+      let tsc = exec(execCmd, function (code, output, error) {
 
-      if (filePath) {
-          alert('typescript', 'started transpiling', filePath);
-      } else {
-          alert('typescript', 'started transpiling', config.src+'/*ts');
-      }
+        if (filePath) {
+          alert('typescript', 'transpiled', filePath);
+          cp(filePath, path.normalize('build/' + filePath));
+        } else {
+          alert('typescript', 'transpiled', config.src + '/*ts');
+        }
 
-      let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/tsc')+
-                     ' -p '+path.normalize('./tsconfig.jit.json'), function(code, output, error) {
+        if (hasInit === false) {
 
-          if (filePath) {
-            alert('typescript', 'transpiled', filePath);
-            cp(filePath, path.normalize('build/'+filePath));
-          } else {
-            alert('typescript', 'transpiled', config.src+'/*ts');
-          }
+          copy.html();
 
-          if(hasInit === false) {
+          style.src({
+            sassConfig: config.style.sass.dev,
+            env: 'dev',
+            allowPostCSS: true,
+            src: config.src,
+            dist: config.build,
+            styleSrcOnInit: false
+          },
+            function (filePath, outFile) {
 
-            copy.html();
+              if (!outFile.includes('style/')) {
 
-            if (!config.style || !config.style.sass || !config.style.sass.dev) {
-              config.style = {
-                sass: {
-                  dev: {
-                    includePaths: ['src/style/'],
-                    outputStyle: 'expanded',
-                    sourceComments: true
-                  }
+                cp(outFile, outFile.replace(config.src, 'build/src'));
+
+              }
+
+              if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+
+                alert('libsass and postcss', 'compiled');
+                if (canWatch === true) {
+                  alert(colors.green('Ready to serve'));
+                  alert(colors.green('Watcher listening for changes'));
+                } else {
+                  alert(colors.green('Build is ready'));
+                }
+
+              } else if (hasCompletedFirstStylePass === true) {
+                compile.ts();
+              }
+
+            },
+            function (filePath, outFile, err) {
+              if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+                if (!err) {
+                  alert('libsass', 'compiled');
+                  setTimeout(compile.src, 1000);
                 }
               }
-            }
+            },
+            function () {
 
-            style.src({
-                sassConfig: config.style.sass.dev,
-                env: 'dev',
-                allowPostCSS: true,
-                src: config.src,
-                dist: config.build,
-                styleSrcOnInit: false
-              },
-              function (filePath, outFile) {
+              hasInit = true;
 
-                if (!outFile.includes('style/')) {
+              if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].post) {
+                config.buildHooks[env].post();
+              }
 
-                  cp(outFile, outFile.replace(config.src, 'build/src'));
+            });
 
-                }
+        }
 
-                if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-
-                  alert('libsass and postcss', 'compiled');
-                  if (canWatch === true) {
-                    alert(colors.green('Ready to serve'));
-                    alert(colors.green('Watcher listening for changes'));
-                  } else {
-                    alert(colors.green('Build is ready'));
-                  }
-
-                } else if(hasCompletedFirstStylePass === true) {
-                  compile.ts();
-                }
-
-              },
-              function (filePath, outFile, err) {
-                if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-                  if (!err) {
-                    alert('libsass', 'compiled');
-                    setTimeout(compile.src, 1000);
-                  }
-                }
-              },
-              function(){
-
-                hasInit = true;
-
-                if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].post) {
-                  config.buildHooks[env].post();
-                }
-
-              });
-
-          }
-
-          isCompiling = false;
+        isCompiling = false;
 
 
       });
+    },
+
+    ts : (filePath) => {
+
+      isCompiling = true;
+    
+      let tsExec = '';
+
+      if (filePath) {
+
+          alert('typescript', 'started transpiling', filePath);
+      
+          fs.readFile(config.projectRoot+'/tsconfig.jit.json', 'utf8', function (err, contents) {
+            if (!err) {
+              contents = JSON.parse(contents);
+              contents.files = [];
+              contents.files.push(filePath);
+              contents = JSON.stringify(contents, null, 4);
+              fs.writeFile(config.projectRoot + '/tsconfig.jit.file.json', contents, function (err) {
+                if (err) {
+                  warn(err);
+                } else {
+                  tsExec = path.normalize(config.projectRoot + '/node_modules/.bin/tsc') +
+                    ' -p ' + path.normalize('./tsconfig.jit.file.json');
+                  compile.file(tsExec, filePath);
+                }
+              });
+            } else {
+              warn(err);
+            }
+
+          });
+
+      } else {
+          alert('typescript', 'started transpiling', config.src+'/*ts');
+          tsExec = path.normalize(config.projectRoot + '/node_modules/.bin/tsc') +
+                                  ' -p ' + path.normalize('./tsconfig.jit.json');
+          compile.file(tsExec, filePath);
+      }
+
+
 
     }
 };
@@ -300,7 +334,48 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
     alert('CHANGE DETECTED', filePath, 'triggered', 'sass and postcss');
 
     hasCompletedFirstStylePass = true;
-    style.file(filePath, true);
+
+    utils.style.file(filePath, {
+      sassConfig: config.style.sass.dev,
+      env: 'dev',
+      allowPostCSS: true,
+      src: config.src,
+      dist: config.build,
+      styleSrcOnInit: false
+    },
+    function (filePath, outFile) {
+
+        if (!outFile.includes('style/')) {
+
+          cp(outFile, outFile.replace(config.src, 'build/src'));
+          compile.ts(outFile.replace('.css', '.ts'));
+
+        }
+
+        if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+
+          alert('libsass and postcss', 'compiled');
+          if (canWatch === true) {
+            alert(colors.green('Ready to serve'));
+            alert(colors.green('Watcher listening for changes'));
+          } else {
+            alert(colors.green('Build is ready'));
+          }
+          hasCompletedFirstStylePass = true;
+
+        } else if (hasCompletedFirstStylePass === false) {
+          compile.ts();
+        }
+
+      },
+      function (filePath, outFile, err) {
+        if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+          if (!err) {
+            alert('libsass', 'compiled');
+            setTimeout(compile.src, 1000);
+          }
+        }
+      });
 
 
   }

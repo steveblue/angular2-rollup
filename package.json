@@ -45,6 +45,7 @@
     "html-minifier": "^3.5.2",
     "htmlprocessor": "^0.2.4",
     "js-string-escape": "^1.0.1",
+    "livereload": "^0.6.2",
     "magic-string": "^0.22.4",
     "node-sass": "^4.5.3",
     "opn": "^5.1.0",
