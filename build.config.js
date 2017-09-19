@@ -28,7 +28,6 @@ module.exports = {
     dist: 'dist',
     lib: 'src/lib',
     libFilename: 'default-lib',
-    globalCSSFilename: 'style.css',
     classPrefix: 'My',
     componentPrefix: 'cmp',
     directivePrefix: 'dir'
