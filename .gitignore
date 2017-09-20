@@ -51,13 +51,14 @@ compiler.jar
 main.js
 main.prod.d.ts
 main.prod.js.map
-
+tsconfig.jit.file.json
 
 # Dist #
 /build
 /public/__build__/
 /src/*/__build__/
 __build__/**
+
 
 # Doc #
 /doc/

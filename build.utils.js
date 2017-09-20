@@ -221,16 +221,46 @@ const utils = {
     },
     style: {
         files: [],
+        globalFiles: (cssConfig, res, rej) => {
+
+            let globals = [];
+
+            ls(path.normalize(config.src + '/style/**/*.scss')).forEach(function (file, index) {
+
+                if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
+                    globals.push(file);
+                }
+
+            });
+
+            globals.forEach(function (file, index) {
+
+                if (globals.indexOf(file) === globals.length - 1) {
+                    utils.style.file(file, cssConfig, res, rej);
+                } else {
+                    utils.style.file(file, cssConfig);
+                }
+
+            });
+
+        },
         file : (filePath, cssConfig, res, rej) => {
 
             const postcss = require(config.projectRoot + '/postcss.' + cssConfig.env + '.js');
+
             let postcssConfig = ' -u';
             let srcPath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf("/"));
             let filename = filePath.replace(/^.*[\\\/]/, '');
-            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(cssConfig.dist + '/style/' + filename.replace('.scss', '.css')) : filePath.replace('.scss', '.css');//.replace(config.src, 'ngfactory');
-            cssConfig.sassConfig.file = filePath.indexOf(path.normalize(config.src + '/style')) > -1 ? path.normalize(config.src + '/style/' + filename) : filePath;
-            cssConfig.sassConfig.outFile = outFile;
+            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(filePath.replace(config.src, config.build).replace('.scss', '.css')) : filePath.replace('.scss', '.css');
+
+            if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
+                utils.style.globalFiles(cssConfig, res, rej);
+                return;
+            } // this file is global w/ underscore and should not be compiled, compile global files instead
             
+            cssConfig.sassConfig.file = filePath;
+            cssConfig.sassConfig.outFile = outFile;
+
             for (let cssProp in postcss.plugins) {
                 postcssConfig += ' ' + cssProp;
             }
@@ -259,8 +289,10 @@ const utils = {
                             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
                                 ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cssConfig.env + '.js')) +
                                 ' -r ' + postcssConfig, function (code, output, error) {
-
-                                    res(filePath, outFile);
+                                    if (res) {
+                                        res(filePath, outFile);
+                                    }
+                                    
 
                                 });
                         } else {
@@ -268,7 +300,10 @@ const utils = {
                                 warn(err);
                             }
                             if (rej && utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
-                                rej(filePath, outFile, err);
+                                if (rej) {
+                                    rej(filePath, outFile, err);
+                                }
+                                
                             }
                         }
                     });
