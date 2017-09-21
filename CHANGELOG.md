@@ -1,3 +1,9 @@
+##1.0.0-beta.4
+
+- Hotfix TypeScript compilation onchange when using `ngr build dev --jit`
+
+-------------------------------------------------------------------------------------------------------------
+
 ##1.0.0-beta.3
 
 - Hotfix for global css that would not compile correctly
@@ -10,8 +16,7 @@
 - Added config for the `libsass` compiler
 - Added support for multiple global CSS files in the `src/style` directory to be deployed to `/build` or `/dist`
 - Deprecated `config.globalCSSFilename` property
-- Optimized TypeScript compilation for JIT mode, compiles single file as opposed to every file now
-- Optimized styling Components, triggers livereload after associated TS file is compiled
+
 
 The build will default to the following configuration for SASS if you do not provide one:
 
