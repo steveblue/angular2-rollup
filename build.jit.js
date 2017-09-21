@@ -129,6 +129,7 @@ const compile = {
         if (filePath) {
           alert('typescript', 'transpiled', filePath);
           cp(filePath, path.normalize('build/' + filePath));
+          isCompiling = false;
         } else {
           alert('typescript', 'transpiled', config.src + '/*ts');
         }
@@ -197,13 +198,13 @@ const compile = {
     ts : (filePath) => {
 
       isCompiling = true;
-    
+
       let tsExec = '';
 
       if (filePath) {
 
           alert('typescript', 'started transpiling', filePath);
-      
+
           fs.readFile(config.projectRoot+'/tsconfig.jit.json', 'utf8', function (err, contents) {
             if (!err) {
               contents = JSON.parse(contents);
@@ -321,11 +322,11 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
     utils.tslint(filePath);
 
-    if (!isCompiling) {
+    //if (!isCompiling) {
 
-      compile.ts(filePath);
+      compile.ts();
 
-    }
+    //}
 
 
   }
@@ -348,7 +349,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
         if (!outFile.includes('style/')) {
 
           cp(outFile, outFile.replace(config.src, 'build/src'));
-          compile.ts(outFile.replace('.css', '.ts'));
+          compile.ts(); //outFile.replace('.css', '.ts')
 
         }
 
