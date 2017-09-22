@@ -1,3 +1,10 @@
+##1.0.0-beta.5
+
+- serve command pushed to end of script during build to avoid issues at startup
+- Bumped default version of scaffolded app to @angular 4.4.2
+
+-------------------------------------------------------------------------------------------------------------
+
 ##1.0.0-beta.4
 
 - Hotfix TypeScript compilation onchange when using `ngr build dev --jit`
