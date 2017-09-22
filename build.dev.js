@@ -29,12 +29,16 @@ let hasInit = false;
 let styleFiles = [];
 let hasCompletedFirstStylePass = false;
 let postcssConfig = ' -u';
+let canServe = false;
 
 /* Test for arguments the ngr cli spits out */
 
 process.argv.forEach((arg) => {
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('serve')) {
+    canServe = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -188,6 +192,11 @@ const compile = {
                   ' -p '+path.normalize('./tsconfig.dev.json'), { shell: true, stdio: 'inherit' });
           }
 
+          alert(colors.green('Build is ready'));
+          if (canServe === true) {
+            utils.serve(canWatch);
+          }
+
         });
 
       }
@@ -333,7 +342,7 @@ watcher
   .on('error', error => warn('ERROR:', error))
   .on('ready', () => {
 
-    alert('INITIAL SCAN COMPLETE', 'building for', env);
+    alert('ngr started', colors.red(env));
     init();
 
   });

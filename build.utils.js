@@ -48,10 +48,11 @@ const sass = require('node-sass');
 const MagicString = require('magic-string');
 const minifyHtml  = require('html-minifier').minify;
 const escape = require('js-string-escape');
-
+const spawn = require('child_process').spawn;
 const cliRoot = path.dirname(fs.realpathSync(__filename));
 const processRoot = path.join(path.dirname(process.cwd()) , path.basename(process.cwd()));
 const cliConfigPath = findUp.sync('cli.config.js');
+
 let projectRoot;
 
 if(!cliConfigPath) {
@@ -184,6 +185,20 @@ const utils = {
     stringRegex: stringRegex,
     multilineComment: multilineComment,
     singleLineComment: singleLineComment,
+    serve: (watch) => {
+
+        let serverCommand = 'npm run serve';
+
+        if (watch === true) {
+            serverCommand += ' watch=true';
+        }
+        else {
+            serverCommand += ' watch=false';
+        }
+
+        spawn(serverCommand, { shell: true, stdio: 'inherit' });
+
+    },
     clean : {
         tmp: () => {
             rm('-rf', path.normalize('./closure'));
@@ -257,7 +272,7 @@ const utils = {
                 utils.style.globalFiles(cssConfig, res, rej);
                 return;
             } // this file is global w/ underscore and should not be compiled, compile global files instead
-            
+
             cssConfig.sassConfig.file = filePath;
             cssConfig.sassConfig.outFile = outFile;
 
@@ -281,8 +296,8 @@ const utils = {
                 if (error) {
                     warn(error.message, 'LINE: ' + error.line);
                 } else {
-      
-           
+
+
                     fs.writeFile(outFile, result.css, function (err) {
                         if (!err && cssConfig.allowPostCSS === true) {
 
@@ -292,7 +307,7 @@ const utils = {
                                     if (res) {
                                         res(filePath, outFile);
                                     }
-                                    
+
 
                                 });
                         } else {
@@ -303,7 +318,7 @@ const utils = {
                                 if (rej) {
                                     rej(filePath, outFile, err);
                                 }
-                                
+
                             }
                         }
                     });
@@ -327,7 +342,7 @@ const utils = {
 
                 });
             }
-            
+
             ls(path.normalize(config.src + '/**/*.scss')).forEach(function(file, index){
 
                 if (file.replace(/^.*[\\\/]/, '')[0] !== '_') {
@@ -335,7 +350,7 @@ const utils = {
                 }
 
             });
-     
+
 
             if(init) {
                 init();

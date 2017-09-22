@@ -267,6 +267,8 @@ const compile = {
                         config.buildHooks.lib.post();
                       }
 
+                      alert(colors.green('Build is ready'));
+
                     });
 
                  });
@@ -317,7 +319,7 @@ let init = function() {
     }
 
     clean.lib();
-   
+
     style.src({
       sassConfig: config.style.sass.prod,
       env: 'prod',
@@ -327,7 +329,7 @@ let init = function() {
       styleSrcOnInit: false
     },
     function (filePath) {
-      
+
       if (hasCompletedFirstStylePass === false) {
         alert('libsass and postcss', 'compiled');
         hasCompletedFirstStylePass = true;
@@ -421,7 +423,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    alert('INITIAL SCAN COMPLETE', 'building for', 'lib');
+    alert('ngr started', colors.red(env));
 
     init();
 });

@@ -31,6 +31,7 @@ let postcssConfig = ' -u';
 let bundleWithClosure = false;
 let isLazy = false;
 let isVerbose = false;
+let canServe = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -46,6 +47,9 @@ process.argv.forEach((arg)=>{
   }
   if (arg.includes('verbose')) {
     isVerbose = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('serve')) {
+    canServe = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -166,9 +170,9 @@ const compile = {
 
         let closure = exec(require(config.projectRoot+'/package.json').scripts['transpile:'+env], function(code, output, error){
             alert('ClosureCompiler', 'transpiled', './'+config.build+'/bundle.es2015.js to', './'+config.build+'/bundle.js');
-            if (canWatch === true) {
+            if (canServe === true) {
               alert(colors.green('Ready to serve'));
-              alert(colors.green('Watcher listening for changes'));
+              utils.serve(canWatch);
             } else {
               alert(colors.green('Build is ready'));
             }
@@ -225,7 +229,12 @@ const compile = {
 
         exec(finalExec, () => {
           alert('ClosureCompiler', 'transpiled', 'bundles into', './' + config.build );
-          alert(colors.green('Build is ready'));
+          if (canServe === true) {
+            alert(colors.green('Ready to serve'));
+            utils.serve(canWatch);
+          } else {
+            alert(colors.green('Build is ready'));
+          }
         });
 
       });
@@ -310,9 +319,9 @@ const compile = {
       let closure = exec(require(config.projectRoot+'/package.json').scripts['bundle:closure'], function(code, output, error){
           alert('ClosureCompiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.js');
 
-          if (canWatch === true) {
+          if (canServe === true) {
             alert(colors.green('Ready to serve'));
-            alert(colors.green('Watcher listening for changes'));
+            utils.serve(canWatch);
           } else {
             alert(colors.green('Build is ready'));
           }
@@ -517,7 +526,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    alert('INITIAL SCAN COMPLETE', 'building for', env);
+    alert('ngr started', colors.red(env));
 
     if(isLazy === true) {
 

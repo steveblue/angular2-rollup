@@ -26,12 +26,16 @@ let isCompiling = false;
 let hasInit = false;
 let styleFiles = [];
 let hasCompletedFirstStylePass = false;
+let canServe = false;
 
 /* Test for arguments the ngr cli spits out */
 
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('serve')) {
+    canServe = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -159,7 +163,9 @@ const compile = {
                 alert('libsass and postcss', 'compiled');
                 if (canWatch === true) {
                   alert(colors.green('Ready to serve'));
-                  alert(colors.green('Watcher listening for changes'));
+                  if (canServe === true) {
+                    utils.serve(canWatch);
+                  }
                 } else {
                   alert(colors.green('Build is ready'));
                 }
@@ -388,7 +394,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    alert('INITIAL SCAN COMPLETE', 'building for', env);
+    alert('ngr started', colors.red(env));
     init();
 
 });

@@ -39,7 +39,7 @@ program
     .parse(process.argv);
 
 
-if (program.serve) {
+if (program.serve && program.build === undefined) {
 
     let serverCommand = 'npm run serve';
 
@@ -58,7 +58,7 @@ if (program.serve) {
 if (program.build) {
 
     let projectPackage = JSON.parse(JSON.stringify(require(config.projectRoot + '/package.json')));
-   
+
     if (program.build === 'dev' && program.jit === undefined && parseInt(projectPackage.dependencies['@angular/core'].split('.')[0]) < 5) {
         utils.warn('Project version is ' + projectPackage.dependencies['@angular/core'] + '. Use ngr build dev --jit or ngr build jit < 5.0.0');
         return;
@@ -105,6 +105,14 @@ if (program.build) {
     }
     else {
         cliCommand += ' verbose=false';
+    }
+
+
+    if (program.serve === true) {
+        cliCommand += ' serve=true';
+    }
+    else {
+        cliCommand += ' serve=false';
     }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
