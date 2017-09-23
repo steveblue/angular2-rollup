@@ -38,7 +38,6 @@
       "@angular/platform-browser-dynamic": "4.4.2",
       "@angular/platform-server": "4.4.2",
       "@angular/router": "4.4.2",
-      "angular": "git+https://github.com/angular/angular",
       "angular-in-memory-web-api": "~0.3.2",
       "compression": "^1.7.0",
       "core-js": "^2.4.1",

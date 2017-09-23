@@ -1,6 +1,8 @@
 ##1.0.0-beta.5
 
 - serve command pushed to end of script during build to avoid issues at startup
+- Optimized default library files copied at start of build scripts
+- Deprecated dependency on angular-srcs
 - Bumped default version of scaffolded app to @angular 4.4.2
 
 -------------------------------------------------------------------------------------------------------------

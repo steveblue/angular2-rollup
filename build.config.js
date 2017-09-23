@@ -1,16 +1,15 @@
 module.exports = {
     dep: {
         lib: [
-            'angular-srcs/shims_for_IE.js',
-            'core-js',
-            'reflect-metadata',
-            'zone.js',
-            'systemjs',
+            'core-js/client/shim.min.js',
+            'core-js/client/shim.min.js.map',
+            'systemjs/dist/system.js',
+            'zone.js/dist/zone.js',
+            'reflect-metadata/Reflect.js',
             '@angular',
             'rxjs'
         ],
         prodLib: [
-            'angular-srcs/shims_for_IE.js',
             'core-js/client/shim.min.js',
             'core-js/client/shim.min.js.map',
             'systemjs/dist/system.js',
