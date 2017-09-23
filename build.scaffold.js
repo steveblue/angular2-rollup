@@ -80,7 +80,7 @@ const files     = [
     'tsconfig.prod.lazy.json',
     'tsconfig.lib.json',
     'tsconfig.lib.es5.json',
-    'tsconfig.json',
+    'jsconfig.json',
     'tslint.json'
 ];
 
