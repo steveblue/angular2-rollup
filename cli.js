@@ -11,7 +11,7 @@ const package     = require(__dirname + '/package.json');
 const config      = utils.config;
 
 let cliCommand = '';
-let useVersion = '5.0.0-beta.6';
+let useVersion = '5.0.0-beta.7';
 
 program
     .version(package.version)
@@ -36,6 +36,7 @@ program
     .option('scaffold, --scaffold [bool]', 'Scaffold a new project')
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
     .option('--angularVersion [string]', 'Scaffold a new project with a specific @angular version')
+    .option('update, --update [bool]', 'Update a project')
     .parse(process.argv);
 
 
@@ -168,6 +169,21 @@ if (program.scaffold) {
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
 }
+
+if (program.update) {
+
+    cliCommand = 'node ' + path.normalize(path.dirname(fs.realpathSync(__filename)) + '/build.update.js');
+
+    if (program.angularVersion === undefined) {
+        cliCommand += ' version=' + useVersion;
+    } else {
+        cliCommand += ' version=' + program.angularVersion;
+    }
+
+    spawn(cliCommand, { shell: true, stdio: 'inherit' });
+
+}
+
 
 
 if (program.test) {

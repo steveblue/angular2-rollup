@@ -1,5 +1,6 @@
 ##1.0.0-beta.5
 
+- Use `ngr update --angularVersion 5.0.0` to update your package.json to a specific version of @angular
 - serve command pushed to end of script during build to avoid issues at startup
 - Optimized default library files copied at start of build scripts
 - Deprecated dependency on angular-srcs
