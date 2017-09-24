@@ -1,7 +1,8 @@
 ##1.0.0-beta.5
 
 - Use `ngr update --angularVersion 5.0.0` to update your package.json to a specific version of @angular
-- serve command pushed to end of script during build to avoid issues at startup
+- New `--include` argument when generating Module. This arg can be configured to auto import Component, Directive, Routes into the Module.
+- Fixed issues at startup by pushing serve command to end of script during build
 - Optimized default library files copied at start of build scripts
 - Deprecated dependency on angular-srcs
 - Bumped default version of scaffolded app to @angular 4.4.2

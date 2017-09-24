@@ -499,8 +499,10 @@ Configuration for build services are in the specific files, while the config for
 
 ## How do I update my project to the latest versions of Angular?
 
-After you have finished updating the `package.json`, run the following command:
+After you have finished updating the `package.json`, run the following commands:
 
+
+- `$ ngr update --angularVersion 5.0.0`
 - `$ npm run clean:install`
 
 
