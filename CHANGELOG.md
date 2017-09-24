@@ -1,4 +1,4 @@
-##1.0.0-beta.5
+##1.0.0-beta.6
 
 - Use `ngr update --angularVersion` to update your package.json to a specific version of @angular
 - New and improved Module generation. `--include` flag can be configured to auto import Component, Directive, Routes into the Module.
