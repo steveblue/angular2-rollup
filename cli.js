@@ -8,6 +8,7 @@ const program     = require('commander');
 const spawn       = require('child_process').spawn;
 const utils       = require(__dirname + '/build.utils.js');
 const package     = require(__dirname + '/package.json');
+const prompt      = require('prompt');
 const config      = utils.config;
 
 let cliCommand = '';
@@ -23,7 +24,7 @@ program
     .option('--closure [bool]', 'Bypass Rollup and bundle with ClosureCompiler')
     .option('--lazy [bool]', 'Bundle with ClosureCompiler with support for lazyloaded modules, generate a lazyloaded route')
     .option('--verbose [bool]', 'Log additional messages in build')
-    .option('generate [type]', 'Generates new code from templates')
+    .option('g, generate [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
     .option('-d, --dir [path]', 'Path the code should be generated in (relative)')
@@ -134,19 +135,128 @@ if (program.lint) {
 
 if (program.generate) {
 
-    let options = {
-        path: program.dir ? process.cwd() + '/' + program.dir : process.cwd(),
-        name: program.name || 'test',
-        type: program.generate,
-        force: program.force ? true : false,
-        spec: program.spec ? true : false,
-        e2e: program.e2e ? true : false,
-        route: program.route ? true : false,
-        include: program.include,
-        lazy: program.lazy ? true : false
-    };
+    if(program.generate === 'wizard') {
 
-    utils.generate.copy(options);
+
+        let validateEntry = function(value) {
+            if (value === 'true' ||
+                value === true ||
+                value === 'lazy' ||
+                value === 'Y' ||
+                value === 'y' ||
+                value === 'YES' ||
+                value === 'yes') {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        utils.console.log(utils.colors.red('ngr codegen wizard'));
+        utils.console.log('filename: ' + utils.colors.gray('kabab-case filename i.e. global-header'));
+        utils.console.log('directory: ' + utils.colors.gray('path/to/folder i.e. src/app/shared/components/global-header'));
+        utils.console.log('type: ' + utils.colors.gray('module, component, directive, enum, e2e, guard, interface, pipe, service'));
+        utils.console.log(utils.colors.bold('Follow the prompts after selecting a type'));
+
+        prompt.message = '';
+        prompt.start();
+        prompt.get(['filename', 'directory', 'type'], function (err, result) {
+
+            if (result.type === 'module') {
+                prompt.addProperties({filename: result.filename, directory: result.directory, type: result.type},
+                                    ['component', 'directive', 'routes', 'unit', 'e2e'],
+                                    function (err, result) {
+
+                                            let includes = '';
+
+                                            for (let prop in result) {
+                                                if (prop !== 'directory' && prop !== 'filename' && prop !== 'type') {
+
+                                                    if (validateEntry(result[prop])) {
+                                                        if (prop === 'e2e') {
+                                                            includes += prop + ',';
+                                                        } else {
+                                                            includes += prop;
+                                                        }
+                                                    }
+
+                                                }
+                                            }
+
+
+                                            let options = {
+                                                path: result.directory,
+                                                name: result.filename,
+                                                type: result.type,
+                                                force: false,
+                                                spec: false,
+                                                e2e: false,
+                                                route: false,
+                                                include: includes,
+                                                lazy: (result['routes'] && result['routes'] === 'lazy') ? true : false
+                                            };
+
+                                            utils.generate.copy(options);
+                });
+            }
+
+            else if (result.type === 'component' || result.type === 'directive') {
+
+                prompt.addProperties({ filename: result.filename, directory: result.directory, type: result.type },
+                    ['unit', 'e2e'],
+                    function (err, result) {
+
+                        let options = {
+                            path: result.directory,
+                            name: result.filename,
+                            type: result.type,
+                            force: false,
+                            spec: validateEntry(result['unit']),
+                            e2e: validateEntry(result['e2e']),
+                            route: false,
+                            include: false,
+                            lazy: false
+                        };
+
+                        utils.generate.copy(options);
+
+                    });
+            } else {
+
+                let options = {
+                    path: result.directory,
+                    name: result.filename,
+                    type: result.type,
+                    force: false,
+                    spec: false,
+                    e2e: false,
+                    route: false,
+                    include: false,
+                    lazy: false
+                };
+
+                utils.generate.copy(options);
+            }
+
+        });
+        return;
+
+    } else {
+
+        let options = {
+            path: program.dir ? process.cwd() + '/' + program.dir : process.cwd(),
+            name: program.name || 'test',
+            type: program.generate,
+            force: program.force ? true : false,
+            spec: program.spec ? true : false,
+            e2e: program.e2e ? true : false,
+            route: program.route ? true : false,
+            include: program.include,
+            lazy: program.lazy ? true : false
+        };
+
+        utils.generate.copy(options);
+    }
 
 }
 

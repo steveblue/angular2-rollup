@@ -507,7 +507,7 @@ const utils = {
                 cp('-R', path.normalize(config.cliRoot + '/.new/' + 'directive' + '/new.directive.ts'), path.normalize(config.cliRoot + '/.tmp'));
                 utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.directive.ts'), options, true);
             }
-            if (includes.includes('spec')) {
+            if (includes.includes('unit')) {
                 //warn('spec');
                 cp(path.normalize(config.cliRoot + '/.new/' + 'module' + '/new.module.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
                 utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.module.spec.ts'), options, true);
@@ -522,17 +522,18 @@ const utils = {
             cp(path.normalize(config.cliRoot + '/.new/' + 'module' + '/new.module.ts'), path.normalize(config.cliRoot + '/.tmp/'));
 
             utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.module.ts'), options, true).then((filePath) => {
+
                 setTimeout(()=>{
                     ls(path.normalize(config.cliRoot + '/.tmp')).forEach((fileName, index) => {
 
                         if (!fileName.includes('new')) {
                             cp((options.force ? '-f' : '-n'), path.normalize(config.cliRoot + '/.tmp') + '/' + fileName, path.normalize(options.path + '/' + fileName));
+                            log(fileName.replace('new', options.name), 'copied to', options.name);
                         }
 
                     });
                     rm('-rf', path.normalize(config.cliRoot + '/.tmp'));
                 },100);
-
 
             });
 

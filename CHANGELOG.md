@@ -1,3 +1,33 @@
+##1.0.0-beta.7
+
+- New wizard makes codegen simpler, trigger with `ngr generate wizard`
+- Fixed usage of `g` as shorthand for `generate`
+
+Example of output from the wizard:
+
+```
+$ ngr generate wizard
+$ ngr codegen wizard
+$ filename: kabab-case filename i.e. global-header
+$ directory: path/to/folder i.e. src/app/shared/components/global-header
+$ type: module, component, directive, enum, e2e, guard, interface, pipe, service
+$ Follow the prompts after selecting a type
+filename:  global-header
+directory:  src/app/shared/components/global-header
+type:  module
+component:  y
+directive:  n
+routes:  n
+unit:  y
+e2e:  n
+[15:38:18] LOG global-header.component.html copied to global-header
+[15:38:18] LOG global-header.component.scss copied to global-header
+[15:38:18] LOG global-header.component.ts copied to global-header
+[15:38:18] LOG global-header.module.spec.ts copied to global-header
+[15:38:18] LOG global-header.module.ts copied to global-header
+```
+
+
 ##1.0.0-beta.6
 
 - Use `ngr update --angularVersion` to update your package.json to a specific version of @angular
