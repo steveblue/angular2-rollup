@@ -3,7 +3,8 @@ import { CommonModule }       from '@angular/common';
 
 @NgModule({
   imports:      [ CommonModule ],
-  declarations: [ ]
+  declarations: [ ],
+  exports: [ ]
 })
 
 export class NewModule {}

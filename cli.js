@@ -23,12 +23,13 @@ program
     .option('--closure [bool]', 'Bypass Rollup and bundle with ClosureCompiler')
     .option('--lazy [bool]', 'Bypass Rollup and bundle with ClosureCompiler with support for lazyloaded modules')
     .option('--verbose [bool]', 'Log additional messages in build')
-    .option('generate, --generate, g [type]', 'Generates new code from templates')
+    .option('generate [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
     .option('-d, --dir [path]', 'Path the code should be generated in (relative)')
     .option('--spec [bool]', 'Include spec files in code generation')
-    .option('e2e [bool]', 'Include e2e spec files in code generation')
+    .option('--e2e [bool]', 'Include e2e spec files in code generation')
+    .option('--import [string]', 'When generating modules generate and import component, directive, and/or routes')
     .option('-r, --route [bool]', 'Include route files in code generation')
     .option('-t, --test [bool]', 'Run unit tests')
     .option('-l, --lint [bool]', 'Run Codelyzer on startup')
@@ -142,7 +143,8 @@ if (program.generate) {
         force: program.force ? true : false,
         spec: program.spec ? true : false,
         e2e: program.e2e ? true : false,
-        route: program.route ? true : false
+        route: program.route ? true : false,
+        import: program.import
     };
 
     utils.generate.copy(options);
