@@ -358,8 +358,8 @@ You must configure `system.config.js` in order to inject third party libaries fo
       'firebase/app': 'lib:firebase/firebase.js',
       'firebase/database': 'lib:firebase/firebase.js',
       'firebase/auth': 'lib:firebase/firebase.js'
-    },
-    ```
+    }
+```
 
 
 You can include third party dependencies with `SystemJS` instead of the `<head>`.
