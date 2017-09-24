@@ -9,10 +9,6 @@ import { Component } from '@angular/core';
 
 export class NewComponent  {
 
-  constructor() {
-
-
-
-  }
+  constructor() {}
 
 }

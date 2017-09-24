@@ -359,6 +359,7 @@ const utils = {
         }
     },
     bundle: {
+
         removeDuplicates: (reference, bundle) => {
             const refLength = bundle.length;
             for (let i = 0; i < refLength; i++) {
@@ -368,6 +369,7 @@ const utils = {
               }
             }
         },
+
         injectCustomExport: (filePath, moduleFactoryName) => {
             let source = fs.readFileSync(filePath, 'utf-8');
             if (source.indexOf(`self['_S']`) == -1) {
@@ -377,10 +379,11 @@ const utils = {
               fs.writeFileSync(filePath, source, 'utf-8');
             }
         }
+
     },
     generate: {
 
-        replace: function (fileName, name) {
+        replace: function (fileName, options, format) {
 
             //console.log(JSON.stringify(config, null, 4));
 
@@ -392,37 +395,146 @@ const utils = {
                     }
 
                     let result = data;
+                    let className = (config.classPrefix) ?
+                                    config.classPrefix + utils.generate.kababToCamel(options.name).charAt(0).toUpperCase() + utils.generate.kababToCamel(options.name).slice(1) :
+                                    utils.generate.kababToCamel(options.name).charAt(0).toUpperCase() + utils.generate.kababToCamel(options.name).slice(1);
+
+                    let componentClassName = className + 'Component';
+                    let directiveClassName = className + 'Directive';
+                    let moduleClassName = className + 'Module';
 
                     if (fileName.includes('component')) {
-
-                        result = result.replace('selector: \'new\'', 'selector: \'' + (config.componentPrefix.toLowerCase() || '') + '-' + name.toLowerCase() + '\'');
-
+                        result = result.replace('selector: \'new\'', 'selector: \'' + (config.componentPrefix.toLowerCase() || '') + '-' + options.name.toLowerCase() + '\'');
                     }
 
                     if (fileName.includes('directive')) {
-
-                       result = result.replace('selector: \'[new]\'', 'selector: \'[' + (config.directivePrefix.toLowerCase() || '') + utils.generate.kababToCamel(name.charAt(0).toUpperCase() + name.slice(1)) + ']\'');
-
+                       result = result.replace('selector: \'[new]\'', 'selector: \'[' + (config.directivePrefix.toLowerCase() || '') + utils.generate.kababToCamel(options.name.charAt(0).toUpperCase() + options.name.slice(1)) + ']\'');
                     }
 
-                    result = result.replace(/new/g, name.toLowerCase());
+                    if (fileName.includes('spec')) {
+                        result = result.replace(/new./, options.name.toLowerCase() + '.');
+                    } else {
+                        result = result.replace(/new./g, options.name.toLowerCase() + '.');
+                    }
 
                     if (config.classPrefix) {
-                        result = result.replace(/New/g, config.classPrefix + utils.generate.kababToCamel(name).charAt(0).toUpperCase() + utils.generate.kababToCamel(name).slice(1));
+                        result = result.replace(/New/g, config.classPrefix + utils.generate.kababToCamel(options.name).charAt(0).toUpperCase() + utils.generate.kababToCamel(options.name).slice(1));
                     }
                     else {
-                        result = result.replace(/New/g, utils.generate.kababToCamel(name).charAt(0).toUpperCase() + utils.generate.kababToCamel(name).slice(1));
+                        result = result.replace(/New/g, utils.generate.kababToCamel(options.name).charAt(0).toUpperCase() + utils.generate.kababToCamel(options.name).slice(1));
                     }
 
-                    fs.writeFile(utils.generate.rename(fileName, name), result, 'utf8', function (err) {
+                    // post processing
+
+                    if (fileName.includes('routes') && format === true) {
+
+                        if (options.lazy) {
+                            result = result.replace("component: ''", "loadChildren: './"+options.name+".module#" + moduleClassName + "'");
+                        } else {
+                            result = result.replace("/*IMPORTS*/", "import { " + componentClassName + " } from './" + options.name + ".component';");
+                            result = result.replace("component: ''", "component: " + componentClassName);
+                        }
+
+                    }
+
+                    if (fileName.includes('module') && format === true) {
+
+                        if (options.include.includes('component')) {
+                            result = result.replace('/*IMPORT_COMPONENT*/', "import { " + componentClassName + " } from './" + options.name + ".component';");
+                            result = result.replace('/*DECLARE_COMPONENT*/', componentClassName );
+                            result = result.replace('/*EXPORT_COMPONENT*/', componentClassName);
+                        }
+                        if (options.include.includes('directive')) {
+                            if (options.include.includes('component')) {
+                                result = result.replace('/*IMPORT_DIRECTIVE*/', "import { " + directiveClassName + " } from './" + options.name + ".directive';");
+                                result = result.replace('/*DECLARE_DIRECTIVE*/', ', '+directiveClassName);
+                                result = result.replace('/*EXPORT_DIRECTIVE*/', ', ' + directiveClassName);
+                            } else {
+                                result = result.replace('/*IMPORT_DIRECTIVE*/', "import { " + directiveClassName + " } from './" + options.name + ".directive';");
+                                result = result.replace('/*DECLARE_DIRECTIVE*/', directiveClassName);
+                                result = result.replace('/*EXPORT_DIRECTIVE*/', directiveClassName);
+                            }
+                        }
+                        if (options.include.includes('route')) {
+                            result = result.replace('/*IMPORT_ROUTE*/', "import { routing } from './" + options.name + ".routes';");
+                            result = result.replace('/*DECLARE_ROUTE*/', 'routing');
+                        }
+
+                    }
+
+                    result = result.replace('/*IMPORTS*/', '');
+                    result = result.replace('/*IMPORT_COMPONENT*/', '');
+                    result = result.replace('/*IMPORT_DIRECTIVE*/', '');
+                    result = result.replace('/*IMPORT_ROUTE*/', '');
+                    result = result.replace('/*DECLARE_COMPONENT*/', '');
+                    result = result.replace('/*DECLARE_DIRECTIVE*/', '');
+                    result = result.replace('/*DECLARE_ROUTE*/', '');
+                    result = result.replace('/*EXPORT_COMPONENT*/', '');
+                    result = result.replace('/*EXPORT_DIRECTIVE*/', '');
+
+                    fs.writeFile(utils.generate.rename(fileName, options.name), result, 'utf8', function (err) {
                         if (err) return console.log(err);
-                        rm(fileName);
-                        res(utils.generate.rename(fileName, name));
+                        if (!format) rm(fileName);
+                        res(utils.generate.rename(fileName, options.name));
                     });
 
                 });
             });
 
+
+        },
+        importComponentIntoRoutes() {
+
+        },
+        generateModule(options) {
+
+            let includes = options.include;
+
+            if (includes.includes('component')) {
+                //warn('component');
+                cp(path.normalize(config.cliRoot + '/.new/' + 'component/new.component.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+                cp(path.normalize(config.cliRoot + '/.new/' + 'component/new.component.html'), path.normalize(config.cliRoot + '/.tmp/'+options.name+'.component.html'));
+                cp(path.normalize(config.cliRoot + '/.new/' + 'component/new.component.scss'), path.normalize(config.cliRoot + '/.tmp/' + options.name + '.component.scss'));
+                utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.component.ts'), options, true);
+            }
+            if (includes.includes('route')) {
+                //warn('route');
+                cp(path.normalize(config.cliRoot + '/.new/' + 'module' + '/new.routes.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+                utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.routes.ts'), options, true);
+            }
+            if (includes.includes('directive')) {
+                //warn('directive');
+                cp('-R', path.normalize(config.cliRoot + '/.new/' + 'directive' + '/new.directive.ts'), path.normalize(config.cliRoot + '/.tmp'));
+                utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.directive.ts'), options, true);
+            }
+            if (includes.includes('spec')) {
+                //warn('spec');
+                cp(path.normalize(config.cliRoot + '/.new/' + 'module' + '/new.module.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+                utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.module.spec.ts'), options, true);
+            }
+            if (includes.includes('e2e')) {
+                //warn('e2e-spec');
+                cp('-R', path.normalize(config.cliRoot + '/.new/' + 'e2e' + '/*'), path.normalize(config.cliRoot + '/.tmp'));
+                utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.e2e-spec.ts'), options, true);
+            }
+
+            //warn('module');
+            cp(path.normalize(config.cliRoot + '/.new/' + 'module' + '/new.module.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+
+            utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.module.ts'), options, true).then((filePath) => {
+                setTimeout(()=>{
+                    ls(path.normalize(config.cliRoot + '/.tmp')).forEach((fileName, index) => {
+
+                        if (!fileName.includes('new')) {
+                            cp((options.force ? '-f' : '-n'), path.normalize(config.cliRoot + '/.tmp') + '/' + fileName, path.normalize(options.path + '/' + fileName));
+                        }
+
+                    });
+                    rm('-rf', path.normalize(config.cliRoot + '/.tmp'));
+                },100);
+
+
+            });
 
         },
         rename: function (fileName, name) {
@@ -436,7 +548,16 @@ const utils = {
             rm('-rf', path.normalize(config.cliRoot+'/.tmp/'));
             mkdir(path.normalize(config.cliRoot+'/.tmp/'));
 
-            cp('-R', path.normalize(config.cliRoot+'/.new/'+options.type+'/*'), path.normalize(config.cliRoot+'/.tmp'));
+            if (options.path && !fs.existsSync(options.path)) {
+                mkdir('-p', options.path);
+            };
+
+            if (options.type === 'module' && options.include.split(',').length > 0) {
+                utils.generate.generateModule(options);
+                return;
+            }
+
+            cp('-R', path.normalize(config.cliRoot + '/.new/' + options.type + '/*'), path.normalize(config.cliRoot + '/.tmp'));
 
             ls(path.normalize(config.cliRoot+'/.tmp')).forEach((fileName, index) => {
 
@@ -456,10 +577,9 @@ const utils = {
                    return;
                }
                log(fileName.replace('new', options.name), 'copied to', options.name);
-               utils.generate.replace(path.normalize(config.cliRoot+'/.tmp/'+fileName), options.name).then((filePath)=>{
+               utils.generate.replace(path.normalize(config.cliRoot+'/.tmp/'+fileName), options).then((filePath)=>{
 
                    mv((options.force ? '-f' : '-n'), filePath, path.normalize(options.path+'/'+filePath.replace(/^.*[\\\/]/, '')));
-                   //log('Generated', filePath, 'at', options.path+'/'+filePath.replace(/^.*[\\\/]/, ''));
 
                });
             });

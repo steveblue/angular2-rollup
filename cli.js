@@ -21,7 +21,7 @@ program
     .option('--postcss [bool]', 'Enable postcss for dev build, default is false')
     .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
     .option('--closure [bool]', 'Bypass Rollup and bundle with ClosureCompiler')
-    .option('--lazy [bool]', 'Bypass Rollup and bundle with ClosureCompiler with support for lazyloaded modules')
+    .option('--lazy [bool]', 'Bundle with ClosureCompiler with support for lazyloaded modules, generate a lazyloaded route')
     .option('--verbose [bool]', 'Log additional messages in build')
     .option('generate [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
@@ -29,7 +29,7 @@ program
     .option('-d, --dir [path]', 'Path the code should be generated in (relative)')
     .option('--spec [bool]', 'Include spec files in code generation')
     .option('--e2e [bool]', 'Include e2e spec files in code generation')
-    .option('--import [string]', 'When generating modules generate and import component, directive, and/or routes')
+    .option('--include [string]', 'When generating modules generate and import component, directive, and/or routes')
     .option('-r, --route [bool]', 'Include route files in code generation')
     .option('-t, --test [bool]', 'Run unit tests')
     .option('-l, --lint [bool]', 'Run Codelyzer on startup')
@@ -53,7 +53,6 @@ if (program.serve && program.build === undefined) {
     }
 
     spawn(serverCommand, { shell: true, stdio: 'inherit' });
-
 
 }
 
@@ -109,7 +108,6 @@ if (program.build) {
         cliCommand += ' verbose=false';
     }
 
-
     if (program.serve === true) {
         cliCommand += ' serve=true';
     }
@@ -144,7 +142,8 @@ if (program.generate) {
         spec: program.spec ? true : false,
         e2e: program.e2e ? true : false,
         route: program.route ? true : false,
-        import: program.import
+        include: program.include,
+        lazy: program.lazy ? true : false
     };
 
     utils.generate.copy(options);

@@ -45,7 +45,9 @@ $ ngr scaffold && npm install
 
 - Run development build, start up Express Server with LiveReload
 
-`$ ngr build dev --serve --watch`
+`$ ngr build dev --jit --serve --watch` pre 5.0.0
+
+`$ ngr build dev --serve --watch` post 5.0.0
 
 When everything is setup correctly, you should be able to visit  [http://localhost:4200](http://localhost:4200) in your browser.
 
@@ -55,10 +57,14 @@ When everything is setup correctly, you should be able to visit  [http://localho
 
 * [Getting Started](#getting-started)
     * [Dependencies](#dependencies)
-    * [Installing](#installing)
-    * [Developing](#developing)
+    * [Install](#install)
+    * [Server](#server)
+    * [Scaffold](#scaffold)
+    * [Update](#update)
+* [Develop](#develop)
+    * [Config](#config)
+    * [Build](#build)
     * [Testing](#testing)
-    * [Production](#production)
 * [CLI](#cli)
 * [Frequently Asked Questions](#faq)
 * [License](#license)
@@ -72,9 +78,29 @@ What you need to run this app:
 * `node` and `npm` (Use [NVM](https://github.com/creationix/nvm))
 * Ensure you're running Node (`v6.5.x`+)
 
-## Installing
+## Install
 
 [Read the Quick Start](#quick-start)
+
+- Install dependencies
+
+To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+Selenium Webdriver requires [Python](https://www.python.org).
+This project requires `node ~6.9.0` to be installed.
+
+- Install the cli and global npm dependencies
+
+`$ npm install -g angular-rollup webdriver-manager codelyzer rimraf`
+
+- Scaffold a new project and install project dependencies
+
+```
+
+$ mkdir my-new-app && cd my-new-app
+$ ngr scaffold && npm install
+
+```
+
 
 ### Configure Server
 
@@ -88,32 +114,6 @@ Change the host and/or port in `/server.config.dev.js` if needed. This config is
 
 ```
 
-## Scaffold
-
-To scaffold a new app run `ngr --scaffold`. This will copy required files into the same directory.
-
-## Configuration
-
-
-`ngr` is built on a few scripts that handle building Angular using JIT or AOT compilation. The CLI also provides a build used to distrbute Angular libraries.
-
-`build.config.js` is the main configuration for the builds
-
-`karma.conf.js` is the main configuration for Karma
-
-`rollup.config.js` configures Rollup for production
-
-Rollup bundles the app for production. You can configure Rollup for the production build in`rollup.config.js`. Rollup also bundles the library build. If you scaffold the app with `--lib` flag you will see addition config files for the library build.
-
-`server.config.dev.js` and `server.config.prod.js` configure the Express server
-
-`tsconfig.json` is boilerplate for VSCode and is not used for production
-
-`tsconfig.dev.json` configures Typescript in the development (JIT) build
-
-`tsconfig.prod.json` configures `ngc` in the production build
-
-
 ## Server
 
 Express is used mainly to provide a development server, but it could also be configured for production to run over `https`.
@@ -123,29 +123,99 @@ Express is used mainly to provide a development server, but it could also be con
 `router.js` configures the routes of the Express server
 
 
+## Scaffold
+
+To scaffold a new app run `ngr scaffold`. This will copy required files into the same directory.
+
+To scaffold at a specific version of `@angular` use `--angularVersion` i.e. `ngr scaffold --angularVersion 4.2.2`
+
+If you want access to the library build, use `ngr scaffold --lib`
+
+
+
+## Update
+
+To update to specific version of `@angular` use `--angularVersion` i.e. `ngr update --angularVersion 4.2.2`
+
+
+
+# Develop
+
+
+## Config
+
+
+- `build.config.js` is the main configuration for the dev, lib, and prod builds
+
+- `karma.conf.js` is the main configuration for Karma
+
+- `rollup.config.js` configures Rollup for prod and lib builds
+
+- `closure.conf` configures Closure Compiler for prod when using the --closure flag
+
+- `closure.lazy.conf` configures Closure Compiler for prod when using the --closure and --lazy flags
+
+- `server.config.dev.js` and `server.config.prod.js` configure the Express server
+
+- `jsconfig.json` is boilerplate for VSCode and is not used for production
+
+- `tsconfig.dev.json` configures Typescript in the development build
+
+- `tsconfig.dev.json` configures Typescript in the development build (JIT)
+
+- `tsconfig.prod.json` configures `ngc` in the production build
+
+
 
 ## Build
 
 To build the app for development, enable livereload, and start up the server:
 
-* `$ ngr build dev --watch --serve`
+* `$ ngr build dev --watch --serve -jit`
 
-`ngr` will build the application for development. The dev environment bootstraps Angular with JIT Compiler for fast and efficient development.
+`ngr` will build the application for development. Using `--jit` bootstraps Angular with JIT Compiler.
 
-Once your work has been validated with the development build, you can also test the production build .
+Once your work has been validated with the development build, you can also test the production build.
+
+It is recommended to bundle with Closure Compiler in ADVANCED_OPTIMIZATIONS mode.
+
+* `$ ngr build prod --closure --serve`
+
+The production build also supports lazy loading with Closure Compiler.
+
+* `$ ngr build prod --closure --lazy --serve`
+
+You can also bundle with Rollup and then optimize with ClosureCompiler, but only with SIMPLE_OPTIMIZATIONS
 
 * `$ ngr build prod --serve`
 
 
-### Developing Component Libraries
+### Production Builds
 
-`ngr` provides a build for developing Angular libraries that conforms to the Angular Package Spec 4.0 Jason Aden gave a presentation about at ng-conf. [Packaging Angular](https://youtu.be/unICbsPGFIA).
+While the development build uses Angular Just In Time (JIT) compilation in conjunction with `tsc`, the production build uses [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to compile the Angular 2 application Ahead of Time (AOT).
+
+AOT is more secure than JIT and should always be used in a production environment.
+
+Here's how is works:
+
+1. The `@angular/compiler` package uses `ngc` to AOT compile the files in `/src` to `/ngfactory`,
+
+2. Closure Compiler optimizes any bundles and outputs ES5 for the browser.
+
+
+### Package Spec 4.0 Library Build
+
+* `$ ngr build lib`
+
+`ngr` provides a build for developing Angular libraries that conforms to the Angular Package Spec 4.0.
+
+Jason Aden gave a presentation about Angular Package Spec 4.0 at ng-conf 2017. [Packaging Angular](https://youtu.be/unICbsPGFIA).
 
 To develop component libraries, scaffold an app with the `--lib` flag.
 
-The name of the library and more is configured in `build.config.js`.
+`tsconfig.lib.json` and `tsconfig.lib.es5.json` configure `ngc` during the library build.
 
-* `$ ngr build lib`
+The library build is configured in `build.config.js`.
 
 
 ## Testing
@@ -162,38 +232,17 @@ For single run `ngr --test`
 
 e2e tests use Protractor and Selenium Webdriver. The process requires multiple tabs to run locally.
 
-* single run:
-  * in a new tab *if not already running!*: `npm run webdriver:start`
-  * in a tab: `ngr build dev --serve`
-  * in a tab: `npm run e2e`
-* interactive mode:
-  * instead of the last command above, you can run: `npm run e2e:live`
-  * when debugging or first writing test suites, you may find it helpful to try out Protractor commands without starting up the entire test suite. You can do this with the element explorer.
-  * you can learn more about [Protractor Interactive Mode here](https://github.com/angular/protractor/blob/master/docs/debugging.md#testing-out-protractor-interactively)
+  1. In a new tab: *if not already running!* `npm run webdriver:start`
+  2. In a new tab: `ngr build dev --serve`
 
-## AOT Production Build
+* Single run:
+  3. In a new tab: `npm run e2e`
 
-While the development build uses Angular Just In Time (JIT) compilation in conjunction with `tsc`, the production build uses [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to compile the Angular 2 application Ahead of Time (AOT). AOT is inherently more secure than JIT and should always be used in a production environment.
+* Interactive mode:
+  3. In a new tab: `npm run e2e:live`
 
-Here's how is works:
+When debugging or first writing test suites, you may find it helpful to try out Protractor commands without starting up the entire test suite. You can do this with the element explorer. Learn more about [Protractor Interactive Mode here](https://github.com/angular/protractor/blob/master/docs/debugging.md#testing-out-protractor-interactively).
 
-1. `ngc` compiles the files in `/src` to `/tmp`,
-
-2. Rollup bundles the files and their dependencies into `build/bundle.es2015.js`.
-
-3. Closure Compiler optimizes the bundle and outputs ES5 for the browser.
-
-### Installation
-
-In order to build for production, install [Closure Compiler](https://developers.google.com/closure/compiler/). Closure Compiler is the only tool that we found would transpile the ES2015 Rollup Bundle to ES5 with 100% reliability after it was processed with `ngc`. Closure Compiler is also a great solution because it provides further optimizations to the bundle after `ngc` and `Rollup` tree shakes the application. Google uses Closure Compiler internally to optimize JavaScript files for production.
-
-To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). We tested the JavaScript version of Closure Compiler and found it resulted in `out of process memory` issues with multiple versions of `node`, so we opted to use the `Java` implementation. The .jar is installed via npm.
-
-To build an application for production, run the following command.
-
-* `$ ngr build prod`
-
-You can now deploy the `/build` folder to your server!
 
 # CLI
 
@@ -206,25 +255,18 @@ To use the CLI run the command `npm install -g` while in the root directory of t
 
 ## CLI Commands
 
-#### --help
+#### ngr --help
 
 Displays the help documentation for using `ngr`
 
 #### build
 
-- `ngr build dev` Builds development environment
-- `ngr build prod` Builds production environment
-
-NOTE: Use `b` instead of `build`
-
+- `ngr build dev` builds development environment
+- `ngr build prod` builds production environment
+- `ngr build prod --closure --lazy` bundles the app with Closure Compiler and supports lazyloading bundles
+- `ngr build lib` produces an Angular library build for distribution
 
 #### generate
-
-- `ngr generate component --name todo-list --spec` Generate a `TodoListComponent` in the current directory with a spec file
-- `ngr generate directive --name todo-list --dir path/to/folder` Generate a `TodoListDirective` in a folder
-- `ngr g module -n todo-list -r` Generate a `TodoListModule` in a folder with a routes.ts file
-- `ngr g e2e -n todo-list` Generate e2e test
-
 
 You can pass the following types to `generate`:
 
@@ -240,6 +282,12 @@ You can pass the following types to `generate`:
 - service
 
 EXAMPLE: `ngr generate service --name todo-list --dir path/to/folder`
+
+When generating a module, there is an optional `--include` flag what will auto import various other types into the Module.
+
+- `ngr generate module --name todo-list --include route,component,route,directive`
+
+This example generates files for configuring routes, component, and directive and then auto imports those files into the module.
 
 You can configure prefixes for Classes, Component and Directive selector in `build.config.js`. Omit the properties from the config to operate without prefixes. Defaults are included that follow the Angular Styleguide.
 
@@ -267,13 +315,17 @@ Follow this step by step questionaire to figure out which method to use.
     YES: Will be bundled by `ngc`, inject the NgModule into your application
     NO: See next question
 
+- Is the library compatible with ClosureCompiler in ADVANCED_OPTIMIZATIONS?
+    YES: Bundle without Rollup using the `--closure` flag.
+    NO: See next question
+
 - Is the library written in ES2015?
     YES: Can most likely be bundled with `Rollup`
     NO: See next question
 
 - Is the library formatted with UMD modules?
     YES: Edit `rollup.config.js` so Rollup can bundle the library
-    NO: You must include the library globally via `<head>` or `SystemJS`. Examples of both are in    `/src/public/index.html`
+    NO: You must include the library globally via `<head>` or `SystemJS`. Examples of both are in `/src/public/index.html`
 
 
 RxJS is bundled as UMD module. In `rollup.config.js`, use the `rollup-plugin-commonjs` to bundle it via the Rollup build step.
@@ -284,7 +336,10 @@ RxJS is bundled as UMD module. In `rollup.config.js`, use the `rollup-plugin-com
     }),
 ```
 
-NOTE: You must configure `system.config.js` in order to inject third party libaries for development. An example is below:
+
+### Configure SystemJS for the dev build
+
+You must configure `system.config.js` in order to inject third party libaries for development. An example is below:
 
 ```
    map: {
@@ -338,7 +393,6 @@ module.exports = {
           'rxjs'
         ],
         prodLib: [
-          'angular-srcs/shims_for_IE.js',
           'core-js/client/shim.min.js',
           'core-js/client/shim.min.js.map',
           'systemjs/dist/system.js',
@@ -440,7 +494,7 @@ Configuration for build services are in the specific files, while the config for
 
 ## How do I update my project to the latest CLI?
 
-`npm install -g ngr@latest`
+`npm install -g angular-rollup@latest`
 
 
 ## How do I update my project to the latest versions of Angular?
@@ -452,7 +506,7 @@ After you have finished updating the `package.json`, run the following command:
 
 ## Can I run LiveReload with the Production build?
 
-Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr build dev` for development, since JIT compile allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr build dev --watch --serve`
+Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr build dev` for development, since the JIT Compiler or ngc in `--watch` mode allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr build dev --watch --serve`
 
 
 For livereload to work in the browser for the production build you currently you have to edit `src/public/index.html`.
@@ -477,10 +531,19 @@ Copy the livereload `script` to the `build:remove:dev` comment near the end of t
 It is not recommended that you deploy the livereload script to production.
 
 
+## How do I take advantage of TypeScript in VSCode?
 
-## How do I take advantage of TypeScript in my IDE?
+Configure the jsconfig.json file.
 
-To take full advantage of TypeScript with autocomplete you would have to use an editor with the correct TypeScript plugins.
+Install the following packages:
+
+Angular Language Service : Editor services for Angular templates
+Angular Support : Go to / peek angular specific definitions
+angular2-inline : Syntax highlighting of inline html and css
+SCSS Intellisense: autocompletion and refactoring of SCSS
+Path Intellisense: Autocomplete for paths in the project
+TypeScript Hero: Additional tooling for the TypeScript language
+
 
 
 #### Use a TypeScript-aware editor

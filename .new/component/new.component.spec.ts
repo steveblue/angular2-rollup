@@ -1,4 +1,5 @@
 
+import { browser } from 'protractor';
 import { TestBed, async } from '@angular/core/testing';
 
 import { NewComponent } from './new.component';

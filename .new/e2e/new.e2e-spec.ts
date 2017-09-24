@@ -1,4 +1,4 @@
-import { browser, by, element } from 'protractor';
+import { browser, describe, beforeEach } from 'protractor';
 import 'tslib';
 
 describe('New', () => {

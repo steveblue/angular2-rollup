@@ -1,3 +1,4 @@
+import { browser } from 'protractor';
 import { NewDirective } from './new.directive';
 
 describe('NewDirective', () => {

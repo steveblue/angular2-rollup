@@ -1,4 +1,5 @@
-import NewModule from './new.module';
+import { browser } from 'protractor';
+import { NewModule } from './new.module';
 
 describe('NewModule', () => {
   let NewModule;
