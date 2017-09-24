@@ -161,11 +161,9 @@ const compile = {
               if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
                 alert('libsass and postcss', 'compiled');
-                if (canWatch === true) {
+                if (canServe === true) {
                   alert(colors.green('Ready to serve'));
-                  if (canServe === true) {
-                    utils.serve(canWatch);
-                  }
+                  utils.serve(canWatch);
                 } else {
                   alert(colors.green('Build is ready'));
                 }

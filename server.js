@@ -77,7 +77,7 @@ if ( env === 'dev' ) {
 
   if (canWatch === true) {
 
-    setTimeout(live,5000)
+    live();
 
   }
 

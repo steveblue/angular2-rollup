@@ -1,27 +1,29 @@
 # angular2-rollup
 
+CLI for bundling Angular with Rollup and Closure Compiler.
+
 [![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A complete, yet simple, starter for Angular 2 using AOT Compile and Rollup.
 
-- `ngr build jit` compiles just in time (JIT) using [Typescript](https://www.typescriptlang.org).
+##Main Features
 
-- `ngr build dev` compiles ahead of time (AOT) using [ngc](https://github.com/angular/angular/tree/master/packages/compiler-cli) in `--watch` mode.
+* `ngr` cli for running builds, code generation, scaffolding and more
 
-- `ngr build prod` compiles ahead of time (AOT) using [ngc](https://github.com/angular/angular/tree/master/packages/compiler-cli), bundles with [Rollup](http://rollupjs.org) and optimizes the build with [Closure Compiler](https://developers.google.com/closure/compiler/).
+* Fast dev environments use JIT Compiler or `ngc` in `--watch` mode
 
-- `ngr build lib` runs a build script for component libraries. It uses  [ngc](https://github.com/angular/angular/tree/master/packages/compiler-cli) to make distributed components compatible with (AOT).
+* Highly optimized bundle for production using Closure Compiler
 
-Build scripts written with [ShellJS](https://github.com/shelljs/shelljs) allow for cross platform support. A boilerplate [Express](http://expressjs.com) server is also included with support for LiveReload. We chose this method so anyone could write their own build that fit the needs of their project and use this starter as an example of how to do it.
+* Lazyload optimized bundles with SystemJS and Closure Compiler
 
-* Best practices in file and application organization for [Angular 2](https://angular.io/).
+* Build library packages that follow [Angular Package Format 4.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview)
+
+* Follows [Angular Styleguide](https://angular.io/guide/styleguide)
 * Ready to go build system using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli), [Rollup](http://rollupjs.org), and [Closure Compiler](https://developers.google.com/closure/compiler/)
 * Test Angular 2 code with [Jasmine](http://jasmine.github.io/) and [Karma](http://karma-runner.github.io/)
 * Coverage with [Istanbul](https://github.com/gotwarlost/istanbul)
-* End-to-end Angular 2 code using [Protractor](https://angular.github.io/protractor/).
+* End-to-end Angular 2 code using [Protractor](https://angular.github.io/protractor/)
 * Stylesheets with [SASS](http://sass-lang.com/) and [PostCSS](http://postcss.org)
 * Error reporting with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer)
-* CLI commands for running builds, generating code, and more!
 
 
 
@@ -59,10 +61,10 @@ When everything is setup correctly, you should be able to visit  [http://localho
     * [Dependencies](#dependencies)
     * [Install](#install)
     * [Server](#server)
+    * [Config](#config)
     * [Scaffold](#scaffold)
     * [Update](#update)
 * [Develop](#develop)
-    * [Config](#config)
     * [Build](#build)
     * [Testing](#testing)
 * [CLI](#cli)
@@ -123,6 +125,41 @@ Express is used mainly to provide a development server, but it could also be con
 `router.js` configures the routes of the Express server
 
 
+## Config
+
+There is a lot of config in this project to allow finetuning each build to developer specifications. `build.config.js` lets you configure filepaths, SASS options, and includes callbacks for steps in each build.
+
+
+| Script        | Description   |
+| ------------- |:-------------:|
+| build.config.js      | Project filepaths, dev, lib, and prod builds |
+| karma.conf.js      | Karma      |
+| postcss.*.js |  PostCSS (prod,lib) |
+| rollup.config.*.js |  Rollup (prod,lib) |
+| closure.conf |  Closure Compiler (prod) when using the --closure flag  |
+| closure.lazy.conf |  Closure Compiler (prod) when using the --closure and --lazy flags  |
+| server.config.*.js |  Express Server  |
+| jsconfig.json |  VSCode editor  |
+| tsconfig.*.json | Configures TypeScript (dev) or @angular/compiler (lib,prod) |
+
+
+### build.config.js
+
+| Property       | Description   |
+| ------------- |:-------------:|
+| dep     | Files and folders that should be copied to /build/lib |
+| clean      | Paths of files and folders to clean in the /build directory after /src/public is copied to /build    |
+| style | Options passed to SASS |
+| src |  Path to src folder |
+| build |  Path to build folder  |
+| dist |  Path to dist directory for the library build  |
+| lib |  Path to library root folder  |
+| libFilename |  filename used for bundles created during library build |
+| classPrefix | Prefix used when declaring Class |
+| componentPrefix | Prefix used when declaring selector for Components |
+| directivePrefix | Prefix used when declaring selector for Directives |
+
+
 ## Scaffold
 
 To scaffold a new app run `ngr scaffold`. This will copy required files into the same directory.
@@ -140,31 +177,6 @@ To update to specific version of `@angular` use `--angularVersion` i.e. `ngr upd
 
 
 # Develop
-
-
-## Config
-
-
-- `build.config.js` is the main configuration for the dev, lib, and prod builds
-
-- `karma.conf.js` is the main configuration for Karma
-
-- `rollup.config.js` configures Rollup for prod and lib builds
-
-- `closure.conf` configures Closure Compiler for prod when using the --closure flag
-
-- `closure.lazy.conf` configures Closure Compiler for prod when using the --closure and --lazy flags
-
-- `server.config.dev.js` and `server.config.prod.js` configure the Express server
-
-- `jsconfig.json` is boilerplate for VSCode and is not used for production
-
-- `tsconfig.dev.json` configures Typescript in the development build
-
-- `tsconfig.dev.json` configures Typescript in the development build (JIT)
-
-- `tsconfig.prod.json` configures `ngc` in the production build
-
 
 
 ## Build
@@ -259,12 +271,6 @@ To use the CLI run the command `npm install -g` while in the root directory of t
 
 Displays the help documentation for using `ngr`
 
-#### build
-
-- `ngr build dev` builds development environment
-- `ngr build prod` builds production environment
-- `ngr build prod --closure --lazy` bundles the app with Closure Compiler and supports lazyloading bundles
-- `ngr build lib` produces an Angular library build for distribution
 
 #### generate
 
@@ -283,7 +289,7 @@ You can pass the following types to `generate`:
 
 EXAMPLE: `ngr generate service --name todo-list --dir path/to/folder`
 
-When generating a module, there is an optional `--include` flag what will auto import various other types into the Module.
+When generating a module, there is an optional `--include` flag what will auto import various other types into the Module, scaffold spec and e2e tests.
 
 - `ngr generate module --name todo-list --include route,component,route,directive`
 

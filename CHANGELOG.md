@@ -1,11 +1,29 @@
 ##1.0.0-beta.5
 
-- Use `ngr update --angularVersion 5.0.0` to update your package.json to a specific version of @angular
-- New `--include` argument when generating Module. This arg can be configured to auto import Component, Directive, Routes into the Module.
+- Use `ngr update --angularVersion` to update your package.json to a specific version of @angular
+- New and improved Module generation. `--include` flag can be configured to auto import Component, Directive, Routes into the Module.
+
+EXAMPLE:
+
+```
+
+ngr generate module --include component,route,spec,e2e --dir src/app/shared/components/my-module --name my-module
+
+```
+
 - Fixed issues at startup by pushing serve command to end of script during build
 - Optimized default library files copied at start of build scripts
 - Deprecated dependency on angular-srcs
 - Bumped default version of scaffolded app to @angular 4.4.2
+- Fixed issue with --serve flag when building for dev in --jit mode
+- Updated README to latest
+
+COMING SOON FOR 1.0.0-beta
+
+- Reduced configuration of lazyload build
+- Wizard for generating modules
+- Better user feedback during Closure Compiler bundling
+
 
 -------------------------------------------------------------------------------------------------------------
 

@@ -11,7 +11,7 @@ const package     = require(__dirname + '/package.json');
 const config      = utils.config;
 
 let cliCommand = '';
-let useVersion = '5.0.0-beta.7';
+let useVersion = '4.4.2';
 
 program
     .version(package.version)
