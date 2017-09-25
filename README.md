@@ -1,4 +1,4 @@
-# angular2-rollup
+# angular-rollup
 
 CLI for bundling Angular with Rollup and Closure Compiler.
 

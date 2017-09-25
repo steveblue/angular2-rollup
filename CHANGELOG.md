@@ -2,6 +2,7 @@
 
 - Cleaned up terminal logs
 - Added warning message for when locally installed cli is out of date
+- Fixed missing .map file for Reflect.js in --jit mode
 
 -------------------------------------------------------------------------------------------------------------
 
