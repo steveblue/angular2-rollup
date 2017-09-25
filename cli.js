@@ -32,7 +32,7 @@ function cmpVersions(a, b) {
 
 
 exec('npm view angular-rollup version', { silent: true }, function(err, result, c) {
-
+    result = '1.0.0-beta.9';
     let sanitizedResult = result.replace('-beta', '').trim();
     let sanitizedPackageVersion = package.version.replace('-beta', '').replace(',', '');
     let sortedList = [sanitizedResult, sanitizedPackageVersion].sort(cmpVersions);
@@ -42,6 +42,7 @@ exec('npm view angular-rollup version', { silent: true }, function(err, result, 
             utils.warn('');
             utils.warn('');
             utils.alert(utils.colors.red('Please update angular-rollup to the latest version ' + result.trim() ));
+            utils.alert(utils.colors.red('See what\'s changed https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md'));
             utils.alert(utils.colors.white('npm i -g angular-rollup@latest'));
             utils.warn('');
             utils.warn('');
