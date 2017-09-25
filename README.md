@@ -5,7 +5,7 @@ CLI for bundling Angular with Rollup and Closure Compiler.
 [![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-##Main Features
+## Main Features
 
 * `ngr` cli for running builds, code generation, scaffolding and more
 
