@@ -1,3 +1,10 @@
+##1.0.0-beta.8
+
+- Cleaned up terminal logs
+- Added warning message for when locally installed cli is out of date
+
+-------------------------------------------------------------------------------------------------------------
+
 ##1.0.0-beta.7
 
 - New wizard makes codegen simpler, trigger with `ngr generate wizard`

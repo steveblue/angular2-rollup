@@ -85,7 +85,7 @@ const copy = {
       exec(path.join(config.cliRoot , path.normalize('node_modules/.bin/htmlprocessor')) +
           ' '+ path.normalize(path.join(config.build , '/')+ 'index.html') +
           ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html') +
-          ' -e '+env, function (code, output, error) {
+        ' -e ' + env, { silent: true }, function (code, output, error) {
         log('index.html', 'formatted');
       });
 
@@ -127,10 +127,10 @@ const copy = {
   Compile Tasks
 
 - clean: Removes source code comments from bundles
-- src: Compiles AOT for production using ngc, Rollup, or ClosureCompiler depending on arguments
-- bundleRollup: ngr build prod, bundles the app in an IIFE with Rollup, then optimizes the bundle with ClosureCompiler
-- bundleClosure ngr build prod --closure, bundles the app with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode
-- bundleLazy: ngr build prod --closure --lazy, bundles the app and lazyloaded routes with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode
+- src: Compiles AOT for production using ngc, Rollup, or Closure Compiler depending on arguments
+- bundleRollup: ngr build prod, bundles the app in an IIFE with Rollup, then optimizes the bundle with Closure Compiler
+- bundleClosure ngr build prod --closure, bundles the app with Closure Compiler in ADVANCED_OPTIMIZATIONS mode
+- bundleLazy: ngr build prod --closure --lazy, bundles the app and lazyloaded routes with Closure Compiler in ADVANCED_OPTIMIZATIONS mode
 
 */
 
@@ -166,10 +166,10 @@ const compile = {
 
       let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.js', function(code, output, error) {
         alert('Rollup', 'bundled bundle.es2015.js in', './build');
-        alert('ClosureCompiler', 'started optimizing', 'bundle.js');
+        alert('Closure Compiler', 'started optimizing', 'bundle.js');
 
         let closure = exec(require(config.projectRoot+'/package.json').scripts['transpile:'+env], function(code, output, error){
-            alert('ClosureCompiler', 'transpiled', './'+config.build+'/bundle.es2015.js to', './'+config.build+'/bundle.js');
+            alert('Closure Compiler', 'transpiled', config.build+'/bundle.es2015.js to', config.build+'/bundle.js');
             if (canServe === true) {
               alert(colors.green('Ready to serve'));
               utils.serve(canWatch);
@@ -228,7 +228,7 @@ const compile = {
         });
 
         exec(finalExec, () => {
-          alert('ClosureCompiler', 'transpiled', 'bundles into', './' + config.build );
+          alert('Closure Compiler', 'transpiled', 'bundles into', './' + config.build );
           if (canServe === true) {
             alert(colors.green('Ready to serve'));
             utils.serve(canWatch);
@@ -252,7 +252,7 @@ const compile = {
           let conf = fs.readFileSync(path.normalize(config.projectRoot+'/closure.lazy.conf'), 'utf-8');
 
           if (isVerbose) log('ngc compiled lazyloaded ngfactory files');
-          alert('ClosureCompiler', 'started bundling', 'ngfactory');
+          alert('Closure Compiler', 'started bundling', 'ngfactory');
 
           rm('-rf', path.normalize('./tmp'));
           mkdir(path.normalize('./tmp'));
@@ -314,10 +314,10 @@ const compile = {
 
     bundleClosure: () => {
 
-      alert('ClosureCompiler', 'started bundling', 'ngfactory');
+      alert('Closure Compiler', 'started bundling', 'ngfactory');
 
       let closure = exec(require(config.projectRoot+'/package.json').scripts['bundle:closure'], function(code, output, error){
-          alert('ClosureCompiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.js');
+          alert('Closure Compiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.js');
 
           if (canServe === true) {
             alert(colors.green('Ready to serve'));

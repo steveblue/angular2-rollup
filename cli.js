@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 require('shelljs/global');
-
+const semver      = require('semver');
 const path        = require('path');
 const fs          = require('fs');
 const program     = require('commander');
@@ -13,6 +13,43 @@ const config      = utils.config;
 
 let cliCommand = '';
 let useVersion = '4.4.2';
+
+function cmpVersions(a, b) {
+    var i, diff;
+    var regExStrip0 = /(\.0+)+$/;
+    var segmentsA = a.replace(regExStrip0, '').split('.');
+    var segmentsB = b.replace(regExStrip0, '').split('.');
+    var l = Math.min(segmentsA.length, segmentsB.length);
+
+    for (i = 0; i < l; i++) {
+        diff = parseInt(segmentsA[i], 10) - parseInt(segmentsB[i], 10);
+        if (diff) {
+            return diff;
+        }
+    }
+    return segmentsA.length - segmentsB.length;
+}
+
+
+exec('npm view angular-rollup version', { silent: true }, function(err, result, c) {
+
+    let sanitizedResult = result.replace('-beta', '').trim();
+    let sanitizedPackageVersion = package.version.replace('-beta', '').replace(',', '');
+    let sortedList = [sanitizedResult, sanitizedPackageVersion].sort(cmpVersions);
+    if (sanitizedResult !== sanitizedPackageVersion) {
+
+        if (sortedList[1] === sanitizedResult) {
+            utils.warn('');
+            utils.warn('');
+            utils.alert(utils.colors.red('Please update angular-rollup to the latest version ' + result.trim() ));
+            utils.alert(utils.colors.white('npm i -g angular-rollup@latest'));
+            utils.warn('');
+            utils.warn('');
+        }
+
+    }
+
+});
 
 program
     .version(package.version)

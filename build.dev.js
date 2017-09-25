@@ -74,7 +74,7 @@ const copy = {
     exec(path.join(config.cliRoot , path.normalize('node_modules/.bin/htmlprocessor'))+
          ' '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
          ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
-         ' -e '+env, function (code, output, error) {
+      ' -e ' + env, { silent: true }, function (code, output, error) {
       log('index.html', 'formatted');
     });
 
