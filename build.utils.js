@@ -129,7 +129,7 @@ const alert = function (noun, verb, action, next) {
     let v = verb ? colors.blue(verb) : '';
     let a = action ? colors.cyan(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(n + ' ' + v + ' ' + a + ' ' + x );
+    cons.warn(n + ' ' + v + ' ' + a + ' ' + x );
 };
 
 /* WARN Method used in the build tasks.
@@ -303,8 +303,9 @@ const utils = {
 
                             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
                                 ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cssConfig.env + '.js')) +
-                                ' -r ' + postcssConfig, function (code, output, error) {
+                                ' -r ' + postcssConfig, { silent: true }, function (code, output, error) {
                                     if (res) {
+                                        log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
                                         res(filePath, outFile);
                                     }
 

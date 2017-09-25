@@ -6,6 +6,7 @@ module.exports = {
             'systemjs/dist/system.js',
             'zone.js/dist/zone.js',
             'reflect-metadata/Reflect.js',
+            'reflect-metadata/Reflect.js.map',
             '@angular',
             'rxjs'
         ],
