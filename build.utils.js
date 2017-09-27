@@ -126,10 +126,10 @@ const log = function (action, noun, next) {
 
 const alert = function (noun, verb, action, next) {
     let n = noun ? colors.bold(noun) : '';
-    let v = verb ? colors.blue(verb) : '';
-    let a = action ? colors.cyan(action) : '';
+    let v = verb ? colors.gray(verb) : '';
+    let a = action ? colors.gray(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
-    cons.warn(n + ' ' + v + ' ' + a + ' ' + x );
+    cons.log(n + ' ' + v + ' ' + a + ' ' + x );
 };
 
 /* WARN Method used in the build tasks.
@@ -200,13 +200,13 @@ const utils = {
 
     },
     clean : {
-        tmp: () => {
+        tmp: (isVerbose) => {
             rm('-rf', path.normalize('./closure'));
             rm('-rf', path.normalize('./ngfactory'));
             mkdir( path.normalize('./ngfactory'));
             mkdir( path.normalize('./closure'));
             cp('-R', path.normalize('./'+config.src+'/'), path.normalize('./ngfactory'));
-            log(config.src+'/*.ts', 'copied to', 'ngfactory/*.ts');
+            if (isVerbose) log(config.src+'/*.ts', 'copied to', 'ngfactory/*.ts');
         },
         lib: () => {
             rm('-rf', path.normalize('./tmp'));
@@ -305,7 +305,7 @@ const utils = {
                                 ' ' + outFile + ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cssConfig.env + '.js')) +
                                 ' -r ' + postcssConfig, { silent: true }, function (code, output, error) {
                                     if (res) {
-                                        log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
+                                        if(cssConfig.isVerbose) log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
                                         res(filePath, outFile);
                                     }
 

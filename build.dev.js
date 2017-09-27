@@ -30,6 +30,7 @@ let styleFiles = [];
 let hasCompletedFirstStylePass = false;
 let postcssConfig = ' -u';
 let canServe = false;
+let isVerbose = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -39,6 +40,9 @@ process.argv.forEach((arg) => {
   }
   if (arg.includes('serve')) {
     canServe = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('verbose')) {
+    isVerbose = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -75,10 +79,10 @@ const copy = {
          ' '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
          ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
       ' -e ' + env, { silent: true }, function (code, output, error) {
-      log('index.html', 'formatted');
+      alert('htmlprocessor', 'formatted index.html');
     });
 
-    log(filePath || path.join(config.src , 'public/'), 'copied to', path.join(config.build , '/'));
+    if (isVerbose) log(filePath || path.join(config.src , 'public/'), 'copied to', path.join(config.build , '/'));
 
     if (config && config.clean) {
       clean.paths(config);
@@ -88,7 +92,7 @@ const copy = {
   file: (filePath) => {
 
     cp('-R', filePath, path.join(config.build , '/'));
-    log(filePath, 'copied to',  path.join(config.build , '/'));
+    if (isVerbose)  log(filePath, 'copied to',  path.join(config.build , '/'));
 
   },
   lib: () => {
@@ -105,8 +109,10 @@ const copy = {
         cp('-R', path.join(path.normalize(config.dep.src) , path.normalize(config.dep.lib[i])), path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.lib[i])));
       }
 
-      log(config.dep.lib[i], 'copied to', path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.lib[i])));
-
+      if (isVerbose) log(config.dep.lib[i], 'copied to', path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.lib[i])));
+      if (i === config.dep.lib.length - 1) {
+        alert(config.dep.src.replace('./', ''), 'copied to', config.dep.dist.replace('./', ''));
+      }
     }
   }
 };
@@ -305,7 +311,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
   else if (filePath.indexOf('.scss') > -1) {
 
-    alert('CHANGE DETECTED', filePath, 'triggered', 'libsass');
+    alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered libsass and postcss');
 
     hasCompletedFirstStylePass = true;
 
@@ -315,7 +321,8 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
       allowPostCSS: true,
       src: config.src,
       dist: config.build,
-      styleSrcOnInit: false
+      styleSrcOnInit: false,
+      isVerbose: isVerbose
     },
     function (filePath) {
       if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {

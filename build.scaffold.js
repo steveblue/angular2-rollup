@@ -15,16 +15,17 @@ const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
     let n = noun ? colors.dim(colors.blue(noun)) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(a + ' ' + n + ' ' + x );
+    cons.log(a + ' ' + n + ' ' + x);
 };
 
 const alert = function (noun, verb, action, next) {
-    let n = noun ?colors.bold(noun) : '';
-    let v = verb ? colors.blue(verb) : '';
-    let a = action ? colors.cyan(action) : '';
+    let n = noun ? colors.bold(noun) : '';
+    let v = verb ? colors.gray(verb) : '';
+    let a = action ? colors.gray(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(n + ' ' + v + ' ' + a + ' ' + x );
+    cons.log(n + ' ' + v + ' ' + a + ' ' + x);
 };
+
 
 
 clim.getTime = function () {

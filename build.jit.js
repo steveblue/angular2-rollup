@@ -27,6 +27,7 @@ let hasInit = false;
 let styleFiles = [];
 let hasCompletedFirstStylePass = false;
 let canServe = false;
+let isVerbose = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -36,6 +37,9 @@ process.argv.forEach((arg)=>{
   }
   if (arg.includes('serve')) {
     canServe = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('verbose')) {
+    isVerbose = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -73,10 +77,10 @@ const copy = {
          ' '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
          ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
       ' -e dev', { silent: true }, function (code, output, error) {
-      log('index.html', 'formatted');
+        alert('htmlprocessor', 'formatted index.html');
     });
 
-    log(filePath || path.join(config.src , 'public/'), 'copied to', path.join(config.build , '/'));
+    if (isVerbose) log(filePath || path.join(config.src , 'public/'), 'copied to', path.join(config.build , '/'));
 
     if (config && config.clean) {
       clean.paths(config);
@@ -86,14 +90,14 @@ const copy = {
   file: (filePath) => {
 
     cp('-R', filePath, path.join(config.build , '/'));
-    log(filePath, 'copied to',  path.join(config.build , '/'));
+    if (isVerbose)  log(filePath, 'copied to',  path.join(config.build , '/'));
 
   },
   html: () => {
 
       ls(path.normalize(config.src+'/app/**/*.html')).forEach(function(filePath) {
         cp(filePath, path.join('build',filePath));
-        log(filePath.replace(/^.*[\\\/]/, ''), 'copied to', 'build/'+filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/')));
+        if (isVerbose)  log(filePath.replace(/^.*[\\\/]/, ''), 'copied to', 'build/'+filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/')));
       });
   },
   lib: () => {
@@ -110,8 +114,10 @@ const copy = {
         cp('-R', path.join(path.normalize(config.dep.src) , path.normalize(config.dep.lib[i])), path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.lib[i])));
       }
 
-      log(config.dep.lib[i], 'copied to', path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.lib[i])));
-
+      if (isVerbose) log(config.dep.lib[i], 'copied to', path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.lib[i])));
+      if (i === config.dep.lib.length - 1) {
+        alert(config.dep.src.replace('./', ''), 'copied to', config.dep.dist.replace('./', ''));
+      }
     }
   }
 };
@@ -129,13 +135,12 @@ const compile = {
     file: (execCmd, filePath) => {
 
       let tsc = exec(execCmd, function (code, output, error) {
-
         if (filePath) {
           alert('typescript', 'transpiled', filePath);
           cp(filePath, path.normalize('build/' + filePath));
           isCompiling = false;
         } else {
-          alert('typescript', 'transpiled', config.src + '/*ts');
+          alert('typescript', 'transpiled', config.src);
         }
 
         if (hasInit === false) {
@@ -231,7 +236,7 @@ const compile = {
           });
 
       } else {
-          alert('typescript', 'started transpiling', config.src+'/*ts');
+          alert('typescript', 'started transpiling', config.src);
           tsExec = path.normalize(config.projectRoot + '/node_modules/.bin/tsc') +
                                   ' -p ' + path.normalize('./tsconfig.jit.json');
           compile.file(tsExec, filePath);
@@ -314,7 +319,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
   else if ( filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
 
-    alert('CHANGE DETECTED', filePath);
+    alert('change', filePath.replace(/^.*[\\\/]/, ''));
 
        copy.html(filePath);
 
@@ -322,21 +327,20 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
   else if ( filePath.indexOf('.ts') > -1 && hasInit === true) {
 
-    alert('CHANGE DETECTED', filePath, 'triggered', 'transpile');
+   
+    if (!isCompiling) {
 
-    utils.tslint(filePath);
-
-    //if (!isCompiling) {
-
+      alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered transpile');
+      utils.tslint(filePath);
       compile.ts();
 
-    //}
+    }
 
 
   }
   else if ( filePath.indexOf('.scss') > -1 ) {
 
-    alert('CHANGE DETECTED', filePath, 'triggered', 'sass and postcss');
+    alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered sass and postcss');
 
     hasCompletedFirstStylePass = true;
 
@@ -346,7 +350,8 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
       allowPostCSS: true,
       src: config.src,
       dist: config.build,
-      styleSrcOnInit: false
+      styleSrcOnInit: false,
+      isVerbose: isVerbose
     },
     function (filePath, outFile) {
 

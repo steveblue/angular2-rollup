@@ -1,3 +1,9 @@
+##1.0.0-beta.10
+
+- Condensed log messages for builds. Use --verbose to print more verbose messages
+
+-------------------------------------------------------------------------------------------------------------
+
 ##1.0.0-beta.9
 
 - Fixed issue with update warning

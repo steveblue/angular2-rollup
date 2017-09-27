@@ -86,10 +86,10 @@ const copy = {
           ' '+ path.normalize(path.join(config.build , '/')+ 'index.html') +
           ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html') +
         ' -e ' + env, { silent: true }, function (code, output, error) {
-        log('index.html', 'formatted');
+          alert('htmlprocessor', 'formatted index.html');
       });
 
-      log(filePath || path.join(config.src , 'public/'), 'copied to', path.join(config.build , '/'));
+      if (isVerbose) log(filePath || path.join(config.src , 'public/'), 'copied to', path.join(config.build , '/'));
 
       if (config && config.clean) {
         clean.paths(config);
@@ -99,7 +99,7 @@ const copy = {
     file: (filePath) => {
 
       cp('-R', filePath, path.join(config.build , '/'));
-      log(filePath, 'copied to',  path.join(config.build , '/'));
+      if (isVerbose) log(filePath, 'copied to',  path.join(config.build , '/'));
 
     },
     lib: () => {
@@ -116,8 +116,10 @@ const copy = {
           cp('-R', path.join(path.normalize(config.dep.src), path.normalize(config.dep.prodLib[i])), path.join(path.normalize(config.dep.dist), path.normalize(config.dep.prodLib[i])));
         }
 
-        log(config.dep.prodLib[i], 'copied to', path.join(path.normalize(config.dep.dist), path.normalize(config.dep.prodLib[i])));
-
+        if (isVerbose) log(config.dep.prodLib[i], 'copied to', path.join(path.normalize(config.dep.dist), path.normalize(config.dep.prodLib[i])));
+        if (i === config.dep.lib.length - 1) {
+          alert(config.dep.src.replace('./', ''), 'copied to', config.dep.dist.replace('./', ''));
+        }
       }
     }
   };
@@ -162,14 +164,14 @@ const compile = {
 
     bundleRollup: () => {
 
-      alert('Rollup', 'started bundling', 'ngfactory');
+      alert('rollup', 'started');
 
       let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.js', function(code, output, error) {
-        alert('Rollup', 'bundled bundle.es2015.js in', './build');
-        alert('Closure Compiler', 'started optimizing', 'bundle.js');
+        alert('rollup', 'bundled');
+        alert('closure compiler', 'started');
 
         let closure = exec(require(config.projectRoot+'/package.json').scripts['transpile:'+env], function(code, output, error){
-            alert('Closure Compiler', 'transpiled', config.build+'/bundle.es2015.js to', config.build+'/bundle.js');
+            alert('closure compiler', colors.green('optimized the bundle'));
             if (canServe === true) {
               alert(colors.green('Ready to serve'));
               utils.serve(canWatch);
@@ -228,7 +230,7 @@ const compile = {
         });
 
         exec(finalExec, () => {
-          alert('Closure Compiler', 'transpiled', 'bundles into', './' + config.build );
+          alert('closure compiler', colors.green('optimized project bundles'));
           if (canServe === true) {
             alert(colors.green('Ready to serve'));
             utils.serve(canWatch);
@@ -252,7 +254,7 @@ const compile = {
           let conf = fs.readFileSync(path.normalize(config.projectRoot+'/closure.lazy.conf'), 'utf-8');
 
           if (isVerbose) log('ngc compiled lazyloaded ngfactory files');
-          alert('Closure Compiler', 'started bundling', 'ngfactory');
+          alert('closure compiler', 'started');
 
           rm('-rf', path.normalize('./tmp'));
           mkdir(path.normalize('./tmp'));
@@ -314,10 +316,10 @@ const compile = {
 
     bundleClosure: () => {
 
-      alert('Closure Compiler', 'started bundling', 'ngfactory');
+      alert('closure compiler', 'started');
 
       let closure = exec(require(config.projectRoot+'/package.json').scripts['bundle:closure'], function(code, output, error){
-          alert('Closure Compiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.js');
+          alert('closure compiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.js');
 
           if (canServe === true) {
             alert(colors.green('Ready to serve'));
@@ -349,12 +351,12 @@ const compile = {
         });
 
 
-        alert ('ngc', 'started compiling', 'ngfactory');
+        alert ('ngc', 'started');
 
         let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
                        ' -p '+path.normalize('./tsconfig.prod.json'), function(code, output, error) {
 
-          alert('ngc', 'compiled', 'ngfactory');
+          alert('ngc', colors.green('compiled ngfactory'));
 
             if ( bundleWithClosure === true && isLazy === false) {
               compile.bundleClosure();
@@ -402,8 +404,6 @@ let init = function() {
 
   rm('-rf', path.normalize(path.join('./' , config.build)));
 
-  clean.tmp();
-
   mkdir(path.normalize('./' + config.build));
   mkdir(path.normalize('./' + config.build + '/lib'));
 
@@ -429,7 +429,7 @@ let init = function() {
     }
 
     if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-      alert('libsass and postcss', 'compiled');
+      alert('libsass and postcss', colors.green('compiled'));
       setTimeout(compile.src, 1000);
     }
     if (hasCompletedFirstStylePass === true) {
@@ -468,7 +468,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
     else if ( filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
 
       if(!isCompiling) {
-        alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
+        alert('change', filePath, 'triggered compile');
         cp(filePath, filePath.replace(path.normalize(config.src), path.normalize('./tmp')));
         compile.src();
       }
@@ -477,7 +477,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
     else if ( filePath.indexOf('.ts') > -1 && hasInit === true) {
 
-      alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
+      alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered compile');
 
       utils.tslint(filePath);
 
@@ -489,7 +489,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
     }
     else if ( filePath.indexOf('.scss') > -1 ) {
 
-      alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
+      alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered libsass and postcss');
 
         hasCompletedFirstStylePass = true;
 
@@ -499,7 +499,8 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
           allowPostCSS: true,
           src: config.src,
           dist: config.build,
-          styleSrcOnInit: false
+          styleSrcOnInit: false,
+          isVerbose: isVerbose
         },
           function (filePath, outFile) {
 
@@ -508,7 +509,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
             }
 
             if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-              alert('libsass and postcss', 'compiled');
+              alert('libsass and postcss', colors.green('compiled'));
               setTimeout(compile.src, 1000);
             }
             if (hasCompletedFirstStylePass === true) {

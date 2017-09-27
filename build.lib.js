@@ -35,6 +35,7 @@ let hasInit = false;
 let styleFiles = [];
 let hasCompletedFirstStylePass = false;
 let postcssConfig = ' -u';
+let isVerbose = false;
 
 
 /* Test for arguments the ngr cli spits out */
@@ -42,6 +43,9 @@ let postcssConfig = ' -u';
 process.argv.forEach((arg)=>{
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('verbose')) {
+    isVerbose = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -68,7 +72,7 @@ if (!config.style || !config.style.sass || !config.style.sass.prod) {
 const copy = {
     file: (filePath) => {
         cp('-R', path.normalize(filePath), path.normalize(config.dist+'/'));
-        log(filePath, 'copied to', path.normalize(config.dist+'/'));
+        if (isVerbose) log(filePath, 'copied to', path.normalize(config.dist+'/'));
     }
 };
 
@@ -155,11 +159,11 @@ const compile = {
 
                   alert('ngc', 'compiled', 'ngfactory');
                   cp('-R', path.normalize(config.lib+'/')+'.', path.normalize('ngfactory/'));
-                  alert('Rollup', 'started bundling', 'ngfactory');
+                  alert('rollup', 'started bundling');
 
                  let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib.js', function(code, output, error) {
 
-                     alert('Rollup', 'bundled', config.libFilename+'.js in', './'+config.dist);
+                     alert('rollup', 'bundled', config.libFilename+'.js in', './'+config.dist);
                      compile.umdLib();
 
                  });
@@ -175,12 +179,12 @@ const compile = {
          let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
                         ' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
                   alert('ngc', 'compiled', 'ngfactory');
-                  alert('Rollup', 'started bundling', 'ngfactory');
+                  alert('rollup', 'started bundling');
 
                  let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+
                                    ' -c rollup.config.lib-umd.js', function(code, output, error) {
 
-                     alert('Rollup', 'bundled', config.libFilename+'.umd.js in', './'+config.dist+'/bundles');
+                     alert('rollup', 'bundled', config.libFilename+'.umd.js in', './'+config.dist+'/bundles');
 
                      alert('Babel', 'started transpiling', config.libFilename+'.umd.js');
 
@@ -210,12 +214,12 @@ const compile = {
                         ' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
 
           log('ngc', 'compiled', 'ngfactory');
-                  alert('Rollup', 'started bundling', 'ngfactory');
+                  alert('rollup', 'started bundling');
 
                  let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+
                                    ' -c rollup.config.lib-es5.js', function(code, output, error) {
 
-                    alert('Rollup', 'bundled', config.libFilename+'.es5.js in', './'+config.dist);
+                    alert('rollup', 'bundled', config.libFilename+'.es5.js in', './'+config.dist);
 
 
                     find(path.normalize('./ngfactory/'))
@@ -233,7 +237,7 @@ const compile = {
 
                               });
 
-                      log('d.ts, metadata.json', 'copied to', './'+config.dist);
+                    if (isVerbose) log('d.ts, metadata.json', 'copied to', './'+config.dist);
 
                       cp(path.normalize(path.join('./ngfactory', config.libFilename + '.metadata.json')), path.normalize(config.dist));
 
@@ -261,7 +265,7 @@ const compile = {
 
                     exec( require(config.projectRoot + '/package.json').scripts['copy:package'], function() {
 
-                      log('package.json', 'copied to', './'+config.dist);
+                      if (isVerbose) log('package.json', 'copied to', './'+config.dist);
 
                       if (config.buildHooks && config.buildHooks.lib && config.buildHooks.lib.post) {
                         config.buildHooks.lib.post();
@@ -368,7 +372,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
       else if ( filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
 
-        alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
+        alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered compile');
 
         if(!isCompiling) {
           clean.lib();
@@ -379,7 +383,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
       else if ( filePath.indexOf('.ts') > -1 && hasInit === true) {
 
-        alert('CHANGE DETECTED', filePath, 'triggered', 'compile');
+        alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered compile');
 
         utils.tslint(filePath);
 
@@ -392,7 +396,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
       else if ( filePath.indexOf('.scss') > -1 ) {
 
-        alert('CHANGE DETECTED', filePath, 'triggered', 'sass and postcss');
+        alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered sass and postcss');
         clean.lib();
         style.file(filePath, {
           sassConfig: config.style.sass.prod,
@@ -400,7 +404,8 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
           allowPostCSS: true,
           src: config.lib,
           dist: config.dist,
-          styleSrcOnInit: false
+          styleSrcOnInit: false,
+          isVerbose: isVerbose
         },
           function (filePath) {
             if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
