@@ -1,6 +1,9 @@
 ##1.0.0-beta.10
 
+- `--closure` is now the default production build, use `ngr build prod --rollup` to bundle with Rollup instead
 - Condensed log messages for builds. Use --verbose to print more verbose messages
+- Fixed issue with closure bundle w/o lazyloading that prevented bundle.js from being created
+- Updated --verbose logs for closure build
 
 -------------------------------------------------------------------------------------------------------------
 

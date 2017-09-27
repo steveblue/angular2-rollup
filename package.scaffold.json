@@ -12,7 +12,7 @@
       "clean:ngfactory": "rimraf ngfactory && mkdir ngfactory",
       "copy:lib": "rsync -a --exclude=*.js ngfactory/ dist",
       "copy:package": "cp ./src/lib/package.json ./dist/package.json",
-      "bundle:closure": "java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf --output_manifest manifest.MF",
+      "bundle:closure": "java -jar node_modules/google-closure-compiler/compiler.jar --warning_level=QUIET --flagfile closure.conf --js_output_file ./build/bundle.js",
       "transpile:prod": "java -jar node_modules/google-closure-compiler/compiler.jar --warning_level=QUIET --language_in=ES6 --language_out=ES5 --js ./build/bundle.es2015.js --js_output_file ./build/bundle.js",
       "webdriver:update": "webdriver-manager update",
       "webdriver:start": "webdriver-manager start",

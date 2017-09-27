@@ -209,7 +209,7 @@ const compile = {
       fs.writeFile(path.normalize(config.projectRoot+'/tmp/closure.lazy.conf'), conf, 'utf-8', () => {
 
         if (isVerbose) log('manifest built');
-        if (isVerbose) log('\n'+conf);
+        //if (isVerbose) log('\n'+conf);
 
         finalExec += 'java -jar node_modules/google-closure-compiler/compiler.jar --flagfile ./tmp/closure.lazy.conf \\\n'
         finalExec += '--entry_point=./main.prod \\\n';
@@ -293,7 +293,7 @@ const compile = {
 
                     lazyBundles.push(bundle);
 
-                    if (isVerbose) log('fileName: ' + fileName.replace('.js', '').replace('.ts', '') + '\n'+JSON.stringify(bundle, null, 4));
+                    //if (isVerbose) log('fileName: ' + fileName.replace('.js', '').replace('.ts', '') + '\n'+JSON.stringify(bundle, null, 4));
 
                     if (lazyBundles.length === config.lazyModulePaths.length) {
                       if (isVerbose) log('building manifest');

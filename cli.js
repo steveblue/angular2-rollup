@@ -59,8 +59,9 @@ program
     .option('-w, --watch [bool]', 'Enable file watchers to detect changes and build')
     .option('--postcss [bool]', 'Enable postcss for dev build, default is false')
     .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
-    .option('--closure [bool]', 'Bypass Rollup and bundle with ClosureCompiler')
+    .option('--closure [bool]', 'Bundle with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode, this is the default')
     .option('--lazy [bool]', 'Bundle with ClosureCompiler with support for lazyloaded modules, generate a lazyloaded route')
+    .option('--rollup [bool]', 'Bundle with Rollup prior to optimizing with ClosureCompiler in SIMPLE_OPTIMIZATIONS mode')
     .option('--verbose [bool]', 'Log additional messages in build')
     .option('g, generate [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
@@ -126,11 +127,13 @@ if (program.build) {
         cliCommand += ' postcss=false';
     }
 
-    if (program.closure === true) {
-        cliCommand += ' closure=true';
+    if (program.rollup === true) {
+        cliCommand += ' rollup=true';
+        cliCommand += ' closure=false';
     }
     else {
-        cliCommand += ' closure=false';
+        cliCommand += ' rollup=false';
+        cliCommand += ' closure=true';
     }
 
     if (program.lazy === true) {
