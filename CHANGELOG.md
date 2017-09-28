@@ -1,6 +1,7 @@
 ## 1.0.0-beta.10
 
 - BREAKING CHANGES in boilerplate `index.html`, `system.import.js`, and `system.config.prod.js`. Refactored files to support lazyloaded bundles
+- New `--dynamicRoutes` option available for scaffold and update, will scaffold app with support for configurable routes prior to bootstrap
 - New configuration file `lazy.config.json` provides model for automating Closure Compiler and SystemJS polyfill for lazyloaded bundles
 - Moved the SystemJS polyfill into `system.polyfill.js`. This script requests `lazy.config.json`, uses a polyfill for SystemJS to map lazyloaded bundles
 - `--closure` is now the default production build, use `ngr build prod --rollup` to bundle with Rollup instead
@@ -85,6 +86,8 @@ To bundle third party scripts, point to the minified version of the script in th
                 "node_modules/marked/marked.min.js"
            ]
 ```
+
+If you use `--dynamicRoutes` during update you will be prompted to overwrite existing project. An additional `routes` property is now available in `lazy.config.json`. This flat Array will configure routes for any lazyloaded children of the root Component.
 
 
 -------------------------------------------------------------------------------------------------------------

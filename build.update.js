@@ -15,6 +15,21 @@ let useVersion = null;
 let cliVersion = null;
 let includeLib = false;
 let hasWarning = false;
+let dynamicRoutes = false;
+
+let validateEntry = function (value) {
+    if (value === 'true' ||
+        value === true ||
+        value === 'lazy' ||
+        value === 'Y' ||
+        value === 'y' ||
+        value === 'YES' ||
+        value === 'yes') {
+        return true;
+    } else {
+        return false;
+    }
+};
 
 const files = [
     'src',
@@ -67,6 +82,9 @@ process.argv.forEach((arg) => {
     if (arg.includes('lib')) {
         includeLib = arg.toString().split('=')[1];
     }
+    if (arg.includes('dynamicRoutes')) {
+        dynamicRoutes = arg.toString().split('=')[1];
+    }
 });
 
 /*
@@ -115,6 +133,36 @@ let init = function () {
         cp('-R', utils.config.cliRoot + '/src/lib/', utils.config.projectRoot + '/src');
 
     } 
+
+    if (dynamicRoutes) {
+
+        utils.console.warn(utils.colors.red('Update to dynamic routing will overwrite existing files'));
+        utils.console.log('It is recommended to backup lazy.config.json, app.routes.ts, and app.module.ts prior to update');
+        prompt.message = '';
+        prompt.start();
+        prompt.get(['Are you sure?'], function (err, result) {
+
+            if (validateEntry(result['Are you sure?'])) {
+                if (fs.existsSync(utils.config.projectRoot + '/src/app/app.config.ts')) {
+                    rm(utils.config.projectRoot + '/src/app/app.config.ts');
+                }
+                if (fs.existsSync(utils.config.projectRoot + '/lazy.config.json')) {
+                    rm(utils.config.projectRoot + '/lazy.config.json');
+                }
+                if (fs.existsSync(utils.config.projectRoot + '/src/app/app.routes.ts')) {
+                    rm(utils.config.projectRoot + '/src/app/app.routes.ts');
+                }
+                rm(utils.config.projectRoot + '/src/app/app.module.ts');
+                cp(utils.config.cliRoot + '/lazy.routes.config.json', utils.config.projectRoot + '/lazy.config.json');
+                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.routes.ts', utils.config.projectRoot + '/src/app/app.routes.ts');
+                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.config.ts', utils.config.projectRoot + '/src/app/app.config.ts');
+                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.module.ts', utils.config.projectRoot + '/src/app/app.module.ts');
+                utils.console.log('routes updated to support dynamic config');
+            }
+
+        });
+
+    }
 
     if (cliVersion) {
 

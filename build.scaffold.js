@@ -4,56 +4,20 @@ require('shelljs/global');
 
 const fs          = require('fs');
 const path        = require('path');
-const colors      = require('colors');
-const clim = require('clim');
-const cons = clim();
+const logger       = require('./build.log.js');
+
+const log = logger.log;
+const warn = logger.warn;
+const alert = logger.alert;
+const colors = logger.colors;
 
 let lib = false;
 let useVersion = '5.0.0';
 let hasWarning = false;
+let dynamicRoutes = false;
 
-const log = function (action, noun, next) {
-    let a = action ? colors.dim(colors.white(action)) : '';
-    let n = noun ? colors.dim(colors.blue(noun)) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(a + ' ' + n + ' ' + x);
-};
-
-const alert = function (noun, verb, action, next) {
-    let n = noun ? colors.white(noun) : '';
-    let v = verb ? colors.gray(verb) : '';
-    let a = action ? colors.gray(action) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(n + ' ' + v + ' ' + a + ' ' + x);
-};
-
-const warn = function (action, noun) {
-    let a = action ? colors.red(action) : '';
-    let n = noun ? colors.white(noun) : '';
-    cons.warn(a + ' ' + n);
-};
-
-
-clim.getTime = function () {
-    let now = new Date();
-    return colors.gray(colors.dim('[' +
-        (now.getHours() < 10 ? '0' : '') + now.getHours() + ':' +
-        (now.getMinutes() < 10 ? '0' : '') + now.getMinutes() + ':' +
-        (now.getSeconds() < 10 ? '0' : '') + now.getSeconds() + ']'));
-};
-
-clim.logWrite = function(level, prefixes, msg) {
-    // Default implementation writing to stderr
-    var line = clim.getTime() + " " + level;
-    if (prefixes.length > 0) line += " " + prefixes.join(" ");
-
-    line = colors.dim(line);
-    line += " " + msg;
-    process.stderr.write(line + "\n");
-
-    // or post it web service, save to database etc...
-};
-
+const projectPath = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
+const cliPath = path.dirname(fs.realpathSync(__filename));
 
 const files     = [
     'src',
@@ -102,6 +66,9 @@ process.argv.forEach((arg)=>{
   if (arg.includes('version')) {
       useVersion = arg.toString().split('=')[1];
   }
+  if (arg.includes('dynamicRoutes')) {
+      dynamicRoutes = arg.toString().split('=')[1];
+  }
 });
 
 
@@ -115,18 +82,37 @@ process.argv.forEach((arg)=>{
 
 const copy = {
     file: (p) => {
-        if (fs.existsSync(path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/' + p.split('/')[p.split('/').length - 1])) {
+        if (fs.existsSync(projectPath + '/' + p.split('/')[p.split('/').length - 1])) {
             warn(p.split('/')[p.split('/').length - 1] + ' already exists');
             hasWarning = true;
         } else {
-            cp('-R', p, path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
-            log(p.split('/')[p.split('/').length - 1], 'copied to', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
+            cp('-R', p, projectPath + '/');
+            log(p.split('/')[p.split('/').length - 1], 'copied to', projectPath + '/');
         }
     },
     scaffold: (files) => {
+
         files.forEach((filename)=>{
-            copy.file(path.dirname(fs.realpathSync(__filename)) + '/' + filename);
+            copy.file(cliPath + '/' + filename);
         })
+        
+        if (dynamicRoutes) {
+            if (fs.existsSync(projectPath + '/src/app/app.config.ts')) {
+                rm(projectPath + '/src/app/app.config.ts');
+            }
+            if (fs.existsSync(projectPath + '/lazy.config.json')) {
+                rm(projectPath + '/lazy.config.json');
+            }
+            if (fs.existsSync(projectPath + '/src/app/app.routes.ts')) {
+                rm(projectPath + '/src/app/app.routes.ts');
+            }
+            rm(projectPath + '/src/app/app.module.ts');
+            cp(cliPath + '/lazy.routes.config.json', projectPath + '/lazy.config.json');
+            cp(cliPath + '/src-dynamic-route/app/app.routes.ts', projectPath + '/src/app/app.routes.ts');
+            cp(cliPath + '/src-dynamic-route/app/app.config.ts', projectPath + '/src/app/app.config.ts');
+            cp(cliPath + '/src-dynamic-route/app/app.module.ts', projectPath + '/src/app/app.module.ts');
+        }
+
     }
 };
 
@@ -139,7 +125,7 @@ let init = function() {
             return filename.includes('lib') === false;
         }));
 
-        rm('-rf', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/src/lib');
+        rm('-rf', projectPath + '/src/lib');
 
     } else {
         copy.scaffold(files);
@@ -151,9 +137,9 @@ let init = function() {
     }
 
 
-    cp(path.dirname(fs.realpathSync(__filename)) + '/package.scaffold.json', path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json');
+    cp(cliPath + '/package.scaffold.json', projectPath+'/package.json');
 
-    fs.readFile(path.dirname(fs.realpathSync(__filename)) + '/package.scaffold.json', (err, script) => {
+    fs.readFile(cliPath + '/package.scaffold.json', (err, script) => {
 
         if (err) throw err;
 
@@ -173,7 +159,7 @@ let init = function() {
             }
         });
 
-        fs.writeFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json', JSON.stringify(script, null, 4), function (err) {
+        fs.writeFile(projectPath+'/package.json', JSON.stringify(script, null, 4), function (err) {
             if (err) log(err);
             log('ngr scaffolded ' + path.basename(process.cwd()), 'angular@'+ useVersion);
             alert('npm install', 'to install project dependencies');

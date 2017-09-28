@@ -37,12 +37,10 @@
 
 
 require('shelljs/global');
-
-const fs   = require('fs');
-const path = require('path');
 const clim = require('clim');
 const cons = clim();
-const colors = require('chalk');
+const fs   = require('fs');
+const path = require('path');
 const findUp = require('find-up');
 const sass = require('node-sass');
 const MagicString = require('magic-string');
@@ -52,6 +50,7 @@ const spawn = require('child_process').spawn;
 const cliRoot = path.dirname(fs.realpathSync(__filename));
 const processRoot = path.join(path.dirname(process.cwd()) , path.basename(process.cwd()));
 const cliConfigPath = findUp.sync('cli.config.js');
+const logger = require('./build.log.js');
 
 let projectRoot;
 
@@ -73,29 +72,10 @@ const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
 
-
-
-/* Format time each LOG displays in the Terminal */
-
-clim.getTime = function(){
-  let now = new Date();
-  return colors.gray(colors.dim('['+
-        (now.getHours() < 10 ? '0' : '') + now.getHours() + ':' +
-        (now.getMinutes() < 10 ? '0' : '') + now.getMinutes() + ':' +
-        (now.getSeconds() < 10 ? '0' : '') + now.getSeconds() + ']'));
-};
-
-clim.logWrite = function(level, prefixes, msg) {
-    // Default implementation writing to stderr
-    var line = clim.getTime() + " " + level;
-    if (prefixes.length > 0) line += " " + prefixes.join(" ");
-
-    line = colors.dim(line);
-    line += " " + msg;
-    process.stderr.write(line + "\n");
-
-    // or post it web service, save to database etc...
-  };
+const log = logger.log;
+const warn = logger.warn;
+const alert = logger.alert;
+const colors = logger.colors;
 
 /* Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz */
 
@@ -113,34 +93,6 @@ function insertText(str, dir, preprocessor = res => res, processFilename = false
     return '"' + text + '"';
   });
 }
-
-/* LOG Method used in the build tasks.
-   Pretty prints LOG, magenta, green, blue, grey message */
-
-const log = function (action, noun, next) {
-    let a = action ? colors.dim(colors.white(action)) : '';
-    let n = noun ? colors.dim(colors.blue(noun)) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(a + ' ' + n + ' ' + x );
-};
-
-const alert = function (noun, verb, action, next) {
-    let n = noun ? colors.white(noun) : '';
-    let v = verb ? colors.gray(verb) : '';
-    let a = action ? colors.gray(action) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(n + ' ' + v + ' ' + a + ' ' + x );
-};
-
-/* WARN Method used in the build tasks.
-   Pretty prints LOG, red, white message */
-
-const warn = function(action, noun) {
-    let a = action ? colors.red(action) : '';
-    let n = noun ? colors.white(noun) : '';
-    cons.warn(a + ' ' + n);
-};
-
 
 
 process.argv.forEach((arg)=>{

@@ -55,6 +55,7 @@ program
     .option('serve, --serve [bool]', 'Run Express Server')
     .option('scaffold, --scaffold [bool]', 'Scaffold a new project')
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
+    .option('--dynamicRoutes [bool]', 'Scaffold a new project with support for routes configured by JSON prior to Bootstrap')
     .option('--angularVersion [string]', 'Scaffold a new project with a specific @angular version')
     .option('update, --update [bool]', 'Update a project')
     .option('--cliVersion [string]', 'Update an existing project with changes to config files provided by the cli')
@@ -72,6 +73,10 @@ if (program.scaffold) {
         cliCommand += ' version=' + useVersion;
     } else {
         cliCommand += ' version=' + program.angularVersion;
+    }
+
+    if (program.dynamicRoutes) {
+        cliCommand += ' dynamicRoutes=true';
     }
 
     cp(path.join(path.dirname(fs.realpathSync(__filename)), 'build.config.js'), path.join(path.dirname(process.cwd()), path.basename(process.cwd())));
@@ -345,6 +350,10 @@ if (program.update) {
 
     if (program.lib) {
         cliCommand += ' lib=' + program.lib;
+    }
+
+    if (program.dynamicRoutes) {
+        cliCommand += ' dynamicRoutes=true';
     }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
