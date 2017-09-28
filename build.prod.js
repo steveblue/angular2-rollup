@@ -231,12 +231,58 @@ const compile = {
 
         exec(finalExec, () => {
           alert('closure compiler', colors.green('optimized project bundles'));
-          if (canServe === true) {
-            alert(colors.green('Ready to serve'));
-            utils.serve(canWatch);
-          } else {
-            alert(colors.green('Build is ready'));
-          }
+
+          exec('java -jar node_modules/google-closure-compiler/compiler.jar --compilation_level=SIMPLE_OPTIMIZATIONS --js ./src/public/system.polyfill.js --js_output_file ./build/system.polyfill.js', () => {
+            if(isVerbose) log('closure compiler', 'optimized system.polyfill.js');
+
+            if (canServe === true) {
+              alert(colors.green('Ready to serve'));
+              utils.serve(canWatch);
+            } else {
+              alert(colors.green('Build is ready'));
+            }
+          });
+
+          bundles.forEach((bundle) => {
+
+            var externs = bundle.model.externs;
+
+            fs.readFile(config.build + '/' + bundle.model.filename, 'utf8', function (err, contents) {
+
+              externs.forEach((dep, i) => {
+                fs.readFile(config.projectRoot + '/' + dep, 'utf8', function (err, con) {
+                  if (!err) {
+                    contents = con.concat(contents);
+                    if (i === bundle.model.externs.length - 1) {
+                      fs.writeFile(config.build + '/' + bundle.model.filename, contents, function (err) {
+                        if (!err) {
+                          if (isVerbose) log('processed externs for', bundle.model.filename);
+                          if (bundles.indexOf(bundle) === bundles.length - 1) {
+                            // do something after bundling
+                          }
+                        } else {
+                          warn(err);
+                        }
+                      });
+                    }
+                  } else {
+                    warn(err);
+                  }
+                });
+              })
+
+
+
+            });
+          });
+
+
+          // if (canServe === true) {
+          //   alert(colors.green('Ready to serve'));
+          //   utils.serve(canWatch);
+          // } else {
+          //   alert(colors.green('Build is ready'));
+          // }
         });
 
       });
@@ -253,7 +299,13 @@ const compile = {
           let main;
           let conf = fs.readFileSync(path.normalize(config.projectRoot+'/closure.lazy.conf'), 'utf-8');
 
-          if (isVerbose) log('ngc compiled lazyloaded ngfactory files');
+          if (isVerbose) log('angular compiler', 'compiled ngfactory');
+
+          if (fs.existsSync(config.projectRoot + '/lazy.config.json')) {
+            cp(config.projectRoot+'/lazy.config.json', config.build+'/');
+            if (isVerbose) log('copied lazy.config.json to ' + config.build);
+          }
+
           alert('closure compiler', 'started');
 
           rm('-rf', path.normalize('./tmp'));
@@ -266,10 +318,12 @@ const compile = {
 
             if (isVerbose) log('compiling ngfactory data for manifest');
 
-            config.lazyModulePaths.forEach((filePath)=>{
+            function transformBundle(bundle){
+
+              let filePath = bundle.src;
               let fileName = filePath.replace(/^.*[\\\/]/, '');
               let modulePath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'));
-
+              if (isVerbose) log('transforming', bundle.filename);
               fs.readFile(filePath, 'utf8', function (err, contents) {
                 if (!err) {
                   let ngFactoryClassName = '';
@@ -283,19 +337,20 @@ const compile = {
                        ' --output_manifest=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.MF')+
                        ' --js_output_file=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.waste.js'), () => {
 
-                    let bundle = {
+                    let bun = {
                       ngFactoryFile: fileName,
                       ngFactoryClassName: ngFactoryClassName,
                       fileName: fileName.replace('.js', '').replace('.ts', ''),
                       filePath: filePath,
-                      fileContent: fs.readFileSync('./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n')
+                      fileContent: fs.readFileSync('./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n'),
+                      model: bundle
                     };
 
-                    lazyBundles.push(bundle);
+                    lazyBundles.push(bun);
 
                     //if (isVerbose) log('fileName: ' + fileName.replace('.js', '').replace('.ts', '') + '\n'+JSON.stringify(bundle, null, 4));
 
-                    if (lazyBundles.length === config.lazyModulePaths.length) {
+                    if (lazyBundles.length === Object.keys(config.lazyOptions.bundles).length) {
                       if (isVerbose) log('building manifest');
                       compile.formatManifest(conf, main, lazyBundles);
                     }
@@ -307,7 +362,11 @@ const compile = {
 
               });
 
-            });
+            }
+
+            for (var bundle in config.lazyOptions.bundles) {
+              transformBundle(config.lazyOptions.bundles[bundle])
+            }
 
           });
 
@@ -319,7 +378,7 @@ const compile = {
       alert('closure compiler', 'started');
 
       let closure = exec(require(config.projectRoot+'/package.json').scripts['bundle:closure'], function(code, output, error){
-          alert('closure compiler', 'bundled', 'ngfactory to', './'+config.build+'/bundle.js');
+          alert('closure compiler', 'optimized bundle.js');
 
           if (canServe === true) {
             alert(colors.green('Ready to serve'));
@@ -351,12 +410,12 @@ const compile = {
         });
 
 
-        alert ('ngc', 'started');
+        alert ('angular compiler', 'started');
 
         let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
                        ' -p '+path.normalize('./tsconfig.prod.json'), function(code, output, error) {
 
-          alert('ngc', colors.green('compiled ngfactory'));
+          alert('angular compiler', colors.green('compiled ngfactory'));
 
             if ( bundleWithClosure === true && isLazy === false) {
               compile.bundleClosure();
@@ -414,6 +473,7 @@ let init = function() {
   copy.lib();
   copy.public();
 
+  alert('libsass and postcss', 'started');
   style.src({
       sassConfig: config.style.sass.prod,
       env: env,
@@ -531,9 +591,10 @@ watcher
 
     if(isLazy === true) {
 
-      fs.readFile(config.projectRoot+'/tsconfig.prod.lazy.json', 'utf8', function (err, contents) {
+      fs.readFile(config.projectRoot+'/lazy.config.json', 'utf8', function (err, contents) {
 
         if (!err) {
+          config.lazyOptions = JSON.parse(contents);
           config.lazyModulePaths = JSON.parse(contents).files;
           init();
         } else {

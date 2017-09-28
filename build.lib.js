@@ -323,7 +323,7 @@ let init = function() {
     }
 
     clean.lib();
-
+    alert('libsass and postcss', 'started');
     style.src({
       sassConfig: config.style.sass.prod,
       env: 'prod',

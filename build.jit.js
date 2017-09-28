@@ -146,7 +146,7 @@ const compile = {
         if (hasInit === false) {
 
           copy.html();
-
+          alert('libsass and postcss', 'started');
           style.src({
             sassConfig: config.style.sass.dev,
             env: 'dev',
@@ -165,7 +165,7 @@ const compile = {
 
               if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
-                alert('libsass and postcss', 'compiled');
+                alert('libsass and postcss', colors.green('compiled'));
                 if (canServe === true) {
                   alert(colors.green('Ready to serve'));
                   utils.serve(canWatch);
@@ -212,7 +212,7 @@ const compile = {
 
       if (filePath) {
 
-          alert('typescript', 'started transpiling', filePath);
+          alert('typescript', 'started');
 
           fs.readFile(config.projectRoot+'/tsconfig.jit.json', 'utf8', function (err, contents) {
             if (!err) {
@@ -236,7 +236,7 @@ const compile = {
           });
 
       } else {
-          alert('typescript', 'started transpiling', config.src);
+          alert('typescript', 'transpiled');
           tsExec = path.normalize(config.projectRoot + '/node_modules/.bin/tsc') +
                                   ' -p ' + path.normalize('./tsconfig.jit.json');
           compile.file(tsExec, filePath);
@@ -281,6 +281,13 @@ let init = function() {
 
   mkdir(path.normalize('./' + config.build));
   mkdir(path.normalize('./' + config.build + '/lib'));
+
+
+  if (fs.existsSync(config.projectRoot + '/lazy.config.json')) {
+    cp(config.projectRoot + '/lazy.config.json', config.build + '/');
+    if (isVerbose) log('copied lazy.config.json to ' + config.build);
+  }
+
 
   if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].pre) {
     config.buildHooks[env].pre();

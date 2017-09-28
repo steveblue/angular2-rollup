@@ -256,7 +256,7 @@ let init = function () {
 
   copy.lib();
   copy.public();
-
+  alert('libsass and postcss', 'started');
   style.src({
     sassConfig: config.style.sass.dev,
     env: env,

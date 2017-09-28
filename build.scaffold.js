@@ -19,7 +19,7 @@ const log = function (action, noun, next) {
 };
 
 const alert = function (noun, verb, action, next) {
-    let n = noun ? colors.bold(noun) : '';
+    let n = noun ? colors.white(noun) : '';
     let v = verb ? colors.gray(verb) : '';
     let a = action ? colors.gray(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
@@ -60,6 +60,7 @@ const files     = [
     'closure.externs.js',
     'karma-test-shim.js',
     'karma.conf.js',
+    'lazy.config.json',
     'main.prod.js',
     'main.prod.ts',
     'main.ts',

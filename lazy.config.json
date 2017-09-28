@@ -1,0 +1,16 @@
+{
+    "bundles": {
+        "view/doc-file/file.module.ngfactory.js": {
+            "src": "./ngfactory/src/app/shared/components/lazy/lazy.module.ngfactory.ts",
+            "filename": "lazy.module.bundle.js",
+            "path": "http://localhost:4200",
+            "externs": []
+        }
+    },
+    "routes": [
+        {
+            "path": "lazy",
+            "loadChildren": "shared/components/lazy/lazy.module#LazyModule"
+        }
+    ]
+}
