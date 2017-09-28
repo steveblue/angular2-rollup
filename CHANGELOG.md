@@ -14,7 +14,7 @@
 
 To update:
 
-$`npm -g angular-rollup@latest`
+$`npm install -g angular-rollup@latest`
 
 In the project directory: 
 
@@ -41,22 +41,6 @@ If you have changed boilerplate files, you will need to diff them against the ne
 Copy the files into a temporary directory and run the command again, then diff the existing files to check for project specific changes. 
 
 If you do not have changes to the boilerplate files, just remove the files and run the command again.
-
-```
-$ rm -rf src/public/system.import.js
-$ rm -rf src/public/system.config.prod.js
-$ rm -rf src/public/index.html
-$ ngr update --cliVersion 1.0.0-beta.10
-[13:20:43] LOG Review changes to angular-rollup in the CHANGELOG (https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md)  
-[13:20:43] WARN lazy.config.json already exists 
-[13:20:43] WARN src/public/system.polyfill.js already exists 
-[13:20:43] LOG system.import.js copied to /Users/steveb/www/4-test/
-[13:20:43] LOG system.config.prod.js copied to /Users/steveb/www/4-test/
-[13:20:43] LOG index.html copied to /Users/steveb/www/4-test/
-[13:20:43] WARN Please move or delete existing files to prevent overwiting. Use a diff tool to track project specific changes. 
-```
-
-NOTE: The second warning in the above example is fine, since lazy.config.json and src/public/system.polyfill.js are new files.
 
 
 ### lazy.config.json
