@@ -330,7 +330,8 @@ let init = function() {
       allowPostCSS: true,
       src: config.lib,
       dist: config.dist,
-      styleSrcOnInit: false
+      styleSrcOnInit: false,
+      isVerbose: isVerbose
     },
     function (filePath) {
 

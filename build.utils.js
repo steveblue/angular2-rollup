@@ -205,7 +205,7 @@ const utils = {
             rm('-rf', path.normalize('./ngfactory'));
             mkdir( path.normalize('./ngfactory'));
             mkdir( path.normalize('./closure'));
-            cp('-R', path.normalize('./'+config.src+'/'), path.normalize('./ngfactory'));
+            cp('-R', path.normalize(config.src+'/'), path.normalize('./ngfactory'));
             if (isVerbose) log(config.src+'/*.ts', 'copied to', 'ngfactory/*.ts');
         },
         lib: () => {

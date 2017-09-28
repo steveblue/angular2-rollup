@@ -100,6 +100,11 @@ if (program.build) {
 
     let projectPackage = JSON.parse(JSON.stringify(require(config.projectRoot + '/package.json')));
 
+    if (program.build === true) {
+        utils.warn('Please use a proper argument for ngr build. i.e. prod, dev, jit');
+        return;
+    }
+
     if (program.build === 'dev' && program.jit === undefined && parseInt(projectPackage.dependencies['@angular/core'].split('.')[0]) < 5) {
         utils.warn('Project version is ' + projectPackage.dependencies['@angular/core'] + '. Use ngr build dev --jit or ngr build jit < 5.0.0');
         return;

@@ -263,7 +263,8 @@ let init = function () {
     allowPostCSS: true,
     src: config.src,
     dist: config.build,
-    styleSrcOnInit: false
+    styleSrcOnInit: false,
+    isVerbose: isVerbose
   },
   function(filePath){
     if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {

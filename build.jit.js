@@ -134,7 +134,12 @@ const compile = {
 
     file: (execCmd, filePath) => {
 
-      let tsc = exec(execCmd, function (code, output, error) {
+      let tsc = exec(execCmd, { silent: true },  function (code, output, error) {
+
+        if (error) {
+          warn(error);
+        }
+
         if (filePath) {
           alert('typescript', 'transpiled', filePath);
           cp(filePath, path.normalize('build/' + filePath));
@@ -153,7 +158,8 @@ const compile = {
             allowPostCSS: true,
             src: config.src,
             dist: config.build,
-            styleSrcOnInit: false
+            styleSrcOnInit: false,
+            isVerbose: isVerbose
           },
             function (filePath, outFile) {
 
