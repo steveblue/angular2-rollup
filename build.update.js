@@ -7,46 +7,14 @@ const path = require('path');
 const colors = require('colors');
 const clim = require('clim');
 const cons = clim();
+const utils = require('./build.utils.js');
+const prompt = require('prompt');
 
 let lib = false;
-let useVersion = '5.0.0';
-
-const log = function (action, noun, next) {
-    let a = action ? colors.dim(colors.white(action)) : '';
-    let n = noun ? colors.dim(colors.blue(noun)) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(a + ' ' + n + ' ' + x);
-};
-
-const alert = function (noun, verb, action, next) {
-    let n = noun ? colors.bold(noun) : '';
-    let v = verb ? colors.blue(verb) : '';
-    let a = action ? colors.cyan(action) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(n + ' ' + v + ' ' + a + ' ' + x);
-};
-
-
-clim.getTime = function () {
-    let now = new Date();
-    return colors.gray(colors.dim('[' +
-        (now.getHours() < 10 ? '0' : '') + now.getHours() + ':' +
-        (now.getMinutes() < 10 ? '0' : '') + now.getMinutes() + ':' +
-        (now.getSeconds() < 10 ? '0' : '') + now.getSeconds() + ']'));
-};
-
-clim.logWrite = function (level, prefixes, msg) {
-    // Default implementation writing to stderr
-    var line = clim.getTime() + " " + level;
-    if (prefixes.length > 0) line += " " + prefixes.join(" ");
-
-    line = colors.dim(line);
-    line += " " + msg;
-    process.stderr.write(line + "\n");
-
-    // or post it web service, save to database etc...
-};
-
+let useVersion = null;
+let cliVersion = null;
+let includeLib = false;
+let hasWarning = false;
 
 const files = [
     'src',
@@ -59,6 +27,7 @@ const files = [
     'closure.externs.js',
     'karma-test-shim.js',
     'karma.conf.js',
+    'lazy.config.json',
     'main.prod.js',
     'main.prod.ts',
     'main.ts',
@@ -85,23 +54,96 @@ const files = [
 ];
 
 
-
 /* Test for arguments the ngr cli spits out */
 
 process.argv.forEach((arg) => {
     if (arg.includes('version')) {
         useVersion = arg.toString().split('=')[1];
     }
+    if (arg.includes('cliVersion')) {
+        console.log(arg.toString());
+        cliVersion = arg.toString().split('=')[1];
+    }
+    if (arg.includes('lib')) {
+        includeLib = arg.toString().split('=')[1];
+    }
 });
+
+/*
+
+  Copy Tasks
+
+- file: Copies a file to /dist
+
+*/
+
+const copy = {
+    file: (filePath, fileName) => {
+        if (fs.existsSync(utils.config.projectRoot + filePath)) {
+            utils.warn(filePath + ' already exists');
+            hasWarning = true;
+        } else {
+            cp(utils.config.cliRoot + '/' + filePath, utils.config.projectRoot + '/' + filePath);
+            utils.log(fileName, 'copied to', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
+        }
+    },
+    newFile: (p) => {
+        if (fs.existsSync(path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/' + p.split('/')[p.split('/').length - 1])) {
+            utils.warn(p.split('/')[p.split('/').length - 1] + ' already exists');
+            hasWarning = true;
+        } else {
+            cp('-R', p, path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
+            utils.log(p.split('/')[p.split('/').length - 1], 'copied to', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
+        }
+    },
+    scaffold: (files) => {
+        files.forEach((filename) => {
+            copy.newFile(path.dirname(fs.realpathSync(__filename)) + '/' + filename);
+        })
+    }
+};
 
 
 let init = function () {
 
+    if (includeLib) {
+
+        copy.scaffold(files.filter((filename) => {
+            return filename.includes('lib') === true;
+        }));
+
+        cp('-R', utils.config.cliRoot + '/src/lib/', utils.config.projectRoot + '/src');
+
+    } 
+
+    if (cliVersion) {
+
+        utils.log('Review changes to angular-rollup in the CHANGELOG (https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md)');
+
+        if (cliVersion === '1.0.0-beta.10') {
+
+            copy.file('lazy.config.json', 'lazy.config.json');
+            copy.file('src/public/system.polyfill.js', 'system.polyfill.js');
+            copy.file('src/public/system.import.js', 'system.import.js');
+            copy.file('src/public/system.config.prod.js', 'system.config.prod.js');
+            copy.file('src/public/index.html', 'index.html');
+            
+            if (hasWarning) {
+                utils.warn('Please move or delete existing files to prevent overwiting. Use a diff tool to track project specific changes.');
+                return;
+            }
+
+        }
+    }
+
+    if (!useVersion) {
+        return;
+    }
 
     fs.readFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/package.json', (err, script) => {
 
         if (err) throw err;
-
+        
         script = JSON.parse(script);
 
         Object.keys(script.dependencies).forEach((dep) => {
@@ -118,7 +160,8 @@ let init = function () {
 
         fs.writeFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/package.json', JSON.stringify(script, null, 4), function (err) {
             if (err) log(err);
-            alert('ngr updated ' + colors.bold(colors.red('@angular')), '=> ' + colors.bold(colors.white(useVersion)) );
+            utils.alert('ngr updated ' + colors.bold(colors.red('@angular')), '=> ' + colors.bold(colors.white(useVersion)) );
+            utils.alert('Please run npm install');
         });
 
     });

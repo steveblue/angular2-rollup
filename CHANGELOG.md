@@ -1,23 +1,102 @@
-##1.0.0-beta.10
+## 1.0.0-beta.10
 
-- New configuration file `lazy.config.json` for lazyloaded bundles 
-- New `system.polyfill.js` loads `lazy.config.json`, uses a polyfill for SystemJS to map lazyloaded bundles
+- BREAKING CHANGES in boilerplate `index.html`, `system.import.js`, and `system.config.prod.js`. Refactored files to support lazyloaded bundles
+- New configuration file `lazy.config.json` provides model for automating Closure Compiler and SystemJS polyfill for lazyloaded bundles
+- Moved the SystemJS polyfill into `system.polyfill.js`. This script requests `lazy.config.json`, uses a polyfill for SystemJS to map lazyloaded bundles
 - `--closure` is now the default production build, use `ngr build prod --rollup` to bundle with Rollup instead
-- Condensed log messages for build scripts. Use --verbose to print more verbose messages
-- Fixed issue with closure that prevented bundle.js from being created
-- Updated --verbose logs for closure build
+- Condensed log messages for build scripts. Use `--verbose` to print more verbose messages
+- Fixed issue with Closure Compiler that prevented bundle.js from being created
+- Improved error reporting across the builds
+- Prevented overwriting of project files when user repeats `ngr scaffold` or `ngr update`
+- Third party libraries (externs) can be bundled but not mangled by ADVANCED_OPTIMIZATIONS when configured in `lazy.config.json`
+- New argument for update `--cliVersion` will attempt to update existing boilerplate, but will not overwrite existing files
+
+To update:
+
+$`npm -g angular-rollup@latest`
+
+In the project directory: 
+
+$`ngr update --angularVersion 4.4.3 --cliVersion 1.0.0-beta.10`
+$`npm install`
+
+
+### ngr update --cliVersion
+
+```
+$ ngr update --cliVersion 1.0.0-beta.10
+[13:17:07] LOG Review changes to angular-rollup in the CHANGELOG (https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md)  
+[13:17:07] LOG lazy.config.json copied to /Users/steveb/www/4-test/
+[13:17:07] LOG system.polyfill.js copied to /Users/steveb/www/4-test/
+[13:17:07] WARN src/public/system.import.js already exists 
+[13:17:07] WARN src/public/system.config.prod.js already exists 
+[13:17:07] WARN src/public/index.html already exists 
+[13:17:07] WARN Please move or delete existing files to prevent overwiting. Use a diff tool to track project specific changes. 
+```
+
+The update task copies new files, warns about overwriting existing files.
+
+If you have changed boilerplate files, you will need to diff them against the new files. 
+Copy the files into a temporary directory and run the command again, then diff the existing files to check for project specific changes. 
+
+If you do not have changes to the boilerplate files, just remove the files and run the command again.
+
+```
+$ rm -rf src/public/system.import.js
+$ rm -rf src/public/system.config.prod.js
+$ rm -rf src/public/index.html
+$ ngr update --cliVersion 1.0.0-beta.10
+[13:20:43] LOG Review changes to angular-rollup in the CHANGELOG (https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md)  
+[13:20:43] WARN lazy.config.json already exists 
+[13:20:43] WARN src/public/system.polyfill.js already exists 
+[13:20:43] LOG system.import.js copied to /Users/steveb/www/4-test/
+[13:20:43] LOG system.config.prod.js copied to /Users/steveb/www/4-test/
+[13:20:43] LOG index.html copied to /Users/steveb/www/4-test/
+[13:20:43] WARN Please move or delete existing files to prevent overwiting. Use a diff tool to track project specific changes. 
+```
+
+NOTE: The second warning in the above example is fine, since lazy.config.json and src/public/system.polyfill.js are new files.
+
+
+### lazy.config.json
+
+A new file is required to configure both the production build script and the SystemJS polyfill at runtime.
+
+```
+{
+    "bundles": {
+        "shared/components/lazy/lazy.module.ngfactory.js": {
+            "src": "./ngfactory/src/app/shared/components/lazy/lazy.module.ngfactory.js",
+            "filename": "lazy.module.bundle.js",
+            "className": "LazyModuleNgFactory",
+            "path": "http://localhost:4200",
+            "externs": []
+        }
+    }
+}
+```
+
+^ All properties are required except `externs`
+
+To bundle third party scripts, point to the minified version of the script in the externs Array.
+
+```
+"externs": [
+                "node_modules/marked/marked.min.js"
+           ]
+```
 
 
 -------------------------------------------------------------------------------------------------------------
 
-##1.0.0-beta.9
+## 1.0.0-beta.9
 
 - Fixed issue with update warning
 
 -------------------------------------------------------------------------------------------------------------
 
 
-##1.0.0-beta.8
+## 1.0.0-beta.8
 
 - Cleaned up terminal logs
 - Added warning message for when locally installed cli is out of date
@@ -25,7 +104,7 @@
 
 -------------------------------------------------------------------------------------------------------------
 
-##1.0.0-beta.7
+## 1.0.0-beta.7
 
 - New wizard makes codegen simpler, trigger with `ngr generate wizard`
 - Fixed usage of `g` as shorthand for `generate`
@@ -56,7 +135,7 @@ e2e:  n
 
 -------------------------------------------------------------------------------------------------------------
 
-##1.0.0-beta.6
+## 1.0.0-beta.6
 
 - Use `ngr update --angularVersion` to update your package.json to a specific version of @angular
 - New and improved Module generation. `--include` flag can be configured to auto import Component, Directive, Routes into the Module.
@@ -85,19 +164,19 @@ COMING SOON FOR 1.0.0-beta
 
 -------------------------------------------------------------------------------------------------------------
 
-##1.0.0-beta.4
+## 1.0.0-beta.4
 
 - Hotfix TypeScript compilation onchange when using `ngr build dev --jit`
 
 -------------------------------------------------------------------------------------------------------------
 
-##1.0.0-beta.3
+## 1.0.0-beta.3
 
 - Hotfix for global css that would not compile correctly
 
 -------------------------------------------------------------------------------------------------------------
 
-##1.0.0-beta.2
+## 1.0.0-beta.2
 
 - Refactored SASS / PostCSS build steps, removed duplicate code
 - Added config for the `libsass` compiler
@@ -143,7 +222,7 @@ style: {
 -------------------------------------------------------------------------------------------------------------
 
 
-##1.0.0-beta.1
+## 1.0.0-beta.1
 
 - Bypass Rollup and build for production with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode
 - EXPERIMENTAL Support for lazyloading routes with ClosureCompiler, requires additional high level API coming soon
@@ -164,7 +243,7 @@ To build for production with support for lazyloaded routes:
 
 
 -------------------------------------------------------------------------------------------------------------
-##1.0.0-beta.0
+## 1.0.0-beta.0
 
 - Updated npm package name to `angular-rollup`, `angular2-rollup` is deprecated
 - Cross platform support including MacOS, Windows and Linux for the CLI
@@ -182,7 +261,7 @@ Minimal changes will be required to upgrade to `angular-rollup`.
 
 -------------------------------------------------------------------------------------------------------------
 
-##5.0.0-beta.6
+## 5.0.0-beta.6
 
 BREAKING CHANGES
 
@@ -196,7 +275,7 @@ To update existing projects, migrate `main.prod.ts`, `tsconfig.dev.json` and `ts
 
 NOTE: `ngr build lib` is broken in `5.0.0-beta.4-5.0.0-beta.6`. If you want to test this build use `ngr scaffold --angularVersion 5.0.0-beta.3` to scaffold your app.
 
-###Prior to 5.0.0
+### Prior to 5.0.0
 
 `main.prod.ts`
 
@@ -283,7 +362,7 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
 ```
 
 
-###After 5.0.0
+### After 5.0.0
 
 `main.prod.ts`
 
@@ -403,7 +482,7 @@ Prior to 5.0.0 `main.prod.ts` needed to be included for `ngc`. After 5.0.0 `ngc`
 ```
 
 
-##4.4.0-RC.0
+## 4.4.0-RC.0
 
 MAJOR BREAKING CHANGES in this release. This release is primarily to improve the CLI, make writing custom builds easier. This release decouples the CLI from project code.
 
@@ -417,7 +496,7 @@ MAJOR BREAKING CHANGES in this release. This release is primarily to improve the
 - Normalized CLI commands, use build instead of --build or generate instead of --generate
 
 
-###MIGRATING from 4.3.6 to 4.4.0-RC.0
+### MIGRATING from 4.3.6 to 4.4.0-RC.0
 
 Install the CLI globally. `npm install -g angular2-rollup`
 
@@ -493,19 +572,19 @@ Update `@angular` dependencies in `package.json`
 
 
 
-##4.3.6
+## 4.3.6
 
 - Updated to Angular 4.3.6
 - Fixed issue in library build that prevented global CSS form compiling minified
 
 
-##4.3.5
+## 4.3.5
 
 - Updated to Angular 4.3.5
 - Deprecated `@types/core-js` and instead configured `compilerOptions.lib` for the dev build
 
 
-##4.3.0
+## 4.3.0
 
 - Updated to Angular 4.3.0
 - Updated RxJs to ~5.4.2 and TypeScript to ^4.2.0, included TypeScript fix in RxJs
@@ -540,7 +619,7 @@ The production build now requires a new Object in build.config.js with the prope
 ```
 
 
-##4.3.0-beta.0
+## 4.3.0-beta.0
 
 - Updated to Angular 4.3.0-beta.0
 - Updated packages to latest compatible versions
@@ -589,7 +668,7 @@ For more information: https://github.com/postcss/postcss-cli/wiki/Migrating-from
 ----------------------------------------------------------------------------------------------------
 
 
-##4.2.0
+## 4.2.0
 
 - Updated to Angular 4.2.0
 - Fixed issue when updating global SASS, livereload and CSS would not update when editing certain files
@@ -600,7 +679,7 @@ For more information: https://github.com/postcss/postcss-cli/wiki/Migrating-from
 
 ----------------------------------------------------------------------------------------------------
 
-##4.0.3
+## 4.0.3
 
 - Updated to Angular 4.0.3
 - New CLI commands, run `npm i -g` to use in your project
@@ -630,13 +709,13 @@ For more information: https://github.com/postcss/postcss-cli/wiki/Migrating-from
 
 ----------------------------------------------------------------------------------------------------
 
-##4.0.2
+## 4.0.2
 
 - Updated to Angular 4.0.2
 
 ----------------------------------------------------------------------------------------------------
 
-##4.0.1
+## 4.0.1
 
 
 - Updated to Angular 4.0.1

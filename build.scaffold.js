@@ -10,6 +10,7 @@ const cons = clim();
 
 let lib = false;
 let useVersion = '5.0.0';
+let hasWarning = false;
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
@@ -26,6 +27,11 @@ const alert = function (noun, verb, action, next) {
     cons.log(n + ' ' + v + ' ' + a + ' ' + x);
 };
 
+const warn = function (action, noun) {
+    let a = action ? colors.red(action) : '';
+    let n = noun ? colors.white(noun) : '';
+    cons.warn(a + ' ' + n);
+};
 
 
 clim.getTime = function () {
@@ -54,7 +60,6 @@ const files     = [
     '.editorconfig',
     '.gitignore',
     '.npmignore',
-    'build.config.js',
     'closure.conf',
     'closure.lazy.conf',
     'closure.externs.js',
@@ -110,8 +115,13 @@ process.argv.forEach((arg)=>{
 
 const copy = {
     file: (p) => {
-        cp('-R', p, path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/');
-        log(p.split('/')[p.split('/').length - 1], 'copied to', path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/');
+        if (fs.existsSync(path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/' + p.split('/')[p.split('/').length - 1])) {
+            warn(p.split('/')[p.split('/').length - 1] + ' already exists');
+            hasWarning = true;
+        } else {
+            cp('-R', p, path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
+            log(p.split('/')[p.split('/').length - 1], 'copied to', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
+        }
     },
     scaffold: (files) => {
         files.forEach((filename)=>{
@@ -120,9 +130,8 @@ const copy = {
     }
 };
 
-
-
 let init = function() {
+
 
     if (lib == false) {
 
@@ -135,6 +144,12 @@ let init = function() {
     } else {
         copy.scaffold(files);
     }
+
+    if (hasWarning == true) {
+        warn('Please move or delete existing files to prevent overwiting.');
+        return;
+    }
+
 
     cp(path.dirname(fs.realpathSync(__filename)) + '/package.scaffold.json', path.dirname(process.cwd()) + '/' + path.basename(process.cwd())+'/package.json');
 

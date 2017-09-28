@@ -213,7 +213,6 @@ const compile = {
       fs.writeFile(path.normalize(config.projectRoot+'/tmp/closure.lazy.conf'), conf, 'utf-8', () => {
 
         if (isVerbose) log('manifest built');
-        //if (isVerbose) log('\n'+conf);
 
         finalExec += 'java -jar node_modules/google-closure-compiler/compiler.jar --flagfile ./tmp/closure.lazy.conf \\\n'
         finalExec += '--entry_point=./main.prod \\\n';
@@ -233,10 +232,14 @@ const compile = {
                     ':(self._S=self._S||[]).push((function(){%s})); //# sourceMappingURL=%basename%.map" \\\n';
         });
 
-        exec(finalExec, () => {
+        exec(finalExec, { silent: true }, (code, output, error) => {
           
+          if (error) {
+            warn(error);
+            return;
+          }
 
-          exec('java -jar node_modules/google-closure-compiler/compiler.jar --compilation_level=SIMPLE_OPTIMIZATIONS --js ./src/public/system.polyfill.js --js_output_file ./build/system.polyfill.js', { silent: true },  (code, output, error) => {
+          exec('java -jar node_modules/google-closure-compiler/compiler.jar --compilation_level=SIMPLE_OPTIMIZATIONS --js ./src/public/system.polyfill.js --js_output_file ./build/system.polyfill.js', { silent: true }, (code, output, error) => {
 
             if (error) {
               warn(error);
@@ -245,7 +248,7 @@ const compile = {
             
             if(isVerbose) log('closure compiler', 'optimized system.polyfill.js');
             alert('closure compiler', colors.green('optimized project bundles'));
-            
+
             if (canServe === true) {
               alert(colors.green('Ready to serve'));
               utils.serve(canWatch);
@@ -258,6 +261,10 @@ const compile = {
 
             var externs = bundle.model.externs;
 
+            if(!externs || externs.length === 0) {
+              return;
+            }
+            
             fs.readFile(config.build + '/' + bundle.model.filename, 'utf8', function (err, contents) {
 
               externs.forEach((dep, i) => {
@@ -347,7 +354,7 @@ const compile = {
               let modulePath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'));
               
               if (isVerbose) log('optimizing', bundle.filename);
-              
+    
               fs.readFile(filePath, 'utf8', function (err, contents) {
                 if (!err) {
                   let ngFactoryClassName = '';
@@ -363,7 +370,7 @@ const compile = {
 
                     let bun = {
                       ngFactoryFile: fileName,
-                      ngFactoryClassName: ngFactoryClassName,
+                      ngFactoryClassName: bundle.className || ngFactoryClassName,
                       fileName: fileName.replace('.js', '').replace('.ts', ''),
                       filePath: filePath,
                       fileContent: fs.readFileSync('./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n'),

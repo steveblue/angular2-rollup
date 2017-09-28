@@ -6,10 +6,9 @@ const path        = require('path');
 const fs          = require('fs');
 const program     = require('commander');
 const spawn       = require('child_process').spawn;
-const utils       = require(__dirname + '/build.utils.js');
 const package     = require(__dirname + '/package.json');
 const prompt      = require('prompt');
-const config      = utils.config;
+
 
 let cliCommand = '';
 let useVersion = '4.4.2';
@@ -31,26 +30,6 @@ function cmpVersions(a, b) {
 }
 
 
-exec('npm view angular-rollup version', { silent: true }, function(err, result, c) {
-
-    let sanitizedResult = result.replace('-beta', '').trim();
-    let sanitizedPackageVersion = package.version.replace('-beta', '').replace(',', '');
-    let sortedList = [sanitizedResult, sanitizedPackageVersion].sort(cmpVersions);
-    if (sanitizedResult !== sanitizedPackageVersion) {
-
-        if (sortedList[1] === sanitizedResult) {
-            utils.warn('');
-            utils.warn('');
-            utils.alert(utils.colors.red('Please update angular-rollup to the latest version ' + result.trim() ));
-            utils.alert(utils.colors.red('See what\'s changed https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md'));
-            utils.alert(utils.colors.white('npm i -g angular-rollup@latest'));
-            utils.warn('');
-            utils.warn('');
-        }
-
-    }
-
-});
 
 program
     .version(package.version)
@@ -78,7 +57,52 @@ program
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
     .option('--angularVersion [string]', 'Scaffold a new project with a specific @angular version')
     .option('update, --update [bool]', 'Update a project')
+    .option('--cliVersion [string]', 'Update an existing project with changes to config files provided by the cli')
     .parse(process.argv);
+
+if (program.scaffold) {
+
+    if (program.lib) {
+        cliCommand = 'node ' + path.normalize(path.dirname(fs.realpathSync(__filename)) + '/build.scaffold.js') + ' --lib';
+    } else {
+        cliCommand = 'node ' + path.normalize(path.dirname(fs.realpathSync(__filename)) + '/build.scaffold.js');
+    }
+
+    if (program.angularVersion === undefined) {
+        cliCommand += ' version=' + useVersion;
+    } else {
+        cliCommand += ' version=' + program.angularVersion;
+    }
+
+    cp(path.join(path.dirname(fs.realpathSync(__filename)), 'build.config.js'), path.join(path.dirname(process.cwd()), path.basename(process.cwd())));
+    spawn(cliCommand, { shell: true, stdio: 'inherit' });
+    return;
+
+}
+
+const utils = require(__dirname + '/build.utils.js');
+const config = utils.config;
+
+exec('npm view angular-rollup version', { silent: true }, function (err, result, c) {
+
+    let sanitizedResult = result.replace('-beta', '').trim();
+    let sanitizedPackageVersion = package.version.replace('-beta', '').replace(',', '');
+    let sortedList = [sanitizedResult, sanitizedPackageVersion].sort(cmpVersions);
+    if (sanitizedResult !== sanitizedPackageVersion) {
+
+        if (sortedList[1] === sanitizedResult) {
+            utils.warn('');
+            utils.warn('');
+            utils.alert(utils.colors.red('Please update angular-rollup to the latest version ' + result.trim()));
+            utils.alert(utils.colors.red('See what\'s changed https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md'));
+            utils.alert(utils.colors.white('npm i -g angular-rollup@latest'));
+            utils.warn('');
+            utils.warn('');
+        }
+
+    }
+
+});
 
 
 if (program.serve && program.build === undefined) {
@@ -307,34 +331,20 @@ if (program.generate) {
 }
 
 
-if (program.scaffold) {
-
-
-    if (program.lib) {
-        cliCommand = 'node '+path.normalize(path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js')+' --lib';
-    } else {
-        cliCommand = 'node '+path.normalize(path.dirname(fs.realpathSync(__filename))+'/build.scaffold.js');
-    }
-
-    if (program.angularVersion === undefined) {
-        cliCommand += ' version=' + useVersion;
-    } else {
-        cliCommand += ' version=' + program.angularVersion;
-    }
-
-    cp(path.join(path.dirname(fs.realpathSync(__filename)), 'build.config.js'), path.join(path.dirname(process.cwd()) , path.basename(process.cwd())));
-    spawn(cliCommand, { shell: true, stdio: 'inherit' });
-
-}
-
 if (program.update) {
 
     cliCommand = 'node ' + path.normalize(path.dirname(fs.realpathSync(__filename)) + '/build.update.js');
 
-    if (program.angularVersion === undefined) {
-        cliCommand += ' version=' + useVersion;
-    } else {
+    if (program.angularVersion) {
         cliCommand += ' version=' + program.angularVersion;
+    }
+
+    if (program.cliVersion) {
+        cliCommand += ' cliVersion=' + program.cliVersion;
+    }
+
+    if (program.lib) {
+        cliCommand += ' lib=' + program.lib;
     }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
