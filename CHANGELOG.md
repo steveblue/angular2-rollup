@@ -1,6 +1,10 @@
 ## 1.0.0-beta.10
 
-- BREAKING CHANGES in boilerplate `index.html`, `system.import.js`, and `system.config.prod.js`. Refactored files to support lazyloaded bundles
+This update includes the remaining major new features for 1.0.0. Leading up to 1.0.0 this project will primarily be targeting bugfixes and improvements to support @angular 5.0.0.
+
+We made several improvements to scaffolding and updating apps built with the `ngr` cli. Both scripts now warn you that files will be overwritten. `ngr update` includes a helper `--cliVersion` to track changes necessary in boilerplate files when updating. We included a new `--dynamicRoutes` option for scaffolding that allows for a dynamic route configuration on bootstrap. You will notice more concise log messages and better error reporting in the terminal with this release. Closure Compiler is now the default bundler when running `ngr build prod`. 
+
+- Refactored boilerplate `index.html`, `system.import.js`, and `system.config.prod.js` to support lazyloaded bundles
 - New `--dynamicRoutes` option available for scaffold and update, will scaffold app with support for configurable routes prior to bootstrap
 - New configuration file `lazy.config.json` provides model for automating Closure Compiler and SystemJS polyfill for lazyloaded bundles
 - Moved the SystemJS polyfill into `system.polyfill.js`. This script requests `lazy.config.json`, uses a polyfill for SystemJS to map lazyloaded bundles
@@ -18,7 +22,7 @@ $`npm install -g angular-rollup@latest`
 
 In the project directory: 
 
-$`ngr update --angularVersion 4.4.3 --cliVersion 1.0.0-beta.10`
+$`ngr update --angularVersion 4.4.4 --cliVersion 1.0.0-beta.10`
 $`npm install`
 
 
