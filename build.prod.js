@@ -233,7 +233,7 @@ const compile = {
         });
 
         exec(finalExec, { silent: true }, (code, output, error) => {
-          
+
           if (error) {
             warn(error);
             return;
@@ -245,7 +245,7 @@ const compile = {
               warn(error);
               return;
             }
-            
+
             if(isVerbose) log('closure compiler', 'optimized system.polyfill.js');
             alert('closure compiler', colors.green('optimized project bundles'));
 
@@ -264,7 +264,7 @@ const compile = {
             if(!externs || externs.length === 0) {
               return;
             }
-            
+
             fs.readFile(config.build + '/' + bundle.model.filename, 'utf8', function (err, contents) {
 
               externs.forEach((dep, i) => {
@@ -313,7 +313,7 @@ const compile = {
 
       let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
         ' -p ' + path.normalize('./tsconfig.prod.lazy.json'), { silent: true },  function(code, output, error) {
-          
+
           if (error) {
             warn(error);
             return;
@@ -352,9 +352,9 @@ const compile = {
               let filePath = bundle.src;
               let fileName = filePath.replace(/^.*[\\\/]/, '');
               let modulePath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'));
-              
+
               if (isVerbose) log('optimizing', bundle.filename);
-    
+
               fs.readFile(filePath, 'utf8', function (err, contents) {
                 if (!err) {
                   let ngFactoryClassName = '';
@@ -639,7 +639,7 @@ watcher
           config.lazyModulePaths = JSON.parse(contents).files;
           init();
         } else {
-          warn('tsconfig.prod.lazy.json does not exist in project folder. Cannot extrapolate lazyloaded modules.');
+          warn('Connay extrapolate bundles. lazy.config.json does not exist in project folder. Please use ngr update --cliVersion 1.0.0-beta.10 to add lazy.config.json.');
         }
 
       });

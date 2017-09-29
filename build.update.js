@@ -97,7 +97,8 @@ process.argv.forEach((arg) => {
 
 const copy = {
     file: (filePath, fileName) => {
-        if (fs.existsSync(utils.config.projectRoot + filePath)) {
+
+        if (fs.existsSync(utils.config.projectRoot +'/'+ filePath)) {
             utils.warn(filePath + ' already exists');
             hasWarning = true;
         } else {
@@ -132,7 +133,7 @@ let init = function () {
 
         cp('-R', utils.config.cliRoot + '/src/lib/', utils.config.projectRoot + '/src');
 
-    } 
+    }
 
     if (dynamicRoutes) {
 
@@ -175,7 +176,7 @@ let init = function () {
             copy.file('src/public/system.import.js', 'system.import.js');
             copy.file('src/public/system.config.prod.js', 'system.config.prod.js');
             copy.file('src/public/index.html', 'index.html');
-            
+
             if (hasWarning) {
                 utils.warn('Please move or delete existing files to prevent overwiting. Use a diff tool to track project specific changes.');
                 return;
@@ -191,7 +192,7 @@ let init = function () {
     fs.readFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/package.json', (err, script) => {
 
         if (err) throw err;
-        
+
         script = JSON.parse(script);
 
         Object.keys(script.dependencies).forEach((dep) => {
