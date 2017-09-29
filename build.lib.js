@@ -114,7 +114,7 @@ const compile = {
                 }
               }, contents, filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/')));
 
-              alert('ngr', 'inline', 'template and styles for', filePath);
+              if(isVerbose) ('inline template and styles for', filePath);
 
               if (inline) {
                 contents = inline.code;
@@ -152,14 +152,14 @@ const compile = {
 
         let clean = exec(scripts['clean:ngfactory'], function(code, output, error) {
 
-              alert('ngc', 'started compiling', 'ngfactory');
+              alert('@angular/compiler', 'started');
 
               let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
                              ' -p '+path.normalize('./tsconfig.lib.json'), function(code, output, error) {
 
-                  alert('ngc', 'compiled', 'ngfactory');
+                  alert('@angular/compiler', 'compiled ngfactory');
                   cp('-R', path.normalize(config.lib+'/')+'.', path.normalize('ngfactory/'));
-                  alert('rollup', 'started bundling');
+                  alert('rollup', 'started');
 
                  let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib.js', function(code, output, error) {
 
@@ -178,8 +178,8 @@ const compile = {
 
          let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
                         ' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
-                  alert('ngc', 'compiled', 'ngfactory');
-                  alert('rollup', 'started bundling');
+                  alert('@angular/compiler', 'compiled', 'ngfactory');
+                  alert('rollup', 'started');
 
                  let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+
                                    ' -c rollup.config.lib-umd.js', function(code, output, error) {
@@ -213,14 +213,13 @@ const compile = {
          let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
                         ' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
 
-          log('ngc', 'compiled', 'ngfactory');
-                  alert('rollup', 'started bundling');
+                 alert('@angular/compiler', 'compiled');
+                 alert('rollup', 'started');
 
                  let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+
                                    ' -c rollup.config.lib-es5.js', function(code, output, error) {
 
                     alert('rollup', 'bundled', config.libFilename+'.es5.js in', './'+config.dist);
-
 
                     find(path.normalize('./ngfactory/'))
                               .filter(function (file) { return file.match(/\.d.ts$/); })
@@ -261,6 +260,7 @@ const compile = {
                                     ' --presets=es2015-rollup '+ path.normalize('./dist/') + config.libFilename + '.es5.js'+
                                     ' --out-file '+ path.normalize('./dist/') + config.libFilename +'.es5.js', function(code, output, error){
                           alert('Babel', 'transpiled', './'+config.dist+'/'+config.libFilename+' to', './'+config.dist+'/'+config.libFilename+'.es5.js');
+                          alert(colors.green('Build is ready'));
                      });
 
                     exec( require(config.projectRoot + '/package.json').scripts['copy:package'], function() {
@@ -270,8 +270,6 @@ const compile = {
                       if (config.buildHooks && config.buildHooks.lib && config.buildHooks.lib.post) {
                         config.buildHooks.lib.post();
                       }
-
-                      alert(colors.green('Build is ready'));
 
                     });
 
