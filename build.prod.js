@@ -639,7 +639,7 @@ watcher
           config.lazyModulePaths = JSON.parse(contents).files;
           init();
         } else {
-          warn('Connay extrapolate bundles. lazy.config.json does not exist in project folder. Please use ngr update --cliVersion 1.0.0-beta.10 to add lazy.config.json.');
+          warn('Cannot extrapolate bundles. lazy.config.json does not exist in project folder. Please use ngr update --cliVersion 1.0.0-beta.10 to add lazy.config.json.');
         }
 
       });
