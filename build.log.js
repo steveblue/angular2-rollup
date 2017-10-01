@@ -6,15 +6,15 @@ const cons = clim();
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
-    let n = noun ? colors.dim(colors.blue(noun)) : '';
+    let n = noun ? colors.dim(colors.white(noun)) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
     cons.log(a + ' ' + n + ' ' + x);
 };
 
 const alert = function (noun, verb, action, next) {
     let n = noun ? colors.white(noun) : '';
-    let v = verb ? colors.gray(verb) : '';
-    let a = action ? colors.gray(action) : '';
+    let v = verb ? colors.white(verb) : '';
+    let a = action ? colors.white(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
     cons.log(n + ' ' + v + ' ' + a + ' ' + x);
 };

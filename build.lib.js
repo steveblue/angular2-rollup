@@ -157,7 +157,7 @@ const compile = {
               let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
                              ' -p '+path.normalize('./tsconfig.lib.json'), function(code, output, error) {
 
-                  alert('@angular/compiler', 'compiled ngfactory');
+                  alert(colors.green('@angular/compiler compiled ngfactory'));
                   cp('-R', path.normalize(config.lib+'/')+'.', path.normalize('ngfactory/'));
                   alert('rollup', 'started');
 
@@ -334,7 +334,7 @@ let init = function() {
     function (filePath) {
 
       if (hasCompletedFirstStylePass === false) {
-        alert('libsass and postcss', 'compiled');
+        alert(colors.green('libsass and postcss compiled'));
         hasCompletedFirstStylePass = true;
         compile.src();
       }
@@ -408,7 +408,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
         },
           function (filePath) {
             if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
-              alert('libsass and postcss', 'compiled');
+              alert(colors.green('libsass and postcss compiled'));
               hasCompletedFirstStylePass = true;
               compile.src();
             }
@@ -427,7 +427,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    alert('ngr started', colors.red(env));
+    alert(colors.green('ngr started lib'));
 
     init();
 });

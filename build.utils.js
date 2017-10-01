@@ -314,13 +314,18 @@ const utils = {
     bundle: {
 
         removeDuplicates: (reference, bundle) => {
-            const refLength = bundle.length;
-            for (let i = 0; i < refLength; i++) {
-              const item = bundle[refLength - i -1];
-              if (reference.includes(item)) {
-                bundle.splice(refLength - i - 1, 1)
-              }
-            }
+            return new Promise((res, rej)=>{
+                const refLength = bundle.fileContent.length;
+                for (let i = 0; i < refLength; i++) {
+                    const item = bundle.fileContent[refLength - i - 1];
+                    if (reference.includes(item)) {
+                        bundle.fileContent.splice(refLength - i - 1, 1)
+                    }
+                    if (i === refLength - 1) {
+                        res(bundle);
+                    }
+                }
+            })
         },
 
         injectCustomExport: (filePath, moduleFactoryName) => {

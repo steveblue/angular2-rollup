@@ -141,11 +141,11 @@ const compile = {
         }
 
         if (filePath) {
-          alert('typescript', 'transpiled', filePath);
+          alert(colors.green('typescript compiled', filePath));
           cp(filePath, path.normalize('build/' + filePath));
           isCompiling = false;
         } else {
-          alert('typescript', 'transpiled', config.src);
+          alert(colors.green('typescript compiled'));
         }
 
         if (hasInit === false) {
@@ -171,7 +171,7 @@ const compile = {
 
               if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
-                alert('libsass and postcss', colors.green('compiled'));
+                alert(colors.green('libsass and postcss compiled'));
                 if (canServe === true) {
                   alert(colors.green('Ready to serve'));
                   utils.serve(canWatch);
@@ -242,7 +242,7 @@ const compile = {
           });
 
       } else {
-          alert('typescript', 'transpiled');
+          // alert('typescript', 'compiled');
           tsExec = path.normalize(config.projectRoot + '/node_modules/.bin/tsc') +
                                   ' -p ' + path.normalize('./tsconfig.jit.json');
           compile.file(tsExec, filePath);
@@ -340,7 +340,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
   else if ( filePath.indexOf('.ts') > -1 && hasInit === true) {
 
-   
+
     if (!isCompiling) {
 
       alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered transpile');
@@ -377,7 +377,8 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
         if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
-          alert('libsass and postcss', 'compiled');
+          alert(colors.green('libsass and postcss compiled'));
+
           if (canWatch === true) {
             alert(colors.green('Ready to serve'));
             alert(colors.green('Watcher listening for changes'));
@@ -410,7 +411,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    alert('ngr started', colors.red(env));
+    alert(colors.green('ngr started ' + env));
     init();
 
 });

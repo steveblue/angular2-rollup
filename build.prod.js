@@ -175,7 +175,7 @@ const compile = {
               warn(error);
               return;
             }
-            alert('closure compiler', colors.green('optimized the bundle'));
+            alert(colors.green('closure compiler optimized the bundle'));
             if (canServe === true) {
               alert(colors.green('Ready to serve'));
               utils.serve(canWatch);
@@ -200,19 +200,21 @@ const compile = {
       let out = '';
       let finalExec = '';
       out += main.join('\n');
-      out += '--module=bundle:' + (main.length - 1 + 3) + '\n\n'; //Remove empty line, add the number of externs
+      out += '\n';
+      out += '--module=bundle:' + (main.length) + '\n\n'; //add the number of externs
 
       bundles.forEach((bundle)=>{
-        utils.bundle.removeDuplicates(main, bundle.fileContent);
         out += bundle.fileContent.join('\n');
         out += '\n--module='+bundle.fileName.replace('ngfactory', 'bundle')+':' + bundle.fileContent.length + ':bundle\n\n';
       });
 
       conf = conf.replace('#LIST_OF_FILES#', out);
 
+      if (isVerbose) log('compiled manifest'+ '\n' + conf);
+
       fs.writeFile(path.normalize(config.projectRoot+'/tmp/closure.lazy.conf'), conf, 'utf-8', () => {
 
-        if (isVerbose) log('manifest built');
+        if (isVerbose) log('manifest saved');
 
         finalExec += 'java -jar node_modules/google-closure-compiler/compiler.jar --flagfile ./tmp/closure.lazy.conf \\\n'
         finalExec += '--entry_point=./main.prod \\\n';
@@ -232,14 +234,23 @@ const compile = {
                     ':(self._S=self._S||[]).push((function(){%s})); //# sourceMappingURL=%basename%.map" \\\n';
         });
 
+        if (isVerbose) log(finalExec);
+        if (isVerbose) log('If the build fails, inspect tmp/closure.lazy.conf, fix the issue and run the following command' + '\n' +
+                           '----------------------------------------------------------------------------------------------' + '\n' +
+                           finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
+                           '----------------------------------------------------------------------------------------------');
+        if (isVerbose) log('compiling bundles for production');
+
         exec(finalExec, { silent: true }, (code, output, error) => {
 
           if (error) {
             warn(error);
-            return;
+            process.exit();
           }
 
-          exec('java -jar node_modules/google-closure-compiler/compiler.jar --compilation_level=SIMPLE_OPTIMIZATIONS --js ./src/public/system.polyfill.js --js_output_file ./build/system.polyfill.js', { silent: true }, (code, output, error) => {
+          exec('java -jar node_modules/google-closure-compiler/compiler.jar'+
+               ' --compilation_level=SIMPLE_OPTIMIZATIONS --js ./src/public/system.polyfill.js'+
+               ' --js_output_file ./build/system.polyfill.js', { silent: true }, (code, output, error) => {
 
             if (error) {
               warn(error);
@@ -247,7 +258,7 @@ const compile = {
             }
 
             if(isVerbose) log('closure compiler', 'optimized system.polyfill.js');
-            alert('closure compiler', colors.green('optimized project bundles'));
+            alert(colors.green('closure compiler optimized project bundles'));
 
             if (canServe === true) {
               alert(colors.green('Ready to serve'));
@@ -277,7 +288,7 @@ const compile = {
                           if (isVerbose) log('processed externs for', bundle.model.filename);
                           if (bundles.indexOf(bundle) === bundles.length - 1) {
                             // do something after bundling
-                            //alert('closure compiler', colors.green('optimized project bundles'));
+                            //alert(colors.green('closure compiler optimized project bundles'));
                           }
                         } else {
                           warn(err);
@@ -309,6 +320,70 @@ const compile = {
 
     },
 
+    removeDuplicates: (reference, bundle) => {
+      return new Promise((res, rej) => {
+        const refLength = bundle.fileContent.length;
+        for (let i = 0; i < refLength; i++) {
+          const item = bundle.fileContent[refLength - i - 1];
+          if (reference.includes(item)) {
+            bundle.fileContent.splice(refLength - i - 1, 1)
+          }
+          if (i === refLength - 1) {
+            res(bundle);
+          }
+        }
+      });
+    },
+
+    injectCustomExport: (filePath, moduleFactoryName) => {
+      let source = fs.readFileSync(filePath, 'utf-8');
+      if (source.indexOf(`self['_S']`) == -1) {
+        source = source.replace('//# sourceMappingURL',
+          `(self['_S']=self['_S']||[])["//${filePath.replace('./ngfactory/src/app/', '')}"]= {"${moduleFactoryName}": ${moduleFactoryName}};
+          //# sourceMappingURL`);
+        fs.writeFileSync(filePath, source, 'utf-8');
+      }
+    },
+
+    hoistDuplicates: (conf, main, ngfactory) => {
+
+      let hoist = (reference, bundles) => {
+
+        return new Promise((res, rej) => {
+          // declare dupe Array
+          let dupes = [];
+          // loop through bundles, add dupes to Array, delete from bundle
+          for (let i = 0; i < bundles.length; i++) {
+            for (let j = 0; j < bundles[i].fileContent.length; j++) {
+              for (let b = 0; b < bundles.length; b++) {
+                if (bundles[b].fileName !== bundles[i].fileName) {
+                  if (bundles[b].fileContent.indexOf(bundles[i].fileContent[j]) > -1 ) {
+                    if(isVerbose) warn('hoisting duplicate dependency in bundle', bundles[i].fileContent[j]);
+                    dupes.push(bundles[i].fileContent[j]);
+                    bundles[i].fileContent.splice(j, 1);
+                  }
+                  if (bundles[i].fileContent[j] === '' ) {
+                    bundles[i].fileContent.splice(j, 1);
+                  }
+                }
+              }
+            }
+          }
+
+          reference = reference.concat(dupes).filter(function (v) { return v !== '' });
+          // add dupe Array to main
+          let output = [reference, bundles];
+          res(output);
+        });
+      };
+
+      hoist(main, ngfactory).then((res) => {
+        if (isVerbose) log('building manifest');
+        compile.formatManifest(conf, res[0], res[1]);
+      });
+
+    },
+
     bundleLazy: () => {
 
       let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
@@ -323,7 +398,7 @@ const compile = {
           let main;
           let conf = fs.readFileSync(path.normalize(config.projectRoot+'/closure.lazy.conf'), 'utf-8');
 
-          if (isVerbose) log('@angular/compiler', 'compiled ngfactory');
+          if (isVerbose) log('@angular/compiler compiled ngfactory');
 
           if (fs.existsSync(config.projectRoot + '/lazy.config.json')) {
             cp(config.projectRoot+'/lazy.config.json', config.build+'/');
@@ -336,7 +411,9 @@ const compile = {
           mkdir(path.normalize('./tmp'));
 
           exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf'+
-            ' --entry_point=./main.prod --output_manifest=./tmp/main.prod.MF --js_output_file=./tmp/main.prod.waste.js', { silent: true },  (code, output, error) => {
+            ' --entry_point=./main.prod'+
+            ' --output_manifest=./tmp/main.prod.MF'+
+            ' --js_output_file=./tmp/main.prod.waste.js', { silent: true },  (code, output, error) => {
 
             if (error) {
               warn(error);
@@ -344,7 +421,6 @@ const compile = {
             }
 
             main = fs.readFileSync('./tmp/main.prod.MF', 'utf-8').split('\n');
-
             if (isVerbose) log('analyzing ngfactory for manifest');
 
             function transformBundle(bundle){
@@ -353,7 +429,7 @@ const compile = {
               let fileName = filePath.replace(/^.*[\\\/]/, '');
               let modulePath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'));
 
-              if (isVerbose) log('optimizing', bundle.filename);
+
 
               fs.readFile(filePath, 'utf8', function (err, contents) {
                 if (!err) {
@@ -363,28 +439,30 @@ const compile = {
                   if (m != null) {
                     ngFactoryClassName = m[5];
                   }
+
                   exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf'+
                        ' --entry_point='+filePath.replace('.js', '').replace('.ts', '')+
                        ' --output_manifest=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.MF')+
                        ' --js_output_file=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.waste.js'), () => {
 
-                    let bun = {
-                      ngFactoryFile: fileName,
-                      ngFactoryClassName: bundle.className || ngFactoryClassName,
-                      fileName: fileName.replace('.js', '').replace('.ts', ''),
-                      filePath: filePath,
-                      fileContent: fs.readFileSync('./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n'),
-                      model: bundle
-                    };
+                    if (isVerbose) log('optimizing', bundle.filename);
 
-                    lazyBundles.push(bun);
+                    compile.removeDuplicates(main, {
+                        ngFactoryFile: fileName,
+                        ngFactoryClassName: bundle.className || ngFactoryClassName,
+                        fileName: fileName.replace('.js', '').replace('.ts', ''),
+                        filePath: filePath,
+                        fileContent: fs.readFileSync('./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n'),
+                        model: bundle
+                      }).then((bundle) => {
+                      lazyBundles.push(bundle);
+                      if (lazyBundles.length === Object.keys(config.lazyOptions.bundles).length) {
+                        //compile.hoistDuplicates(conf, main, lazyBundles).bind(compile);
+                        compile.formatManifest(conf, main, lazyBundles);
+                      }
+                    });
 
                     //if (isVerbose) log('fileName: ' + fileName.replace('.js', '').replace('.ts', '') + '\n'+JSON.stringify(bundle, null, 4));
-
-                    if (lazyBundles.length === Object.keys(config.lazyOptions.bundles).length) {
-                      if (isVerbose) log('building manifest');
-                      compile.formatManifest(conf, main, lazyBundles);
-                    }
 
                   });
                 } else {
@@ -396,7 +474,7 @@ const compile = {
             }
 
             for (var bundle in config.lazyOptions.bundles) {
-              transformBundle(config.lazyOptions.bundles[bundle])
+              transformBundle(config.lazyOptions.bundles[bundle]);
             }
 
           });
@@ -415,7 +493,7 @@ const compile = {
             return;
           }
 
-          alert('closure compiler', 'optimized bundle.js');
+          alert(colors.green('closure compiler optimized bundle.js'));
 
           if (canServe === true) {
             alert(colors.green('Ready to serve'));
@@ -455,7 +533,7 @@ const compile = {
             warn(error);
             return;
           }
-          alert('@angular/compiler', colors.green('compiled ngfactory'));
+          alert(colors.green('@angular/compiler compiled ngfactory'));
 
             if ( bundleWithClosure === true && isLazy === false) {
               compile.bundleClosure();
@@ -530,7 +608,7 @@ let init = function() {
     }
 
     if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-      alert('libsass and postcss', colors.green('compiled'));
+      alert(colors.green('libsass and postcss compiled'));
       setTimeout(compile.src, 1000);
     }
     if (hasCompletedFirstStylePass === true) {
@@ -610,7 +688,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
             }
 
             if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-              alert('libsass and postcss', colors.green('compiled'));
+              alert(colors.green('libsass and postcss compiled'));
               setTimeout(compile.src, 1000);
             }
             if (hasCompletedFirstStylePass === true) {
@@ -628,7 +706,7 @@ watcher
   .on('error', error =>  warn('ERROR:', error))
   .on('ready', () => {
 
-    alert('ngr started', colors.red(env));
+    alert(colors.green('ngr started ' + env));
 
     if(isLazy === true) {
 

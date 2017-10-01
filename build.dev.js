@@ -170,7 +170,7 @@ const compile = {
                                  ' --noImplicitAny false --allowUnreachableCode false --moduleResolution node'+
                                  ' --typeRoots node --lib dom,es2017',
               function (code, output, error) {
-                alert('tsc', 'transpiled', outFile);
+                alert(colors.green('typescript compiled', outFile));
               });
           } else {
             warn(err);
@@ -268,7 +268,7 @@ let init = function () {
   },
   function(filePath){
     if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-      alert('libsass and postcss', 'compiled');
+      alert(colors.green('libsass and postcss compiled'));
       setTimeout(compile.src, 1000);
     }
   },
@@ -327,7 +327,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
     },
     function (filePath) {
       if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-        alert('libsass and postcss', 'compiled');
+        alert(colors.green('libsass and postcss compiled'));
         setTimeout(compile.src, 1000);
       }
     },
@@ -350,7 +350,7 @@ watcher
   .on('error', error => warn('ERROR:', error))
   .on('ready', () => {
 
-    alert('ngr started', colors.red(env));
+    alert(colors.green('ngr started '+env));
     init();
 
   });
