@@ -242,10 +242,7 @@ const compile = {
         });
 
         if (isVerbose) log(finalExec);
-        if (isVerbose) log('If the build fails, inspect tmp/closure.lazy.conf, fix the issue and run the following command' + '\n' +
-                           '----------------------------------------------------------------------------------------------------' + '\n' +
-                           finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
-                           '----------------------------------------------------------------------------------------------------');
+
         alert('optimizing bundles for production');
 
         let finalBuild = exec(finalExec, { silent: true }, (code, output, error) => {
@@ -258,7 +255,11 @@ const compile = {
               log('There may be too many or not enough externs defined in closure.externs.js');
               log('A library may not be properly imported for treeshaking in your app');
               log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build');
-              log('If the problem persists, there may be an issue with the build report an issue (https://github.com/steveblue/angular2-rollup/issues)');
+              log('If the problem persists, there may be an issue with the build. Report the issue here (https://github.com/steveblue/angular2-rollup/issues)');
+              log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build, manually the issue and run the following command' + '\n' +
+                '----------------------------------------------------------------------------------------------------' + '\n' +
+                finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
+                '----------------------------------------------------------------------------------------------------');
             }
             finalBuild.kill();
           }
@@ -449,6 +450,7 @@ const compile = {
     bundleLazy: () => {
 
       let lazyBundles = [];
+      let bundleIndex = 0;
       let main;
       let conf = fs.readFileSync(path.normalize(config.projectRoot + '/closure.lazy.conf'), 'utf-8');
 
@@ -488,6 +490,7 @@ const compile = {
 
             if (isVerbose) log('read main.prod manifest');
 
+
             function transformBundle(bundle){
 
               let filePath = bundle.src;
@@ -525,14 +528,13 @@ const compile = {
                       lazyBundles.push(bundle);
 
                       if (lazyBundles.length === Object.keys(config.lazyOptions.bundles).length) {
-                        //compile.hoistDuplicates(conf, main, lazyBundles).bind(compile);
                         compile.prepareVendorFilesForManifest(conf, main, lazyBundles);
-                        //compile.formatManifest(conf, main, lazyBundles);
+                      } else {
+                        bundleIndex++;
+                        transformBundle(config.lazyOptions.bundles[Object.keys(config.lazyOptions.bundles)[bundleIndex]]);
                       }
 
                     });
-
-                    //if (isVerbose) log('fileName: ' + fileName.replace('.js', '').replace('.ts', '') + '\n'+JSON.stringify(bundle, null, 4));
 
                   });
                 } else {
@@ -543,9 +545,7 @@ const compile = {
 
             }
 
-            for (var bundle in config.lazyOptions.bundles) {
-              transformBundle(config.lazyOptions.bundles[bundle]);
-            }
+            transformBundle(config.lazyOptions.bundles[Object.keys(config.lazyOptions.bundles)[bundleIndex]]);
 
           });
 
