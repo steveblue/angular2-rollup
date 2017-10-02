@@ -199,6 +199,8 @@ const compile = {
 
       let out = '';
       let finalExec = '';
+      let hasError = false;
+
       out += main.join('\n');
       out += '\n';
       out += '--module=bundle:' + (main.length) + '\n\n'; //add the number of externs
@@ -241,11 +243,12 @@ const compile = {
                            '----------------------------------------------------------------------------------------------');
         if (isVerbose) log('compiling bundles for production');
 
-        exec(finalExec, { silent: true }, (code, output, error) => {
+        let finalBuild = exec(finalExec, { silent: true }, (code, output, error) => {
 
           if (error) {
             warn(error);
-            process.exit();
+            hasError = true;
+            finalBuild.kill();
           }
 
           exec('java -jar node_modules/google-closure-compiler/compiler.jar'+
@@ -254,18 +257,24 @@ const compile = {
 
             if (error) {
               warn(error);
+              hasError = true;
               return;
             }
 
-            if(isVerbose) log('closure compiler', 'optimized system.polyfill.js');
-            alert(colors.green('closure compiler optimized project bundles'));
+            if(!hasError) {
 
-            if (canServe === true) {
-              alert(colors.green('Ready to serve'));
-              utils.serve(canWatch);
-            } else {
-              alert(colors.green('Build is ready'));
+              if (isVerbose) log('closure compiler', 'optimized system.polyfill.js');
+              alert(colors.green('closure compiler optimized project bundles'));
+
+              if (canServe === true) {
+                alert(colors.green('Ready to serve'));
+                utils.serve(canWatch);
+              } else {
+                alert(colors.green('Build is ready'));
+              }
+
             }
+
           });
 
           bundles.forEach((bundle) => {
