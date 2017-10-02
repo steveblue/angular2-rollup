@@ -127,7 +127,7 @@ if (program.serve && program.build === undefined) {
 
 if (program.build) {
 
-    let projectPackage = JSON.parse(JSON.stringify(require(config.projectRoot + '/package.json')));
+    let projectPackage = JSON.parse(JSON.stringify(require(config.processRoot + '/package.json')));
 
     if (program.build === true) {
         utils.warn('Please use a proper argument for ngr build. i.e. prod, dev, jit');
@@ -143,7 +143,7 @@ if (program.build) {
         program.build = 'jit';
     }
 
-    let buildRoot = fs.existsSync(path.join(config.projectRoot , 'build.' + program.build + '.js')) ? config.projectRoot : config.cliRoot;
+    let buildRoot = fs.existsSync(path.join(config.processRoot , 'build.' + program.build + '.js')) ? config.processRoot : config.cliRoot;
 
     cliCommand = 'rimraf build && node ' + path.join(buildRoot , 'build.'+program.build+'.js');
 

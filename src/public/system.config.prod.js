@@ -3,6 +3,7 @@
   System.config({
     'map': {
       'bundle': 'bundle.js',
+      'vendor': 'vendor.js',
       'polyfill': 'system.polyfill.js'
     },
     'meta': {

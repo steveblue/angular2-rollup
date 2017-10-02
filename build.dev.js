@@ -132,7 +132,7 @@ const compile = {
 
   clean: (filePath) => {
 
-    const outFile = filePath ? filePath : path.join(config.projectRoot, config.build , 'bundle.js');
+    const outFile = filePath ? filePath : path.join(config.processRoot, config.build , 'bundle.js');
 
     fs.readFile(outFile, 'utf8', function (err, contents) {
       if (!err) {
@@ -155,16 +155,16 @@ const compile = {
 
   main: () => {
 
-    const outFile = path.join(config.projectRoot, config.build , 'main.ts');
+    const outFile = path.join(config.processRoot, config.build , 'main.ts');
 
-    fs.readFile(path.join(config.projectRoot, 'main.prod.js'), 'utf8', function (err, contents) {
+    fs.readFile(path.join(config.processRoot, 'main.prod.js'), 'utf8', function (err, contents) {
       if (!err) {
         contents = contents.replace("./ngfactory/src/app/app.module.ngfactory", "src/app/app.module.ngfactory");
         contents = contents.replace("import { enableProdMode } from '@angular/core';", "");
         contents = contents.replace("enableProdMode();", "");
         fs.writeFile(outFile, contents, function (err) {
           if (!err) {
-            let transpile = exec(path.join(config.projectRoot, 'node_modules/.bin/tsc')+
+            let transpile = exec(path.join(config.processRoot, 'node_modules/.bin/tsc')+
                                  ' ' + outFile + ' --target es5 --module commonjs'+
                                  ' --emitDecoratorMetadata true --experimentalDecorators true'+
                                  ' --noImplicitAny false --allowUnreachableCode false --moduleResolution node'+
@@ -190,11 +190,11 @@ const compile = {
         let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
 
           if (canWatch === true) {
-            spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+
+            spawn(path.normalize(config.processRoot+'/node_modules/.bin/ngc')+' -p '+
                   path.normalize('./tsconfig.dev.json')+
                   ' --watch', { shell: true, stdio: 'inherit' });
           } else {
-            spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+            spawn(path.normalize(config.processRoot+'/node_modules/.bin/ngc')+
                   ' -p '+path.normalize('./tsconfig.dev.json'), { shell: true, stdio: 'inherit' });
           }
 

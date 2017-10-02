@@ -195,15 +195,19 @@ const compile = {
 
     },
 
-    formatManifest: (conf, main, bundles) => {
+    formatManifest: (conf, main, bundles, vendorFiles, externs) => {
 
       let out = '';
       let finalExec = '';
       let hasError = false;
 
+      out += vendorFiles.join('\n');
+      out += '\n';
+      out += '--module=vendor:' + (vendorFiles.length + externs.length) + '\n\n'; //add the number of externs
+
       out += main.join('\n');
       out += '\n';
-      out += '--module=bundle:' + (main.length) + '\n\n'; //add the number of externs
+      out += '--module=bundle:' + (main.length) + ':vendor\n\n';
 
       bundles.forEach((bundle)=>{
         out += bundle.fileContent.join('\n');
@@ -212,7 +216,8 @@ const compile = {
 
       conf = conf.replace('#LIST_OF_FILES#', out);
 
-      if (isVerbose) log('compiled manifest'+ '\n' + conf);
+      alert('compiled manifest');
+      if (isVerbose) log('\n' + conf);
 
       fs.writeFile(path.normalize(config.projectRoot+'/tmp/closure.lazy.conf'), conf, 'utf-8', () => {
 
@@ -238,16 +243,23 @@ const compile = {
 
         if (isVerbose) log(finalExec);
         if (isVerbose) log('If the build fails, inspect tmp/closure.lazy.conf, fix the issue and run the following command' + '\n' +
-                           '----------------------------------------------------------------------------------------------' + '\n' +
+                           '----------------------------------------------------------------------------------------------------' + '\n' +
                            finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
-                           '----------------------------------------------------------------------------------------------');
-        if (isVerbose) log('compiling bundles for production');
+                           '----------------------------------------------------------------------------------------------------');
+        alert('optimizing bundles for production');
 
         let finalBuild = exec(finalExec, { silent: true }, (code, output, error) => {
 
           if (error) {
             warn(error);
             hasError = true;
+            if (error.includes('JS files specified')) {
+              log('There is a mismatch between the number of dependencies detected the and files provided')
+              log('There may be too many or not enough externs defined in closure.externs.js');
+              log('A library may not be properly imported for treeshaking in your app');
+              log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build');
+              log('If the problem persists, there may be an issue with the build report an issue (https://github.com/steveblue/angular2-rollup/issues)');
+            }
             finalBuild.kill();
           }
 
@@ -354,46 +366,91 @@ const compile = {
       }
     },
 
-    hoistDuplicates: (conf, main, ngfactory) => {
+    prepareVendorFilesForManifest: (conf, main, bundles) => {
 
-      let hoist = (reference, bundles) => {
+      let moduleRegex = /(node_modules)(\/)([a-zA-Z@-_]+)(\/)/;
+      let externsRegex = /(var|let)( )([a-zA-Z]+)( )(=)( )(function\(\){};)/;
 
-        return new Promise((res, rej) => {
-          // declare dupe Array
-          let dupes = [];
-          // loop through bundles, add dupes to Array, delete from bundle
-          for (let i = 0; i < bundles.length; i++) {
-            for (let j = 0; j < bundles[i].fileContent.length; j++) {
-              for (let b = 0; b < bundles.length; b++) {
-                if (bundles[b].fileName !== bundles[i].fileName) {
-                  if (bundles[b].fileContent.indexOf(bundles[i].fileContent[j]) > -1 ) {
-                    if(isVerbose) warn('hoisting duplicate dependency in bundle', bundles[i].fileContent[j]);
-                    dupes.push(bundles[i].fileContent[j]);
-                    bundles[i].fileContent.splice(j, 1);
-                  }
-                  if (bundles[i].fileContent[j] === '' ) {
-                    bundles[i].fileContent.splice(j, 1);
-                  }
+      // add vendor files from main bundle to vendorFiles Array
+      let vendorFiles = main.filter((fileName) => {
+        if (fileName.includes('node_modules')) {
+          return fileName;
+        }
+      });
+
+      // remove vendor files from bundle.js
+      main = main.filter((fileName)=>{
+        if (!fileName.includes('node_modules')) {
+          return fileName;
+        }
+      });
+
+      // loop through bundles and search for vendor files
+      bundles.forEach((bundle) => {
+
+          bundle.fileContent = bundle.fileContent.filter((fileName) => {
+
+            if (fileName.includes('node_modules')) {
+
+              let packageMatch = moduleRegex.exec(fileName);
+              let index = vendorFiles.length - 1;
+              let lastIndex = null;
+
+              for (; index >= 0; index--) { // insert dependency at last index of known dependencies
+                if (moduleRegex.exec(vendorFiles[index])[3] === moduleRegex.exec(fileName)[3]) {
+                  lastIndex = index;
+                  vendorFiles.splice(lastIndex, 0, fileName);
+                  break;
                 }
               }
+
+              // if library package wasnt found in vendor, should we keep it in the lazyloaded bundle?
+              // if (lastIndex === null) {
+              //   return fileName;
+              // }
+
+              // if no index of library package, push to end of vendorFiles
+              if (lastIndex === null) {
+                vendorFiles.push(fileName);
+              }
+
+            } else {
+              return fileName;
             }
-          }
 
-          reference = reference.concat(dupes).filter(function (v) { return v !== '' });
-          // add dupe Array to main
-          let output = [reference, bundles];
-          res(output);
-        });
-      };
-
-      hoist(main, ngfactory).then((res) => {
-        if (isVerbose) log('building manifest');
-        compile.formatManifest(conf, res[0], res[1]);
+          });
+          // log('BUNDLE', bundle.fileName, bundle.fileContent.length);
+          // log(bundle.fileContent.join('\n'));
       });
+
+      // remove duplicates that were included from lazyloaded bundles
+      vendorFiles = vendorFiles.filter(function (item, pos, self) {
+        return self.indexOf(item) == pos;
+      });
+
+      // log('MAIN');
+      // log(main.join('\n'));
+      // log('VENDOR');
+      // log(vendorFiles.join('\n'));
+
+      let externs = fs.readFileSync(path.normalize(config.projectRoot + '/closure.externs.js'), 'utf-8');
+      let externsLength = 0;
+
+      externs = externs.split('\n').filter((line) => {
+        if (line.match(externsRegex)) {
+          return line;
+        }
+      });
+
+      compile.formatManifest(conf, main, bundles, vendorFiles, externs);
 
     },
 
     bundleLazy: () => {
+
+      let lazyBundles = [];
+      let main;
+      let conf = fs.readFileSync(path.normalize(config.projectRoot + '/closure.lazy.conf'), 'utf-8');
 
       let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
         ' -p ' + path.normalize('./tsconfig.prod.lazy.json'), { silent: true },  function(code, output, error) {
@@ -402,10 +459,6 @@ const compile = {
             warn(error);
             return;
           }
-
-          let lazyBundles = [];
-          let main;
-          let conf = fs.readFileSync(path.normalize(config.projectRoot+'/closure.lazy.conf'), 'utf-8');
 
           if (isVerbose) log('@angular/compiler compiled ngfactory');
 
@@ -429,8 +482,11 @@ const compile = {
               return;
             }
 
-            main = fs.readFileSync('./tmp/main.prod.MF', 'utf-8').split('\n');
             if (isVerbose) log('analyzing ngfactory for manifest');
+
+            main = fs.readFileSync('./tmp/main.prod.MF', 'utf-8').split('\n');
+
+            if (isVerbose) log('read main.prod manifest');
 
             function transformBundle(bundle){
 
@@ -438,23 +494,24 @@ const compile = {
               let fileName = filePath.replace(/^.*[\\\/]/, '');
               let modulePath = filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'));
 
-
-
               fs.readFile(filePath, 'utf8', function (err, contents) {
+
                 if (!err) {
+
                   let ngFactoryClassName = '';
                   let ngFactoryNameRegex = new RegExp('(export)( )(const)( )((?:[a-z][a-z0-9_]*))(:)',["i"]);
                   let m = ngFactoryNameRegex.exec(contents);
+
                   if (m != null) {
                     ngFactoryClassName = m[5];
                   }
+
+                  if (isVerbose) log('analyzing', bundle.filename);
 
                   exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf'+
                        ' --entry_point='+filePath.replace('.js', '').replace('.ts', '')+
                        ' --output_manifest=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.MF')+
                        ' --js_output_file=./tmp/'+fileName.replace('.js', '').replace('.ts', '').concat('.waste.js'), () => {
-
-                    if (isVerbose) log('optimizing', bundle.filename);
 
                     compile.removeDuplicates(main, {
                         ngFactoryFile: fileName,
@@ -464,11 +521,15 @@ const compile = {
                         fileContent: fs.readFileSync('./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n'),
                         model: bundle
                       }).then((bundle) => {
+
                       lazyBundles.push(bundle);
+
                       if (lazyBundles.length === Object.keys(config.lazyOptions.bundles).length) {
                         //compile.hoistDuplicates(conf, main, lazyBundles).bind(compile);
-                        compile.formatManifest(conf, main, lazyBundles);
+                        compile.prepareVendorFilesForManifest(conf, main, lazyBundles);
+                        //compile.formatManifest(conf, main, lazyBundles);
                       }
+
                     });
 
                     //if (isVerbose) log('fileName: ' + fileName.replace('.js', '').replace('.ts', '') + '\n'+JSON.stringify(bundle, null, 4));
@@ -495,7 +556,9 @@ const compile = {
 
       alert('closure compiler', 'started');
 
-      let closure = exec(require(config.projectRoot + '/package.json').scripts['bundle:closure'], { silent: true }, function(code, output, error){
+      if (isVerbose) log(require(config.processRoot + '/package.json').scripts['bundle:closure']);
+
+      let closure = exec(require(config.processRoot + '/package.json').scripts['bundle:closure'], { silent: true }, function(code, output, error){
 
           if (error) {
             warn(error);
