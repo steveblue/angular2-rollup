@@ -2,25 +2,27 @@
 
 This update includes the remaining major new features for 1.0.0. Leading up to 1.0.0 this project will primarily be targeting bugfixes and improvements to support @angular 5.0.0.
 
-We made several improvements to scaffolding and updating apps built with the `ngr` cli. Both scripts now warn you that files will be overwritten. `ngr update` includes a helper `--cliVersion` to track changes necessary in boilerplate files when updating. We included a new `--dynamicRoutes` option for scaffolding that allows for a dynamic route configuration on bootstrap. You will notice more concise log messages and better error reporting in the terminal with this release. Closure Compiler is now the default bundler when running `ngr build prod`. 
+This update includes several improvements to scaffolding and updating apps. Both scripts now warn you that files will be overwritten. if you try to scaffold an app over an existing app or update files that already exist. The `ngr update` command includes a helper argument (`--cliVersion`) to track changes necessary in boilerplate files when updating. Also found in this version is a new `--dynamicRoutes` option for scaffolding that allows for a dynamic route configuration on bootstrap. More concise log messages and better error reporting in the terminal are packaged with this release. The largest change to the production build is that closure Compiler is now the default bundler when running `ngr build prod`.
 
+- `--closure` is now the default production build, use `ngr build prod --rollup` to bundle with Rollup instead
 - Refactored boilerplate `index.html`, `system.import.js`, and `system.config.prod.js` to support lazyloaded bundles
 - New `--dynamicRoutes` option available for scaffold and update, will scaffold app with support for configurable routes prior to bootstrap
-- New configuration file `lazy.config.json` provides model for automating Closure Compiler and SystemJS polyfill for lazyloaded bundles
-- Moved the SystemJS polyfill into `system.polyfill.js`. This script requests `lazy.config.json`, uses a polyfill for SystemJS to map lazyloaded bundles
-- `--closure` is now the default production build, use `ngr build prod --rollup` to bundle with Rollup instead
-- Condensed log messages for build scripts. Use `--verbose` to print more verbose messages
-- Fixed issue with Closure Compiler that prevented bundle.js from being created
-- Improved error reporting across the builds
-- Prevented overwriting of project files when user repeats `ngr scaffold` or `ngr update`
-- Third party libraries (externs) can be bundled but not mangled by ADVANCED_OPTIMIZATIONS when configured in `lazy.config.json`
 - New argument for update `--cliVersion` will attempt to update existing boilerplate, but will not overwrite existing files
+- New configuration file `lazy.config.json` provides model for automating Closure Compiler and SystemJS polyfill for lazyloaded bundles
+- Prevented overwriting of project files when user repeats `ngr scaffold` or `ngr update`
+- Moved the SystemJS polyfill into `system.polyfill.js`. This script requests `lazy.config.json`, uses a polyfill for SystemJS to map lazyloaded bundles. This config file is only necessary for the `--lazy` build.
+- Condensed log messages for build scripts. Use `--verbose` to print more verbose messages
+- Fixed issue with Closure Compiler that prevented `bundle.js` from being created
+- Improved error reporting across the builds by adding new warnings, specific messages to help fix issues
+- Third party libraries (externs) that are specific to a lazyloaded bundle can be bundled but not mangled by ADVANCED_OPTIMIZATIONS when configured in `lazy.config.json`
+- Fixed issues with `--lazy` build when two or more lazyloaded bundles shared dependencies with the main bundle
+- Fixes an issue with `--lazy` build when declaring externs in `closure.externs.js`
 
 To update:
 
 $`npm install -g angular-rollup@latest`
 
-In the project directory: 
+In the project directory:
 
 $`ngr update --angularVersion 4.4.4 --cliVersion 1.0.0-beta.10`
 $`npm install`
@@ -30,19 +32,19 @@ $`npm install`
 
 ```
 $ ngr update --cliVersion 1.0.0-beta.10
-[13:17:07] LOG Review changes to angular-rollup in the CHANGELOG (https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md)  
+[13:17:07] LOG Review changes to angular-rollup in the CHANGELOG (https://github.com/steveblue/angular2-rollup/blob/master/CHANGELOG.md)
 [13:17:07] LOG lazy.config.json copied to /Users/steveb/www/4-test/
 [13:17:07] LOG system.polyfill.js copied to /Users/steveb/www/4-test/
-[13:17:07] WARN src/public/system.import.js already exists 
-[13:17:07] WARN src/public/system.config.prod.js already exists 
-[13:17:07] WARN src/public/index.html already exists 
-[13:17:07] WARN Please move or delete existing files to prevent overwiting. Use a diff tool to track project specific changes. 
+[13:17:07] WARN src/public/system.import.js already exists
+[13:17:07] WARN src/public/system.config.prod.js already exists
+[13:17:07] WARN src/public/index.html already exists
+[13:17:07] WARN Please move or delete existing files to prevent overwiting. Use a diff tool to track project specific changes.
 ```
 
 The update task copies new files, warns about overwriting existing files.
 
-If you have changed boilerplate files, you will need to diff them against the new files. 
-Copy the files into a temporary directory and run the command again, then diff the existing files to check for project specific changes. 
+If you have changed boilerplate files, you will need to diff them against the new files.
+Copy the files into a temporary directory and run the command again, then diff the existing files to check for project specific changes.
 
 If you do not have changes to the boilerplate files, just remove the files and run the command again.
 
