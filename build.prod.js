@@ -461,13 +461,13 @@ const compile = {
       let main;
       let conf = fs.readFileSync(path.normalize(config.projectRoot + '/closure.lazy.conf'), 'utf-8');
 
-      // let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
-      //   ' -p ' + path.normalize('./tsconfig.prod.lazy.json'), { silent: true },  function(code, output, error) {
+      let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+        ' -p ' + path.normalize('./tsconfig.prod.lazy.json'), { silent: true },  function(code, output, error) {
 
-      //     if (error) {
-      //       warn(error);
-      //       return;
-      //     }
+          if (error) {
+            warn(error);
+            return;
+          }
 
           if (isVerbose) log('@angular/compiler compiled ngfactory');
 
@@ -556,7 +556,7 @@ const compile = {
 
           });
 
-     // });
+     });
     },
 
     bundleClosure: () => {
