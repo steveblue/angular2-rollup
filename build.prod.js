@@ -258,13 +258,16 @@ const compile = {
               log('There is a mismatch between the number of dependencies detected the and files provided');
               log('There may be an issue with how externs defined in closure.externs.js');
               log('Please follow this format exactly when defining an extern: var System = function(){};')
-              log('A library may not be properly imported for treeshaking in your app');
-              log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build, manually fix the issue and run the following command' + '\n' +
-                '----------------------------------------------------------------------------------------------------' + '\n' +
-                finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
-                '----------------------------------------------------------------------------------------------------');
-              log('If the problem persists, there may be an issue with the build. Report the issue here (https://github.com/steveblue/angular2-rollup/issues)');
+              log('A library or script may not be properly imported for treeshaking in your app');
             }
+            if (error.includes('WARNING - Failed to load module "@angular/')) {
+              log('There is an issue with how @angular packages are declared in closure.lazy.conf');
+            }
+            log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build, manually fix the issue and run the following command' + '\n' +
+              '----------------------------------------------------------------------------------------------------' + '\n' +
+              finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
+              '----------------------------------------------------------------------------------------------------');
+            log('If the problem persists, there may be an issue with the build. Report the issue here (https://github.com/steveblue/angular2-rollup/issues)');
             finalBuild.kill();
           }
 
@@ -458,13 +461,13 @@ const compile = {
       let main;
       let conf = fs.readFileSync(path.normalize(config.projectRoot + '/closure.lazy.conf'), 'utf-8');
 
-      let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
-        ' -p ' + path.normalize('./tsconfig.prod.lazy.json'), { silent: true },  function(code, output, error) {
+      // let ngc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+      //   ' -p ' + path.normalize('./tsconfig.prod.lazy.json'), { silent: true },  function(code, output, error) {
 
-          if (error) {
-            warn(error);
-            return;
-          }
+      //     if (error) {
+      //       warn(error);
+      //       return;
+      //     }
 
           if (isVerbose) log('@angular/compiler compiled ngfactory');
 
@@ -553,7 +556,7 @@ const compile = {
 
           });
 
-      });
+     // });
     },
 
     bundleClosure: () => {

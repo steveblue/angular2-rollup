@@ -134,11 +134,7 @@ const compile = {
 
     file: (execCmd, filePath) => {
 
-      let tsc = exec(execCmd, { silent: true },  function (code, output, error) {
-
-        if (error) {
-          warn(error);
-        }
+      let tsc = exec(execCmd, function (code, output, error) {
 
         if (filePath) {
           alert(colors.green('typescript compiled', filePath));
