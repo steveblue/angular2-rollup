@@ -175,7 +175,7 @@ const compile = {
               warn(error);
               return;
             }
-            alert(colors.green('closure compiler optimized the bundle'));
+            alert('closure compiler optimized the bundle');
             if (canServe === true) {
               alert(colors.green('Ready to serve'));
               utils.serve(canWatch);
@@ -200,6 +200,10 @@ const compile = {
       let out = '';
       let finalExec = '';
       let hasError = false;
+
+      log('processing ' + externs.length + ' externs');
+      log('processing ' + vendorFiles.length + ' vendor files');
+      log('processing ' + main.length + ' app files');
 
       out += vendorFiles.join('\n');
       out += '\n';
@@ -251,15 +255,15 @@ const compile = {
             warn(error);
             hasError = true;
             if (error.includes('JS files specified')) {
-              log('There is a mismatch between the number of dependencies detected the and files provided')
-              log('There may be too many or not enough externs defined in closure.externs.js');
+              log('There is a mismatch between the number of dependencies detected the and files provided');
+              log('There may be an issue with how externs defined in closure.externs.js');
+              log('Please follow this format exactly when defining an extern: var System = function(){};')
               log('A library may not be properly imported for treeshaking in your app');
-              log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build');
-              log('If the problem persists, there may be an issue with the build. Report the issue here (https://github.com/steveblue/angular2-rollup/issues)');
-              log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build, manually the issue and run the following command' + '\n' +
+              log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build, manually fix the issue and run the following command' + '\n' +
                 '----------------------------------------------------------------------------------------------------' + '\n' +
                 finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
                 '----------------------------------------------------------------------------------------------------');
+              log('If the problem persists, there may be an issue with the build. Report the issue here (https://github.com/steveblue/angular2-rollup/issues)');
             }
             finalBuild.kill();
           }
@@ -277,7 +281,7 @@ const compile = {
             if(!hasError) {
 
               if (isVerbose) log('closure compiler', 'optimized system.polyfill.js');
-              alert(colors.green('closure compiler optimized project bundles'));
+              alert('closure compiler optimized project bundles');
 
               if (canServe === true) {
                 alert(colors.green('Ready to serve'));
@@ -310,7 +314,7 @@ const compile = {
                           if (isVerbose) log('processed externs for', bundle.model.filename);
                           if (bundles.indexOf(bundle) === bundles.length - 1) {
                             // do something after bundling
-                            //alert(colors.green('closure compiler optimized project bundles'));
+                            //alert('closure compiler optimized project bundles');
                           }
                         } else {
                           warn(err);
@@ -565,7 +569,7 @@ const compile = {
             return;
           }
 
-          alert(colors.green('closure compiler optimized bundle.js'));
+          alert('closure compiler optimized bundle.js');
 
           if (canServe === true) {
             alert(colors.green('Ready to serve'));
@@ -605,7 +609,7 @@ const compile = {
             warn(error);
             return;
           }
-          alert(colors.green('@angular/compiler compiled ngfactory'));
+          alert('@angular/compiler compiled ngfactory');
 
             if ( bundleWithClosure === true && isLazy === false) {
               compile.bundleClosure();
@@ -680,7 +684,7 @@ let init = function() {
     }
 
     if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-      alert(colors.green('libsass and postcss compiled'));
+      alert('libsass and postcss compiled');
       setTimeout(compile.src, 1000);
     }
     if (hasCompletedFirstStylePass === true) {
@@ -760,7 +764,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
             }
 
             if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-              alert(colors.green('libsass and postcss compiled'));
+              alert('libsass and postcss compiled');
               setTimeout(compile.src, 1000);
             }
             if (hasCompletedFirstStylePass === true) {
