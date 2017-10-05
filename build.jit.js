@@ -137,11 +137,11 @@ const compile = {
       let tsc = exec(execCmd, function (code, output, error) {
 
         if (filePath) {
-          alert(colors.green('typescript compiled', filePath));
+          alert('typescript compiled', filePath);
           cp(filePath, path.normalize('build/' + filePath));
           isCompiling = false;
         } else {
-          alert(colors.green('typescript compiled'));
+          alert('typescript compiled');
         }
 
         if (hasInit === false) {
@@ -167,12 +167,12 @@ const compile = {
 
               if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
-                alert(colors.green('libsass and postcss compiled'));
+                alert('libsass and postcss compiled');
                 if (canServe === true) {
-                  alert(colors.green('Ready to serve'));
+                  alert('Ready to serve');
                   utils.serve(canWatch);
                 } else {
-                  alert(colors.green('Build is ready'));
+                  alert('Build is ready');
                 }
 
               } else if (hasCompletedFirstStylePass === true) {
@@ -373,7 +373,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
         if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
-          alert(colors.green('libsass and postcss compiled'));
+          alert('libsass and postcss compiled');
 
           if (canWatch === true) {
             alert(colors.green('Ready to serve'));
