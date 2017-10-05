@@ -218,7 +218,7 @@ const utils = {
             let postcssConfig = ' -u';
             let srcPath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf("/"));
             let filename = filePath.replace(/^.*[\\\/]/, '');
-            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(filePath.replace(config.src, config.build).replace('.scss', '.css')) : filePath.replace('.scss', '.css');
+            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(filePath.replace(config.src, cssConfig.dist).replace('.scss', '.css')) : filePath.replace('.scss', '.css');
 
             if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
                 utils.style.globalFiles(cssConfig, res, rej);
