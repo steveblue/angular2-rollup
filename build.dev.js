@@ -22,7 +22,7 @@ const warn = utils.warn;
 const alert = utils.alert;
 const clean = utils.clean;
 
-let allowPostCSS = false;
+let allowPostCSS = true;
 let canWatch = false;
 let isCompiling = false;
 let hasInit = false;
@@ -43,6 +43,9 @@ process.argv.forEach((arg) => {
   }
   if (arg.includes('verbose')) {
     isVerbose = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('postcss')) {
+    allowPostCSS = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -251,16 +254,16 @@ let init = function () {
   mkdir(path.normalize('./' + config.build + '/lib'));
 
   if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].pre) {
-    config.buildHooks[env].pre();
+    config.buildHooks[env].pre(process.argv);
   }
 
   copy.lib();
   copy.public();
-  alert('libsass and postcss', 'started');
+  allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');
   style.src({
     sassConfig: config.style.sass.dev,
     env: env,
-    allowPostCSS: true,
+    allowPostCSS: allowPostCSS,
     src: config.src,
     dist: config.build,
     styleSrcOnInit: false,
@@ -268,14 +271,15 @@ let init = function () {
   },
   function(filePath){
     if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-      alert('libsass and postcss compiled');
+      allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
       setTimeout(compile.src, 1000);
     }
   },
   function(filePath, outFile, err){
     if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
       if (!err) {
-        alert('libsass', 'compiled');
+        //alert('libsass', 'compiled');
+        allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
         setTimeout(compile.src, 1000);
       }
     }
@@ -319,7 +323,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
     style.file(filePath, {
       sassConfig: config.style.sass.dev,
       env: env,
-      allowPostCSS: true,
+      allowPostCSS: allowPostCSS,
       src: config.src,
       dist: config.build,
       styleSrcOnInit: false,

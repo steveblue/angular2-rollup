@@ -36,12 +36,13 @@ program
     .usage('<keywords>')
     .option('build, --build, b [env]', 'Build the application by environment')
     .option('-w, --watch [bool]', 'Enable file watchers to detect changes and build')
-    .option('--postcss [bool]', 'Enable postcss for dev build, default is false')
+    .option('--postcss [bool]', 'Enable postcss for build, default is true')
     .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
     .option('--closure [bool]', 'Bundle with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode, this is the default')
     .option('--lazy [bool]', 'Bundle with ClosureCompiler with support for lazyloaded modules, generate a lazyloaded route')
     .option('--rollup [bool]', 'Bundle with Rollup prior to optimizing with ClosureCompiler in SIMPLE_OPTIMIZATIONS mode')
     .option('--verbose [bool]', 'Log additional messages in build')
+    .option('--deploy [bool]', 'Option to deploy build available in buildHooks.env.post arguments' )
     .option('g, generate [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -154,14 +155,14 @@ if (program.build) {
         cliCommand += ' watch=false';
     }
 
-    if (program.postcss === true) {
-        cliCommand += ' postcss=true';
-    }
-    else {
+    if (program.postcss === 'false') {
         cliCommand += ' postcss=false';
     }
+    else {
+        cliCommand += ' postcss=true';
+    }
 
-    if (program.rollup === true) {
+    if (program.rollup === true || program.build === 'lib') {
         cliCommand += ' rollup=true';
         cliCommand += ' closure=false';
     }
@@ -190,6 +191,14 @@ if (program.build) {
     else {
         cliCommand += ' serve=false';
     }
+
+    if (program.deploy === true) {
+        cliCommand += ' deploy=true';
+    }
+    else {
+        cliCommand += ' deploy=false';
+    }
+
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 

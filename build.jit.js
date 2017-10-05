@@ -28,6 +28,7 @@ let styleFiles = [];
 let hasCompletedFirstStylePass = false;
 let canServe = false;
 let isVerbose = false;
+let allowPostCSS = true;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -40,6 +41,9 @@ process.argv.forEach((arg)=>{
   }
   if (arg.includes('verbose')) {
     isVerbose = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('postcss')) {
+    allowPostCSS = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -147,11 +151,11 @@ const compile = {
         if (hasInit === false) {
 
           copy.html();
-          alert('libsass and postcss', 'started');
+          allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');
           style.src({
             sassConfig: config.style.sass.dev,
             env: 'dev',
-            allowPostCSS: true,
+            allowPostCSS: allowPostCSS,
             src: config.src,
             dist: config.build,
             styleSrcOnInit: false,
@@ -167,7 +171,7 @@ const compile = {
 
               if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
-                alert('libsass and postcss compiled');
+                allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
                 if (canServe === true) {
                   alert('Ready to serve');
                   utils.serve(canWatch);
@@ -184,7 +188,7 @@ const compile = {
               if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
                 if (!err) {
                   alert('libsass', 'compiled');
-                  setTimeout(compile.src, 1000);
+                  //setTimeout(compile.ts, 1000);
                 }
               }
             },
@@ -193,7 +197,7 @@ const compile = {
               hasInit = true;
 
               if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].post) {
-                config.buildHooks[env].post();
+                config.buildHooks[env].post(process.argv);
               }
 
             });
@@ -292,7 +296,7 @@ let init = function() {
 
 
   if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].pre) {
-    config.buildHooks[env].pre();
+    config.buildHooks[env].pre(process.argv);
   }
 
   copy.lib();
@@ -349,14 +353,14 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
   }
   else if ( filePath.indexOf('.scss') > -1 ) {
 
-    alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered sass and postcss');
+    alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered '+ (allowPostCSS ? 'libsass and postcss' : 'libsass'));
 
     hasCompletedFirstStylePass = true;
 
     utils.style.file(filePath, {
       sassConfig: config.style.sass.dev,
       env: 'dev',
-      allowPostCSS: true,
+      allowPostCSS: allowPostCSS,
       src: config.src,
       dist: config.build,
       styleSrcOnInit: false,
@@ -373,7 +377,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 
         if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
-          alert('libsass and postcss compiled');
+          allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
 
           if (canWatch === true) {
             alert(colors.green('Ready to serve'));
@@ -391,7 +395,7 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
       function (filePath, outFile, err) {
         if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
           if (!err) {
-            alert('libsass', 'compiled');
+            allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
             setTimeout(compile.src, 1000);
           }
         }
