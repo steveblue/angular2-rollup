@@ -315,7 +315,7 @@ let init = function() {
     rm('-rf', path.normalize( config.processRoot+'/.tmp/'));
     rm('-rf',  path.normalize('./ngfactory'));
     rm('-rf',  path.normalize('./'+config.dist));
-
+    
     mkdir( path.normalize('./ngfactory'));
     mkdir( path.normalize('./'+config.dist));
     mkdir( path.normalize('./'+config.dist+'/bundles'));
