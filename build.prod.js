@@ -567,9 +567,9 @@ const compile = {
 
       alert('closure compiler', 'started');
 
-      if (isVerbose) log(require(config.processRoot + '/package.json').scripts['bundle:closure']);
+      if (isVerbose) log(require(config.projectRoot + '/package.json').scripts['bundle:closure']);
 
-      let closure = exec(require(config.processRoot + '/package.json').scripts['bundle:closure'], { silent: true }, function(code, output, error){
+      let closure = exec(require(config.projectRoot + '/package.json').scripts['bundle:closure'], { silent: true }, function(code, output, error){
 
           if (error) {
             warn(error);

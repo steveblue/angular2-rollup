@@ -220,17 +220,17 @@ const compile = {
 
           alert('typescript', 'started');
 
-          fs.readFile(config.processRoot+'/tsconfig.jit.json', 'utf8', function (err, contents) {
+          fs.readFile(config.projectRoot+'/tsconfig.jit.json', 'utf8', function (err, contents) {
             if (!err) {
               contents = JSON.parse(contents);
               contents.files = [];
               contents.files.push(filePath);
               contents = JSON.stringify(contents, null, 4);
-              fs.writeFile(config.processRoot + '/tsconfig.jit.file.json', contents, function (err) {
+              fs.writeFile(config.projectRoot + '/tsconfig.jit.file.json', contents, function (err) {
                 if (err) {
                   warn(err);
                 } else {
-                  tsExec = path.normalize(config.processRoot + '/node_modules/.bin/tsc') +
+                  tsExec = path.normalize(config.projectRoot + '/node_modules/.bin/tsc') +
                     ' -p ' + path.normalize('./tsconfig.jit.file.json');
                   compile.file(tsExec, filePath);
                 }
@@ -243,7 +243,7 @@ const compile = {
 
       } else {
           // alert('typescript', 'compiled');
-          tsExec = path.normalize(config.processRoot + '/node_modules/.bin/tsc') +
+          tsExec = path.normalize(config.projectRoot + '/node_modules/.bin/tsc') +
                                   ' -p ' + path.normalize('./tsconfig.jit.json');
           compile.file(tsExec, filePath);
       }
@@ -289,8 +289,8 @@ let init = function() {
   mkdir(path.normalize('./' + config.build + '/lib'));
 
 
-  if (fs.existsSync(config.processRoot + '/lazy.config.json')) {
-    cp(config.processRoot + '/lazy.config.json', config.build + '/');
+  if (fs.existsSync(config.projectRoot + '/lazy.config.json')) {
+    cp(config.projectRoot + '/lazy.config.json', config.build + '/');
     if (isVerbose) log('copied lazy.config.json to ' + config.build);
   }
 
