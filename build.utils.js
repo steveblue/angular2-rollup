@@ -60,8 +60,8 @@ if(!cliConfigPath) {
     projectRoot = path.normalize(cliConfigPath.substring(0, cliConfigPath.replace(/\\/g,"/").lastIndexOf("/")));
 }
 
-const scripts = require(processRoot+'/package.json').scripts;
-let config = require(processRoot+'/build.config.js');
+const scripts = require(projectRoot+'/package.json').scripts;
+let config = require(projectRoot+'/build.config.js');
 
 const moduleIdRegex = /moduleId\s*:(.*)/g;
 const directiveRegex = /@Directive\(\s?{([\s\S]*)}\s?\)$/gm;

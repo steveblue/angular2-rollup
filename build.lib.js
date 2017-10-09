@@ -162,7 +162,6 @@ const compile = {
                              ' -p '+path.normalize('./tsconfig.lib.json'), function(code, output, error) {
 
                   alert('@angular/compiler compiled ngfactory');
-                  warn(config.lib);
                   cp('-R', path.normalize(config.lib+'/')+'.', path.normalize('tmp/'));
                   alert('rollup', 'started');
 
