@@ -1,3 +1,14 @@
+## 1.0.0-beta.11
+
+- Added first argument to all buildHooks callbacks in `build.config.js` that allows user to do something based on process.argv
+- Fixed issue with scaffolding an app that prevented initial build
+- Fixed issue in library build that prevented files from properly being copied
+- Fixed logging errors in jit build
+- Fixed an issue that prevented the library build from distributing css
+
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.0-beta.10
 
 This update includes the remaining major new features for 1.0.0. Leading up to 1.0.0 this project will primarily be targeting bugfixes and improvements to support @angular 5.0.0.
