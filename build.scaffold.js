@@ -19,6 +19,13 @@ let dynamicRoutes = false;
 const projectPath = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
 const cliPath = path.dirname(fs.realpathSync(__filename));
 
+fs.writeFile(projectPath + '/cli.config.js', 'module.exports = { cliRoot: "' + cliPath + '"}', function (err) {
+    if (err) {
+        return console.log(err);
+    }
+});
+
+
 const files     = [
     'src',
     '.editorconfig',
