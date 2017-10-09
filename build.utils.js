@@ -97,14 +97,14 @@ function insertText(str, dir, preprocessor = res => res, processFilename = false
 
 process.argv.forEach((arg)=>{
     if (arg.includes('scaffold')) {
-        if (!fs.existsSync(processRoot + '/build.config.js')) {
-            cp(cliRoot + '/build.config.js', processRoot + '/build.config.js');
+        if (!fs.existsSync(projectRoot + '/build.config.js')) {
+            cp(cliRoot + '/build.config.js', projectRoot + '/build.config.js');
             config = require(cliRoot + '/build.config.js');
         }
 
-        if (!fs.existsSync(processRoot + '/cli.config.js')) {
+        if (!fs.existsSync(projectRoot + '/cli.config.js')) {
 
-            fs.writeFile(processRoot + '/cli.config.js', 'module.exports = { cliRoot: "'+ cliRoot +'"}', function (err) {
+            fs.writeFile(projectRoot + '/cli.config.js', 'module.exports = { cliRoot: "'+ cliRoot +'"}', function (err) {
                 if (err) {
                     return console.log(err);
                 }
