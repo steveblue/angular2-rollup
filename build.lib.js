@@ -158,14 +158,15 @@ const compile = {
 
               alert('@angular/compiler', 'started');
 
-              let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+              let tsc = exec(path.normalize(config.processRoot+'/node_modules/.bin/ngc')+
                              ' -p '+path.normalize('./tsconfig.lib.json'), function(code, output, error) {
 
                   alert('@angular/compiler compiled ngfactory');
-                  cp('-R', path.normalize(config.lib+'/')+'.', path.normalize('ngfactory/'));
+                  warn(config.lib);
+                  cp('-R', path.normalize(config.lib+'/')+'.', path.normalize('tmp/'));
                   alert('rollup', 'started');
 
-                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib.js', function(code, output, error) {
+                 let bundle = exec(path.normalize(config.processRoot+'/node_modules/.bin/rollup')+' -c rollup.config.lib.js', function(code, output, error) {
 
                      alert('rollup', 'bundled', config.libFilename+'.js in', './'+config.dist);
                      compile.umdLib();
@@ -180,19 +181,19 @@ const compile = {
 
     umdLib : () => {
 
-         let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+         let tsc = exec(path.normalize(config.processRoot+'/node_modules/.bin/ngc')+
                         ' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
                   alert('@angular/compiler', 'compiled', 'ngfactory');
                   alert('rollup', 'started');
 
-                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+
+                 let bundle = exec(path.normalize(config.processRoot+'/node_modules/.bin/rollup')+
                                    ' -c rollup.config.lib-umd.js', function(code, output, error) {
 
                      alert('rollup', 'bundled', config.libFilename+'.umd.js in', './'+config.dist+'/bundles');
 
                      alert('Babel', 'started transpiling', config.libFilename+'.umd.js');
 
-                     let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+
+                     let transpile = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel')+
                                          ' --plugins=transform-es2015-modules-commonjs '+
                                          ' --module umd ' +
                                          path.normalize('./dist/bundles/') + config.libFilename + '.umd.js'+
@@ -214,13 +215,13 @@ const compile = {
 
 
 
-         let tsc = exec(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
+         let tsc = exec(path.normalize(config.processRoot+'/node_modules/.bin/ngc')+
                         ' -p '+path.normalize('./tsconfig.lib.es5.json'), function(code, output, error) {
 
                  alert('@angular/compiler', 'compiled');
                  alert('rollup', 'started');
 
-                 let bundle = exec(path.normalize(config.projectRoot+'/node_modules/.bin/rollup')+
+                 let bundle = exec(path.normalize(config.processRoot+'/node_modules/.bin/rollup')+
                                    ' -c rollup.config.lib-es5.js', function(code, output, error) {
 
                     alert('rollup', 'bundled', config.libFilename+'.es5.js in', './'+config.dist);
@@ -260,14 +261,14 @@ const compile = {
 
                     alert('Babel', 'started transpiling', config.libFilename+'.es5.js');
 
-                    let transpile = exec(path.normalize(config.projectRoot + '/node_modules/.bin/babel')+
+                    let transpile = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel')+
                                     ' --presets=es2015-rollup '+ path.normalize('./dist/') + config.libFilename + '.es5.js'+
                                     ' --out-file '+ path.normalize('./dist/') + config.libFilename +'.es5.js', function(code, output, error){
                           alert('Babel', 'transpiled', './'+config.dist+'/'+config.libFilename+' to', './'+config.dist+'/'+config.libFilename+'.es5.js');
                           alert(colors.green('Build is ready'));
                      });
 
-                    exec( require(config.projectRoot + '/package.json').scripts['copy:package'], function() {
+                    exec( require(config.processRoot + '/package.json').scripts['copy:package'], function() {
 
                       if (isVerbose) log('package.json', 'copied to', './'+config.dist);
 
@@ -312,7 +313,7 @@ let style = utils.style;
 
 let init = function() {
 
-    rm('-rf', path.normalize( config.projectRoot+'/.tmp/'));
+    rm('-rf', path.normalize( config.processRoot+'/.tmp/'));
     rm('-rf',  path.normalize('./ngfactory'));
     rm('-rf',  path.normalize('./'+config.dist));
 
