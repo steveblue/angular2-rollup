@@ -205,9 +205,9 @@ const compile = {
       let finalExec = '';
       let hasError = false;
 
-      log('processing ' + externs.length + ' externs');
-      log('processing ' + vendorFiles.length + ' vendor files');
-      log('processing ' + main.length + ' app files');
+      if (isVerbose) log('processing ' + externs.length + ' externs');
+      if (isVerbose) log('processing ' + vendorFiles.length + ' vendor files');
+      if (isVerbose) log('processing ' + main.length + ' app files');
 
       out += vendorFiles.join('\n');
       out += '\n';
