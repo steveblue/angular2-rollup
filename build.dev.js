@@ -92,10 +92,10 @@ const copy = {
     }
 
   },
-  file: (filePath) => {
+  file: (filePath, dest) => {
 
-    cp('-R', filePath, path.join(config.build , '/'));
-    if (isVerbose)  log(filePath, 'copied to',  path.join(config.build , '/'));
+    cp('-R', filePath, dest || path.join(config.build, '/'));
+    if (isVerbose) log(filePath, 'copied to', dest || path.join(config.build, '/'));
 
   },
   lib: () => {
@@ -304,12 +304,12 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 }).on('change', filePath => {
 
 
-  if (filePath.indexOf(path.join(config.src , 'public')) > -1) {
+  if (filePath.includes(path.join(config.src, 'public'))) {
 
-    if (filePath.indexOf(path.join(config.src , 'index.html'))) {
+    if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
       copy.public();
     } else {
-      copy.file(filePath);
+      copy.file(filePath, filePath.replace(path.normalize('src/public/'), path.normalize(config.build + '/')));
     }
 
   }

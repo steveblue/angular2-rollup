@@ -100,10 +100,10 @@ const copy = {
       }
 
     },
-    file: (filePath) => {
+    file: (filePath, dest) => {
 
-      cp('-R', filePath, path.join(config.build , '/'));
-      if (isVerbose) log(filePath, 'copied to',  path.join(config.build , '/'));
+      cp('-R', filePath, dest || path.join(config.build, '/'));
+      if (isVerbose) log(filePath, 'copied to', dest || path.join(config.build, '/'));
 
     },
     lib: () => {
@@ -717,17 +717,17 @@ let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
 }).on('change', filePath => {
 
 
-    if (filePath.indexOf(path.join(config.src , 'public')) > -1) {
+  if (filePath.includes(path.join(config.src, 'public'))) {
 
-      if (filePath.indexOf(path.join(config.src , 'index.html'))) {
-        copy.public();
-      } else {
-        copy.file(filePath);
-      }
-
+    if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
+      copy.public();
+    } else {
+      copy.file(filePath, filePath.replace(path.normalize('src/public/'), path.normalize(config.build + '/')));
     }
 
-    else if ( filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
+  }
+
+  else if ( filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
 
       if(!isCompiling) {
         alert('change', filePath, 'triggered compile');
