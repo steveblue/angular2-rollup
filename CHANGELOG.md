@@ -1,3 +1,11 @@
+## 1.0.0-beta.12
+
+- Fixed an issue that prevented files in src/public from properly being copied to build
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
 ## 1.0.0-beta.11
 
 - Added first argument to all buildHooks callbacks in `build.config.js` that allows user to do something based on process.argv
