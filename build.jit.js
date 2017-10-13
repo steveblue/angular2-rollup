@@ -302,7 +302,6 @@ let init = () => {
     if (isVerbose) log('copied lazy.config.json to ' + config.build);
   }
 
-  log(config.buildHooks[env].pre);
 
   if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].pre) {
 
