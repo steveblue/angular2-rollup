@@ -76,16 +76,16 @@ if (!config.style || !config.style.sass || !config.style.sass.dev) {
 const copy = {
   public: (filePath) => {
 
-    cp('-R', path.normalize(config.src + '/public/')+'.', path.normalize(path.join(config.build , '/')));
+    cp('-R', path.normalize(config.src + '/public/') + '.', path.normalize(path.join(config.build, '/')));
 
-    exec(path.join(config.cliRoot , path.normalize('node_modules/.bin/htmlprocessor'))+
-         ' '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
-         ' -o '+ path.normalize(path.join(config.build , '/')+ 'index.html')+
+    exec(path.join(config.cliRoot, path.normalize('node_modules/.bin/htmlprocessor')) +
+      ' ' + path.normalize(path.join(config.build, '/') + 'index.html') +
+      ' -o ' + path.normalize(path.join(config.build, '/') + 'index.html') +
       ' -e ' + env, { silent: true }, function (code, output, error) {
-      alert('htmlprocessor', 'formatted index.html');
-    });
+        alert('htmlprocessor', 'formatted index.html');
+      });
 
-    if (isVerbose) log(filePath || path.join(config.src , 'public/'), 'copied to', path.join(config.build , '/'));
+    if (isVerbose) log(filePath || path.join(config.src, 'public/'), 'copied to', path.join(config.build, '/'));
 
     if (config && config.clean) {
       clean.paths(config);
@@ -103,16 +103,16 @@ const copy = {
     for (var i = 0; i < config.dep.lib.length; i++) {
 
       if (config.dep.lib[i].split('/').pop().split('.').length > 1) { // file
-        let filePath = path.join(config.dep.dist , config.dep.lib[i]);
-        if (!fs.existsSync(path.normalize(filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'))))) {
-          mkdir('-p', path.normalize(filePath.substring(0, filePath.replace(/\\/g,"/").lastIndexOf('/'))));
+        let filePath = path.join(config.dep.dist, config.dep.lib[i]);
+        if (!fs.existsSync(path.normalize(filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf('/'))))) {
+          mkdir('-p', path.normalize(filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf('/'))));
         } // catch folders
-        cp('-R',  path.join(path.normalize(config.dep.src) , path.normalize(config.dep.lib[i])),  path.join(path.normalize(config.dep.dist), path.normalize(config.dep.lib[i])));
+        cp('-R', path.join(path.normalize(config.dep.src), path.normalize(config.dep.lib[i])), path.join(path.normalize(config.dep.dist), path.normalize(config.dep.lib[i])));
       } else { // folder
-        cp('-R', path.join(path.normalize(config.dep.src) , path.normalize(config.dep.lib[i])), path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.lib[i])));
+        cp('-R', path.join(path.normalize(config.dep.src), path.normalize(config.dep.lib[i])), path.join(path.normalize(config.dep.dist), path.normalize(config.dep.lib[i])));
       }
 
-      if (isVerbose) log(config.dep.lib[i], 'copied to', path.join(path.normalize(config.dep.dist) , path.normalize(config.dep.lib[i])));
+      if (isVerbose) log(config.dep.lib[i], 'copied to', path.join(path.normalize(config.dep.dist), path.normalize(config.dep.lib[i])));
       if (i === config.dep.lib.length - 1) {
         alert(config.dep.src.replace('./', ''), 'copied to', config.dep.dist.replace('./', ''));
       }
@@ -135,7 +135,7 @@ const compile = {
 
   clean: (filePath) => {
 
-    const outFile = filePath ? filePath : path.join(config.projectRoot, config.build , 'bundle.js');
+    const outFile = filePath ? filePath : path.join(config.projectRoot, config.build, 'bundle.js');
 
     fs.readFile(outFile, 'utf8', function (err, contents) {
       if (!err) {
@@ -158,7 +158,7 @@ const compile = {
 
   main: () => {
 
-    const outFile = path.join(config.projectRoot, config.build , 'main.ts');
+    const outFile = path.join(config.projectRoot, config.build, 'main.ts');
 
     fs.readFile(path.join(config.projectRoot, 'main.prod.js'), 'utf8', function (err, contents) {
       if (!err) {
@@ -167,11 +167,11 @@ const compile = {
         contents = contents.replace("enableProdMode();", "");
         fs.writeFile(outFile, contents, function (err) {
           if (!err) {
-            let transpile = exec(path.join(config.projectRoot, 'node_modules/.bin/tsc')+
-                                 ' ' + outFile + ' --target es5 --module commonjs'+
-                                 ' --emitDecoratorMetadata true --experimentalDecorators true'+
-                                 ' --noImplicitAny false --allowUnreachableCode false --moduleResolution node'+
-                                 ' --typeRoots node --lib dom,es2017',
+            let transpile = exec(path.join(config.projectRoot, 'node_modules/.bin/tsc') +
+              ' ' + outFile + ' --target es5 --module commonjs' +
+              ' --emitDecoratorMetadata true --experimentalDecorators true' +
+              ' --noImplicitAny false --allowUnreachableCode false --moduleResolution node' +
+              ' --typeRoots node --lib dom,es2017',
               function (code, output, error) {
                 alert('typescript compiled', outFile);
               });
@@ -188,27 +188,27 @@ const compile = {
   },
   src: () => {
 
-        isCompiling = true;
+    isCompiling = true;
 
-        let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
+    let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
 
-          if (canWatch === true) {
-            spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+' -p '+
-                  path.normalize('./tsconfig.dev.json')+
-                  ' --watch', { shell: true, stdio: 'inherit' });
-          } else {
-            spawn(path.normalize(config.projectRoot+'/node_modules/.bin/ngc')+
-                  ' -p '+path.normalize('./tsconfig.dev.json'), { shell: true, stdio: 'inherit' });
-          }
-
-          alert(colors.green('Build is ready'));
-          if (canServe === true) {
-            utils.serve(canWatch);
-          }
-
-        });
-
+      if (canWatch === true) {
+        spawn(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') + ' -p ' +
+          path.normalize('./tsconfig.dev.json') +
+          ' --watch', { shell: true, stdio: 'inherit' });
+      } else {
+        spawn(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
+          ' -p ' + path.normalize('./tsconfig.dev.json'), { shell: true, stdio: 'inherit' });
       }
+
+      alert(colors.green('Build is ready'));
+      if (canServe === true) {
+        utils.serve(canWatch);
+      }
+
+    });
+
+  }
 
 }
 
@@ -243,8 +243,40 @@ let style = utils.style;
 */
 
 
-let init = function () {
+let init = () => {
 
+  const initProcesses = () => {
+
+    copy.lib();
+    copy.public();
+    allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');
+    style.src({
+      sassConfig: config.style.sass.dev,
+      env: env,
+      allowPostCSS: allowPostCSS,
+      src: config.src,
+      dist: config.build,
+      styleSrcOnInit: false,
+      isVerbose: isVerbose
+    },
+      function (filePath) {
+        if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+          allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
+          setTimeout(compile.src, 1000);
+        }
+      },
+      function (filePath, outFile, err) {
+        if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+          if (!err) {
+            //alert('libsass', 'compiled');
+            allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
+            setTimeout(compile.src, 1000);
+          }
+        }
+      });
+    compile.main();
+
+  }
 
   rm('-rf', path.normalize(path.join('./', config.build)));
 
@@ -254,38 +286,27 @@ let init = function () {
   mkdir(path.normalize('./' + config.build + '/lib'));
 
   if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].pre) {
-    config.buildHooks[env].pre(process.argv);
+
+    config.buildHooks[env].pre(process.argv).then(() => {
+
+      initProcesses();
+
+      if (canWatch) {
+        watch();
+      }
+
+    });
+
+  } else {
+
+    initProcesses();
+
+    if (canWatch) {
+      watch();
+    }
+
   }
 
-  copy.lib();
-  copy.public();
-  allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');
-  style.src({
-    sassConfig: config.style.sass.dev,
-    env: env,
-    allowPostCSS: allowPostCSS,
-    src: config.src,
-    dist: config.build,
-    styleSrcOnInit: false,
-    isVerbose: isVerbose
-  },
-  function(filePath){
-    if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-      allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
-      setTimeout(compile.src, 1000);
-    }
-  },
-  function(filePath, outFile, err){
-    if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-      if (!err) {
-        //alert('libsass', 'compiled');
-        allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
-        setTimeout(compile.src, 1000);
-      }
-    }
-  });
-
-  compile.main();
 
 };
 
@@ -297,64 +318,68 @@ let init = function () {
 
 */
 
+let watch = () => {
 
-let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
-  ignored: /[\/\\]\./,
-  persistent: canWatch
-}).on('change', filePath => {
+  let watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
+    ignored: /[\/\\]\./,
+    persistent: canWatch
+  }).on('change', filePath => {
 
 
-  if (filePath.includes(path.join(config.src, 'public'))) {
-
-    if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
-      copy.public();
-    } else {
-      copy.file(filePath, filePath.replace(path.normalize('src/public/'), path.normalize(config.build + '/')));
+    if (hasInit === false) {
+      return;
     }
 
-  }
+    if (filePath.includes(path.join(config.src, 'public'))) {
 
-  else if (filePath.indexOf('.scss') > -1) {
-
-    alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered libsass and postcss');
-
-    hasCompletedFirstStylePass = true;
-
-    style.file(filePath, {
-      sassConfig: config.style.sass.dev,
-      env: env,
-      allowPostCSS: allowPostCSS,
-      src: config.src,
-      dist: config.build,
-      styleSrcOnInit: false,
-      isVerbose: isVerbose
-    },
-    function (filePath) {
-      if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-        alert('libsass and postcss compiled');
-        setTimeout(compile.src, 1000);
+      if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
+        copy.public();
+      } else {
+        copy.file(filePath, filePath.replace(path.normalize('src/public/'), path.normalize(config.build + '/')));
       }
-    },
-    function (filePath, outFile, err) {
-      if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-        if (!err) {
-          alert('libsass', 'compiled');
-          setTimeout(compile.src, 1000);
-        }
-      }
-    });
+
+    }
+
+    else if (filePath.indexOf('.scss') > -1) {
+
+      alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered libsass and postcss');
+
+      hasCompletedFirstStylePass = true;
+
+      style.file(filePath, {
+        sassConfig: config.style.sass.dev,
+        env: env,
+        allowPostCSS: allowPostCSS,
+        src: config.src,
+        dist: config.build,
+        styleSrcOnInit: false,
+        isVerbose: isVerbose
+      },
+        function (filePath) {
+          if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+            alert('libsass and postcss compiled');
+            setTimeout(compile.src, 1000);
+          }
+        },
+        function (filePath, outFile, err) {
+          if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+            if (!err) {
+              alert('libsass', 'compiled');
+              setTimeout(compile.src, 1000);
+            }
+          }
+        });
 
 
-  }
+    }
 
-})
-.on('unlink', filePath => log(filePath, 'has been removed'));
+  })
+    .on('unlink', filePath => log(filePath, 'has been removed'));
 
-watcher
-  .on('error', error => warn('ERROR:', error))
-  .on('ready', () => {
+  watcher
+    .on('error', error => warn('ERROR:', error));
 
-    alert(colors.green('ngr started '+env));
-    init();
+}
 
-  });
+
+init();
