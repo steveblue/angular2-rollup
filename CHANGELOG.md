@@ -1,6 +1,20 @@
 ## 1.0.0-beta.12
 
 - Fixed an issue that prevented files in src/public from properly being copied to build
+- buildHooks pre step in `build.config.js` must return a Promise i.e.
+
+```
+    buildHooks: {
+        jit: {
+            pre: () => {
+                return new Promise((res, rej) => {
+                    // do something like copy files into /src
+                    res();
+                })
+            }
+        }
+    }
+```
 
 
 -------------------------------------------------------------------------------------------------------------
