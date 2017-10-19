@@ -1,6 +1,7 @@
 ## 1.0.0-beta.12
 
 - Fixed an issue that prevented files in src/public from properly being copied to build
+- Fixed an issue where .gitignore may not be copied when app is scaffolded
 - buildHooks pre step in `build.config.js` must return a Promise i.e.
 
 ```

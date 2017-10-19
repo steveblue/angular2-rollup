@@ -12,7 +12,7 @@ const alert = logger.alert;
 const colors = logger.colors;
 
 let lib = false;
-let useVersion = '5.0.0';
+let useVersion = '4.4.6';
 let hasWarning = false;
 let dynamicRoutes = false;
 
@@ -29,7 +29,7 @@ fs.writeFile(projectPath + '/cli.config.js', 'module.exports = { cliRoot: "' + c
 const files     = [
     'src',
     '.editorconfig',
-    '.gitignore',
+    'gitignore.scaffold',
     '.npmignore',
     'closure.conf',
     'closure.lazy.conf',
@@ -99,10 +99,21 @@ const copy = {
     },
     scaffold: (files) => {
 
+        if (fs.existsSync(projectPath + '/' + '.gitignore')) {
+            warn('.gitignore' + ' already exists');
+            hasWarning = true;
+        } else {
+            cp(cliPath + '/' + 'gitignore.scaffold', projectPath + '/' + '.gitignore');
+            log('.gitignore', 'copied to', projectPath + '/');
+        }
+
         files.forEach((filename)=>{
+            if (filename === 'gitignore.scaffold') {
+                return;
+            }
             copy.file(cliPath + '/' + filename);
-        })
-        
+        });
+
         if (dynamicRoutes) {
             if (fs.existsSync(projectPath + '/src/app/app.config.ts')) {
                 rm(projectPath + '/src/app/app.config.ts');
@@ -172,7 +183,7 @@ let init = function() {
             alert('npm install', 'to install project dependencies');
             alert('ngr build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
             alert('ngr build prod --serve', 'to compile your project AOT for production, start up Express server');
-            alert('ngr help', 'for more CLI commands' );
+            alert('ngr --help', 'for more CLI commands' );
         });
 
       });

@@ -11,7 +11,7 @@ const prompt      = require('prompt');
 
 
 let cliCommand = '';
-let useVersion = '4.4.2';
+let useVersion = '4.4.6';
 
 function cmpVersions(a, b) {
     var i, diff;
