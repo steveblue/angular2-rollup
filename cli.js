@@ -40,6 +40,7 @@ program
     .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
     .option('--closure [bool]', 'Bundle with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode, this is the default')
     .option('--lazy [bool]', 'Bundle with ClosureCompiler with support for lazyloaded modules, generate a lazyloaded route')
+    .option('--remote [bool]', 'Bundle a lazyloaded route without a localized main bundle or sibling bundles, requires .MF copied into tmp directory in pre build step')
     .option('--rollup [bool]', 'Bundle with Rollup prior to optimizing with ClosureCompiler in SIMPLE_OPTIMIZATIONS mode')
     .option('--verbose [bool]', 'Log additional messages in build')
     .option('--deploy [bool]', 'Option to deploy build available in buildHooks.env.post arguments' )
@@ -197,6 +198,13 @@ if (program.build) {
     }
     else {
         cliCommand += ' deploy=false';
+    }
+
+    if (program.remote === true) {
+        cliCommand += ' remote=true';
+    }
+    else {
+        cliCommand += ' remote=false';
     }
 
 

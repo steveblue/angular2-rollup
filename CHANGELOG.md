@@ -2,7 +2,9 @@
 
 - Fixed an issue that prevented files in src/public from properly being copied to build
 - Fixed an issue where .gitignore may not be copied when app is scaffolded
-- buildHooks pre step in `build.config.js` must return a Promise i.e.
+- Added `--remote` argument to production build. Allows a client to build from a host closure manifest `main.prod.MF`
+- Added preCompile and postCompile hooks into prod build
+- pre, preCompile, and postCompile functions in `build.config.js` must return a Promise i.e.
 
 ```
     buildHooks: {
@@ -16,6 +18,76 @@
         }
     }
 ```
+
+For a client to utilize the new `--remote` flag and build a lazyloaded module from a host module, the host must provide a package for the client that includes:
+
+- ngfactory files that were bundled in the host's `bundle.js`, listed in the host's `main.prod.MF`
+- `bundle.js` and `bundle.js.map` files to be used in the client's index.html for testing against the production bundle
+- `main.prod.MF`
+
+The client must then copy the host's `ngfactory` files into `/ngfactory` during the `postCompile` build step. 
+The client must also copy the host's `main.prod.MF` into `/closure` during the `postCompile` build step.
+The client must copy `bundle.js` and `bundle.js.map` into the `/build` directory in the `post` build step.
+
+Here is an example of doing this with the buildHooks:
+
+
+```
+    buildHooks: {
+        prod: {
+            postCompile: function (args) {
+
+                let isRemote = false;
+                args.forEach((arg) => {
+                    if (arg.includes('remote')) {
+                        isRemote = arg.split('=')[1].trim() === 'true' ? true : false;
+                    }
+                });
+                return new Promise((res, rej) => {
+                    if (isRemote) {
+                        mkdir('remote');
+                        cp(path.normalize('./path/to/host/files'), path.normalize('./remote'));
+                        res();
+                    } else {
+                        res();
+                    }
+
+                });
+            },
+            postCompile: function (args) {
+
+                let isRemote = false;
+                args.forEach((arg) => {
+                    if (arg.includes('remote')) {
+                        isRemote = arg.split('=')[1].trim() === 'true' ? true : false;
+                    }
+                });
+                return new Promise((res, rej) => {
+                    if (isRemote) {
+                        cp(path.normalize('./remote/main.prod.MF'), path.normalize('./closure/main.prod.MF'));
+                        cp('-R', path.normalize('./remote/ngfactory/*'), path.normalize('./ngfactory/'));
+                        res();
+                    } else {
+                        res();
+                    }
+
+                });
+            },
+            post: function(args) {
+                let isRemote = false;
+                args.forEach((arg) => {
+                    if (arg.includes('remote')) {
+                        isRemote = arg.split('=')[1].trim() === 'true' ? true : false;
+                    }
+                });
+                if (isRemote) {
+                    cp(path.normalize('./remote/bundle.js'), path.normalize('./build/bundle.remote.js'));
+                    cp(path.normalize('./remote/bundle.js.map'), path.normalize('./build/bundle.remote.js.map'));
+                }
+            }
+        }
+    }
+    ```
 
 
 -------------------------------------------------------------------------------------------------------------

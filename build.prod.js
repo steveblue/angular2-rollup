@@ -33,6 +33,7 @@ let isLazy = false;
 let isVerbose = false;
 let canServe = false;
 let allowPostCSS = true;
+let isRemote = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -54,6 +55,9 @@ process.argv.forEach((arg) => {
   }
   if (arg.includes('postcss')) {
     allowPostCSS = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('remote')) {
+    isRemote = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -227,11 +231,11 @@ const compile = {
     alert('compiled manifest');
     if (isVerbose) log('\n' + conf);
 
-    fs.writeFile(path.normalize(config.projectRoot + '/tmp/closure.lazy.conf'), conf, 'utf-8', () => {
+    fs.writeFile(path.normalize(config.projectRoot + '/closure/closure.lazy.conf'), conf, 'utf-8', () => {
 
       if (isVerbose) log('manifest saved');
 
-      finalExec += 'java -jar node_modules/google-closure-compiler/compiler.jar --flagfile ./tmp/closure.lazy.conf \\\n'
+      finalExec += 'java -jar node_modules/google-closure-compiler/compiler.jar --flagfile ./closure/closure.lazy.conf \\\n'
       finalExec += '--entry_point=./main.prod \\\n';
 
       bundles.forEach((bundle) => {
@@ -267,7 +271,7 @@ const compile = {
           if (error.includes('WARNING - Failed to load module "@angular/')) {
             log('There is an issue with how @angular packages are declared in closure.lazy.conf');
           }
-          log('Inspect tmp/closure.lazy.conf for problems in the configuration of the final build, manually fix the issue and run the following command' + '\n' +
+          log('Inspect closure/closure.lazy.conf for problems in the configuration of the final build, manually fix the issue and run the following command' + '\n' +
             '----------------------------------------------------------------------------------------------------' + '\n' +
             finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
             '----------------------------------------------------------------------------------------------------');
@@ -289,6 +293,10 @@ const compile = {
 
               if (isVerbose) log('closure compiler', 'optimized system.polyfill.js');
               alert('closure compiler optimized project bundles');
+
+              if (utils.config.buildHooks && utils.config.buildHooks[env] && utils.config.buildHooks[env].post) {
+                utils.config.buildHooks[env].post(process.argv);
+              }
 
               if (canServe === true) {
                 alert(colors.green('Ready to serve'));
@@ -409,6 +417,7 @@ const compile = {
           let lastIndex = null;
 
           for (; index >= 0; index--) { // insert dependency at last index of known dependencies
+
             if (moduleRegex.exec(vendorFiles[index])[3] === moduleRegex.exec(fileName)[3]) {
               lastIndex = index;
               vendorFiles.splice(lastIndex, 0, fileName);
@@ -458,11 +467,76 @@ const compile = {
 
   },
 
-  bundleLazy: () => {
+
+  transformBundles: (conf) => {
 
     let lazyBundles = [];
     let bundleIndex = 0;
-    let main;
+    let main = fs.readFileSync('./closure/main.prod.MF', 'utf-8').split('\n');
+
+    if (isVerbose) log('read main.prod manifest');
+
+    function transformBundle(bundle) {
+
+      let filePath = bundle.src;
+      let fileName = filePath.replace(/^.*[\\\/]/, '');
+      let modulePath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf('/'));
+
+      fs.readFile(filePath, 'utf8', function (err, contents) {
+
+        if (!err) {
+
+          let ngFactoryClassName = '';
+          let ngFactoryNameRegex = new RegExp('(export)( )(const)( )((?:[a-z][a-z0-9_]*))(:)', ["i"]);
+          let m = ngFactoryNameRegex.exec(contents);
+
+          if (m != null) {
+            ngFactoryClassName = m[5];
+          }
+
+          if (isVerbose) log('analyzing', bundle.filename);
+
+          exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf' +
+            ' --entry_point=' + filePath.replace('.js', '').replace('.ts', '') +
+            ' --output_manifest=./closure/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF') +
+            ' --js_output_file=./closure/' + fileName.replace('.js', '').replace('.ts', '').concat('.waste.js'), () => {
+
+              compile.removeDuplicates(main, {
+                ngFactoryFile: fileName,
+                ngFactoryClassName: bundle.className || ngFactoryClassName,
+                fileName: fileName.replace('.js', '').replace('.ts', ''),
+                filePath: filePath,
+                fileContent: fs.readFileSync('./closure/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n'),
+                model: bundle
+              }).then((bundle) => {
+
+                lazyBundles.push(bundle);
+
+                if (lazyBundles.length === Object.keys(config.lazyOptions.bundles).length) {
+                  compile.prepareVendorFilesForManifest(conf, main, lazyBundles);
+                } else {
+                  bundleIndex++;
+                  transformBundle(config.lazyOptions.bundles[Object.keys(config.lazyOptions.bundles)[bundleIndex]]);
+                }
+
+              });
+
+            });
+        } else {
+          warn(err);
+        }
+
+      });
+
+    }
+
+    transformBundle(config.lazyOptions.bundles[Object.keys(config.lazyOptions.bundles)[bundleIndex]]);
+
+  },
+
+  bundleLazy: () => {
+
+
     let conf = fs.readFileSync(path.normalize(config.projectRoot + '/closure.lazy.conf'), 'utf-8');
 
     let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
@@ -482,83 +556,27 @@ const compile = {
 
         alert('closure compiler', 'started');
 
-        rm('-rf', path.normalize('./tmp'));
-        mkdir(path.normalize('./tmp'));
+        if (!isRemote) {
+          exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf' +
+            ' --entry_point=./main.prod' +
+            ' --output_manifest=./closure/main.prod.MF' +
+            ' --js_output_file=./closure/main.prod.waste.js', { silent: true }, (code, output, error) => {
 
-        exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf' +
-          ' --entry_point=./main.prod' +
-          ' --output_manifest=./tmp/main.prod.MF' +
-          ' --js_output_file=./tmp/main.prod.waste.js', { silent: true }, (code, output, error) => {
+              if (error) {
+                warn(error);
+                return;
+              }
 
-            if (error) {
-              warn(error);
-              return;
-            }
+              if (isVerbose) log('analyzing ngfactory for manifest');
 
-            if (isVerbose) log('analyzing ngfactory for manifest');
+              compile.transformBundles(conf);
 
-            main = fs.readFileSync('./tmp/main.prod.MF', 'utf-8').split('\n');
-
-            if (isVerbose) log('read main.prod manifest');
+            });
+        } else {
+          compile.transformBundles(conf);
+        }
 
 
-            function transformBundle(bundle) {
-
-              let filePath = bundle.src;
-              let fileName = filePath.replace(/^.*[\\\/]/, '');
-              let modulePath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf('/'));
-
-              fs.readFile(filePath, 'utf8', function (err, contents) {
-
-                if (!err) {
-
-                  let ngFactoryClassName = '';
-                  let ngFactoryNameRegex = new RegExp('(export)( )(const)( )((?:[a-z][a-z0-9_]*))(:)', ["i"]);
-                  let m = ngFactoryNameRegex.exec(contents);
-
-                  if (m != null) {
-                    ngFactoryClassName = m[5];
-                  }
-
-                  if (isVerbose) log('analyzing', bundle.filename);
-
-                  exec('java -jar node_modules/google-closure-compiler/compiler.jar --flagfile closure.conf' +
-                    ' --entry_point=' + filePath.replace('.js', '').replace('.ts', '') +
-                    ' --output_manifest=./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF') +
-                    ' --js_output_file=./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.waste.js'), () => {
-
-                      compile.removeDuplicates(main, {
-                        ngFactoryFile: fileName,
-                        ngFactoryClassName: bundle.className || ngFactoryClassName,
-                        fileName: fileName.replace('.js', '').replace('.ts', ''),
-                        filePath: filePath,
-                        fileContent: fs.readFileSync('./tmp/' + fileName.replace('.js', '').replace('.ts', '').concat('.MF'), 'utf-8').split('\n'),
-                        model: bundle
-                      }).then((bundle) => {
-
-                        lazyBundles.push(bundle);
-
-                        if (lazyBundles.length === Object.keys(config.lazyOptions.bundles).length) {
-                          compile.prepareVendorFilesForManifest(conf, main, lazyBundles);
-                        } else {
-                          bundleIndex++;
-                          transformBundle(config.lazyOptions.bundles[Object.keys(config.lazyOptions.bundles)[bundleIndex]]);
-                        }
-
-                      });
-
-                    });
-                } else {
-                  warn(err);
-                }
-
-              });
-
-            }
-
-            transformBundle(config.lazyOptions.bundles[Object.keys(config.lazyOptions.bundles)[bundleIndex]]);
-
-          });
 
       });
   },
@@ -596,38 +614,59 @@ const compile = {
 
   },
 
+  bundle: () => {
+
+    if (bundleWithClosure === true && isLazy === false) {
+      compile.bundleClosure();
+    } else if (bundleWithClosure === true && isLazy === true) {
+      compile.bundleLazy();
+    } else {
+      compile.bundleRollup();
+    }
+
+  },
+
   src: () => {
 
     isCompiling = true;
 
-    clean.tmp();
-
-    // remove moduleId prior to ngc build. TODO: look for another method.
-    ls(path.normalize('ngfactory/**/*.ts')).forEach(function (file) {
-      sed('-i', /^.*moduleId: module.id,.*$/, '', file);
-    });
-
-
-    alert('@angular/compiler', 'started');
-
-    let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
-      ' -p ' + path.normalize('./tsconfig.prod.json'), { silent: true }, function (code, output, error) {
-        if (error) {
-          warn(error);
-          return;
-        }
-        alert('@angular/compiler compiled ngfactory');
-
-        if (bundleWithClosure === true && isLazy === false) {
-          compile.bundleClosure();
-        } else if (bundleWithClosure === true && isLazy === true) {
-          compile.bundleLazy();
-        } else {
-          compile.bundleRollup();
-        }
-
+    let startCompile = () => {
+      // remove moduleId prior to ngc build. TODO: look for another method.
+      ls(path.normalize('ngfactory/**/*.ts')).forEach(function (file) {
+        sed('-i', /^.*moduleId: module.id,.*$/, '', file);
       });
 
+      alert('@angular/compiler', 'started');
+
+      let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
+        ' -p ' + path.normalize('./tsconfig.prod.json'), { silent: true }, function (code, output, error) {
+          if (error) {
+            warn(error);
+            return;
+          }
+          alert('@angular/compiler compiled ngfactory');
+
+          if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].postCompile) {
+            config.buildHooks[env].postCompile(process.argv).then(() => {
+              compile.bundle();
+            });
+          } else {
+            compile.bundle();
+          }
+
+
+        });
+    };
+
+    clean.tmp();
+
+    if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].preCompile) {
+      config.buildHooks[env].preCompile(process.argv).then(() => {
+        startCompile();
+      });
+    } else {
+      startCompile();
+    }
 
   }
 }
@@ -720,9 +759,6 @@ let init = () => {
 
   }
 
-
-
-
 }
 
 /*
@@ -756,7 +792,7 @@ let watch = () => {
 
       if (!isCompiling) {
         alert('change', filePath, 'triggered compile');
-        cp(filePath, filePath.replace(path.normalize(config.src), path.normalize('./tmp')));
+        cp(filePath, filePath.replace(path.normalize(config.src), path.normalize('./closure')));
         compile.src();
       }
 
