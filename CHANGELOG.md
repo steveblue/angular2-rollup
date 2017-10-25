@@ -35,7 +35,7 @@ Here is an example of doing this with the buildHooks:
 ```
     buildHooks: {
         prod: {
-            postCompile: function (args) {
+            preCompile: function (args) {
 
                 let isRemote = false;
                 args.forEach((arg) => {
