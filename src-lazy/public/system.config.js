@@ -23,7 +23,9 @@
       '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs': 'lib:rxjs'
+      'rxjs': 'lib:rxjs',
+      // map lazyloaded modules for JIT, remove for 5.0.0 DEV
+      'shared/components/lazy/lazy.module': 'src/app/shared/components/lazy/lazy.module.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {

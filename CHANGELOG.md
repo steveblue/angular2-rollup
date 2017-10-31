@@ -2,6 +2,7 @@
 
 - Fixed an issue that prevented files in src/public from properly being copied to build
 - Fixed an issue where .gitignore may not be copied when app is scaffolded
+- `ngr scaffold` now defaults to a single bundle, use `--lazyModule` to bootstrap with lazyloaded routes, `--dynamicRoutes` is the same
 - Added `--remote` argument to production build. Allows a client to build from a host closure manifest `main.prod.MF`
 - Added preCompile and postCompile hooks into prod build
 - pre, preCompile, and postCompile functions in `build.config.js` must return a Promise i.e.

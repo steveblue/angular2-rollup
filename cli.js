@@ -57,6 +57,7 @@ program
     .option('serve, --serve [bool]', 'Run Express Server')
     .option('scaffold, --scaffold [bool]', 'Scaffold a new project')
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
+    .option('--lazyModule [bool]', 'Scaffold a new project with support for lazyloaded modules')
     .option('--dynamicRoutes [bool]', 'Scaffold a new project with support for routes configured by JSON prior to Bootstrap')
     .option('--angularVersion [string]', 'Scaffold a new project with a specific @angular version')
     .option('update, --update [bool]', 'Update a project')
@@ -79,6 +80,10 @@ if (program.scaffold) {
 
     if (program.dynamicRoutes) {
         cliCommand += ' dynamicRoutes=true';
+    }
+
+    if (program.lazyModule) {
+        cliCommand += ' lazy=true';
     }
 
     cp(path.join(path.dirname(fs.realpathSync(__filename)), 'build.config.js'), path.join(path.dirname(process.cwd()), path.basename(process.cwd())));

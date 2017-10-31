@@ -15,6 +15,8 @@ let lib = false;
 let useVersion = '4.4.6';
 let hasWarning = false;
 let dynamicRoutes = false;
+let isLazy = false;
+let isElectron = false;
 
 const projectPath = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
 const cliPath = path.dirname(fs.realpathSync(__filename));
@@ -73,6 +75,12 @@ process.argv.forEach((arg)=>{
   if (arg.includes('version')) {
       useVersion = arg.toString().split('=')[1];
   }
+  if (arg.includes('electron')) {
+      isElectron = arg.toString().split('=')[1];
+  }
+  if (arg.includes('lazy')) {
+      isLazy = arg.toString().split('=')[1];
+  }
   if (arg.includes('dynamicRoutes')) {
       dynamicRoutes = arg.toString().split('=')[1];
   }
@@ -114,19 +122,40 @@ const copy = {
             copy.file(cliPath + '/' + filename);
         });
 
-        if (dynamicRoutes) {
-            if (fs.existsSync(projectPath + '/src/app/app.config.ts')) {
-                rm(projectPath + '/src/app/app.config.ts');
+        if (isLazy || dynamicRoutes) {
+            if (fs.existsSync(projectPath + '/src/public/system.config.js')) {
+                rm(projectPath + '/src/public/system.config.js');
             }
-            if (fs.existsSync(projectPath + '/lazy.config.json')) {
-                rm(projectPath + '/lazy.config.json');
+            if (fs.existsSync(projectPath + '/src/public/system.import.js')) {
+                rm(projectPath + '/src/public/system.import.js');
             }
             if (fs.existsSync(projectPath + '/src/app/app.routes.ts')) {
                 rm(projectPath + '/src/app/app.routes.ts');
             }
+            if (fs.existsSync(projectPath + '/lazy.config.json')) {
+                rm(projectPath + '/lazy.config.json');
+            }
             rm(projectPath + '/src/app/app.module.ts');
+            rm(projectPath + '/src/app/shared/components/lazy/lazy.module.ts');
+            cp(cliPath + '/lazy.config.json', projectPath + '/lazy.config.json');
+            cp(cliPath + '/src-lazy/app/app.module.ts', projectPath + '/src/app/app.module.ts');
+            cp(cliPath + '/src-lazy/app/app.routes.ts', projectPath + '/src/app/app.routes.ts');
+            cp(cliPath + '/src-lazy/public/system.polyfill.js', projectPath + '/src/public/system.polyfill.js');
+            cp(cliPath + '/src-lazy/public/system.config.js', projectPath + '/src/public/system.config.js');
+            cp(cliPath + '/src-lazy/public/system.config.prod.js', projectPath + '/src/public/system.config.prod.js');
+            cp(cliPath + '/src-lazy/public/system.import.js', projectPath + '/src/public/system.import.js');
+            cp(cliPath + '/src-lazy/app/shared/components/lazy/lazy.module.ts', projectPath + '/src/app/shared/components/lazy/lazy.module.ts');
+            cp(cliPath + '/src-lazy/app/shared/components/lazy/lazy.routes.ts', projectPath + '/src/app/shared/components/lazy/lazy.routes.ts');
+
+        }
+
+        if (dynamicRoutes) {
+            if (fs.existsSync(projectPath + '/src/app/app.config.ts')) {
+                rm(projectPath + '/src/app/app.config.ts');
+            }
+            rm(projectPath + '/src/app/app.module.ts');
+            rm(projectPath + '/lazy.config.json');
             cp(cliPath + '/lazy.routes.config.json', projectPath + '/lazy.config.json');
-            cp(cliPath + '/src-dynamic-route/app/app.routes.ts', projectPath + '/src/app/app.routes.ts');
             cp(cliPath + '/src-dynamic-route/app/app.config.ts', projectPath + '/src/app/app.config.ts');
             cp(cliPath + '/src-dynamic-route/app/app.module.ts', projectPath + '/src/app/app.module.ts');
         }
