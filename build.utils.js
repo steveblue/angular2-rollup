@@ -37,6 +37,7 @@
 
 
 require('shelljs/global');
+// LiveReload and Watcher for dev.
 const clim = require('clim');
 const cons = clim();
 const fs   = require('fs');
@@ -150,6 +151,20 @@ const utils = {
 
         spawn(serverCommand, { shell: true, stdio: 'inherit' });
 
+    },
+    electron: (watch) => {
+
+        let serverCommand = 'npm run electron';
+
+        if (watch === true) {
+
+            serverCommand += ' watch=true';
+        }
+        else {
+            serverCommand += ' watch=false';
+        }
+
+        spawn(serverCommand, { shell: true, stdio: 'inherit' });
     },
     clean : {
         tmp: (isVerbose) => {

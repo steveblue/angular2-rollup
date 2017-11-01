@@ -4,6 +4,7 @@
     "license": "MIT",
     "repository": "",
     "contributors": [],
+    "main": "./main.electron.js",
     "scripts": {
       "clean": "rimraf node_modules ngfactory doc build && npm cache clean",
       "clean:install": "npm run clean && npm install",
@@ -26,6 +27,7 @@
       "ci:watch": "npm run e2e && npm run test:watch",
       "start": "ngr --build dev --watch --serve",
       "serve": "node server.js",
+      "electron": "electron ./main.electron.js",
       "postinstall": "npm run webdriver:update"
     },
     "dependencies": {
@@ -65,7 +67,6 @@
       "css-mqpacker": "^6.0.1",
       "cssnano": "^3.10.0",
       "google-closure-compiler": "^20170409.0.0",
-      "google-closure-compiler-js": "^20170409.0.0",
       "jasmine-core": "^2.6.4",
       "jasmine-spec-reporter": "^4.1.1",
       "karma": "^1.7.0",

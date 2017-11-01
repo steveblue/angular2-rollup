@@ -31,6 +31,7 @@ let hasCompletedFirstStylePass = false;
 let postcssConfig = ' -u';
 let canServe = false;
 let isVerbose = false;
+let startElectron = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -43,6 +44,9 @@ process.argv.forEach((arg) => {
   }
   if (arg.includes('verbose')) {
     isVerbose = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('electron')) {
+    startElectron = arg.split('=')[1].trim() === 'true' ? true : false;
   }
   if (arg.includes('postcss')) {
     allowPostCSS = arg.split('=')[1].trim() === 'true' ? true : false;
@@ -203,8 +207,12 @@ const compile = {
 
       alert(colors.green('Build is ready'));
       if (canServe === true) {
+        alert(colors.green('Ready to serve'));
         utils.serve(canWatch);
-      }
+      } else if (startElectron === true) {
+        alert(colors.green('Ready to serve'));
+        utils.electron(canWatch);
+      } 
 
     });
 

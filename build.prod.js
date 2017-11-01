@@ -34,6 +34,7 @@ let isVerbose = false;
 let canServe = false;
 let allowPostCSS = true;
 let isRemote = false;
+let startElectron = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -52,6 +53,9 @@ process.argv.forEach((arg) => {
   }
   if (arg.includes('serve')) {
     canServe = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('electron')) {
+    startElectron = arg.split('=')[1].trim() === 'true' ? true : false;
   }
   if (arg.includes('postcss')) {
     allowPostCSS = arg.split('=')[1].trim() === 'true' ? true : false;
@@ -187,6 +191,9 @@ const compile = {
         if (canServe === true) {
           alert(colors.green('Ready to serve'));
           utils.serve(canWatch);
+        } else if (startElectron === true) {
+          alert(colors.green('Ready to serve'));
+          utils.electron(canWatch);
         } else {
           alert(colors.green('Build is ready'));
         }
@@ -301,6 +308,9 @@ const compile = {
               if (canServe === true) {
                 alert(colors.green('Ready to serve'));
                 utils.serve(canWatch);
+              } else if (startElectron === true) {
+                alert(colors.green('Ready to serve'));
+                utils.electron(canWatch);
               } else {
                 alert(colors.green('Build is ready'));
               }
@@ -599,7 +609,10 @@ const compile = {
       if (canServe === true) {
         alert(colors.green('Ready to serve'));
         utils.serve(canWatch);
-      } else {
+      } else if (startElectron === true) {
+        alert(colors.green('Ready to serve'));
+        utils.electron(canWatch);
+      }  else {
         alert(colors.green('Build is ready'));
       }
       //compile.clean();

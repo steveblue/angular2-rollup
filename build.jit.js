@@ -27,6 +27,7 @@ let hasInit = false;
 let styleFiles = [];
 let hasCompletedFirstStylePass = false;
 let canServe = false;
+let startElectron = false;
 let isVerbose = false;
 let allowPostCSS = true;
 
@@ -38,6 +39,9 @@ process.argv.forEach((arg) => {
   }
   if (arg.includes('serve')) {
     canServe = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('electron')) {
+    startElectron = arg.split('=')[1].trim() === 'true' ? true : false;
   }
   if (arg.includes('verbose')) {
     isVerbose = arg.split('=')[1].trim() === 'true' ? true : false;
@@ -173,9 +177,12 @@ const compile = {
 
               allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
               if (canServe === true) {
-                alert('Ready to serve');
+                alert(colors.green('Ready to serve'));
                 utils.serve(canWatch);
-              } else {
+              } else if (startElectron === true) {
+                alert(colors.green('Ready to serve'));
+                utils.electron(canWatch);
+              }else {
                 alert('Build is ready');
               }
 

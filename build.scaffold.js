@@ -160,6 +160,13 @@ const copy = {
             cp(cliPath + '/src-dynamic-route/app/app.module.ts', projectPath + '/src/app/app.module.ts');
         }
 
+        if (isElectron) {
+            rm(projectPath + '/src/public/index.html');
+            cp(cliPath + '/src-electron/public/index.html', projectPath + '/src/public/index.html');
+            cp(cliPath + '/src-electron/public/renderer.js', projectPath + '/src/public/renderer.js');
+            cp(cliPath + '/main.electron.js', projectPath + '/main.electron.js');
+        }
+
     }
 };
 
