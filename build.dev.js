@@ -213,6 +213,8 @@ const compile = {
         alert(colors.green('Ready to serve'));
         utils.electron(canWatch);
       } 
+      
+      hasInit = true;
 
     });
 
@@ -363,20 +365,13 @@ let watch = () => {
         styleSrcOnInit: false,
         isVerbose: isVerbose
       },
-        function (filePath) {
-          if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-            alert('libsass and postcss compiled');
-            setTimeout(compile.src, 1000);
-          }
-        },
-        function (filePath, outFile, err) {
-          if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-            if (!err) {
-              alert('libsass', 'compiled');
-              setTimeout(compile.src, 1000);
-            }
-          }
-        });
+      function (filePath, outFile) {
+
+        if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+          allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
+        }
+
+      });
 
 
     }
