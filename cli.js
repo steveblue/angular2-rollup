@@ -11,7 +11,7 @@ const prompt      = require('prompt');
 
 
 let cliCommand = '';
-let useVersion = '4.4.6';
+let useVersion = '5.0.0';
 
 function cmpVersions(a, b) {
     var i, diff;
@@ -44,6 +44,7 @@ program
     .option('--rollup [bool]', 'Bundle with Rollup prior to optimizing with ClosureCompiler in SIMPLE_OPTIMIZATIONS mode')
     .option('--verbose [bool]', 'Log additional messages in build')
     .option('--deploy [bool]', 'Option to deploy build available in buildHooks.env.post arguments' )
+    .option('--externs [bool]', 'Option to use or ignore closure.externs.js when counting vendor files during prod build, default is true')
     .option('g, generate [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -224,6 +225,12 @@ if (program.build) {
         cliCommand += ' remote=false';
     }
 
+    if (program.externs === false) {
+        cliCommand += ' externs=false';
+    }
+    else {
+        cliCommand += ' externs=true';
+    }
 
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 

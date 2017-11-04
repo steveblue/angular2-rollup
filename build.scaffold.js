@@ -12,7 +12,7 @@ const alert = logger.alert;
 const colors = logger.colors;
 
 let lib = false;
-let useVersion = '4.4.6';
+let useVersion = '5.0.0';
 let hasWarning = false;
 let dynamicRoutes = false;
 let isLazy = false;

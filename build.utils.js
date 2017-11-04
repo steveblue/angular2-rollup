@@ -37,7 +37,6 @@
 
 
 require('shelljs/global');
-// LiveReload and Watcher for dev.
 const clim = require('clim');
 const cons = clim();
 const fs   = require('fs');
@@ -62,6 +61,7 @@ if(!cliConfigPath) {
 }
 
 const scripts = require(projectRoot+'/package.json').scripts;
+const angularVersion = require(projectRoot + '/package.json').dependencies['@angular/core'];
 let config = require(projectRoot+'/build.config.js');
 
 const moduleIdRegex = /moduleId\s*:(.*)/g;
@@ -138,6 +138,7 @@ const utils = {
     stringRegex: stringRegex,
     multilineComment: multilineComment,
     singleLineComment: singleLineComment,
+    angularVersion: angularVersion,
     serve: (watch) => {
 
         let serverCommand = 'npm run serve';

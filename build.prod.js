@@ -35,6 +35,7 @@ let canServe = false;
 let allowPostCSS = true;
 let isRemote = false;
 let startElectron = false;
+let useExterns = true;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -62,6 +63,9 @@ process.argv.forEach((arg) => {
   }
   if (arg.includes('remote')) {
     isRemote = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('externs')) {
+    useExterns = arg.split('=')[1].trim() === 'true' ? true : false;
   }
 });
 
@@ -215,14 +219,23 @@ const compile = {
     let out = '';
     let finalExec = '';
     let hasError = false;
+    let externalVendorFileCount = 0;
 
     if (isVerbose) log('processing ' + externs.length + ' externs');
     if (isVerbose) log('processing ' + vendorFiles.length + ' vendor files');
     if (isVerbose) log('processing ' + main.length + ' app files');
 
+    // add files to count from closure.lazy.conf, primarily the package.json files from @angular packages
+
+    conf.split('\n').forEach(function (item) {
+      if (item.includes('--js')) {
+        externalVendorFileCount++;
+      }
+    });
+
     out += vendorFiles.join('\n');
     out += '\n';
-    out += '--module=vendor:' + (vendorFiles.length + externs.length) + '\n\n'; //add the number of externs
+    out += '--module=vendor:' + (vendorFiles.length + externs.length + externalVendorFileCount) + '\n\n'; //add the number of externs
 
     out += main.join('\n');
     out += '\n';
@@ -234,6 +247,13 @@ const compile = {
     });
 
     conf = conf.replace('#LIST_OF_FILES#', out);
+
+    if (conf.includes('package.json') && parseInt(utils.angularVersion.split('.')[0]) >= 5) {
+      conf += '--package_json_entry_names es2015' + '\n';
+    }
+    if (!conf.includes('--process_common_js_modules')) {
+      conf += '--process_common_js_modules' + '\n';
+    }
 
     alert('compiled manifest');
     if (isVerbose) log('\n' + conf);
@@ -413,6 +433,8 @@ const compile = {
       if (!fileName.includes('node_modules')) {
         return fileName;
       }
+    }).map((fileName) => {
+      return '--js ' + fileName;
     });
 
     // loop through bundles and search for vendor files
@@ -449,6 +471,8 @@ const compile = {
           return fileName;
         }
 
+      }).map((fileName) => {
+        return '--js ' + fileName;
       });
       // log('BUNDLE', bundle.fileName, bundle.fileContent.length);
       // log(bundle.fileContent.join('\n'));
@@ -457,21 +481,26 @@ const compile = {
     // remove duplicates that were included from lazyloaded bundles
     vendorFiles = vendorFiles.filter(function (item, pos, self) {
       return self.indexOf(item) == pos;
+    }).map((fileName) => {
+      return '--js ' + fileName;
     });
 
     // log('MAIN');
     // log(main.join('\n'));
     // log('VENDOR');
     // log(vendorFiles.join('\n'));
+    let externs = [];
 
-    let externs = fs.readFileSync(path.normalize(config.projectRoot + '/closure.externs.js'), 'utf-8');
-    let externsLength = 0;
+    if (useExterns) {
+      let externs = fs.readFileSync(path.normalize(config.projectRoot + '/closure.externs.js'), 'utf-8');
+      let externsLength = 0;
 
-    externs = externs.split('\n').filter((line) => {
-      if (line.match(externsRegex)) {
-        return line;
-      }
-    });
+      externs = externs.split('\n').filter((line) => {
+        if (line.match(externsRegex)) {
+          return line;
+        }
+      });
+    }
 
     compile.formatManifest(conf, main, bundles, vendorFiles, externs);
 
@@ -612,7 +641,7 @@ const compile = {
       } else if (startElectron === true) {
         alert(colors.green('Ready to serve'));
         utils.electron(canWatch);
-      }  else {
+      } else {
         alert(colors.green('Build is ready'));
       }
       //compile.clean();

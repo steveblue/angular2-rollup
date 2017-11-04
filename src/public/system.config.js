@@ -23,7 +23,30 @@
       '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs': 'lib:rxjs'
+      'rxjs/Observable': 'lib:rxjs/observable',
+      'rxjs/observable/merge': 'lib:rxjs/observable/merge',
+      'rxjs/observable/forkJoin': 'lib:rxjs/observable/forkJoin',
+      'rxjs/observable/fromPromise': 'lib:rxjs/observable/fromPromise',
+      'rxjs/observable/from': 'lib:rxjs/observable/from',
+      'rxjs/observable/of': 'lib:rxjs/observable/of',
+      'rxjs/observable/interval': 'lib:rxjs/observable/interval',
+      'rxjs/Subject': 'lib:rxjs/Subject',
+      'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject',
+      'rxjs/Subscription': 'lib:rxjs/subsription',
+      'rxjs/operators': 'lib:rxjs/operators/index',
+      'rxjs/operator/share': 'lib:rxjs/operator/share',
+      'rxjs/operator/map': 'lib:rxjs/operator/map',
+      'rxjs/operator/every': 'lib:rxjs/operator/every',
+      'rxjs/operator/first': 'lib:rxjs/operator/first',
+      'rxjs/operator/last': 'lib:rxjs/operator/last',
+      'rxjs/operator/reduce': 'lib:rxjs/operator/reduce',
+      'rxjs/operator/catch': 'lib:rxjs/operator/catch',
+      'rxjs/operator/filter': 'lib:rxjs/operator/filter',
+      'rxjs/operator/mergeMap': 'lib:rxjs/operator/mergeMap',
+      'rxjs/operator/mergeAll': 'lib:rxjs/operator/mergeAll',
+      'rxjs/operator/concatMap': 'lib:rxjs/operator/concatMap',
+      'rxjs/operator/concatAll': 'lib:rxjs/operator/concatAll',
+      'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
