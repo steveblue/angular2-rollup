@@ -1,7 +1,6 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppConfig } from './app.config';
@@ -20,7 +19,6 @@ export function initConfig(config: AppConfig) {
                BrowserAnimationsModule,
                HttpModule,
                CommonModule,
-               FormsModule,
                HomeModule,
                routing],
     declarations: [ AppComponent ],

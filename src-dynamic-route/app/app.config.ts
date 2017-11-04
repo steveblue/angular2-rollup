@@ -2,9 +2,6 @@ import { Inject, Injectable, Injector } from '@angular/core';
 import { Router, Routes, Route } from '@angular/router';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 
-import { Observable } from 'rxjs/Observable';
-import { toPromise } from 'rxjs/operator/toPromise';
-
 import { HomeComponent } from './shared/components/home/home.component';
 
 @Injectable()
