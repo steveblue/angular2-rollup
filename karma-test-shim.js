@@ -35,7 +35,7 @@ System.config({
   // Assume npm: is set in `paths` in systemjs.config
   // Map the angular testing umd bundles
   map: {
-    'app' : '/build',
+    'app': '/build',
     '@angular/core/testing': 'lib/@angular/core/bundles/core-testing.umd.js',
     '@angular/common/testing': 'lib/@angular/common/bundles/common-testing.umd.js',
     '@angular/compiler/testing': 'lib/@angular/compiler/bundles/compiler-testing.umd.js',
@@ -53,24 +53,24 @@ System.import('/base/build/system.config.js')
   .then(initTesting);
 
 
-function initTestBed(){
+function initTestBed() {
   return Promise.all([
     System.import('/base/build/lib/@angular/core/bundles/core-testing.umd.js'),
     System.import('/base/build/lib/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js')
   ])
 
-  .then(function (providers) {
-    var coreTesting    = providers[0];
-    var browserTesting = providers[1];
+    .then(function (providers) {
+      var coreTesting = providers[0];
+      var browserTesting = providers[1];
 
-    coreTesting.TestBed.initTestEnvironment(
-      browserTesting.BrowserDynamicTestingModule,
-      browserTesting.platformBrowserDynamicTesting());
-  })
+      coreTesting.TestBed.initTestEnvironment(
+        browserTesting.BrowserDynamicTestingModule,
+        browserTesting.platformBrowserDynamicTesting());
+    })
 }
 
 // Import all spec files and start karma
-function initTesting () {
+function initTesting() {
   return Promise.all(
     allSpecFiles.map(function (moduleName) {
       return System.import(moduleName);

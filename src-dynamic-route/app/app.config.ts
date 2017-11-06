@@ -7,11 +7,8 @@ import { HomeComponent } from './shared/components/home/home.component';
 @Injectable()
 export class AppConfig {
 
-
     constructor(private injector: Injector,
-        private http: Http) {
-
-    }
+        private http: Http) {}
 
     public load() {
 

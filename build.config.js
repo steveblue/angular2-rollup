@@ -1,3 +1,7 @@
+require('shelljs/global');
+const fs = require('fs');
+const path = require('path');
+
 module.exports = {
     dep: {
         lib: [
@@ -49,5 +53,17 @@ module.exports = {
     libFilename: 'default-lib',
     classPrefix: 'My',
     componentPrefix: 'cmp',
-    directivePrefix: 'dir'
+    directivePrefix: 'dir',
+    buildHooks: {
+        dev: {
+            pre: () => {
+                
+                return new Promise((res, rej) => {
+                    cp('lazy.config.json', './build/lazy.config.json');
+                    res();
+                });
+
+            }
+        }
+    }
 }

@@ -23,9 +23,19 @@
       '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs': 'lib:rxjs',
-      // map lazyloaded modules for JIT, remove for 5.0.0 DEV
-      'shared/components/lazy/lazy.module': 'src/app/shared/components/lazy/lazy.module.js'
+      'rxjs/Observable': 'lib:rxjs/observable',
+      'rxjs/observable': 'lib:rxjs/observable',
+      'rxjs/Subject': 'lib:rxjs/Subject',
+      'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject',
+      'rxjs/Subscription': 'lib:rxjs/Subscription',
+      'rxjs/Observer': 'lib:rxjs/Observer',
+      'rxjs/operators': 'lib:rxjs/operators',
+      'rxjs/operator': 'lib:rxjs/operator',
+      'rxjs/add/operator': 'lib:rxjs/add/operator',
+      'rxjs/add/operators': 'lib:rxjs/operators',
+      'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError',
+      // map lazyloaded modules for DEV, replace '.ngfactory' with '' for JIT
+      'shared/components/lazy/lazy.module.ngfactory': 'src/app/shared/components/lazy/lazy.module.ngfactory.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {

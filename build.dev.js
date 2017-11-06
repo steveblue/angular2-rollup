@@ -22,7 +22,7 @@ const warn = utils.warn;
 const alert = utils.alert;
 const clean = utils.clean;
 
-let allowPostCSS = true;
+let allowPostCSS = false;
 let canWatch = false;
 let isCompiling = false;
 let hasInit = false;
@@ -167,14 +167,14 @@ const compile = {
     fs.readFile(path.join(config.projectRoot, 'main.prod.js'), 'utf8', function (err, contents) {
       if (!err) {
         contents = contents.replace("./ngfactory/src/app/app.module.ngfactory", "src/app/app.module.ngfactory");
-        contents = contents.replace("import { enableProdMode } from '@angular/core';", "");
+        contents = contents.replace('import { enableProdMode } from "@angular/core";', '');
         contents = contents.replace("enableProdMode();", "");
         fs.writeFile(outFile, contents, function (err) {
           if (!err) {
             let transpile = exec(path.join(config.projectRoot, 'node_modules/.bin/tsc') +
               ' ' + outFile + ' --target es5 --module commonjs' +
               ' --emitDecoratorMetadata true --experimentalDecorators true' +
-              ' --noImplicitAny false --allowUnreachableCode false --moduleResolution node' +
+              ' --noImplicitAny false --sourceMap true --moduleResolution node' +
               ' --typeRoots node --lib dom,es2017',
               function (code, output, error) {
                 alert('typescript compiled', outFile);
@@ -212,8 +212,8 @@ const compile = {
       } else if (startElectron === true) {
         alert(colors.green('Ready to serve'));
         utils.electron(canWatch);
-      } 
-      
+      }
+
       hasInit = true;
 
     });
@@ -352,7 +352,7 @@ let watch = () => {
 
     else if (filePath.indexOf('.scss') > -1) {
 
-      alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered libsass and postcss');
+      //alert('change', filePath.replace(/^.*[\\\/]/, ''), 'triggered libsass and postcss');
 
       hasCompletedFirstStylePass = true;
 
@@ -367,9 +367,9 @@ let watch = () => {
       },
       function (filePath, outFile) {
 
-        if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
-          allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
-        }
+          if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+            allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
+          }
 
       });
 

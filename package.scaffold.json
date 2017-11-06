@@ -76,6 +76,7 @@
       "karma-jasmine-html-reporter": "^0.2.2",
       "karma-mocha-reporter": "^2.2.3",
       "karma-phantomjs-launcher": "^1.0.4",
+      "karma-remap-coverage": "^0.1.4",
       "karma-remap-istanbul": "^0.6.0",
       "karma-verbose-reporter": "^0.0.6",
       "livereload": "^0.6.2",
@@ -92,6 +93,7 @@
       "rollup-plugin-commonjs": "^8.0.2",
       "rollup-plugin-node-resolve": "^3.0.0",
       "rollup-plugin-replace": "^1.1.1",
+      "shelljs": "^0.7.8",
       "ts-helpers": "^1.1.2",
       "tslint": "^5.4.3",
       "typescript": "2.4.2"
