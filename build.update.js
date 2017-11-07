@@ -254,19 +254,22 @@ let init = function () {
                 utils.alert('Http will be deprecated in Angular 6.0.0, migrate all instances of Http to HttpClient in your app and add "tslib/tslib.js" to build.config.js');
                 utils.alert('RxJs has been updated to 5.5.2, please update your app accordingly. Please change the mappings in system.config.js to something like below:');
                 utils.alert("\n// other libraries \n"+
-                    "'rxjs/Observable': 'lib:rxjs/observable', \n"+
-                    "'rxjs/observable': 'lib:rxjs/observable', \n"+
-                    "'rxjs/Subject': 'lib:rxjs/Subject', \n"+
-                    "'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject', \n"+
-                    "'rxjs/Subscription': 'lib:rxjs/Subscription', \n"+
-                    "'rxjs/Observer': 'lib:rxjs/Observer', \n"+
-                    "'rxjs/operators': 'lib:rxjs/operators/index.js', \n"+
-                    "'rxjs/operator': 'lib:rxjs/operator', \n"+
-                    "'rxjs/add/operator': 'lib:rxjs/add/operator', \n"+
-                    "'rxjs/add/operators': 'lib:rxjs/operators/index.js', \n"+
-                    "'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError', \n"+
-                    "'tslib': 'lib:tslib/tslib.js'");
+                            "'rxjs/Observable': 'lib:rxjs/observable', \n"+
+                            "'rxjs/observable': 'lib:rxjs/observable', \n"+
+                            "'rxjs/Subject': 'lib:rxjs/Subject', \n"+
+                            "'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject', \n"+
+                            "'rxjs/Subscription': 'lib:rxjs/Subscription', \n"+
+                            "'rxjs/Observer': 'lib:rxjs/Observer', \n"+
+                            "'rxjs/operators': 'lib:rxjs/operators/index.js', \n"+
+                            "'rxjs/operator': 'lib:rxjs/operator', \n"+
+                            "'rxjs/add/operator': 'lib:rxjs/add/operator', \n"+
+                            "'rxjs/add/operators': 'lib:rxjs/operators/index.js', \n"+
+                            "'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError', \n"+
+                            "'tslib': 'lib:tslib/tslib.js'");
+                utils.alert('For more information, read the official blog post about Angular 5.0.0 https://blog.angular.io/version-5-0-0-of-angular-now-available-37e414935ced');
+                utils.alert('Use the Angular Update Guide for more help updating to 5.0.0 https://angular-update-guide.firebaseapp.com');
             }
+
             utils.alert('ngr updated ' + colors.bold(colors.red('@angular')), '=> ' + colors.bold(colors.white(useVersion)));
             utils.alert('Please run npm install');
         });
