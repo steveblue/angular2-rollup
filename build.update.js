@@ -267,8 +267,8 @@ let init = function () {
                             "'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError', \n"+
                             "'tslib': 'lib:tslib/tslib.js'");
                 utils.alert('closure.conf and closure.lazy.conf must be updated to support --package_json_entry_names');
-                utils.alert('For an example of closure.conf visit https://gist.github.com/steveblue/4ab4c826793b9a395e8751489c6f606e');
-                utils.alert('For an example of closure.lazy.conf visit https://gist.github.com/steveblue/60cbb7faf58249dd8da5788409205cea')
+                utils.alert('For an example closure.conf visit https://gist.github.com/steveblue/4ab4c826793b9a395e8751489c6f606e');
+                utils.alert('For an example closure.lazy.conf visit https://gist.github.com/steveblue/60cbb7faf58249dd8da5788409205cea')
                 utils.alert('For more information, read the official blog post about Angular 5.0.0 https://blog.angular.io/version-5-0-0-of-angular-now-available-37e414935ced');
                 utils.alert('Use the Angular Update Guide for more help updating to 5.0.0 https://angular-update-guide.firebaseapp.com');
             }
