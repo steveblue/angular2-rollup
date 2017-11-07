@@ -1,3 +1,8 @@
+## 1.0.0-rc.0
+
+- Version bump
+- Update README
+
 ## 1.0.0-beta.13
 
 - Use `ngr update --angularVersion 5.0.0` for help updating an existing scaffolded app to Angular 5.0.0

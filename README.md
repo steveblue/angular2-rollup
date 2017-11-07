@@ -9,22 +9,29 @@ CLI for bundling Angular with Rollup and Closure Compiler.
 
 * `ngr` cli for running builds, code generation, scaffolding and more
 
-* Fast dev environments use JIT Compiler or `ngc` in `--watch` mode
+* Fast dev environments use AOT in `--watch` mode or JIT
 
 * Highly optimized bundle for production using Closure Compiler
 
 * Lazyload optimized bundles with SystemJS and Closure Compiler
 
+* Scaffold an application with dynamic routing configured by JSON
+
+* EXPERIMENTAL support for building a native app with Electron
+
 * Build library packages that follow [Angular Package Format 4.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview)
 
 * Follows [Angular Styleguide](https://angular.io/guide/styleguide)
-* Ready to go build system using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli), [Rollup](http://rollupjs.org), and [Closure Compiler](https://developers.google.com/closure/compiler/)
-* Test Angular 2 code with [Jasmine](http://jasmine.github.io/) and [Karma](http://karma-runner.github.io/)
-* Coverage with [Istanbul](https://github.com/gotwarlost/istanbul)
-* End-to-end Angular 2 code using [Protractor](https://angular.github.io/protractor/)
-* Stylesheets with [SASS](http://sass-lang.com/) and [PostCSS](http://postcss.org)
-* Error reporting with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer)
 
+* Ready to go build system using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli), [Rollup](http://rollupjs.org), and [Closure Compiler](https://developers.google.com/closure/compiler/)
+
+* Test Angular 2 code with [Jasmine](http://jasmine.github.io/) and [Karma](http://karma-runner.github.io/)
+
+* End-to-end Angular 2 code using [Protractor](https://angular.github.io/protractor/)
+
+* Stylesheets with [SASS](http://sass-lang.com/) and [PostCSS](http://postcss.org)
+
+* Error reporting with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer)
 
 
 ## Quick start
@@ -47,12 +54,9 @@ $ ngr scaffold && npm install
 
 - Run development build, start up Express Server with LiveReload
 
-`$ ngr build dev --jit --serve --watch` pre 5.0.0
-
-`$ ngr build dev --serve --watch` post 5.0.0
+`$ ngr build dev --serve --watch`
 
 When everything is setup correctly, you should be able to visit  [http://localhost:4200](http://localhost:4200) in your browser.
-
 
 
 ## Table of Contents
@@ -78,7 +82,7 @@ When everything is setup correctly, you should be able to visit  [http://localho
 
 What you need to run this app:
 * `node` and `npm` (Use [NVM](https://github.com/creationix/nvm))
-* Ensure you're running Node (`v6.5.x`+)
+* Ensure you're running Node (`6.9.0`+)
 
 ## Install
 
@@ -88,7 +92,7 @@ What you need to run this app:
 
 To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 Selenium Webdriver requires [Python](https://www.python.org).
-This project requires `node ~6.9.0` to be installed.
+
 
 - Install the cli and global npm dependencies
 
@@ -164,16 +168,17 @@ There is a lot of config in this project to allow finetuning each build to devel
 
 To scaffold a new app run `ngr scaffold`. This will copy required files into the same directory.
 
-To scaffold at a specific version of `@angular` use `--angularVersion` i.e. `ngr scaffold --angularVersion 4.2.2`
+To scaffold at a specific version of `@angular` use `--angularVersion` i.e. `ngr scaffold --angularVersion 5.0.0`
 
 If you want access to the library build, use `ngr scaffold --lib`
+
+If you want to build a project for native app development with Electron use `ngr scaffold --electron`
 
 
 
 ## Update
 
-To update to specific version of `@angular` use `--angularVersion` i.e. `ngr update --angularVersion 4.2.2`
-
+To update a project to a specific version of `@angular` use `--angularVersion` i.e. `ngr update --angularVersion 5.0.0`
 
 
 # Develop
@@ -183,36 +188,29 @@ To update to specific version of `@angular` use `--angularVersion` i.e. `ngr upd
 
 To build the app for development, enable livereload, and start up the server:
 
-* `$ ngr build dev --watch --serve -jit`
+* `$ ngr build dev --watch --serve`
 
-`ngr` will build the application for development. Using `--jit` bootstraps Angular with JIT Compiler.
+`ngr` will build the application for development.
+
+Optionally, use `--jit` to bootstrap Angular with JIT Compiler.
 
 Once your work has been validated with the development build, you can also test the production build.
 
 It is recommended to bundle with Closure Compiler in ADVANCED_OPTIMIZATIONS mode.
 
-* `$ ngr build prod --closure --serve`
+* `$ ngr build prod`
 
 The production build also supports lazy loading with Closure Compiler.
 
-* `$ ngr build prod --closure --lazy --serve`
+* `$ ngr build prod --lazy`
 
-You can also bundle with Rollup and then optimize with ClosureCompiler, but only with SIMPLE_OPTIMIZATIONS
+You can also bundle with Rollup and then optimize with ClosureCompiler, but only with SIMPLE_OPTIMIZATIONS. This build does not support lazyloading.
 
-* `$ ngr build prod --serve`
+* `$ ngr build prod --rollup`
 
 
-### Production Builds
+NOTE: If you scaffolded an app for electron use the `--electron` argument.
 
-While the development build uses Angular Just In Time (JIT) compilation in conjunction with `tsc`, the production build uses [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli) to compile the Angular 2 application Ahead of Time (AOT).
-
-AOT is more secure than JIT and should always be used in a production environment.
-
-Here's how is works:
-
-1. The `@angular/compiler` package uses `ngc` to AOT compile the files in `/src` to `/ngfactory`,
-
-2. Closure Compiler optimizes any bundles and outputs ES5 for the browser.
 
 
 ### Package Spec 4.0 Library Build
@@ -223,7 +221,7 @@ Here's how is works:
 
 Jason Aden gave a presentation about Angular Package Spec 4.0 at ng-conf 2017. [Packaging Angular](https://youtu.be/unICbsPGFIA).
 
-To develop component libraries, scaffold an app with the `--lib` flag.
+To develop component libraries, scaffold an app with the `--lib` flag. Update an existing scaffolded app to support the library build with `ngr update --lib`.
 
 `tsconfig.lib.json` and `tsconfig.lib.es5.json` configure `ngc` during the library build.
 
@@ -258,28 +256,15 @@ When debugging or first writing test suites, you may find it helpful to try out 
 
 # CLI
 
-This starter code includes a CLI that allows you to build and start up an Express Server without `npm run`. The CLI includes commands for generating new code snippets similar to Angular CLI.
 
-To use the CLI run the command `npm install -g` while in the root directory of the project, then `npm link`. `webdriver-manager` should also be installed globally if it isn't already.
-
-`npm install -g`
-`npm link`
-
-## CLI Commands
-
-#### ngr --help
-
-Displays the help documentation for using `ngr`
+The `angular-rollup` CLI includes a few more useful commands. Display all supported commands with `ngr --help`.
 
 
 #### generate
 
-`ngr generate, g`
-
-The easiest way to generate code is to use the wizard.
+`ngr generate` helps generate code quickly within your scaffoled app. The easiest way to generate code is to use the wizard.
 
 `ngr generate wizard`
-
 
 Example of output from the wizard:
 
@@ -340,7 +325,7 @@ You can choose to run an Express server in parallel with build tasks, with or wi
 
 Production builds do not require the CLI, just the package.json
 
-- `NODE_ENV=prod node server.js --https` Run Express server with SSL for production, requires `./conf/ssl/key.pem` and `./conf/ssl/cert.pem`.
+- `NODE_ENV=prod ngr serve` Run Express server with SSL for production, requires `./conf/ssl/key.pem` and `./conf/ssl/cert.pem`.
 
 
 
@@ -348,32 +333,20 @@ Production builds do not require the CLI, just the package.json
 
 ## How do I include third party libraries?
 
-Follow this step by step questionaire to figure out which method to use.
+The production build relies heavily on Closure Compiler, which provides excellent optimizations but unfortunately is not compatible with most third party libraries. Luckily, Closure Compiler can be configured to build referencing methods and variables found in external scripts. Follow this step by step questionaire to figure out which method to use.
 
 - Does the library conform to Angular Package Spec 4.0?
-    YES: Will be bundled by `ngc`, inject the NgModule into your application
-    NO: See next question
-
-- Is the library compatible with ClosureCompiler in ADVANCED_OPTIMIZATIONS?
-    YES: Bundle without Rollup using the `--closure` flag.
+    YES: Will be bundled by `ngc`, inject the NgModule into your application, add to `closure.conf` and/or closure.lazy.conf
     NO: See next question
 
 - Is the library written in ES2015?
-    YES: Can most likely be bundled with `Rollup`
+    YES: Include the necessary library files in `closure.conf`
     NO: See next question
 
 - Is the library formatted with UMD modules?
-    YES: Edit `rollup.config.js` so Rollup can bundle the library
-    NO: You must include the library globally via `<head>` or `SystemJS`. Examples of both are in `/src/public/index.html`
+    YES: Include the necessary library files in `closure.conf`
+    NO: You must include the library globally via `<head>` or `SystemJS`. Add the necessary externs to `closure.externs.js`
 
-
-RxJS is bundled as UMD module. In `rollup.config.js`, use the `rollup-plugin-commonjs` to bundle it via the Rollup build step.
-
- ```
-    commonjs({
-     include: 'node_modules/rxjs/**'
-    }),
-```
 
 
 ### Configure SystemJS for the dev build
@@ -392,11 +365,8 @@ You must configure `system.config.js` in order to inject third party libaries fo
       '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs': 'lib:rxjs',
-      'firebase': 'lib:firebase/firebase.js',
-      'firebase/app': 'lib:firebase/firebase.js',
-      'firebase/database': 'lib:firebase/firebase.js',
-      'firebase/auth': 'lib:firebase/firebase.js'
+      'rxjs/Observable': 'lib:rxjs/observable',
+      'tslib': 'lib:tslib/tslib.js'
     }
 ```
 
@@ -424,10 +394,13 @@ You must also edit `public/index.html` and the systemjs config files to load lib
 module.exports = {
     dep: {
         lib: [
-          'core-js',
-          'reflect-metadata',
-          'zone.js',
-          'systemjs',
+          'core-js/client/shim.min.js',
+          'core-js/client/shim.min.js.map',
+          'systemjs/dist/system.js',
+          'zone.js/dist/zone.js',
+          'reflect-metadata/Reflect.js',
+          'reflect-metadata/Reflect.js.map',
+          'tslib/tslib.js',
           '@angular',
           'rxjs'
         ],
@@ -443,33 +416,28 @@ module.exports = {
 ```
 
 
-#### Bundling libraries written in ES2105 Modules
+#### Bundling libraries
 
-It is a best practice to tree shake and bundle third party libraries for production, however this process only works with Rollup if the third party library is packaged with ES2015 modules. It is also not recommended to import an entire library that is treeshakable like so:
+It is a best practice to tree shake and bundle third party libraries for production, however this process only works if the third party library is packaged with a module pattern such as ES2015 modules.
+
+It is NOT recommended to import an entire library that is treeshakable like so:
 
 `import Rx from "rxjs/Rx";`
 
-While you could do this, it is a best practice to only import the methods of the library your app requires.
+While you could do this, it is a best practice to only import the methods of the library your app requires. This will signifcantly shrink the size of the bundle Closure Compiler creates.
 
 ```
-import "rxjs/add/observable/interval";
-import "rxjs/add/operator/take";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/bufferCount"
+import { map } from 'rxjs/operators/map';
 
 ```
 
-If you import an entire library using `*` for instance, the entire library will be bundled in your application, so import ONLY the methods your application requires for an optimal bundle.
-
-`import` will only work with libraries packaged with ES2015 modules.
-
-When bundling for production, you may need to also need to update the `rollup.config.js` file to properly bundle the third party library.
+Closure Compiler cannot handle libraries that import ES2015 modules with `*`.
 
 
 
 #### Typings
 
-You may also need to inject `typings` for the `ngc` service to properly inject dependencies during AOT compilation.
+You may also need to inject `typings` for `ngc` to properly inject dependencies during AOT compilation.
 
 ```
 "compilerOptions": {
@@ -493,10 +461,9 @@ Editing index.html
     <!-- /build -->
 ```
 
-`ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build.
+`ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build. For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor);
 
 The typical Angular 2 dependencies are already included in the `<head>` tag in `index.html`.
-
 
 
 ## How can I write a custom build?
@@ -547,7 +514,7 @@ After you have finished updating the `package.json`, run the following commands:
 
 ## Can I run LiveReload with the Production build?
 
-Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr build dev` for development, since the JIT Compiler or ngc in `--watch` mode allows for a faster workflow. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr build dev --watch --serve`
+Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr build dev` for development, which uses AOT in --watch mode, mirroring the production build in a lot of ways. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr build prod --watch --serve`
 
 
 For livereload to work in the browser for the production build you currently you have to edit `src/public/index.html`.
