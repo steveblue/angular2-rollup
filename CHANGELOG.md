@@ -1,8 +1,7 @@
 ## 1.0.0-beta.12
 
-
-
-- `ngr scaffold` now defaults to a single bundle, use `--lazyModule` to bootstrap with lazyloaded routes, `--dynamicRoutes` is the same
+- Support for Angular 5.0.0
+- `ngr scaffold` now defaults to a single bundle, use `--lazy` to bootstrap with lazyloaded routes, `--dynamicRoutes` is the same
 - Added EXPERIMENTAL support for Electron. Scaffold a new app with `ngr scaffold --electron` then build with `--electron` argument. electron must be installed with `npm i -g electron`.
 - Added `--remote` argument to production build. Allows a client to build from a host closure manifest `main.prod.MF`
 - Fixed an issue that prevented files in src/public from properly being copied to build
@@ -10,7 +9,6 @@
 - Fixed an issue that prevented livereload when changing a SASS file while using AOT in --watch mode
 - Added preCompile and postCompile hooks into prod build
 - pre, preCompile, and postCompile functions in `build.config.js` must return a Promise i.e.
-
 
 ```
     buildHooks: {
@@ -31,7 +29,7 @@ For a client to utilize the new `--remote` flag and build a lazyloaded module fr
 - `bundle.js` and `bundle.js.map` files to be used in the client's index.html for testing against the production bundle
 - `main.prod.MF`
 
-The client must then copy the host's `ngfactory` files into `/ngfactory` during the `postCompile` build step. 
+The client must then copy the host's `ngfactory` files into `/ngfactory` during the `postCompile` build step.
 The client must also copy the host's `main.prod.MF` into `/closure` during the `postCompile` build step.
 The client must copy `bundle.js` and `bundle.js.map` into the `/build` directory in the `post` build step.
 
