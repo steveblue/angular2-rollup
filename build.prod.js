@@ -672,45 +672,32 @@ const compile = {
     isCompiling = true;
 
     let startCompile = () => {
+      
       // remove moduleId prior to ngc build. TODO: look for another method.
       ls(path.normalize('ngfactory/**/*.ts')).forEach(function (file) {
         sed('-i', /^.*moduleId: module.id,.*$/, '', file);
       });
 
-    
-      if ( parseInt(utils.angularVersion.split('.')[0]) < 5 ) {
+      alert('@angular/compiler', 'started');
 
-        alert('@angular/compiler', 'started');
+      let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
+        ' -p ' + path.normalize('./tsconfig.prod.json'), { silent: true }, function (code, output, error) {
+          if (error) {
+            warn(error);
+            return;
+          }
+          alert('@angular/compiler compiled ngfactory');
 
-        let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
-          ' -p ' + path.normalize('./tsconfig.prod.json'), { silent: true }, function (code, output, error) {
-            if (error) {
-              warn(error);
-              return;
-            }
-            alert('@angular/compiler compiled ngfactory');
-
-            if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].postCompile) {
-              config.buildHooks[env].postCompile(process.argv).then(() => {
-                compile.bundle();
-              });
-            } else {
+          if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].postCompile) {
+            config.buildHooks[env].postCompile(process.argv).then(() => {
               compile.bundle();
-            }
-
-
-          });
-      } else {
-
-        if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].postCompile) {
-          config.buildHooks[env].postCompile(process.argv).then(() => {
+            });
+          } else {
             compile.bundle();
-          });
-        } else {
-          compile.bundle();
-        }
-      }
+          }
 
+
+        });
     };
 
     clean.tmp();
