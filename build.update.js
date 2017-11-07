@@ -96,9 +96,9 @@ process.argv.forEach((arg) => {
 */
 
 const copy = {
-    file: (filePath, fileName) => {
+    file: (filePath, fileName, force) => {
 
-        if (fs.existsSync(utils.config.projectRoot +'/'+ filePath)) {
+        if (fs.existsSync(utils.config.projectRoot +'/'+ filePath) && force !== true) {
             utils.warn(filePath + ' already exists');
             hasWarning = true;
         } else {
@@ -185,6 +185,18 @@ let init = function () {
         }
     }
 
+    if (useVersion === '5.0.0') {
+
+        copy.file('karma-test-shim.js', 'karma-test-shim.js', true);
+        utils.warn('ngr overwrote karma-test-shim.js');
+        copy.file('karma.conf.js', 'karma.conf.js', true);
+        utils.warn('ngr overwrote karma.conf.js');
+        rm(utils.config.projectRoot + '/tsconfig.prod.lazy.json');
+        utils.warn('ngr deleted tsconfig.prod.lazy.json because it is not needed anymore');
+        rm(utils.config.projectRoot + '/main.prod.ts');
+        utils.warn('ngr deleted main.prod.ts because it is not needed anymore, please remove main.prod.ts from any tsconfig');
+    }
+
     if (!useVersion) {
         return;
     }
@@ -207,9 +219,55 @@ let init = function () {
             }
         });
 
+        if (useVersion === '5.0.0') {
+            script['scripts']['bundle:closure'] = 'java -jar node_modules/google-closure-compiler/compiler.jar --warning_level=QUIET --flagfile closure.conf --js_output_file ./build/bundle.js --output_manifest=closure/manifest.MF';
+            script.dependencies['core-js'] = '^2.5.1';
+            script.dependencies['zone.js'] = '^0.8.18';
+            script.devDependencies.typescript = '2.4.2';
+            script.devDependencies.tslib = '^1.6.1';
+            script.devDependencies['@types/jasmine'] = '^2.6.3';
+            script.devDependencies['@types/karma'] = '^1.7.1';
+            script.devDependencies['jasmine-core'] = '^2.8.0';
+            script.devDependencies['jasmine-spec-reporter'] = '^4.2.0';
+            script.devDependencies['karma-remap-coverage'] = '^0.1.4';
+            script.devDependencies['karma-coverage'] = '^1.1.1';
+            script.devDependencies['karma-jasmine-html-reporter'] = '^0.2.2';
+            script.devDependencies['karma-chrome-launcher'] = '^2.2.0';
+            script.devDependencies['karma-jasmine'] = '^1.1.0';
+            script.devDependencies['google-closure-compiler'] = 'git+https://github.com/gregmagolan/closure-compiler.git#20170919.angular.dist';
+            delete script.devDependencies['google-closure-compiler-js'];
+            script.dependencies.rxjs = '^5.5.2';
+        }
+
+        // script['main'] = './main.electron.js',
+        // script['scripts'].electron = 'electron ./main.electron.js';
+
         fs.writeFile(path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/package.json', JSON.stringify(script, null, 4), function (err) {
+
             if (err) log(err);
-            utils.alert('ngr updated ' + colors.bold(colors.red('@angular')), '=> ' + colors.bold(colors.white(useVersion)) );
+
+            if (useVersion === '5.0.0') {
+                utils.alert('AOT in watch mode is now the default dev environment');
+                utils.alert('Remove any deprecated properties in tslint.json');
+                utils.alert('If you have any lazyloaded modules listed in the files array of tsconfig.prod.json, migrate them to tsconfig.dev.json');
+                utils.alert('If you have any lazyloaded modules, you need to update thier mappings in src/public/system.config.js');
+                utils.alert('Http will be deprecated in Angular 6.0.0, migrate all instances of Http to HttpClient in your app and add "tslib/tslib.js" to build.config.js');
+                utils.alert('RxJs has been updated to 5.5.2, please update your app accordingly. Please change the mappings in system.config.js to something like below:');
+                utils.alert("\n// other libraries \n"+
+                    "'rxjs/Observable': 'lib:rxjs/observable', \n"+
+                    "'rxjs/observable': 'lib:rxjs/observable', \n"+
+                    "'rxjs/Subject': 'lib:rxjs/Subject', \n"+
+                    "'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject', \n"+
+                    "'rxjs/Subscription': 'lib:rxjs/Subscription', \n"+
+                    "'rxjs/Observer': 'lib:rxjs/Observer', \n"+
+                    "'rxjs/operators': 'lib:rxjs/operators/index.js', \n"+
+                    "'rxjs/operator': 'lib:rxjs/operator', \n"+
+                    "'rxjs/add/operator': 'lib:rxjs/add/operator', \n"+
+                    "'rxjs/add/operators': 'lib:rxjs/operators/index.js', \n"+
+                    "'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError', \n"+
+                    "'tslib': 'lib:tslib/tslib.js'");
+            }
+            utils.alert('ngr updated ' + colors.bold(colors.red('@angular')), '=> ' + colors.bold(colors.white(useVersion)));
             utils.alert('Please run npm install');
         });
 
