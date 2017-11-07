@@ -33,7 +33,8 @@
       'rxjs/operator': 'lib:rxjs/operator',
       'rxjs/add/operator': 'lib:rxjs/add/operator',
       'rxjs/add/operators': 'lib:rxjs/operators',
-      'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError'
+      'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError',
+      'tslib': 'lib:tslib/tslib.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {

@@ -34,6 +34,7 @@
       'rxjs/add/operator': 'lib:rxjs/add/operator',
       'rxjs/add/operators': 'lib:rxjs/operators',
       'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError',
+      'tslib': 'lib:tslib/tslib.js',
       // map lazyloaded modules for DEV, replace '.ngfactory' with '' for JIT
       'shared/components/lazy/lazy.module.ngfactory': 'src/app/shared/components/lazy/lazy.module.ngfactory.js'
     },

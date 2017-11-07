@@ -11,6 +11,7 @@ module.exports = {
             'zone.js/dist/zone.js',
             'reflect-metadata/Reflect.js',
             'reflect-metadata/Reflect.js.map',
+            'tslib/tslib.js',
             '@angular',
             'rxjs'
         ],
@@ -57,7 +58,7 @@ module.exports = {
     buildHooks: {
         dev: {
             pre: () => {
-                
+
                 return new Promise((res, rej) => {
                     cp('lazy.config.json', './build/lazy.config.json');
                     res();
