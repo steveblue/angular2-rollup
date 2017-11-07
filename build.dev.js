@@ -175,9 +175,9 @@ const compile = {
               ' ' + outFile + ' --target es5 --module commonjs' +
               ' --emitDecoratorMetadata true --experimentalDecorators true' +
               ' --noImplicitAny false --sourceMap true --moduleResolution node' +
-              ' --typeRoots node --lib dom,es2017',
+              ' --typeRoots node --lib dom,es2017', {silent: true},
               function (code, output, error) {
-                alert('typescript compiled', outFile);
+                if (isVerbose) alert('typescript compiled', outFile);
               });
           } else {
             warn(err);

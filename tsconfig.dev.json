@@ -28,6 +28,7 @@
     "skipMetadataEmit": true
   },
   "files": [
-    "./src/app/app.module.ts"
+    "./src/app/app.module.ts",
+    "./src/app/shared/components/lazy/lazy.module.ts"
   ]
 }

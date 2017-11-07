@@ -87,6 +87,7 @@ process.argv.forEach((arg)=>{
 });
 
 
+
 /*
 
   Copy Tasks
@@ -176,13 +177,27 @@ let init = function() {
     if (lib == false) {
 
         copy.scaffold(files.filter((filename)=>{
-            return filename.includes('lib') === false;
+
+            if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('tsconfig.prod.lazy.json')) {
+                return false;
+            } else {
+                return filename.includes('lib') === false;
+            }
+            
         }));
 
         rm('-rf', projectPath + '/src/lib');
 
     } else {
-        copy.scaffold(files);
+        copy.scaffold(files.filter((filename) => {
+
+            if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('tsconfig.prod.lazy.json')) {
+                return false;
+            } else {
+                return true;
+            }
+
+        }));
     }
 
     if (hasWarning == true) {

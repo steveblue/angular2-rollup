@@ -575,11 +575,12 @@ const compile = {
 
   bundleLazy: () => {
 
-
     let conf = fs.readFileSync(path.normalize(config.projectRoot + '/closure.lazy.conf'), 'utf-8');
 
+    let tsConfig = (parseInt(utils.angularVersion.split('.')[0]) < 5) ? './tsconfig.prod.lazy.json' : './tsconfig.prod.json';
+
     let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
-      ' -p ' + path.normalize('./tsconfig.prod.lazy.json'), { silent: true }, function (code, output, error) {
+      ' -p ' + path.normalize(tsConfig), { silent: true }, function (code, output, error) {
 
         if (error) {
           warn(error);
@@ -614,8 +615,6 @@ const compile = {
         } else {
           compile.transformBundles(conf);
         }
-
-
 
       });
   },
@@ -678,26 +677,40 @@ const compile = {
         sed('-i', /^.*moduleId: module.id,.*$/, '', file);
       });
 
-      alert('@angular/compiler', 'started');
+    
+      if ( parseInt(utils.angularVersion.split('.')[0]) < 5 ) {
 
-      let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
-        ' -p ' + path.normalize('./tsconfig.prod.json'), { silent: true }, function (code, output, error) {
-          if (error) {
-            warn(error);
-            return;
-          }
-          alert('@angular/compiler compiled ngfactory');
+        alert('@angular/compiler', 'started');
 
-          if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].postCompile) {
-            config.buildHooks[env].postCompile(process.argv).then(() => {
+        let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
+          ' -p ' + path.normalize('./tsconfig.prod.json'), { silent: true }, function (code, output, error) {
+            if (error) {
+              warn(error);
+              return;
+            }
+            alert('@angular/compiler compiled ngfactory');
+
+            if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].postCompile) {
+              config.buildHooks[env].postCompile(process.argv).then(() => {
+                compile.bundle();
+              });
+            } else {
               compile.bundle();
-            });
-          } else {
+            }
+
+
+          });
+      } else {
+
+        if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].postCompile) {
+          config.buildHooks[env].postCompile(process.argv).then(() => {
             compile.bundle();
-          }
+          });
+        } else {
+          compile.bundle();
+        }
+      }
 
-
-        });
     };
 
     clean.tmp();

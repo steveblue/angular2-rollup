@@ -29,7 +29,7 @@
       'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject',
       'rxjs/Subscription': 'lib:rxjs/Subscription',
       'rxjs/Observer': 'lib:rxjs/Observer',
-      'rxjs/operators': 'lib:rxjs/operators',
+      'rxjs/operators': 'lib:rxjs/operators/index.js',
       'rxjs/operator': 'lib:rxjs/operator',
       'rxjs/add/operator': 'lib:rxjs/add/operator',
       'rxjs/add/operators': 'lib:rxjs/operators',

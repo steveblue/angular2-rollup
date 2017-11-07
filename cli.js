@@ -39,7 +39,7 @@ program
     .option('--postcss [bool]', 'Enable postcss for build, default is true')
     .option('--jit [bool]', 'Run dev build in JIT mode, also use ngr build jit')
     .option('--closure [bool]', 'Bundle with ClosureCompiler in ADVANCED_OPTIMIZATIONS mode, this is the default')
-    .option('--lazy [bool]', 'Bundle with ClosureCompiler with support for lazyloaded modules, generate a lazyloaded route')
+    .option('--lazy [bool]', 'Bundle with ClosureCompiler with support for lazyloaded modules, generate a lazyloaded route, or scaffold an app with lazyloaded modules')
     .option('--remote [bool]', 'Bundle a lazyloaded route without a localized main bundle or sibling bundles, requires .MF copied into tmp directory in pre build step')
     .option('--rollup [bool]', 'Bundle with Rollup prior to optimizing with ClosureCompiler in SIMPLE_OPTIMIZATIONS mode')
     .option('--verbose [bool]', 'Log additional messages in build')
@@ -58,7 +58,6 @@ program
     .option('serve, --serve [bool]', 'Run Express Server')
     .option('scaffold, --scaffold [bool]', 'Scaffold a new project')
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
-    .option('--lazyModule [bool]', 'Scaffold a new project with support for lazyloaded modules')
     .option('--dynamicRoutes [bool]', 'Scaffold a new project with support for routes configured by JSON prior to Bootstrap')
     .option('--electron [bool]', 'Scaffold a new project with additional files needed to support Electron, serve with Electron')
     .option('--angularVersion [string]', 'Scaffold a new project with a specific @angular version')
@@ -88,7 +87,7 @@ if (program.scaffold) {
         cliCommand += ' electron=true';
     }
 
-    if (program.lazyModule) {
+    if (program.lazy) {
         cliCommand += ' lazy=true';
     }
 

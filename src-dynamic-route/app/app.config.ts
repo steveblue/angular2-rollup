@@ -1,6 +1,6 @@
 import { Inject, Injectable, Injector } from '@angular/core';
 import { Router, Routes, Route } from '@angular/router';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { HomeComponent } from './shared/components/home/home.component';
 
@@ -8,7 +8,7 @@ import { HomeComponent } from './shared/components/home/home.component';
 export class AppConfig {
 
     constructor(private injector: Injector,
-        private http: Http) {}
+        private http: HttpClient) {}
 
     public load() {
 
@@ -16,7 +16,7 @@ export class AppConfig {
 
             this.http.get('lazy.config.json').toPromise().then((res) => {
 
-                let routerConfig = res.json();
+                let routerConfig = res;
 
                 let routes: Routes = [
                     { path: '', component: HomeComponent }
