@@ -175,7 +175,7 @@ const compile = {
               ' ' + outFile + ' --target es5 --module commonjs' +
               ' --emitDecoratorMetadata true --experimentalDecorators true' +
               ' --noImplicitAny false --sourceMap true --moduleResolution node' +
-              ' --typeRoots node --lib dom,es2017', {silent: true},
+              ' --typeRoots node --lib dom,es2017', { silent: true },
               function (code, output, error) {
                 if (isVerbose) alert('typescript compiled', outFile);
               });
@@ -194,18 +194,10 @@ const compile = {
 
     isCompiling = true;
 
-    let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
-
-      if (canWatch === true) {
-        spawn(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') + ' -p ' +
-          path.normalize('./tsconfig.dev.json') +
-          ' --watch', { shell: true, stdio: 'inherit' });
-      } else {
-        spawn(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
-          ' -p ' + path.normalize('./tsconfig.dev.json'), { shell: true, stdio: 'inherit' });
+    let readyMessage = function(isAOTWatch) {
+      if (!isAOTWatch) {
+        alert(colors.green('Build is ready'));
       }
-
-      alert(colors.green('Build is ready'));
       if (canServe === true) {
         alert(colors.green('Ready to serve'));
         utils.serve(canWatch);
@@ -213,6 +205,26 @@ const compile = {
         alert(colors.green('Ready to serve'));
         utils.electron(canWatch);
       }
+    }
+
+    let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
+
+      if (canWatch === true) {
+        utils.alert('@angular/compiler started');
+        readyMessage(true);
+        spawn(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') + ' -p ' +
+          path.normalize('./tsconfig.dev.json') +
+          ' --watch', { shell: true, stdio: 'inherit' });
+      } else {
+        utils.alert('@angular/compiler started');
+        exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
+          ' -p ' + path.normalize('./tsconfig.dev.json'), { shell: true, stdio: 'inherit' }, function(){
+            utils.alert('@angular/compiler compiled');
+            readyMessage();
+          });
+      }
+
+
 
       hasInit = true;
 

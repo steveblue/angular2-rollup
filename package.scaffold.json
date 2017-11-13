@@ -66,7 +66,7 @@
       "codelyzer": "^4.0.1",
       "css-mqpacker": "^6.0.1",
       "cssnano": "^3.10.0",
-      "google-closure-compiler": "git+https://github.com/gregmagolan/closure-compiler.git#20170919.angular.dist",
+      "google-closure-compiler": "20171023.0.1",
       "jasmine-core": "^2.6.4",
       "jasmine-spec-reporter": "^4.1.1",
       "karma": "^1.7.0",
