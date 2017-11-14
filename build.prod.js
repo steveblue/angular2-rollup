@@ -756,6 +756,7 @@ let init = () => {
       src: config.src,
       dist: config.build,
       styleSrcOnInit: false,
+      sourceMap: false,
       isVerbose: isVerbose
     },
       function (filePath, outFile) {

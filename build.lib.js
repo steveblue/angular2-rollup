@@ -193,7 +193,7 @@ const compile = {
             alert('Babel', 'started transpiling', config.libFilename + '.umd.js');
 
             let transpile = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel') +
-              ' --source-maps' + 
+              ' --source-maps' +
               ' --presets=es2015-rollup ' +
               ' --plugins=transform-es2015-modules-commonjs ' +
               ' --module umd ' +
@@ -263,7 +263,7 @@ const compile = {
             alert('Babel', 'started transpiling', config.libFilename + '.es5.js');
 
             let transpile = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel') +
-              ' --source-maps' + 
+              ' --source-maps' +
               ' --presets=es2015-rollup ' + path.normalize('./dist/') + config.libFilename + '.es5.js' +
               ' --out-file ' + path.normalize('./dist/') + config.libFilename + '.es5.js', function (code, output, error) {
                 alert('Babel', 'transpiled', './' + config.dist + '/' + config.libFilename + ' to', './' + config.dist + '/' + config.libFilename + '.es5.js');
@@ -433,6 +433,7 @@ let watch = () => {
         src: config.lib,
         dist: config.dist,
         styleSrcOnInit: false,
+        sourceMap: false,
         isVerbose: isVerbose
       },
         function (filePath) {

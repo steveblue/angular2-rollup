@@ -279,6 +279,7 @@ let init = () => {
       src: config.src,
       dist: config.build,
       styleSrcOnInit: false,
+      sourceMap: true,
       isVerbose: isVerbose
     },
       function (filePath) {

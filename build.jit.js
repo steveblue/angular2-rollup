@@ -182,7 +182,7 @@ const compile = {
               } else if (startElectron === true) {
                 alert(colors.green('Ready to serve'));
                 utils.electron(canWatch);
-              }else {
+              } else {
                 alert('Build is ready');
               }
 
@@ -400,6 +400,7 @@ let watch = () => {
         src: config.src,
         dist: config.build,
         styleSrcOnInit: false,
+        sourceMap: true,
         isVerbose: isVerbose
       },
         function (filePath, outFile) {
