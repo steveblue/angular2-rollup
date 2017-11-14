@@ -193,6 +193,7 @@ const compile = {
             alert('Babel', 'started transpiling', config.libFilename + '.umd.js');
 
             let transpile = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel') +
+              ' --presets=es2015-rollup ' +
               ' --plugins=transform-es2015-modules-commonjs ' +
               ' --module umd ' +
               path.normalize('./dist/bundles/') + config.libFilename + '.umd.js' +
