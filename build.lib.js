@@ -149,7 +149,7 @@ const compile = {
     // remove moduleId prior to ngc build. TODO: look for another method.
     ls(path.normalize('./tmp/**/*.ts')).forEach(function (file) {
 
-      //compile.clean(file);
+      compile.clean(file);
       sed('-i', /^.*moduleId: module.id,.*$/, '', file);
 
     });
