@@ -230,7 +230,7 @@ const utils = {
         file : (filePath, cssConfig, res, rej) => {
 
             const postcss = require(config.projectRoot + '/postcss.' + cssConfig.env + '.js');
-          
+
             let postcssConfig = ' -u';
             let srcPath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf("/"));
             let filename = filePath.replace(/^.*[\\\/]/, '');
@@ -270,7 +270,7 @@ const utils = {
                         if (!err && cssConfig.allowPostCSS === true) {
                             res(filePath, outFile);
                             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
-                                ' ' + outFile + 
+                                ' ' + outFile +
                                 (cssConfig.sourceMap === false ? ' --no-map true' : '') +
                                 ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cssConfig.env + '.js')) +
                                 ' -r ' + postcssConfig, { silent: true }, function (code, output, error) {
@@ -285,11 +285,14 @@ const utils = {
                             if (err) {
                                 warn(err);
                             }
-                            if (rej && utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
+                            else if (rej && utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
                                 if (rej) {
                                     rej(filePath, outFile, err);
                                 }
 
+                            } else {
+                                if (cssConfig.isVerbose) log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
+                                res(filePath, outFile);
                             }
                         }
                     });
