@@ -672,7 +672,7 @@ const compile = {
     isCompiling = true;
 
     let startCompile = () => {
-      
+
       // remove moduleId prior to ngc build. TODO: look for another method.
       ls(path.normalize('ngfactory/**/*.ts')).forEach(function (file) {
         sed('-i', /^.*moduleId: module.id,.*$/, '', file);
@@ -767,11 +767,10 @@ let init = () => {
 
         if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
           allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
-          setTimeout(compile.src, 1000);
-        }
-        if (hasCompletedFirstStylePass === true) {
+          hasCompletedFirstStylePass = true;
           compile.src();
         }
+
 
       });
   }

@@ -176,6 +176,7 @@ const compile = {
             if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
 
               allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
+              hasCompletedFirstStylePass = true;
               if (canServe === true) {
                 alert(colors.green('Ready to serve'));
                 utils.serve(canWatch);
@@ -193,6 +194,7 @@ const compile = {
           },
           function (filePath, outFile, err) {
             if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
+              hasCompletedFirstStylePass = true;
               if (!err) {
                 alert('libsass', 'compiled');
                 //setTimeout(compile.ts, 1000);

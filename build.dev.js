@@ -285,6 +285,7 @@ let init = () => {
       function (filePath) {
         if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
           allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
+          hasCompletedFirstStylePass = true;
           setTimeout(compile.src, 1000);
         }
       },
@@ -293,6 +294,7 @@ let init = () => {
           if (!err) {
             //alert('libsass', 'compiled');
             allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
+            hasCompletedFirstStylePass = true;
             setTimeout(compile.src, 1000);
           }
         }
