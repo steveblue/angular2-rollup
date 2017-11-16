@@ -28,7 +28,7 @@ fs.writeFile(projectPath + '/cli.config.js', 'module.exports = { cliRoot: "' + c
 });
 
 
-const files     = [
+const files = [
     'src',
     '.editorconfig',
     'gitignore.scaffold',
@@ -39,17 +39,14 @@ const files     = [
     'karma-test-shim.js',
     'karma.conf.js',
     'lazy.config.json',
-    'main.prod.js',
     'main.prod.ts',
+    'main.prod.js',
     'main.ts',
     'postcss.dev.js',
     'postcss.jit.js',
     'postcss.prod.js',
     'protractor.config.js',
     'rollup.config.js',
-    'rollup.config.lib.js',
-    'rollup.config.lib-es5.js',
-    'rollup.config.lib-umd.js',
     'router.js',
     'server.config.dev.js',
     'server.config.prod.js',
@@ -58,8 +55,6 @@ const files     = [
     'tsconfig.jit.json',
     'tsconfig.prod.json',
     'tsconfig.prod.lazy.json',
-    'tsconfig.lib.json',
-    'tsconfig.lib.es5.json',
     'jsconfig.json',
     'tslint.json'
 ];
@@ -176,29 +171,24 @@ let init = function() {
 
     if (lib == false) {
 
-        copy.scaffold(files.filter((filename)=>{
-
-            if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('tsconfig.prod.lazy.json')) {
-                return false;
-            } else {
-                return filename.includes('lib') === false;
-            }
-            
-        }));
-
         rm('-rf', projectPath + '/src/lib');
 
-    } else {
-        copy.scaffold(files.filter((filename) => {
-
-            if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('tsconfig.prod.lazy.json')) {
-                return false;
-            } else {
-                return true;
-            }
-
-        }));
     }
+
+    copy.scaffold(files.filter((filename) => {
+
+        if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('main.prod.ts')) {
+            return false;
+        }
+        else if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('tsconfig.prod.lazy.json')) {
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }));
+
 
     if (hasWarning == true) {
         warn('Please move or delete existing files to prevent overwiting.');

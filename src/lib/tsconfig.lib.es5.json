@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "../../tmp",
+    "outDir": "../../ngfactory",
     "target": "es2015",
-    "module": "es2015",
+    "module": "es5",
     "declaration": true,
     "stripInternal": true,
     "emitDecoratorMetadata": true,
@@ -11,13 +14,11 @@
     "removeComments": true,
     "allowUnreachableCode": false,
     "moduleResolution": "node",
-    "outDir": "./ngfactory",
     "lib": ["es2015", "dom"],
     "skipLibCheck": true,
     "types": []
   },
   "angularCompilerOptions": {
-   "genDir": "./ngfactory",
    "strictMetadataEmit": true,
    "skipTemplateCodegen": true,
    "annotateForClosureCompiler": true,
@@ -26,7 +27,7 @@
    "debug": false
   },
   "files": [
-    "./tmp/index.ts"
+    "../../tmp/index.ts"
   ],
   "compileOnSave": false,
   "buildOnSave": false

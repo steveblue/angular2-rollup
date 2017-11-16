@@ -267,7 +267,7 @@ const utils = {
 
                     fs.writeFile(outFile, result.css, function (err) {
                         if (!err && cssConfig.allowPostCSS === true) {
-                            res(filePath, outFile);
+
                             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
                                 ' ' + outFile +
                                 (cssConfig.sourceMap === false ? ' --no-map true' : '') +
@@ -282,6 +282,7 @@ const utils = {
                                     }
 
                                 });
+
                         } else {
                             if (err) {
                                 warn(err);

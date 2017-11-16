@@ -172,7 +172,7 @@ const compile = {
           cp('-R', path.normalize(libConfig.src + '/') + '.', path.normalize('tmp/'));
           //alert('rollup', 'started');
 
-          let bundle = exec(path.normalize(config.processRoot + '/node_modules/.bin/rollup') + 
+          let bundle = exec(path.normalize(config.processRoot + '/node_modules/.bin/rollup') +
             ' -c ' + (libConfigPath !== null ? path.join(libConfig.src , libConfig.es2015.rollupConfig) : libConfig.es2015.rollupConfig), function (code, output, error) {
 
               alert('rollup', 'bundled', path.normalize(libConfig.es2015.outFile));
@@ -209,7 +209,7 @@ const compile = {
               ' --module umd ' +
               path.normalize(libConfig.umd.outFile) +
               ' --out-file ' + path.normalize(libConfig.umd.outFile), function (code, output, error) {
-                
+
                 alert('babel', 'transpiled', path.normalize(libConfig.umd.outFile));
                 compile.es5Lib(libConfig);
 
@@ -234,7 +234,7 @@ const compile = {
           ' -c ' + (libConfigPath !== null ? path.join(libConfig.src, libConfig.es5.rollupConfig) : libConfig.es5.rollupConfig), function (code, output, error) {
 
             alert('rollup', 'bundled', path.normalize(libConfig.es5.outFile));
-          
+
             find(path.normalize('./ngfactory/'))
               .filter(function (file) { return file.match(/\.d.ts$/); })
               .forEach((filePath) => {
@@ -336,6 +336,7 @@ let init = () => {
       allowPostCSS: allowPostCSS,
       src: libConfig.src,
       dist: libConfig.dist,
+      sourceMap: false,
       styleSrcOnInit: false,
       isVerbose: isVerbose
     },
@@ -386,7 +387,7 @@ let init = () => {
 
 // backwards compatibility with previous default lib build
 
-if (libConfigPath === null) { 
+if (libConfigPath === null) {
   libConfig = {
     'src': config.lib,
     'dist': config.dist,
