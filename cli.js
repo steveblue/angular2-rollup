@@ -27,6 +27,7 @@ program
     .option('--verbose [bool]', 'Log additional messages in build')
     .option('--deploy [bool]', 'Option to deploy build available in buildHooks.env.post arguments' )
     .option('--externs [bool]', 'Option to use or ignore closure.externs.js when counting vendor files during prod build, default is true')
+    .option('-c, --config [string]', 'Path to configuration file for library build')
     .option('g, generate [type]', 'Generates new code from templates')
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
@@ -139,6 +140,304 @@ let isSameRelease = function(remote, package) {
     }
 }
 
+let init = function() {
+
+    if (program.serve && program.build === undefined) {
+
+        let serverCommand = 'npm run serve';
+
+        if (program.watch === true) {
+            serverCommand += ' watch=true';
+        }
+        else {
+            serverCommand += ' watch=false';
+        }
+
+        spawn(serverCommand, { shell: true, stdio: 'inherit' });
+
+    }
+
+    if (program.build) {
+
+        let projectPackage = JSON.parse(JSON.stringify(require(config.processRoot + '/package.json')));
+
+        if (program.build === true) {
+            utils.warn('Please use a proper argument for ngr build. i.e. prod, dev, jit');
+            return;
+        }
+
+        if (program.build === 'dev' && program.jit === undefined && parseInt(projectPackage.dependencies['@angular/core'].split('.')[0]) < 5) {
+            utils.warn('Project version is ' + projectPackage.dependencies['@angular/core'] + '. Use ngr build dev --jit or ngr build jit < 5.0.0');
+            return;
+        }
+
+        if (program.build === 'dev' && program.jit === true) { // override dev build with --jit argument
+            program.build = 'jit';
+        }
+
+        let buildRoot = fs.existsSync(path.join(config.processRoot, 'build.' + program.build + '.js')) ? config.processRoot : config.cliRoot;
+
+        cliCommand = 'rimraf build && node ' + path.join(buildRoot, 'build.' + program.build + '.js');
+
+        if (program.watch === true) {
+            cliCommand += ' watch=true';
+        }
+        else {
+            cliCommand += ' watch=false';
+        }
+
+        if (program.postcss === 'false') {
+            cliCommand += ' postcss=false';
+        }
+        else {
+            cliCommand += ' postcss=true';
+        }
+
+        if (program.rollup === true || program.build === 'lib') {
+            cliCommand += ' rollup=true';
+            cliCommand += ' closure=false';
+        }
+        else {
+            cliCommand += ' rollup=false';
+            cliCommand += ' closure=true';
+        }
+
+        if (program.lazy === true) {
+            cliCommand += ' lazy=true';
+        }
+        else {
+            cliCommand += ' lazy=false';
+        }
+
+        if (program.verbose === true) {
+            cliCommand += ' verbose=true';
+        }
+        else {
+            cliCommand += ' verbose=false';
+        }
+
+        if (program.serve === true) {
+            cliCommand += ' serve=true';
+        }
+        else {
+            cliCommand += ' serve=false';
+        }
+
+        if (program.electron === true) {
+            cliCommand += ' electron=true';
+        }
+        else {
+            cliCommand += ' electron=false';
+        }
+
+        if (program.deploy === true) {
+            cliCommand += ' deploy=true';
+        }
+        else {
+            cliCommand += ' deploy=false';
+        }
+
+        if (program.remote === true) {
+            cliCommand += ' remote=true';
+        }
+        else {
+            cliCommand += ' remote=false';
+        }
+
+        if (program.externs === false) {
+            cliCommand += ' externs=false';
+        }
+        else {
+            cliCommand += ' externs=true';
+        }
+
+        if (program.config && program.config.length > 0) {
+            cliCommand += ' config=' + program.config;
+        }
+
+        spawn(cliCommand, { shell: true, stdio: 'inherit' });
+
+    }
+
+    if (program.unit) {
+
+        spawn(`npm run test`, { shell: true, stdio: 'inherit' });
+
+    }
+
+    if (program.lint) {
+
+        spawn(`npm run lint`, { shell: true, stdio: 'inherit' });
+
+    }
+
+
+    if (program.generate) {
+
+        if (program.generate === 'wizard') {
+
+
+            let validateEntry = function (value) {
+                if (value === 'true' ||
+                    value === true ||
+                    value === 'lazy' ||
+                    value === 'Y' ||
+                    value === 'y' ||
+                    value === 'YES' ||
+                    value === 'yes') {
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+
+            utils.console.log(utils.colors.red('ngr codegen wizard'));
+            utils.console.log('filename: ' + utils.colors.gray('kabab-case filename i.e. global-header'));
+            utils.console.log('directory: ' + utils.colors.gray('path/to/folder i.e. src/app/shared/components/global-header'));
+            utils.console.log('type: ' + utils.colors.gray('module, component, directive, enum, e2e, guard, interface, pipe, service'));
+            utils.console.log(utils.colors.bold('Follow the prompts after selecting a type'));
+
+            prompt.message = '';
+            prompt.start();
+            prompt.get(['filename', 'directory', 'type'], function (err, result) {
+
+                if (result.type === 'module') {
+                    prompt.addProperties({ filename: result.filename, directory: result.directory, type: result.type },
+                        ['component', 'directive', 'routes', 'unit', 'e2e'],
+                        function (err, result) {
+
+                            let includes = '';
+
+                            for (let prop in result) {
+                                if (prop !== 'directory' && prop !== 'filename' && prop !== 'type') {
+
+                                    if (validateEntry(result[prop])) {
+                                        if (prop === 'e2e') {
+                                            includes += prop + ',';
+                                        } else {
+                                            includes += prop;
+                                        }
+                                    }
+
+                                }
+                            }
+
+
+                            let options = {
+                                path: result.directory,
+                                name: result.filename,
+                                type: result.type,
+                                force: false,
+                                spec: false,
+                                e2e: false,
+                                route: false,
+                                include: includes,
+                                lazy: (result['routes'] && result['routes'] === 'lazy') ? true : false
+                            };
+
+                            utils.generate.copy(options);
+                        });
+                }
+
+                else if (result.type === 'component' || result.type === 'directive') {
+
+                    prompt.addProperties({ filename: result.filename, directory: result.directory, type: result.type },
+                        ['unit', 'e2e'],
+                        function (err, result) {
+
+                            let options = {
+                                path: result.directory,
+                                name: result.filename,
+                                type: result.type,
+                                force: false,
+                                spec: validateEntry(result['unit']),
+                                e2e: validateEntry(result['e2e']),
+                                route: false,
+                                include: false,
+                                lazy: false
+                            };
+
+                            utils.generate.copy(options);
+
+                        });
+                } else {
+
+                    let options = {
+                        path: result.directory,
+                        name: result.filename,
+                        type: result.type,
+                        force: false,
+                        spec: false,
+                        e2e: false,
+                        route: false,
+                        include: false,
+                        lazy: false
+                    };
+
+                    utils.generate.copy(options);
+                }
+
+            });
+            return;
+
+        } else {
+
+            let options = {
+                path: program.dir ? process.cwd() + '/' + program.dir : process.cwd(),
+                name: program.name || 'test',
+                type: program.generate,
+                force: program.force ? true : false,
+                spec: program.spec ? true : false,
+                e2e: program.e2e ? true : false,
+                route: program.route ? true : false,
+                include: program.include,
+                lazy: program.lazy ? true : false
+            };
+
+            utils.generate.copy(options);
+        }
+
+    }
+
+
+    if (program.update) {
+
+        cliCommand = 'node ' + path.normalize(path.dirname(fs.realpathSync(__filename)) + '/build.update.js');
+
+        if (program.angularVersion) {
+            cliCommand += ' version=' + program.angularVersion;
+        }
+
+        if (program.cliVersion) {
+            cliCommand += ' cliVersion=' + program.cliVersion;
+        }
+
+        if (program.lib) {
+            cliCommand += ' lib=' + program.lib;
+        }
+
+        if (program.dynamicRoutes) {
+            cliCommand += ' dynamicRoutes=true';
+        }
+
+        spawn(cliCommand, { shell: true, stdio: 'inherit' });
+
+    }
+
+
+
+    if (program.test) {
+
+        if (program.watch === true) {
+            spawn('npm run test:watch', { shell: true, stdio: 'inherit' });
+        }
+        else {
+            spawn('npm run test', { shell: true, stdio: 'inherit' });
+        }
+
+    }
+}
+
 exec('npm view angular-rollup version', { silent: true }, function (err, result, c) {
 
     let sanitizedResult = result.replace('-beta', '').replace('-rc', '').trim();
@@ -167,298 +466,11 @@ exec('npm view angular-rollup version', { silent: true }, function (err, result,
         versionMessage(package.version);
     }
 
+    setTimeout(init,50);
+
 });
 
 
-if (program.serve && program.build === undefined) {
 
-    let serverCommand = 'npm run serve';
-
-    if (program.watch === true) {
-        serverCommand += ' watch=true';
-    }
-    else {
-        serverCommand += ' watch=false';
-    }
-
-    spawn(serverCommand, { shell: true, stdio: 'inherit' });
-
-}
-
-if (program.build) {
-
-    let projectPackage = JSON.parse(JSON.stringify(require(config.processRoot + '/package.json')));
-
-    if (program.build === true) {
-        utils.warn('Please use a proper argument for ngr build. i.e. prod, dev, jit');
-        return;
-    }
-
-    if (program.build === 'dev' && program.jit === undefined && parseInt(projectPackage.dependencies['@angular/core'].split('.')[0]) < 5) {
-        utils.warn('Project version is ' + projectPackage.dependencies['@angular/core'] + '. Use ngr build dev --jit or ngr build jit < 5.0.0');
-        return;
-    }
-
-    if (program.build === 'dev' && program.jit === true) { // override dev build with --jit argument
-        program.build = 'jit';
-    }
-
-    let buildRoot = fs.existsSync(path.join(config.processRoot , 'build.' + program.build + '.js')) ? config.processRoot : config.cliRoot;
-
-    cliCommand = 'rimraf build && node ' + path.join(buildRoot , 'build.'+program.build+'.js');
-
-    if (program.watch === true) {
-        cliCommand += ' watch=true';
-    }
-    else {
-        cliCommand += ' watch=false';
-    }
-
-    if (program.postcss === 'false') {
-        cliCommand += ' postcss=false';
-    }
-    else {
-        cliCommand += ' postcss=true';
-    }
-
-    if (program.rollup === true || program.build === 'lib') {
-        cliCommand += ' rollup=true';
-        cliCommand += ' closure=false';
-    }
-    else {
-        cliCommand += ' rollup=false';
-        cliCommand += ' closure=true';
-    }
-
-    if (program.lazy === true) {
-        cliCommand += ' lazy=true';
-    }
-    else {
-        cliCommand += ' lazy=false';
-    }
-
-    if (program.verbose === true) {
-        cliCommand += ' verbose=true';
-    }
-    else {
-        cliCommand += ' verbose=false';
-    }
-
-    if (program.serve === true) {
-        cliCommand += ' serve=true';
-    }
-    else {
-        cliCommand += ' serve=false';
-    }
-
-    if (program.electron === true) {
-        cliCommand += ' electron=true';
-    }
-    else {
-        cliCommand += ' electron=false';
-    }
-
-    if (program.deploy === true) {
-        cliCommand += ' deploy=true';
-    }
-    else {
-        cliCommand += ' deploy=false';
-    }
-
-    if (program.remote === true) {
-        cliCommand += ' remote=true';
-    }
-    else {
-        cliCommand += ' remote=false';
-    }
-
-    if (program.externs === false) {
-        cliCommand += ' externs=false';
-    }
-    else {
-        cliCommand += ' externs=true';
-    }
-
-    spawn(cliCommand, { shell: true, stdio: 'inherit' });
-
-}
-
-if (program.unit) {
-
-    spawn(`npm run test`, { shell: true, stdio: 'inherit' });
-
-}
-
-if (program.lint) {
-
-    spawn(`npm run lint`, { shell: true, stdio: 'inherit' });
-
-}
-
-
-if (program.generate) {
-
-    if(program.generate === 'wizard') {
-
-
-        let validateEntry = function(value) {
-            if (value === 'true' ||
-                value === true ||
-                value === 'lazy' ||
-                value === 'Y' ||
-                value === 'y' ||
-                value === 'YES' ||
-                value === 'yes') {
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        utils.console.log(utils.colors.red('ngr codegen wizard'));
-        utils.console.log('filename: ' + utils.colors.gray('kabab-case filename i.e. global-header'));
-        utils.console.log('directory: ' + utils.colors.gray('path/to/folder i.e. src/app/shared/components/global-header'));
-        utils.console.log('type: ' + utils.colors.gray('module, component, directive, enum, e2e, guard, interface, pipe, service'));
-        utils.console.log(utils.colors.bold('Follow the prompts after selecting a type'));
-
-        prompt.message = '';
-        prompt.start();
-        prompt.get(['filename', 'directory', 'type'], function (err, result) {
-
-            if (result.type === 'module') {
-                prompt.addProperties({filename: result.filename, directory: result.directory, type: result.type},
-                                    ['component', 'directive', 'routes', 'unit', 'e2e'],
-                                    function (err, result) {
-
-                                            let includes = '';
-
-                                            for (let prop in result) {
-                                                if (prop !== 'directory' && prop !== 'filename' && prop !== 'type') {
-
-                                                    if (validateEntry(result[prop])) {
-                                                        if (prop === 'e2e') {
-                                                            includes += prop + ',';
-                                                        } else {
-                                                            includes += prop;
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-
-
-                                            let options = {
-                                                path: result.directory,
-                                                name: result.filename,
-                                                type: result.type,
-                                                force: false,
-                                                spec: false,
-                                                e2e: false,
-                                                route: false,
-                                                include: includes,
-                                                lazy: (result['routes'] && result['routes'] === 'lazy') ? true : false
-                                            };
-
-                                            utils.generate.copy(options);
-                });
-            }
-
-            else if (result.type === 'component' || result.type === 'directive') {
-
-                prompt.addProperties({ filename: result.filename, directory: result.directory, type: result.type },
-                    ['unit', 'e2e'],
-                    function (err, result) {
-
-                        let options = {
-                            path: result.directory,
-                            name: result.filename,
-                            type: result.type,
-                            force: false,
-                            spec: validateEntry(result['unit']),
-                            e2e: validateEntry(result['e2e']),
-                            route: false,
-                            include: false,
-                            lazy: false
-                        };
-
-                        utils.generate.copy(options);
-
-                    });
-            } else {
-
-                let options = {
-                    path: result.directory,
-                    name: result.filename,
-                    type: result.type,
-                    force: false,
-                    spec: false,
-                    e2e: false,
-                    route: false,
-                    include: false,
-                    lazy: false
-                };
-
-                utils.generate.copy(options);
-            }
-
-        });
-        return;
-
-    } else {
-
-        let options = {
-            path: program.dir ? process.cwd() + '/' + program.dir : process.cwd(),
-            name: program.name || 'test',
-            type: program.generate,
-            force: program.force ? true : false,
-            spec: program.spec ? true : false,
-            e2e: program.e2e ? true : false,
-            route: program.route ? true : false,
-            include: program.include,
-            lazy: program.lazy ? true : false
-        };
-
-        utils.generate.copy(options);
-    }
-
-}
-
-
-if (program.update) {
-
-    cliCommand = 'node ' + path.normalize(path.dirname(fs.realpathSync(__filename)) + '/build.update.js');
-
-    if (program.angularVersion) {
-        cliCommand += ' version=' + program.angularVersion;
-    }
-
-    if (program.cliVersion) {
-        cliCommand += ' cliVersion=' + program.cliVersion;
-    }
-
-    if (program.lib) {
-        cliCommand += ' lib=' + program.lib;
-    }
-
-    if (program.dynamicRoutes) {
-        cliCommand += ' dynamicRoutes=true';
-    }
-
-    spawn(cliCommand, { shell: true, stdio: 'inherit' });
-
-}
-
-
-
-if (program.test) {
-
-    if (program.watch === true) {
-        spawn('npm run test:watch', { shell: true, stdio: 'inherit' });
-    }
-    else {
-        spawn('npm run test', { shell: true, stdio: 'inherit' });
-    }
-
-}
 
 

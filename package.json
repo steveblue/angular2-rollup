@@ -5,9 +5,6 @@
   "repository": "https://github.com/steveblue/angular2-rollup",
   "contributors": [
     "Stephen Belovarich",
-    "Jason Aden",
-    "Felix Itzenplitz",
-    "Kyle Cordes",
     "olegreznichenko"
   ],
   "scripts": {
@@ -15,7 +12,6 @@
     "clean:install": "npm run clean && npm install",
     "clean:ngfactory": "rimraf ngfactory && mkdir ngfactory",
     "copy:lib": "rsync -a --exclude=*.js ngfactory/ dist",
-    "copy:package": "cp ./src/lib/package.json ./dist/package.json",
     "lint": "tslint --force \"src/app/**/*.ts\"",
     "e2e": "protractor protractor.config.js",
     "e2e:live": "protractor protractor.config.js --elementExplorer",

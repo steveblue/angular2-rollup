@@ -265,7 +265,6 @@ const utils = {
                     warn(error.message, 'LINE: ' + error.line);
                 } else {
 
-
                     fs.writeFile(outFile, result.css, function (err) {
                         if (!err && cssConfig.allowPostCSS === true) {
                             res(filePath, outFile);
@@ -274,11 +273,13 @@ const utils = {
                                 (cssConfig.sourceMap === false ? ' --no-map true' : '') +
                                 ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cssConfig.env + '.js')) +
                                 ' -r ' + postcssConfig, { silent: true }, function (code, output, error) {
+                                    // if (error) {
+                                    //     utils.warn(error);
+                                    // }
                                     if (res) {
                                         if(cssConfig.isVerbose) log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
                                         res(filePath, outFile);
                                     }
-
 
                                 });
                         } else {
