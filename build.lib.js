@@ -21,7 +21,6 @@ const warn = utils.warn;
 const clean = utils.clean;
 const angular = utils.angular;
 
-
 if (config.preLibraryBuild) {
   const preBuild = config.preLibraryBuild;
 }
