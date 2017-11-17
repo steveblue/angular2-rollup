@@ -1,3 +1,10 @@
+## 1.0.0-rc.2
+
+- Fixed a typo in the `system.config.js` that prevented rxjs from being currently mapped in dev mode
+- Added cli commands to generate unit tests for components and directives
+- Added unit test generation to the wizard
+
+
 ## 1.0.0-rc.1
 
 - `ngr build lib` now accepts `--config` argument, can point to a JSON configuration for library packages
