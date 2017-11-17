@@ -32,7 +32,7 @@ program
     .option('-n, --name [string]', 'The name of the new code to be generated (kebab-case)')
     .option('-f, --force [bool]', 'Force overwrite during code generate')
     .option('-d, --dir [path]', 'Path the code should be generated in (relative)')
-    .option('--spec [bool]', 'Include spec files in code generation')
+    .option('--spec [bool, string]', 'Include spec files in code generation, when generating unit tests optionally specify "directive" for directive tests instead of the default component tests')
     .option('--e2e [bool]', 'Include e2e spec files in code generation')
     .option('--include [string]', 'When generating modules generate and import component, directive, and/or routes')
     .option('-r, --route [bool]', 'Include route files in code generation')
@@ -291,7 +291,7 @@ let init = function() {
                 }
             };
 
-            utils.console.log(utils.colors.red('ngr codegen wizard'));
+            utils.console.log(utils.colors.green('ngr codegen wizard'));
             utils.console.log('filename: ' + utils.colors.gray('kabab-case filename i.e. global-header'));
             utils.console.log('directory: ' + utils.colors.gray('path/to/folder i.e. src/app/shared/components/global-header'));
             utils.console.log('type: ' + utils.colors.gray('module, component, directive, enum, e2e, guard, interface, pipe, service'));
@@ -339,6 +339,54 @@ let init = function() {
                         });
                 }
 
+                else if (result.type === 'unit') {
+
+                    prompt.addProperties({ filename: result.filename, directory: result.directory, type: result.type },
+                        ['component'],
+                        function (err, result) {
+
+                            if (validateEntry(result['component'])) {
+                                
+                                let options = {
+                                    path: result.directory,
+                                    name: result.filename,
+                                    type: result.type,
+                                    force: false,
+                                    spec: false,
+                                    e2e: false,
+                                    route: false,
+                                    include: false,
+                                    lazy: false
+                                };
+
+                                utils.generate.copy(options);
+
+                            } else {
+
+                                prompt.addProperties({ filename: result.filename, directory: result.directory, type: result.type },
+                                    ['directive'],
+                                    function (err, result) {
+
+                                        let options = {
+                                            path: result.directory,
+                                            name: result.filename,
+                                            type: result.type,
+                                            force: false,
+                                            spec: 'directive',
+                                            e2e: false,
+                                            route: false,
+                                            include: false,
+                                            lazy: false
+                                        };
+
+                                        utils.generate.copy(options);
+
+                                    });
+                            }
+
+                        });
+                }
+
                 else if (result.type === 'component' || result.type === 'directive') {
 
                     prompt.addProperties({ filename: result.filename, directory: result.directory, type: result.type },
@@ -382,12 +430,20 @@ let init = function() {
 
         } else {
 
+            let spec = false;
+
+            if (program.generate === 'unit' && program.spec === 'directive') {
+                spec = 'directive';
+            } else if (program.spec) {
+                spec = true;
+            }
+
             let options = {
                 path: program.dir ? process.cwd() + '/' + program.dir : process.cwd(),
                 name: program.name || 'test',
                 type: program.generate,
                 force: program.force ? true : false,
-                spec: program.spec ? true : false,
+                spec: spec,
                 e2e: program.e2e ? true : false,
                 route: program.route ? true : false,
                 include: program.include,
@@ -423,8 +479,6 @@ let init = function() {
         spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
     }
-
-
 
     if (program.test) {
 

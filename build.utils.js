@@ -467,7 +467,7 @@ const utils = {
         importComponentIntoRoutes() {
 
         },
-        generateModule(options) {
+        module: function(options) {
 
             let includes = options.include;
 
@@ -477,6 +477,10 @@ const utils = {
                 cp(path.normalize(config.cliRoot + '/.new/' + 'component/new.component.html'), path.normalize(config.cliRoot + '/.tmp/'+options.name+'.component.html'));
                 cp(path.normalize(config.cliRoot + '/.new/' + 'component/new.component.scss'), path.normalize(config.cliRoot + '/.tmp/' + options.name + '.component.scss'));
                 utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.component.ts'), options, true);
+                if (includes.includes('unit')) {
+                    cp(path.normalize(config.cliRoot + '/.new/' + 'component' + '/new.component.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+                    utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.component.spec.ts'), options, true);
+                }
             }
             if (includes.includes('route')) {
                 //warn('route');
@@ -487,12 +491,16 @@ const utils = {
                 //warn('directive');
                 cp('-R', path.normalize(config.cliRoot + '/.new/' + 'directive' + '/new.directive.ts'), path.normalize(config.cliRoot + '/.tmp'));
                 utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.directive.ts'), options, true);
+                if (includes.includes('unit')) {
+                    cp(path.normalize(config.cliRoot + '/.new/' + 'directive' + '/new.directive.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+                    utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.directive.spec.ts'), options, true);
+                }
             }
-            if (includes.includes('unit')) {
-                //warn('spec');
-                cp(path.normalize(config.cliRoot + '/.new/' + 'module' + '/new.module.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
-                utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.module.spec.ts'), options, true);
-            }
+            // if (includes.includes('unit')) {
+            //     //warn('spec');
+            //     cp(path.normalize(config.cliRoot + '/.new/' + 'module' + '/new.module.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+            //     utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.module.spec.ts'), options, true);
+            // }
             if (includes.includes('e2e')) {
                 //warn('e2e-spec');
                 cp('-R', path.normalize(config.cliRoot + '/.new/' + 'e2e' + '/*'), path.normalize(config.cliRoot + '/.tmp'));
@@ -519,13 +527,35 @@ const utils = {
             });
 
         },
-        rename: function (fileName, name) {
+        unitTest: function(options) {
+            //log(JSON.stringify(options, null, 4));
+            if (options.spec === 'directive') {
+                cp(path.normalize(config.cliRoot + '/.new/' + 'directive' + '/new.directive.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+                utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.directive.spec.ts'), options).then((filePath) => {
+                    mv((options.force ? '-f' : '-n'), filePath, path.normalize(options.path + '/' + filePath.replace(/^.*[\\\/]/, '')));
+                    log(filePath.replace(/^.*[\\\/]/, '').replace('new', options.name), 'copied to', options.name);
+                });
+            } else {
+                cp(path.normalize(config.cliRoot + '/.new/' + 'component' + '/new.component.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
+                utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.component.spec.ts'), options).then((filePath) => {
+                    mv((options.force ? '-f' : '-n'), filePath, path.normalize(options.path + '/' + filePath.replace(/^.*[\\\/]/, '')));
+                    log(filePath.replace(/^.*[\\\/]/, '').replace('new', options.name), 'copied to', options.name);
+                });
+            }
+        },
+        lib: function (options) {
+            log(JSON.stringify(options, null, 4));
+        },
+        rename: function(fileName, name) {
             return fileName.replace(/new/g, name.toLowerCase());
         },
         kababToCamel: function(s){
+            if (!s.replace) {
+                utils.warn('generate requires a name in kebab-case. Please use --name argument to specify a name.');
+            }
             return s.replace(/(\-\w)/g, function(m){return m[1].toUpperCase();});
         },
-        copy: function (options) {
+        copy: function(options) {
 
             rm('-rf', path.normalize(config.cliRoot+'/.tmp/'));
             mkdir(path.normalize(config.cliRoot+'/.tmp/'));
@@ -535,7 +565,17 @@ const utils = {
             };
 
             if (options.type === 'module' && options.include.split(',').length > 0) {
-                utils.generate.generateModule(options);
+                utils.generate.module(options);
+                return;
+            }
+
+            if(options.type === 'unit') {
+                utils.generate.unitTest(options);
+                return;
+            }
+
+            if (options.type === 'lib') {
+                utils.generate.lib(options);
                 return;
             }
 

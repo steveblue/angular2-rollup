@@ -1,12 +1,14 @@
-import { browser } from 'protractor';
+import { TestBed } from '@angular/core/testing';
 import { NewDirective } from './new.directive';
 
 describe('NewDirective', () => {
-  it('should create an instance', () => {
-    const directive = new NewDirective();
-    expect(directive).toBeTruthy();
+
+  beforeEach(() => {
+
+    TestBed.configureTestingModule({
+      declarations: [NewDirective]
+    });
+
   });
+
 });
-
-
-

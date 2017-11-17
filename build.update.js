@@ -127,9 +127,9 @@ let init = function () {
 
     if (includeLib) {
 
-        copy.scaffold(files.filter((filename) => {
-            return filename.includes('lib') === true;
-        }));
+        // copy.scaffold(files.filter((filename) => {
+        //     return filename.includes('lib') === true;
+        // }));
 
         cp('-R', utils.config.cliRoot + '/src/lib/', utils.config.projectRoot + '/src');
 

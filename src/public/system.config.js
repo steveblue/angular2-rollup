@@ -24,8 +24,7 @@
       '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs/Observable': 'lib:rxjs/observable',
-      'rxjs/observable': 'lib:rxjs/observable',
+      'rxjs/Observable': 'lib:rxjs/Observable',
       'rxjs/Subject': 'lib:rxjs/Subject',
       'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject',
       'rxjs/Subscription': 'lib:rxjs/Subscription',
