@@ -1,9 +1,9 @@
 ## 1.0.0-rc.2
 
-- Fixed a typo in the `system.config.js` that prevented rxjs from being currently mapped in dev mode
 - Added method to generate a library package
 - Added cli commands to generate unit tests for components and directives
 - Added unit test generation to the wizard
+- Fixed an issue with `system.config.js` that prevented rxjs from being currently mapped in dev mode
 - Fixed an issue that would cause warnings when trying to run `ngr update --lib`. This argument will be deprecated in a future release, Use `ngr generate lib` instead.
 
 Generate the configuration required for library packages with `ngr generate lib` or use `ngr generate wizard`.
@@ -28,7 +28,7 @@ Optionally, generate a unit test for a directive with the --spec argument.
 - `ngr build lib` now accepts `--config` argument, can point to a JSON configuration for library packages
 - Fixed an issue that caused `es2015` code to be bundled with the `umd` library
 - Fixed an issue that caused sourcemaps to be emitted with css in components packaged with the library build
-- Added sourcemaps for `es5` and `umd` bundles 
+- Added sourcemaps for `es5` and `umd` bundles
 - Deprecated `copy:package` field in package.json and automated this command
 - Fixed syntax highlighting in the CHANGELOG
 
