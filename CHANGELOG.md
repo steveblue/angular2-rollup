@@ -1,8 +1,26 @@
 ## 1.0.0-rc.2
 
 - Fixed a typo in the `system.config.js` that prevented rxjs from being currently mapped in dev mode
+- Added method to generate a library package
 - Added cli commands to generate unit tests for components and directives
 - Added unit test generation to the wizard
+- Fixed an issue that would cause warnings when trying to run `ngr update --lib`. This argument will be deprecated in a future release, Use `ngr generate lib` instead.
+
+Generate the configuration required for library packages with `ngr generate lib` or use `ngr generate wizard`.
+
+`ngr generate lib --name my-lib --dir src/app/shared/lib`
+
+After you have generated some components for the library, use `ngr build lib` to build the library in the `dist` folder.
+
+`ngr build lib -c src/app/shared/lib/lib.config.json`
+
+Generate a unit test either use the wizard (`ngr generate wizard`) or use the following examples as a guide.
+
+`ngr generate unit --dir src/app/shared/components/my-component --name my-component`
+
+Optionally, generate a unit test for a directive with the --spec argument.
+
+`ngr generate unit --dir src/app/shared/components/my-component --name my-directive --spec directive`
 
 
 ## 1.0.0-rc.1

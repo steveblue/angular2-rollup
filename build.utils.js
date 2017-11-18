@@ -176,10 +176,10 @@ const utils = {
             cp('-R', path.normalize(config.src+'/'), path.normalize('./ngfactory'));
             if (isVerbose) log(config.src+'/*.ts', 'copied to', 'ngfactory/*.ts');
         },
-        lib: () => {
+        lib: (libConfig) => {
             rm('-rf', path.normalize('./tmp'));
             mkdir(path.normalize('./tmp'));
-            cp('-R', path.normalize('./'+config.lib+'/')+'.', path.normalize('./tmp'));
+            cp('-R', path.normalize('./'+libConfig.src+'/')+'.', path.normalize('./tmp'));
             log(config.lib+'/*.ts', 'copied to', 'tmp/*.ts');
         },
         paths: (p) => {
@@ -306,8 +306,9 @@ const utils = {
         src: (cssConfig, res, rej, init) => {
 
             utils.style.files = [];
-
-            mkdir(path.join(cssConfig.dist, 'style'));
+            if (!fs.existsSync(path.join(cssConfig.dist, 'style'))) {
+                mkdir(path.join(cssConfig.dist, 'style'));
+            }
 
             if (ls(path.normalize(cssConfig.src + '/**/*.scss')).length > 0) {
                 ls(path.normalize(cssConfig.src + '/**/*.scss')).forEach(function(file, index){
@@ -464,9 +465,6 @@ const utils = {
 
 
         },
-        importComponentIntoRoutes() {
-
-        },
         module: function(options) {
 
             let includes = options.include;
@@ -544,15 +542,51 @@ const utils = {
             }
         },
         lib: function (options) {
-            log(JSON.stringify(options, null, 4));
+
+            cp('-R', path.normalize(config.cliRoot + '/.new/lib/*'), path.normalize(config.cliRoot + '/.tmp'));
+            ls(path.normalize(config.cliRoot + '/.tmp')).forEach((fileName, index) => {
+
+                fs.readFile(path.normalize(config.cliRoot + '/.tmp/'+fileName), 'utf8', function (err, data) {
+
+                    if (err) {
+                        return warn(err);
+                    }
+
+                    if (fileName.includes('tsconfig')) {
+                        data = utils.generate.replacePath(data, path.relative(config.projectRoot, options.path).split(path.sep).length);   
+                    }
+
+                    fs.writeFile(path.normalize(config.cliRoot + '/.tmp/' + fileName), utils.generate.renameLib(data, options.name), 'utf8', function(){
+
+                        if (fs.existsSync(path.normalize(options.path + '/' + fileName))) {
+                            warn(fileName + ' already exists. Please move or delete and try again.');
+                            rm(path.normalize(config.cliRoot + '/.tmp/' + fileName));
+                        } else {
+                            mv(path.normalize(config.cliRoot + '/.tmp/' + fileName), options.path);
+                            log(fileName, 'copied to', options.path);
+                        }
+
+                    });    
+
+                });
+
+            });
+           
+        },
+        replacePath: function (fileContent, length) {
+            let relativePath = '';
+            for (let i=0; i<length; i++) {
+                relativePath += '../';
+            }
+            return fileContent.replace(/..\/..\//g, relativePath);
+        },
+        renameLib: function (fileContent, name) {
+            return fileContent.replace(/default-lib/g, name.toLowerCase());
         },
         rename: function(fileName, name) {
             return fileName.replace(/new/g, name.toLowerCase());
         },
         kababToCamel: function(s){
-            if (!s.replace) {
-                utils.warn('generate requires a name in kebab-case. Please use --name argument to specify a name.');
-            }
             return s.replace(/(\-\w)/g, function(m){return m[1].toUpperCase();});
         },
         copy: function(options) {
@@ -576,6 +610,11 @@ const utils = {
 
             if (options.type === 'lib') {
                 utils.generate.lib(options);
+                return;
+            }
+
+            if (!fs.existsSync(path.normalize(config.cliRoot + '/.new/' + options.type))) {
+                warn('Unavailable type. The available types are module, component, directive, enum, e2e, guard, interface, pipe, service, lib.');
                 return;
             }
 

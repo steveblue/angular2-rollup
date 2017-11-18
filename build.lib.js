@@ -327,7 +327,7 @@ let init = () => {
 
   const initProcesses = () => {
 
-    clean.lib();
+    clean.lib(libConfig);
     //allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');
     style.src({
       sassConfig: config.style.sass.prod,
@@ -354,11 +354,16 @@ let init = () => {
 
   rm('-rf', path.normalize(config.processRoot + '/.tmp/'));
   rm('-rf', path.normalize('./ngfactory'));
-  rm('-rf', path.normalize('./' + libConfig.dist));
+
 
   mkdir(path.normalize('./ngfactory'));
-  mkdir(path.normalize('./' + libConfig.dist));
-  mkdir(path.normalize('./' + libConfig.dist + '/bundles'));
+
+  // if (!fs.existsSync(path.normalize('./' + libConfig.dist))) {
+  //   mkdir(path.normalize('./' + libConfig.dist));
+  // }
+  // if (!fs.existsSync(path.normalize('./' + libConfig.dist + '/bundles'))) {
+  //   mkdir(path.normalize('./' + libConfig.dist + '/bundles'));
+  // }
 
   if (config.buildHooks && config.buildHooks['lib'] && config.buildHooks['lib'].pre) {
 

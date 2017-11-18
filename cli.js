@@ -274,6 +274,8 @@ let init = function() {
 
     if (program.generate) {
 
+        
+
         if (program.generate === 'wizard') {
 
 
@@ -294,7 +296,7 @@ let init = function() {
             utils.console.log(utils.colors.green('ngr codegen wizard'));
             utils.console.log('filename: ' + utils.colors.gray('kabab-case filename i.e. global-header'));
             utils.console.log('directory: ' + utils.colors.gray('path/to/folder i.e. src/app/shared/components/global-header'));
-            utils.console.log('type: ' + utils.colors.gray('module, component, directive, enum, e2e, guard, interface, pipe, service'));
+            utils.console.log('type: ' + utils.colors.gray('module, component, directive, enum, e2e, guard, interface, pipe, service, lib'));
             utils.console.log(utils.colors.bold('Follow the prompts after selecting a type'));
 
             prompt.message = '';
@@ -346,7 +348,7 @@ let init = function() {
                         function (err, result) {
 
                             if (validateEntry(result['component'])) {
-                                
+
                                 let options = {
                                     path: result.directory,
                                     name: result.filename,
@@ -410,6 +412,10 @@ let init = function() {
                         });
                 } else {
 
+                    if (result.type === 'library') {
+                        result.type = 'lib';
+                    }
+
                     let options = {
                         path: result.directory,
                         name: result.filename,
@@ -429,7 +435,12 @@ let init = function() {
             return;
 
         } else {
-
+            
+            if (typeof (program.name) === 'function') {
+                utils.warn('generate requires a name in kebab-case. Please use --name argument to specify a name.');
+                return;
+            }
+            
             let spec = false;
 
             if (program.generate === 'unit' && program.spec === 'directive') {
