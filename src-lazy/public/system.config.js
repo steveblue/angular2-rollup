@@ -24,17 +24,7 @@
       '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs/Observable': 'lib:rxjs/observable',
-      'rxjs/observable': 'lib:rxjs/observable',
-      'rxjs/Subject': 'lib:rxjs/Subject',
-      'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject',
-      'rxjs/Subscription': 'lib:rxjs/Subscription',
-      'rxjs/Observer': 'lib:rxjs/Observer',
-      'rxjs/operators': 'lib:rxjs/operators/index.js',
-      'rxjs/operator': 'lib:rxjs/operator',
-      'rxjs/add/operator': 'lib:rxjs/add/operator',
-      'rxjs/add/operators': 'lib:rxjs/operators',
-      'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError',
+      'rxjs': 'lib: rxjs',
       'tslib': 'lib:tslib/tslib.js',
       // map lazyloaded modules for DEV, replace '.ngfactory' with '' for JIT
       'shared/components/lazy/lazy.module.ngfactory': 'src/app/shared/components/lazy/lazy.module.ngfactory.js'

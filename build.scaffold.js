@@ -169,12 +169,6 @@ const copy = {
 let init = function() {
 
 
-    if (lib == false) {
-
-        rm('-rf', projectPath + '/src/lib');
-
-    }
-
     copy.scaffold(files.filter((filename) => {
 
         if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('main.prod.ts')) {
@@ -188,6 +182,15 @@ let init = function() {
         }
 
     }));
+
+    if (lib == false) {
+
+        rm('-rf', projectPath + '/src/lib');
+
+    } else {
+        mkdir('-p', projectPath + '/src/lib');
+        cp('-R', cliPath + '/src/lib/*', projectPath + '/src/lib');
+    }
 
 
     if (hasWarning == true) {

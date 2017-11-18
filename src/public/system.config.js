@@ -24,16 +24,7 @@
       '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs/Observable': 'lib:rxjs/Observable',
-      'rxjs/Subject': 'lib:rxjs/Subject',
-      'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject',
-      'rxjs/Subscription': 'lib:rxjs/Subscription',
-      'rxjs/Observer': 'lib:rxjs/Observer',
-      'rxjs/operators': 'lib:rxjs/operators/index.js',
-      'rxjs/operator': 'lib:rxjs/operator',
-      'rxjs/add/operator': 'lib:rxjs/add/operator',
-      'rxjs/add/operators': 'lib:rxjs/operators',
-      'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError',
+      'rxjs': 'lib: rxjs',
       'tslib': 'lib:tslib/tslib.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
