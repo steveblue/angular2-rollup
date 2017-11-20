@@ -1,3 +1,8 @@
+## 1.0.0-rc.3
+
+- Fixed an issue that caused library config to generate with incorrect path
+
+
 ## 1.0.0-rc.2
 
 - Added method to generate a library package
