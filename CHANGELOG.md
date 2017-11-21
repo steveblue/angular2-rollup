@@ -1,3 +1,10 @@
+## 1.0.0-rc.4 
+
+- Add `ngr.config.js` file to root of any existing project to use cli commands. This file can be empty.
+- Deprecated `cli.config.js`, builds now reference `ngr.config.js` or `build.config.js`
+- Update README with instructions for `ngr.config.js` and using buildHooks in `build.config.js`
+
+
 ## 1.0.0-rc.3
 
 - Fixed an issue that caused library config to generate with incorrect path

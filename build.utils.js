@@ -49,16 +49,10 @@ const escape = require('js-string-escape');
 const spawn = require('child_process').spawn;
 const cliRoot = path.dirname(fs.realpathSync(__filename));
 const processRoot = path.join(path.dirname(process.cwd()) , path.basename(process.cwd()));
-const cliConfigPath = findUp.sync('cli.config.js');
+const cliConfigPath = findUp.sync(['ngr.config.js', 'build.config.js']);
 const logger = require('./build.log.js');
 
-let projectRoot;
-
-if(!cliConfigPath) {
-    projectRoot =  path.normalize('./');
-} else {
-    projectRoot = path.normalize(cliConfigPath.substring(0, cliConfigPath.replace(/\\/g,"/").lastIndexOf("/")));
-}
+let projectRoot = path.normalize(cliConfigPath.substring(0, cliConfigPath.replace(/\\/g, '/').lastIndexOf('/')));
 
 const scripts = require(projectRoot+'/package.json').scripts;
 const angularVersion = require(projectRoot + '/package.json').dependencies['@angular/core'];
@@ -101,16 +95,6 @@ process.argv.forEach((arg)=>{
         if (!fs.existsSync(projectRoot + '/build.config.js')) {
             cp(cliRoot + '/build.config.js', projectRoot + '/build.config.js');
             config = require(cliRoot + '/build.config.js');
-        }
-
-        if (!fs.existsSync(projectRoot + '/cli.config.js')) {
-
-            fs.writeFile(projectRoot + '/cli.config.js', 'module.exports = { cliRoot: "'+ cliRoot +'"}', function (err) {
-                if (err) {
-                    return console.log(err);
-                }
-            });
-
         }
     }
 });

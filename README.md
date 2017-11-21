@@ -344,6 +344,11 @@ Production builds do not require the CLI, just the package.json
 
 # FAQ
 
+## Can I use the CLI in the context of an existing application?
+
+Yes. This feature became readily available in 1.0.0-rc.4. Just include a `ngr.config.js` file at the root of your application. The file can be empty, it just serves as a marker for the root of your application. We may introduce configuration options here in the future as a proxy to `build.config.js`. 
+
+
 ## How do I include third party libraries?
 
 The production build relies heavily on Closure Compiler, which provides excellent optimizations but unfortunately is not compatible with most third party libraries. Luckily, Closure Compiler can be configured to build referencing methods and variables found in external scripts. Follow this step by step questionaire to figure out which method to use.
@@ -378,7 +383,7 @@ You must configure `system.config.js` in order to inject third party libaries fo
       '@angular/router': 'lib:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'lib:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs/Observable': 'lib:rxjs/observable',
+      'rxjs/Observable': 'lib:rxjs/Observable',
       'tslib': 'lib:tslib/tslib.js'
     }
 ```
@@ -479,36 +484,27 @@ Editing index.html
 The typical Angular 2 dependencies are already included in the `<head>` tag in `index.html`.
 
 
-## How can I write a custom build?
+## How can I customize the different builds?
 
-You could create a custom build to fit the specific needs of your project. It is recommended to duplicate an existing build and start from there.
-
-```
-build.env.js
+There are hooks in the current build scripts where you are inject custom functionality. Each build (jit, dev, prod, and lib) have a `pre` and `post` hook. All hooks except `post` require that you return a `Promise`. The `lib` build includes an additional `clean` hook for stripping out unnecessary files from the dist folder.
 
 ```
-
-In `build.env.js`:
-
-```
-const env = 'dev';
-```
-
-This build script includes a constant you should change to the new name of the environment if you also want to augment other settings for `Rollup`, `TypeScript`, or `PostCSS`. Otherwise, you can hijack the `dev`, `prod` environments. There is an example of how this could be done in `build.lib.js`.
-
-When duplicating the development build, you can tweak the `tsconfig` or `PostCSS` settings.
-
-```
-tsconfig.env.json
-postcss.env.json
-
+    buildHooks: {
+        dev: {
+            pre: () => {
+                return new Promise((res, rej) => {
+                    // do something
+                    res();
+                })
+            },
+            post: () => {
+              // do something
+            }
+        }
+    }
 ```
 
-Configuration for build services are in the specific files, while the config for Closure Compiler is found in `package.json`. If you are duplicating the production build and renaming the environment, you can augment the options for ClosureCompiler:
-
-```
-"transpile:env": "java -jar ./compiler.jar --warning_level=QUIET --language_in=ES6 --language_out=ES5 --js ./build/bundle.es2015.js --js_output_file ./build/bundle.js",
-```
+If you require a new hook, submit a feature request in Github issues. 
 
 
 ## How do I update my project to the latest CLI?
