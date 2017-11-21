@@ -238,20 +238,31 @@ const compile = {
               .filter(function (file) { return file.match(/\.d.ts$/); })
               .forEach((filePath) => {
 
-                let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
                 let fileName = filePath.replace(/^.*[\\\/]/, '');
 
-                if (!fs.existsSync(dir)) {
-                  mkdir('-p', dir);
+                if (fileName === (libConfig.filename+'.d.ts')) {
+                  let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
+                  fs.readFile(path.join('ngfactory', fileName), 'utf8', function (err, contents) {
+                    if (!err) {
+                      contents = contents.replace('./index', './src/index');
+                      fs.writeFile(path.join(dir, fileName), contents, 'utf-8');
+                    }
+                  });
+                } else {
+
+                  let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist/src'));
+                  if (!fs.existsSync(dir)) {
+                    mkdir('-p', dir);
+                  }
+                  cp(filePath, path.join(dir, fileName));
+
                 }
 
-                cp(filePath, path.join(dir, fileName));
 
               });
 
-            if (isVerbose) log('d.ts, metadata.json', 'copied to', './' + libConfig.dist);
-
             cp(path.normalize(path.join('./ngfactory', libConfig.filename + '.metadata.json')), path.normalize(libConfig.dist));
+            if (isVerbose) log('d.ts, metadata.json', 'copied to', './' + libConfig.dist);
 
             //rm(path.normalize(libConfig.dist + '/index.ts'));
 
@@ -358,9 +369,9 @@ let init = () => {
 
   mkdir(path.normalize('./ngfactory'));
 
-  // if (!fs.existsSync(path.normalize('./' + libConfig.dist))) {
-  //   mkdir(path.normalize('./' + libConfig.dist));
-  // }
+  if (!fs.existsSync(path.normalize('./' + libConfig.dist))) {
+    mkdir(path.normalize('./' + libConfig.dist));
+  }
   // if (!fs.existsSync(path.normalize('./' + libConfig.dist + '/bundles'))) {
   //   mkdir(path.normalize('./' + libConfig.dist + '/bundles'));
   // }

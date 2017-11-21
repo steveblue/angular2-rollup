@@ -213,19 +213,27 @@ NOTE: If you scaffolded an app for electron use the `--electron` argument.
 
 
 
-### Package Spec 4.0 Library Build
+### Package Format 5.0 Library Build
 
 * `$ ngr build lib`
 
-`ngr` provides a build for developing Angular libraries that conforms to the Angular Package Spec 4.0.
+`ngr` provides a build for developing Angular libraries that conforms to the Angular Package Format 5.0.
 
-Jason Aden gave a presentation about Angular Package Spec 4.0 at ng-conf 2017. [Packaging Angular](https://youtu.be/unICbsPGFIA).
+Jason Aden gave a presentation about Angular Package Format 4.0 at ng-conf 2017. [Packaging Angular](https://youtu.be/unICbsPGFIA).
 
-To develop component libraries, scaffold an app with the `--lib` flag. Update an existing scaffolded app to support the library build with `ngr update --lib`.
+Package Format 5.0 is largely unchanged from 4.0, except for conforming some of the bundles to specific paths in the distributed package.
 
-`tsconfig.lib.json` and `tsconfig.lib.es5.json` configure `ngc` during the library build.
+Generate the configuration required for library packages with `ngr generate lib` or use `ngr generate wizard`.
 
-The library build is configured in `build.config.js`.
+`ngr generate lib --name my-lib --dir src/app/shared/lib`
+
+After you have generated some components for the library, use `ngr build lib` to build the library in the `dist` folder.
+
+`ngr build lib -c src/app/shared/lib/lib.config.json`
+
+Once all the necessary configuration files are in place and some modules have been generated for the library, make sure import each module in the `index.ts`. In each module, export all the necessary classes.
+
+
 
 
 ## Testing
@@ -298,6 +306,7 @@ You can pass the following types to `generate`:
 - component
 - directive
 - enum
+- unit
 - e2e
 - guard
 - interface
@@ -314,6 +323,10 @@ When generating a module, there is an optional `--include` flag what will auto i
 This example generates files for configuring routes, component, and directive and then auto imports those files into the module.
 
 You can configure prefixes for Classes, Component and Directive selector in `build.config.js`. Omit the properties from the config to operate without prefixes. Defaults are included that follow the Angular Styleguide.
+
+Generate a unit test with the wizard (`ngr generate wizard`) or use the following example as a guide.
+
+`ngr generate unit --dir src/app/shared/components/my-component --name my-component`
 
 
 #### --serve & --watch

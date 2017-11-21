@@ -1,6 +1,10 @@
 ## 1.0.0-rc.3
 
 - Fixed an issue that caused library config to generate with incorrect path
+- Updated default paths in library configuration to conform to Package Spec 5.0
+- Fixed an issue that could cause modules to not be generated when using `ngr generate module`
+- Fixed an issue that could prevent global stylesheet from being generated in dist folder
+- Updated README
 
 
 ## 1.0.0-rc.2

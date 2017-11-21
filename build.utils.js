@@ -306,8 +306,9 @@ const utils = {
         src: (cssConfig, res, rej, init) => {
 
             utils.style.files = [];
+
             if (!fs.existsSync(path.join(cssConfig.dist, 'style'))) {
-                mkdir(path.join(cssConfig.dist, 'style'));
+                mkdir('-p', path.join(cssConfig.dist, 'style'));
             }
 
             if (ls(path.normalize(cssConfig.src + '/**/*.scss')).length > 0) {
@@ -553,7 +554,12 @@ const utils = {
                     }
 
                     if (fileName.includes('tsconfig')) {
-                        data = utils.generate.replacePath(data, path.relative(config.projectRoot, options.path).split(path.sep).length);   
+                        data = utils.generate.replacePath(data, path.relative(config.projectRoot, options.path).split(path.sep).length);
+                    }
+
+                    if (fileName.includes('lib.config')) {
+                        log(options.path);
+                        data = data.replace('"src": "src/lib"', '"src": "' + path.relative(config.projectRoot, options.path) + '"')
                     }
 
                     fs.writeFile(path.normalize(config.cliRoot + '/.tmp/' + fileName), utils.generate.renameLib(data, options.name), 'utf8', function(){
@@ -566,12 +572,12 @@ const utils = {
                             log(fileName, 'copied to', options.path);
                         }
 
-                    });    
+                    });
 
                 });
 
             });
-           
+
         },
         replacePath: function (fileContent, length) {
             let relativePath = '';
@@ -598,7 +604,7 @@ const utils = {
                 mkdir('-p', options.path);
             };
 
-            if (options.type === 'module' && options.include.split(',').length > 0) {
+            if (options.type === 'module' && options.include && options.include.split(',').length > 0) {
                 utils.generate.module(options);
                 return;
             }
