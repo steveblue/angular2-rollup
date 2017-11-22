@@ -170,7 +170,7 @@ const utils = {
             rm('-rf', path.normalize('./tmp'));
             mkdir(path.normalize('./tmp'));
             cp('-R', path.normalize('./'+libConfig.src+'/')+'.', path.normalize('./tmp'));
-            log(config.lib+'/*.ts', 'copied to', 'tmp/*.ts');
+            log(libConfig.src+'/*.ts', 'copied to', 'tmp/*.ts');
         },
         paths: (p) => {
 
