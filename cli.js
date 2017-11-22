@@ -91,7 +91,6 @@ if (program.scaffold) {
         cliCommand += ' bare=true';
     }
 
-    cp(path.join(path.dirname(fs.realpathSync(__filename)), 'build.config.js'), path.join(path.dirname(process.cwd()), path.basename(process.cwd())));
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
 
     return;
@@ -450,12 +449,12 @@ let init = function() {
             return;
 
         } else {
-            
+
             if (typeof (program.name) === 'function') {
                 utils.warn('generate requires a name in kebab-case. Please use --name argument to specify a name.');
                 return;
             }
-            
+
             let spec = false;
 
             if (program.generate === 'unit' && program.spec === 'directive') {
@@ -518,34 +517,38 @@ let init = function() {
     }
 }
 
-exec('npm view angular-rollup version', {silent: true}, function (err, result, c) {
+if (!program.generate) {
 
-    let sanitizedResult = result.replace('-beta', '').replace('-rc', '').trim();
-    let sanitizedPackageVersion = package.version.replace('-beta', '').replace('-rc', '').replace(',', '');
-    let sortedList = [sanitizedResult, sanitizedPackageVersion].sort(cmpVersions);
+    exec('npm view angular-rollup version', { silent: true }, function (err, result, c) {
 
-    if (result.split('.')[0] === package.version.split('.')[0] &&
-        result.includes('beta') && package.version.includes('rc')) {
-        devMessage(package.version);
-    }
-    else if (isSameRelease(result, package) &&
-        parseInt(package.version.split('.')[0]) > parseInt(result.split('.')[0]) ||
-        parseInt(package.version.split('.')[1]) > parseInt(result.split('.')[1]) ||
-        parseInt(package.version.split('.')[2]) > parseInt(result.split('.')[2]) ||
-        parseInt(package.version.split('.')[3]) > parseInt(result.split('.')[3])) {
-        devMessage(package.version);
-    }
-    else if (checkVersion(package, result, 0) || checkVersion(package, result, 1) || checkVersion(package, result, 2)) {
-        updateMessage(result);
-    }
-    else if (sanitizedResult !== sanitizedPackageVersion) {
-        if (sortedList[1] === sanitizedResult) {
+        let sanitizedResult = result.replace('-beta', '').replace('-rc', '').trim();
+        let sanitizedPackageVersion = package.version.replace('-beta', '').replace('-rc', '').replace(',', '');
+        let sortedList = [sanitizedResult, sanitizedPackageVersion].sort(cmpVersions);
+
+        if (result.split('.')[0] === package.version.split('.')[0] &&
+            result.includes('beta') && package.version.includes('rc')) {
+            devMessage(package.version);
+        }
+        else if (isSameRelease(result, package) &&
+            parseInt(package.version.split('.')[0]) > parseInt(result.split('.')[0]) ||
+            parseInt(package.version.split('.')[1]) > parseInt(result.split('.')[1]) ||
+            parseInt(package.version.split('.')[2]) > parseInt(result.split('.')[2]) ||
+            parseInt(package.version.split('.')[3]) > parseInt(result.split('.')[3])) {
+            devMessage(package.version);
+        }
+        else if (checkVersion(package, result, 0) || checkVersion(package, result, 1) || checkVersion(package, result, 2)) {
             updateMessage(result);
         }
-    } else {
-        versionMessage(package.version);
-    }
-});
+        else if (sanitizedResult !== sanitizedPackageVersion) {
+            if (sortedList[1] === sanitizedResult) {
+                updateMessage(result);
+            }
+        } else {
+            versionMessage(package.version);
+        }
+    });
+
+}
 
 init();
 
