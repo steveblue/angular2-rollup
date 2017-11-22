@@ -17,21 +17,21 @@ let hasWarning = false;
 let dynamicRoutes = false;
 let isLazy = false;
 let isElectron = false;
+let isBare = false;
+let hasRollup = false;
+let hasServer = false;
 
 const projectPath = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
 const cliPath = path.dirname(fs.realpathSync(__filename));
 
 const files = [
-    'src',
     '.editorconfig',
     'gitignore.scaffold',
     '.npmignore',
     'closure.conf',
-    'closure.lazy.conf',
     'closure.externs.js',
     'karma-test-shim.js',
     'karma.conf.js',
-    'lazy.config.json',
     'main.prod.ts',
     'main.prod.js',
     'main.ts',
@@ -39,16 +39,10 @@ const files = [
     'postcss.jit.js',
     'postcss.prod.js',
     'protractor.config.js',
-    'rollup.config.js',
-    'router.js',
-    'server.config.dev.js',
-    'server.config.prod.js',
-    'server.js',
     'tsconfig.dev.json',
     'tsconfig.jit.json',
     'tsconfig.prod.json',
     'tsconfig.prod.lazy.json',
-    'jsconfig.json',
     'tslint.json'
 ];
 
@@ -71,8 +65,16 @@ process.argv.forEach((arg)=>{
   if (arg.includes('dynamicRoutes')) {
       dynamicRoutes = arg.toString().split('=')[1];
   }
+  if (arg.includes('rollup')) {
+      hasRollup = arg.toString().split('=')[1];
+  }
+  if (arg.includes('server')) {
+      hasServer = arg.toString().split('=')[1];
+  }
+  if (arg.includes('bare')) {
+      isBare = arg.toString().split('=')[1];
+  }
 });
-
 
 
 /*
@@ -95,6 +97,19 @@ const copy = {
     },
     scaffold: (files) => {
 
+        if (fs.existsSync(projectPath + '/' + 'src')) {
+            warn('src' + ' already exists');
+            hasWarning = true;
+        } else {
+            mkdir(projectPath + '/' + 'src');
+            if (isBare) {
+                cp('-R', cliPath + '/src-bare/*', projectPath + '/' + 'src');
+            } else {
+                cp('-R', cliPath + '/src/*', projectPath + '/' + 'src');
+            }
+            log('src', 'copied to', projectPath + '/');
+        }
+
         if (fs.existsSync(projectPath + '/' + '.gitignore')) {
             warn('.gitignore' + ' already exists');
             hasWarning = true;
@@ -110,6 +125,32 @@ const copy = {
             copy.file(cliPath + '/' + filename);
         });
 
+        if (hasRollup) {
+            if (fs.existsSync(projectPath + '/rollup.config.js')) {
+                warn('rollup.config.js' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/rollup.config.js', projectPath + '/rollup.config.js');
+                log('rollup.config.js', 'copied to', projectPath + '/');
+            }
+        }
+
+        if (hasServer) {
+            if (fs.existsSync(projectPath + '/server.js')) {
+                warn('server.js' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/server.config.dev.js', projectPath + '/server.config.dev.js');
+                cp(cliPath + '/server.config.prod.js', projectPath + '/server.config.prod.js');
+                cp(cliPath + '/server.js', projectPath + '/server.js');
+                cp(cliPath + '/router.js', projectPath + '/router.js');
+                log('server.config.dev.js', 'copied to', projectPath + '/');
+                log('server.config.prod.js', 'copied to', projectPath + '/');
+                log('server.js', 'copied to', projectPath + '/');
+                log('router.js', 'copied to', projectPath + '/');
+            }
+        }
+
         if (isLazy || dynamicRoutes) {
             if (fs.existsSync(projectPath + '/src/public/system.config.js')) {
                 rm(projectPath + '/src/public/system.config.js');
@@ -120,12 +161,18 @@ const copy = {
             if (fs.existsSync(projectPath + '/src/app/app.routes.ts')) {
                 rm(projectPath + '/src/app/app.routes.ts');
             }
+            if (fs.existsSync(projectPath + '/closure.lazy.conf')) {
+                rm(projectPath + '/closure.lazy.conf');
+            }
             if (fs.existsSync(projectPath + '/lazy.config.json')) {
                 rm(projectPath + '/lazy.config.json');
             }
             rm(projectPath + '/src/app/app.module.ts');
             rm(projectPath + '/src/app/shared/components/lazy/lazy.module.ts');
+            cp(cliPath + '/closure.lazy.conf', projectPath + '/closure.lazy.conf');
+            log('closure.lazy.conf', 'copied to', projectPath + '/');
             cp(cliPath + '/lazy.config.json', projectPath + '/lazy.config.json');
+            log('lazy.config.json', 'copied to', projectPath + '/');
             cp(cliPath + '/src-lazy/app/app.module.ts', projectPath + '/src/app/app.module.ts');
             cp(cliPath + '/src-lazy/app/app.routes.ts', projectPath + '/src/app/app.routes.ts');
             cp(cliPath + '/src-lazy/public/system.polyfill.js', projectPath + '/src/public/system.polyfill.js');
@@ -144,6 +191,7 @@ const copy = {
             rm(projectPath + '/src/app/app.module.ts');
             rm(projectPath + '/lazy.config.json');
             cp(cliPath + '/lazy.routes.config.json', projectPath + '/lazy.config.json');
+            log('lazy.routes.config.json', 'copied to', projectPath + '/');
             cp(cliPath + '/src-dynamic-route/app/app.config.ts', projectPath + '/src/app/app.config.ts');
             cp(cliPath + '/src-dynamic-route/app/app.module.ts', projectPath + '/src/app/app.module.ts');
         }
@@ -153,6 +201,8 @@ const copy = {
             cp(cliPath + '/src-electron/public/index.html', projectPath + '/src/public/index.html');
             cp(cliPath + '/src-electron/public/renderer.js', projectPath + '/src/public/renderer.js');
             cp(cliPath + '/main.electron.js', projectPath + '/main.electron.js');
+            log('renderer.js', 'copied to', projectPath + '/src/public/');
+            log('main.electron.js', 'copied to', projectPath + '/');
         }
 
     }
@@ -185,6 +235,20 @@ let init = function() {
     }
 
 
+    if (isBare === 'true') {
+        fs.readFile(projectPath + '/tsconfig.dev.json', (err, contents) => {
+            let script = JSON.parse(contents);
+            script.files = script.files.splice(script.files.indexOf('./src/app/shared/components/lazy/lazy.module.ts') - 1, 1);
+            fs.writeFile(projectPath + '/tsconfig.dev.json', JSON.stringify(script, null, 4));
+        });
+        fs.readFile(projectPath + '/tsconfig.prod.json', (err, contents) => {
+            let script = JSON.parse(contents);
+            script.files = script.files.splice(script.files.indexOf('./ngfactory/src/app/shared/components/lazy/lazy.module.ts') - 1, 1);
+            fs.writeFile(projectPath + '/tsconfig.prod.json', JSON.stringify(script, null, 4));
+        });
+    }
+
+
     if (hasWarning == true) {
         warn('Please move or delete existing files to prevent overwiting.');
         return;
@@ -192,6 +256,7 @@ let init = function() {
 
 
     cp(cliPath + '/package.scaffold.json', projectPath+'/package.json');
+
 
     fs.readFile(cliPath + '/package.scaffold.json', (err, script) => {
 
@@ -215,8 +280,8 @@ let init = function() {
 
         fs.writeFile(projectPath+'/package.json', JSON.stringify(script, null, 4), function (err) {
             if (err) log(err);
-            log('ngr scaffolded ' + path.basename(process.cwd()), 'angular@'+ useVersion);
-            alert('npm install', 'to install project dependencies');
+            alert('ngr scaffolded ' + path.basename(process.cwd()) + ' with', 'angular@'+ useVersion);
+            alert(colors.green('npm install to install project dependencies'));
             alert('ngr build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
             alert('ngr build prod --serve', 'to compile your project AOT for production, start up Express server');
             alert('ngr --help', 'for more CLI commands' );

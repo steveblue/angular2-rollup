@@ -1,7 +1,11 @@
 ## 1.0.0-rc.4 
 
-- Add `ngr.config.js` file to root of any existing project to use cli commands. This file can be empty.
+- Add `ngr.config.js` file to root of any existing project to use cli commands. This file can be empty. This feature allows library builds in an existing app.
+- Removed `rollup.config.json` from default scaffold, use `ngr scaffold --rollup` flag to get it back
+- Added option to scaffold without the Express server, use `ngr scaffold --server false`
+- Added option to scaffold a bare bones application, use `ngr scaffold --bare`
 - Deprecated `cli.config.js`, builds now reference `ngr.config.js` or `build.config.js`
+- Deprecated `jsconfig.json`
 - Update README with instructions for `ngr.config.js` and using buildHooks in `build.config.js`
 
 

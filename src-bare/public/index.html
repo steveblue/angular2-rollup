@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="/">
+
+  <title>angular-rollup</title>
+
+  <link rel="stylesheet" href="/style/style.css">
+
+  <script src="/lib/core-js/client/shim.min.js"></script>
+  <script src="/lib/zone.js/dist/zone.js"></script>
+  <!-- build:remove:prod -->
+  <script src="/lib/reflect-metadata/Reflect.js"></script>
+  <!-- /build -->
+  <script src="/lib/systemjs/dist/system.js"></script>
+</head>
+
+<body>
+
+  <cmp-prefix1-app-root>
+    <div class="loading__icon is--large is--center"></div>
+  </cmp-prefix1-app-root>
+
+  <!-- build:remove:prod -->
+  <script src="system.config.js"></script>
+  <script>
+    Promise.all([
+      System.import('app')
+    ]);
+  </script>
+  <script>
+    if (!navigator.userAgent.indexOf("MSIE 9") > -1) {
+      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+        ':35729/livereload.js?snipver=1"></' + 'script>')
+    }
+  </script>
+  <!-- /build -->
+  <!-- build:remove:dev -->
+  <script src="system.import.js"></script>
+  <!-- /build -->
+
+</body>
+
+</html>

@@ -50,21 +50,7 @@ module.exports = {
     src: 'src',
     build: 'build',
     dist: 'dist',
-    lib: 'src/lib',
-    libFilename: 'default-lib',
     classPrefix: 'My',
     componentPrefix: 'cmp',
-    directivePrefix: 'dir',
-    buildHooks: {
-        dev: {
-            pre: () => {
-
-                return new Promise((res, rej) => {
-                    cp('lazy.config.json', './build/lazy.config.json');
-                    res();
-                });
-
-            }
-        }
-    }
+    directivePrefix: 'dir'
 }

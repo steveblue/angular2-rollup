@@ -41,6 +41,9 @@ program
     .option('serve, --serve [bool]', 'Run Express Server')
     .option('scaffold, --scaffold [bool]', 'Scaffold a new project')
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
+    .option('--rollup [bool]', 'Scaffold a new project with support for bundling with Rollup and Closure Compiler in SIMPLE_OPTIMIZATIONS mode')
+    .option('--server [bool]', 'Scaffold a new project with an Express server')
+    .option('--bare [bool]', 'Scaffold a new project with a simple Hello World, exclude the demo')
     .option('--dynamicRoutes [bool]', 'Scaffold a new project with support for routes configured by JSON prior to Bootstrap')
     .option('--electron [bool]', 'Scaffold a new project with additional files needed to support Electron, serve with Electron')
     .option('--angularVersion [string]', 'Scaffold a new project with a specific @angular version')
@@ -74,8 +77,23 @@ if (program.scaffold) {
         cliCommand += ' lazy=true';
     }
 
+    if (program.rollup) {
+        cliCommand += ' rollup=true';
+    }
+
+    if (program.server === false) {
+        cliCommand += ' server=false';
+    } else {
+        cliCommand += ' server=true';
+    }
+
+    if (program.bare) {
+        cliCommand += ' bare=true';
+    }
+
     cp(path.join(path.dirname(fs.realpathSync(__filename)), 'build.config.js'), path.join(path.dirname(process.cwd()), path.basename(process.cwd())));
     spawn(cliCommand, { shell: true, stdio: 'inherit' });
+
     return;
 
 }
@@ -274,10 +292,7 @@ let init = function() {
 
     if (program.generate) {
 
-        
-
         if (program.generate === 'wizard') {
-
 
             let validateEntry = function (value) {
                 if (value === 'true' ||
