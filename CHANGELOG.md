@@ -1,8 +1,12 @@
 ## 1.0.0-rc.5 
 
-- Deprecated `build.config.js` in favor of namespaced file. New apps default to `ngr.config.js`
+- Deprecated `build.config.js` in favor of namespaced file, new scaffolded apps default to `ngr.config.js`
 - Cleaned up default `ngr.config.js` to include the bare minimum
 - Removed dependency on npm registry, builds can run free of internet connection
+- Removed unnecessary dependencies in package.json that had accumulated over course of development
+- Updated README to include correct directions for running unit tests
+- Removed selenium webdriver postinstall step from package.json
+- Fixed typos in logs and comments in cli build scripts
 - Use `postcss-csso` instead of `css-nano` for new scaffolded apps to fix possible bugs with z-index
 
 If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`mv build.config.js ngr.config.js`) and update references to `build.config.js` in `server.js` and `router.js`. The build scripts will continue to check for build.config.js until we choose to deprecate backwards compatibility in a later release.

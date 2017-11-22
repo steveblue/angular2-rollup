@@ -11,23 +11,23 @@ CLI for bundling Angular with Rollup and Closure Compiler.
 
 * Fast dev environments use AOT in `--watch` mode or JIT
 
-* Highly optimized bundle for production using Closure Compiler
+* Highly optimized bundle for production using Closure Compiler in ADVANCED_OPTIMIZATIONS mode
 
 * Lazyload optimized bundles with SystemJS and Closure Compiler
 
 * Scaffold an application with dynamic routing configured by JSON
 
-* EXPERIMENTAL support for building a native app with Electron
+* EXPERIMENTAL support for scaffolding a native app with Electron
 
-* Build library packages that follow [Angular Package Format 4.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview)
+* Build library packages that follow [Angular Package Format 5.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview)
 
 * Follows [Angular Styleguide](https://angular.io/guide/styleguide)
 
 * Ready to go build system using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli), [Rollup](http://rollupjs.org), and [Closure Compiler](https://developers.google.com/closure/compiler/)
 
-* Test Angular 2 code with [Jasmine](http://jasmine.github.io/) and [Karma](http://karma-runner.github.io/)
+* Test Angular code with [Jasmine](http://jasmine.github.io/) and [Karma](http://karma-runner.github.io/)
 
-* End-to-end Angular 2 code using [Protractor](https://angular.github.io/protractor/)
+* End-to-end Angular code using [Protractor](https://angular.github.io/protractor/)
 
 * Stylesheets with [SASS](http://sass-lang.com/) and [PostCSS](http://postcss.org)
 
@@ -234,8 +234,6 @@ After you have generated some components for the library, use `ngr build lib` to
 Once all the necessary configuration files are in place and some modules have been generated for the library, make sure import each module in the `index.ts`. In each module, export all the necessary classes.
 
 
-
-
 ## Testing
 
 
@@ -243,10 +241,19 @@ Once all the necessary configuration files are in place and some modules have be
 
 Unit tests use Karma and can be run with the `--watch` flag.
 
-For single run `ngr --test`
+For single run 
+
+```
+ngr build jit 
+npm run test
+```
+
+For a shortcut, add `ngr build jit` to the `pretest` field in your package.json.
 
 
 ### 2. End-to-End Tests (aka. e2e, integration)
+
+Prior to running tests run `npm run webdriver:update`
 
 e2e tests use Protractor and Selenium Webdriver. The process requires multiple tabs to run locally.
 
@@ -481,7 +488,7 @@ Editing index.html
 
 `ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build. For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor);
 
-The typical Angular 2 dependencies are already included in the `<head>` tag in `index.html`.
+The typical Angular dependencies are already included in the `<head>` tag in `index.html`.
 
 
 ## How can I customize the different builds?
@@ -555,11 +562,13 @@ Configure the jsconfig.json file.
 Install the following packages:
 
 Angular Language Service : Editor services for Angular templates
-Angular Support : Go to / peek angular specific definitions
-angular2-inline : Syntax highlighting of inline html and css
+Angular Support : go to / peek angular specific definitions
+angular2-inline : syntax highlighting of inline html and css
 SCSS Intellisense: autocompletion and refactoring of SCSS
-Path Intellisense: Autocomplete for paths in the project
-TypeScript Hero: Additional tooling for the TypeScript language
+Path Intellisense: autocomplete for paths in the project
+NPM Intellisense: autocomplete paths to node_modules
+Auto Import ES6 & TS: auto import for TypeScript
+TypeScript Hero: additional tooling for the TypeScript language
 
 
 

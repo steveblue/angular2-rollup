@@ -5,12 +5,12 @@ import resolve from 'rollup-plugin-node-resolve';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from 'rollup-plugin-commonjs';
 
-const paths = require('./build.config.js');
+const config = require('./ngr.config.js');
 
 export default {
   entry: './main.prod.js',
   format: 'iife',
-  dest: paths.build + '/bundle.es2015.js',
+  dest: config.build + '/bundle.es2015.js',
   sourceMap: false,
   treeshake: true,
   plugins: [

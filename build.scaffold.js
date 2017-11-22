@@ -35,6 +35,7 @@ const files = [
     'main.prod.ts',
     'main.prod.js',
     'main.ts',
+    'ngr.config.js',
     'postcss.dev.js',
     'postcss.jit.js',
     'postcss.prod.js',
@@ -281,7 +282,7 @@ let init = function() {
         fs.writeFile(projectPath+'/package.json', JSON.stringify(script, null, 4), function (err) {
             if (err) log(err);
             alert('ngr scaffolded ' + path.basename(process.cwd()) + ' with', 'angular@'+ useVersion);
-            alert(colors.green('npm install to install project dependencies'));
+            alert(colors.green('please run npm install'));
             alert('ngr build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
             alert('ngr build prod --serve', 'to compile your project AOT for production, start up Express server');
             alert('ngr --help', 'for more CLI commands' );

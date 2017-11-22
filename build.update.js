@@ -31,43 +31,6 @@ let validateEntry = function (value) {
     }
 };
 
-const files = [
-    'src',
-    '.editorconfig',
-    '.gitignore',
-    '.npmignore',
-    'build.config.js',
-    'closure.conf',
-    'closure.lazy.conf',
-    'closure.externs.js',
-    'karma-test-shim.js',
-    'karma.conf.js',
-    'lazy.config.json',
-    'main.prod.js',
-    'main.prod.ts',
-    'main.ts',
-    'postcss.dev.js',
-    'postcss.jit.js',
-    'postcss.prod.js',
-    'protractor.config.js',
-    'rollup.config.js',
-    'rollup.config.lib.js',
-    'rollup.config.lib-es5.js',
-    'rollup.config.lib-umd.js',
-    'router.js',
-    'server.config.dev.js',
-    'server.config.prod.js',
-    'server.js',
-    'tsconfig.dev.json',
-    'tsconfig.jit.json',
-    'tsconfig.prod.json',
-    'tsconfig.prod.lazy.json',
-    'tsconfig.lib.json',
-    'tsconfig.lib.es5.json',
-    'jsconfig.json',
-    'tslint.json'
-];
-
 
 /* Test for arguments the ngr cli spits out */
 
@@ -114,11 +77,6 @@ const copy = {
             cp('-R', p, path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
             utils.log(p.split('/')[p.split('/').length - 1], 'copied to', path.dirname(process.cwd()) + '/' + path.basename(process.cwd()) + '/');
         }
-    },
-    scaffold: (files) => {
-        files.forEach((filename) => {
-            copy.newFile(path.dirname(fs.realpathSync(__filename)) + '/' + filename);
-        })
     }
 };
 
@@ -126,10 +84,6 @@ const copy = {
 let init = function () {
 
     if (includeLib) {
-
-        // copy.scaffold(files.filter((filename) => {
-        //     return filename.includes('lib') === true;
-        // }));
 
         cp('-R', utils.config.cliRoot + '/src/lib/', utils.config.projectRoot + '/src');
 
@@ -254,8 +208,8 @@ let init = function () {
                 utils.alert('Http will be deprecated in Angular 6.0.0, migrate all instances of Http to HttpClient in your app and add "tslib/tslib.js" to build.config.js');
                 utils.alert('RxJs has been updated to 5.5.2, please update your app accordingly. Please change the mappings in system.config.js to something like below:');
                 utils.alert("\n// other libraries \n"+
-                            "'rxjs/Observable': 'lib:rxjs/observable', \n"+
-                            "'rxjs/observable': 'lib:rxjs/observable', \n"+
+                            "'rxjs/Observable': 'lib:rxjs/Observable', \n"+
+                            "'rxjs/observable/merge': 'lib:rxjs/observable/merge', \n"+
                             "'rxjs/Subject': 'lib:rxjs/Subject', \n"+
                             "'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject', \n"+
                             "'rxjs/Subscription': 'lib:rxjs/Subscription', \n"+

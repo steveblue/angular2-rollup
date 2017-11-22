@@ -6,13 +6,13 @@
 
     Global set of utility methods used in various build tasks.
 
-    - paths   : build.config.js Object
+    - config  : ngr.config.js Object
     - scripts : package.json scripts Object
     - console : Direct access to clim()
     - colors  : Direct access to chalk
     - log     : Used to pretty print log messages in the Terminal
     - warn    : Used to pretty print warnings in the Terminal
-    - regex   : Used to test the following Strings in soruce code
+    - regex   : Used to test the following Strings in source code
                     - moduleIdRegex: moduleId: module.id
                     - directiveRegex: @Directive,
                     - componentRegex: @Component,

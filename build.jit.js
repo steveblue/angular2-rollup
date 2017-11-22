@@ -184,7 +184,7 @@ const compile = {
                 alert(colors.green('Ready to serve'));
                 utils.electron(canWatch);
               } else {
-                alert('Build is ready');
+                alert(colors.green('Build is ready'));
               }
 
             } else if (hasCompletedFirstStylePass === true) {
