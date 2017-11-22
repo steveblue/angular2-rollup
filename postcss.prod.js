@@ -1,13 +1,11 @@
 module.exports = {
   plugins: {
     'autoprefixer': {
-        browsers: 'last 20 versions'
+        browsers: 'last 2 versions'
     },
     'css-mqpacker': {
       sort: true
     },
-    'cssnano': {
-        zindex: false
-    }
+    'postcss-csso': {}
   }
 }
