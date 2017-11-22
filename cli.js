@@ -518,7 +518,7 @@ let init = function() {
     }
 }
 
-exec('npm view angular-rollup version', { silent: true }, function (err, result, c) {
+exec('npm view angular-rollup version', {silent: true}, function (err, result, c) {
 
     let sanitizedResult = result.replace('-beta', '').replace('-rc', '').trim();
     let sanitizedPackageVersion = package.version.replace('-beta', '').replace('-rc', '').replace(',', '');
@@ -545,12 +545,9 @@ exec('npm view angular-rollup version', { silent: true }, function (err, result,
     } else {
         versionMessage(package.version);
     }
-
-    setTimeout(init,50);
-
 });
 
-
+init();
 
 
 

@@ -35,8 +35,8 @@
 
  */
 
-
 require('shelljs/global');
+
 const clim = require('clim');
 const cons = clim();
 const fs   = require('fs');
@@ -51,13 +51,6 @@ const cliRoot = path.dirname(fs.realpathSync(__filename));
 const processRoot = path.join(path.dirname(process.cwd()) , path.basename(process.cwd()));
 const cliConfigPath = findUp.sync(['ngr.config.js', 'build.config.js']);
 const logger = require('./build.log.js');
-
-let projectRoot = path.normalize(cliConfigPath.substring(0, cliConfigPath.replace(/\\/g, '/').lastIndexOf('/')));
-
-const scripts = require(projectRoot+'/package.json').scripts;
-const angularVersion = require(projectRoot + '/package.json').dependencies['@angular/core'];
-let config = require(projectRoot+'/build.config.js');
-
 const moduleIdRegex = /moduleId\s*:(.*)/g;
 const directiveRegex = /@Directive\(\s?{([\s\S]*)}\s?\)$/gm;
 const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
@@ -66,11 +59,16 @@ const styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
 const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
-
 const log = logger.log;
 const warn = logger.warn;
 const alert = logger.alert;
 const colors = logger.colors;
+
+let projectRoot = path.normalize(cliConfigPath.substring(0, cliConfigPath.replace(/\\/g, '/').lastIndexOf('/')));
+
+const scripts = require(projectRoot+'/package.json').scripts;
+const angularVersion = require(projectRoot + '/package.json').dependencies['@angular/core'];
+
 
 /* Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz */
 
@@ -89,15 +87,23 @@ function insertText(str, dir, preprocessor = res => res, processFilename = false
   });
 }
 
-
-process.argv.forEach((arg)=>{
+process.argv.forEach((arg) => {
     if (arg.includes('scaffold')) {
-        if (!fs.existsSync(projectRoot + '/build.config.js')) {
-            cp(cliRoot + '/build.config.js', projectRoot + '/build.config.js');
-            config = require(cliRoot + '/build.config.js');
+        if (!fs.existsSync(projectRoot + '/ngr.config.js')) {
+            cp(cliRoot + '/ngr.config.js', projectRoot + '/ngr.config.js');
+            config = require(cliRoot + '/ngr.config.js');
         }
     }
 });
+
+if (fs.existsSync(projectRoot + '/ngr.config.js')) {
+    config = require(projectRoot + '/ngr.config.js');
+} else if (fs.existsSync(projectRoot + '/build.config.js')) {
+    config = require(projectRoot + '/build.config.js');
+} else {
+    warn('ngr.config.js is not found. Please include ngr.config.js at the root of your project to continue.');
+    return;
+}
 
 config.cliRoot = cliRoot;
 config.processRoot = processRoot;

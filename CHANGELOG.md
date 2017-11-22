@@ -1,3 +1,12 @@
+## 1.0.0-rc.5 
+
+- Deprecated `build.config.js` in favor of namespaced file. New apps default to `ngr.config.js`
+- Cleaned up default `ngr.config.js` to include the bare minimum
+- Removed dependency on npm registry, builds can run free of internet connection
+
+If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`mv build.config.js ngr.config.js`) and update references to `build.config.js` in `server.js` and `router.js`. The build scripts will continue to check for build.config.js until we choose to deprecate backwards compatibility in a later release.
+
+
 ## 1.0.0-rc.4 
 
 - Add `ngr.config.js` file to root of any existing project to use cli commands. This file can be empty. This feature allows library builds in an existing app.

@@ -6,7 +6,7 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const app = express();
-const config = require('./build.config.js');
+const config = require('./ngr.config.js');
 const serverConfig = {
   dev: require('./server.config.dev.js'),
   prod: require('./server.config.prod.js')
