@@ -228,7 +228,7 @@ let init = function () {
             }
 
             utils.alert('ngr updated ' + colors.bold(colors.red('@angular')), '=> ' + colors.bold(colors.white(useVersion)));
-            utils.alert('run npm install');
+            utils.alert('run npm install or yarn install');
         });
 
     });
