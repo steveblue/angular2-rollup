@@ -258,7 +258,7 @@ Prior to running tests run `npm run webdriver:update`
 e2e tests use Protractor and Selenium Webdriver. The process requires multiple tabs to run locally.
 
   1. In a new tab: *if not already running!* `npm run webdriver:start`
-  2. In a new tab: `ngr build dev --serve`
+  2. In a new tab: `ngr build jit --serve`
 
 * Single run:
   3. In a new tab: `npm run e2e`
