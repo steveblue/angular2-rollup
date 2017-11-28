@@ -897,7 +897,7 @@ if (isLazy === true) {
   rm('-rf', path.normalize(path.join('./', config.build)));
   mkdir(path.normalize('./' + config.build));
   mkdir(path.normalize('./' + config.build + '/lib'));
-  cp('./lazy.config.json', './build/lazy.config.json');
+  cp('./lazy.config.json', './' + config.build + '/lazy.config.json');
   fs.readFile(config.projectRoot + '/lazy.config.json', 'utf8', function (err, contents) {
 
     if (!err) {
