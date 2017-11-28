@@ -1,3 +1,8 @@
+## 1.0.0-rc.6
+
+- Fixed issue that caused dev build to double compile on scss changes. Use `--postcss true` if you need to compile dev to test in older browsers.
+
+
 ## 1.0.0-rc.5 
 
 - Deprecated `build.config.js` in favor of namespaced file, new scaffolded apps default to `ngr.config.js`

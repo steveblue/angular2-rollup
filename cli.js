@@ -206,6 +206,9 @@ let init = function() {
         if (program.postcss === 'false') {
             cliCommand += ' postcss=false';
         }
+        else if (program.build === 'dev' && program.postcss === undefined) {
+            cliCommand += ' postcss=false';
+        }
         else {
             cliCommand += ' postcss=true';
         }
