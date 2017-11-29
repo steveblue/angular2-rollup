@@ -13,6 +13,7 @@
     "types": [
        "node",
        "jasmine",
+       "jasminewd2",
        "karma"
     ],
     "lib": [

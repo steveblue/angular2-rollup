@@ -1,9 +1,11 @@
 ## 1.0.0-rc.6
 
+- Updated protractor config to latest
 - Fixed issue that caused dev build to double compile on scss changes. Use `--postcss true` if you need to compile dev to test in older browsers.
 - Fixed issue in e2e test template when using `ngr generate`
 - Fixed typo in README regarding e2e testing
-
+- Fixed issue that could prevent lazy.config.json from being copied correctly in prod build
+- Added yarn to install messaging because why not?
 
 ## 1.0.0-rc.5 
 
