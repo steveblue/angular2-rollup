@@ -8,6 +8,7 @@ module.exports = {
             'reflect-metadata/Reflect.js',
             'reflect-metadata/Reflect.js.map',
             'tslib/tslib.js',
+            'web-animations-js/web-animations.min.js',
             '@angular',
             'rxjs'
         ],
@@ -15,7 +16,8 @@ module.exports = {
             'core-js/client/shim.min.js',
             'core-js/client/shim.min.js.map',
             'systemjs/dist/system.js',
-            'zone.js/dist/zone.js'
+            'zone.js/dist/zone.js',
+            'web-animations-js/web-animations.min.js'
         ],
         src: './node_modules',
         dist: './build/lib'

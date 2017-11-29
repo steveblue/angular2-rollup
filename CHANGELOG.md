@@ -6,6 +6,7 @@
 - Fixed typo in README regarding e2e testing
 - Fixed issue that could prevent lazy.config.json from being copied correctly in prod build
 - Added yarn to install messaging because why not?
+- Added Web Animations polyfill to default configuration 
 
 ## 1.0.0-rc.5 
 
