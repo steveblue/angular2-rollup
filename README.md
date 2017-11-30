@@ -40,7 +40,7 @@ NOTE: This package requires `python` and `java JDK` to be installed prior to ins
 
 - Install the cli and global dependencies
 
-`$ npm install -g angular-rollup webdriver-manager codelyzer rimraf`
+`$ npm install -g angular-rollup codelyzer rimraf`
 
 - Scaffold a new project and install dependencies
 
@@ -96,7 +96,7 @@ Selenium Webdriver requires [Python](https://www.python.org).
 
 - Install the cli and global npm dependencies
 
-`$ npm install -g angular-rollup webdriver-manager codelyzer rimraf`
+`$ npm install -g angular-rollup codelyzer rimraf`
 
 - Scaffold a new project and install project dependencies
 
@@ -241,10 +241,10 @@ Once all the necessary configuration files are in place and some modules have be
 
 Unit tests use Karma and can be run with the `--watch` flag.
 
-For single run 
+For single run
 
 ```
-ngr build jit 
+ngr build jit
 npm run test
 ```
 
@@ -353,7 +353,7 @@ Production builds do not require the CLI, just the package.json
 
 ## Can I use the CLI in the context of an existing application?
 
-Yes. This feature became readily available in 1.0.0-rc.4. Just include a `ngr.config.js` file at the root of your application. The file can be empty, it just serves as a marker for the root of your application. We may introduce configuration options here in the future as a proxy to `build.config.js`. 
+Yes. This feature became readily available in 1.0.0-rc.4. Just include a `ngr.config.js` file at the root of your application. The file can be empty, it just serves as a marker for the root of your application. We may introduce configuration options here in the future as a proxy to `build.config.js`.
 
 
 ## How do I include third party libraries?
@@ -511,7 +511,7 @@ There are hooks in the current build scripts where you are inject custom functio
     }
 ```
 
-If you require a new hook, submit a feature request in Github issues. 
+If you require a new hook, submit a feature request in Github issues.
 
 
 ## How do I update my project to the latest CLI?
