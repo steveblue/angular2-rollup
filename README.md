@@ -49,7 +49,6 @@ CLI for bundling Angular with Rollup and Closure Compiler.
     * [Code Generation](#code-generation)
     * [Development Server](#development-server)
 
-* [CLI](#cli)
 * [FAQ](#faq)
 * [License](#license)
 
