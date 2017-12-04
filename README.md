@@ -19,11 +19,9 @@ CLI for bundling Angular with Rollup and Closure Compiler.
 
 * EXPERIMENTAL support for scaffolding a native app with Electron
 
-* Build library packages that follow [Angular Package Format 5.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview)
+* Build library packages fromatted with [Angular Package Format 5.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview)
 
 * Follows [Angular Styleguide](https://angular.io/guide/styleguide)
-
-* Ready to go build system using [ngc](https://github.com/angular/angular/tree/master/modules/%40angular/compiler-cli), [Rollup](http://rollupjs.org), and [Closure Compiler](https://developers.google.com/closure/compiler/)
 
 * Test Angular code with [Jasmine](http://jasmine.github.io/) and [Karma](http://karma-runner.github.io/)
 
@@ -33,30 +31,6 @@ CLI for bundling Angular with Rollup and Closure Compiler.
 
 * Error reporting with [TSLint](http://palantir.github.io/tslint/) and [Codelyzer](https://github.com/mgechev/codelyzer)
 
-
-## Quick start
-
-NOTE: This package requires `python` and `java JDK` to be installed prior to installion. Several dependencies require these services.
-
-- Install the cli and global dependencies
-
-`$ npm install -g angular-rollup codelyzer rimraf`
-
-- Scaffold a new project and install dependencies
-
-```
-
-$ mkdir my-new-app && cd my-new-app
-$ ngr scaffold && npm install
-
-```
-
-
-- Run development build, start up Express Server with LiveReload
-
-`$ ngr build dev --serve --watch`
-
-When everything is setup correctly, you should be able to visit  [http://localhost:4200](http://localhost:4200) in your browser.
 
 
 ## Table of Contents
@@ -78,21 +52,12 @@ When everything is setup correctly, you should be able to visit  [http://localho
 
 # Getting Started
 
-## Dependencies
-
-What you need to run this app:
-* `node` and `npm` (Use [NVM](https://github.com/creationix/nvm))
-* Ensure you're running Node (`6.9.0`+)
-
 ## Install
 
-[Read the Quick Start](#quick-start)
 
 - Install dependencies
 
-To run Closure Compiler, you need to install the [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
-Selenium Webdriver requires [Python](https://www.python.org).
-
+Install the [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 - Install the cli and global npm dependencies
 
@@ -106,7 +71,6 @@ $ mkdir my-new-app && cd my-new-app
 $ ngr scaffold && npm install
 
 ```
-
 
 ### Configure Server
 
@@ -124,30 +88,29 @@ Change the host and/or port in `/server.config.dev.js` if needed. This config is
 
 Express is used mainly to provide a development server, but it could also be configured for production to run over `https`.
 
-`node server.js` is run as a parallel process to the build when using the `--serve` flag
+`node server.js` is run as a parallel process when using the `--serve` flag. You can also bring your own server if your prefer.
 
-`router.js` configures the routes of the Express server
+`router.js` configures the routes of the Express server.
 
 
 ## Config
 
-There is a lot of config in this project to allow finetuning each build to developer specifications. `build.config.js` lets you configure filepaths, SASS options, and includes callbacks for steps in each build.
+There is a lot of config in this project to allow finetuning each build to developer specifications. `ngr.config.js` lets you configure filepaths, SASS options, and includes callbacks for steps in each build.
 
 
 | Script        | Description   |
 | ------------- |:-------------:|
-| build.config.js      | Project filepaths, dev, lib, and prod builds |
+| ngr.config.js      | Project filepaths, callbacks for build steps |
 | karma.conf.js      | Karma      |
 | postcss.*.js |  PostCSS (prod,lib) |
 | rollup.config.*.js |  Rollup (prod,lib) |
 | closure.conf |  Closure Compiler (prod) when using the --closure flag  |
 | closure.lazy.conf |  Closure Compiler (prod) when using the --closure and --lazy flags  |
 | server.config.*.js |  Express Server  |
-| jsconfig.json |  VSCode editor  |
 | tsconfig.*.json | Configures TypeScript (dev) or @angular/compiler (lib,prod) |
 
 
-### build.config.js
+### ngr.config.js
 
 | Property       | Description   |
 | ------------- |:-------------:|
@@ -157,8 +120,6 @@ There is a lot of config in this project to allow finetuning each build to devel
 | src |  Path to src folder |
 | build |  Path to build folder  |
 | dist |  Path to dist directory for the library build  |
-| lib |  Path to library root folder  |
-| libFilename |  filename used for bundles created during library build |
 | classPrefix | Prefix used when declaring Class |
 | componentPrefix | Prefix used when declaring selector for Components |
 | directivePrefix | Prefix used when declaring selector for Directives |
@@ -170,9 +131,12 @@ To scaffold a new app run `ngr scaffold`. This will copy required files into the
 
 To scaffold at a specific version of `@angular` use `--angularVersion` i.e. `ngr scaffold --angularVersion 5.0.0`
 
-If you want access to the library build, use `ngr scaffold --lib`
-
-If you want to build a project for native app development with Electron use `ngr scaffold --electron`
+| Option       | Description   |
+| ------------- |:-------------:|
+| --lazy     | Demo app with lazyloaded routes |
+| --dynamicRoutes      | Demo app with lazyloaded routes, JSON config for routes |
+| --electron | Demo app with configuration files for electron |
+| --bare |  Scaffold a simple hello world application  |
 
 
 
@@ -180,8 +144,11 @@ If you want to build a project for native app development with Electron use `ngr
 
 To update a project to a specific version of `@angular` use `--angularVersion` i.e. `ngr update --angularVersion 5.0.0`
 
+Sometimes major cli releases have minimal breaking changes. Use `--cliVersion` for instructions for migrating to a specific version.
 
-# Develop
+
+
+# Development
 
 
 ## Build
@@ -190,7 +157,9 @@ To build the app for development, enable livereload, and start up the server:
 
 * `$ ngr build dev --watch --serve`
 
-`ngr` will build the application for development.
+`ngr` will build the application for development using AOT in --watch mode.
+
+Use the `--electron` argument instead of `--serve` if you want to test in the Electron environment.
 
 Optionally, use `--jit` to bootstrap Angular with JIT Compiler.
 
@@ -200,7 +169,7 @@ It is recommended to bundle with Closure Compiler in ADVANCED_OPTIMIZATIONS mode
 
 * `$ ngr build prod`
 
-The production build also supports lazy loading with Closure Compiler.
+The production build also supports lazy loading with Closure Compiler. Use the --lazy argument if you have lazyloaded routes.
 
 * `$ ngr build prod --lazy`
 
@@ -208,34 +177,46 @@ You can also bundle with Rollup and then optimize with ClosureCompiler, but only
 
 * `$ ngr build prod --rollup`
 
+If you scaffolded an app for electron use the `--electron` argument.
 
-NOTE: If you scaffolded an app for electron use the `--electron` argument.
+* `$ ngr build prod --electron`
 
 
 
 ### Package Format 5.0 Library Build
 
-* `$ ngr build lib`
-
 `ngr` provides a build for developing Angular libraries that conforms to the Angular Package Format 5.0.
 
-Jason Aden gave a presentation about Angular Package Format 4.0 at ng-conf 2017. [Packaging Angular](https://youtu.be/unICbsPGFIA).
+Jason Aden gave a presentation about Angular Package Format at ng-conf 2017. [Packaging Angular](https://youtu.be/unICbsPGFIA).
 
-Package Format 5.0 is largely unchanged from 4.0, except for conforming some of the bundles to specific paths in the distributed package.
+Package Format 5.0 is largely unchanged from 4.0, except for paths to bundles in the distributed package.
 
-Generate the configuration required for library packages with `ngr generate lib` or use `ngr generate wizard`.
+#### Generate A Library Package
+
+Generate library packages with `ngr generate lib` or use `ngr generate wizard`.
 
 `ngr generate lib --name my-lib --dir src/app/shared/lib`
+
+This will generate a library package in the src/app/shared/lib folder with the necessary configuration.
+
+#### Developing A Library
+
+- Keep your code strictly typed.
+- Do not create monolithic `@NgModule`, separate modules by discrete functionality. This allows the library to be treeshaken.
+- In each module export the necessary components, directives, services, etc.
+- Update the index.ts with exports for each module.
+
+#### Build Library
+
+Update the version number of the library's package.json prior to building.
 
 After you have generated some components for the library, use `ngr build lib` to build the library in the `dist` folder.
 
 `ngr build lib -c src/app/shared/lib/lib.config.json`
 
-Once all the necessary configuration files are in place and some modules have been generated for the library, make sure import each module in the `index.ts`. In each module, export all the necessary classes.
 
 
 ## Testing
-
 
 ### 1. Unit Tests
 
@@ -329,7 +310,7 @@ When generating a module, there is an optional `--include` flag what will auto i
 
 This example generates files for configuring routes, component, and directive and then auto imports those files into the module.
 
-You can configure prefixes for Classes, Component and Directive selector in `build.config.js`. Omit the properties from the config to operate without prefixes. Defaults are included that follow the Angular Styleguide.
+You can configure prefixes for Classes, Component and Directive selector in `ngr.config.js`. Omit the properties from the config to operate without prefixes. Defaults are included that follow the Angular Styleguide.
 
 Generate a unit test with the wizard (`ngr generate wizard`) or use the following example as a guide.
 
@@ -341,9 +322,9 @@ Generate a unit test with the wizard (`ngr generate wizard`) or use the followin
 You can choose to run an Express server in parallel with build tasks, with or without Livereload enabled
 
 - `ngr build dev --watch --serve` Builds development environment, runs Express server with livereload
-- `ngr serve` Runs Express server, make sure you have built beforehand!
+- `ngr serve` Run the Express server. Make sure you have built beforehand!
 
-Production builds do not require the CLI, just the package.json
+Production builds do not require the CLI to be served with the default Express server, just the package.json.
 
 - `NODE_ENV=prod ngr serve` Run Express server with SSL for production, requires `./conf/ssl/key.pem` and `./conf/ssl/cert.pem`.
 
@@ -353,14 +334,14 @@ Production builds do not require the CLI, just the package.json
 
 ## Can I use the CLI in the context of an existing application?
 
-Yes. This feature became readily available in 1.0.0-rc.4. Just include a `ngr.config.js` file at the root of your application. The file can be empty, it just serves as a marker for the root of your application. We may introduce configuration options here in the future as a proxy to `build.config.js`.
+Yes. This feature became readily available in 1.0.0-rc.4. Just include a `ngr.config.js` file at the root of your application. The file can be empty, it just serves as a marker for the root of your application.
 
 
 ## How do I include third party libraries?
 
 The production build relies heavily on Closure Compiler, which provides excellent optimizations but unfortunately is not compatible with most third party libraries. Luckily, Closure Compiler can be configured to build referencing methods and variables found in external scripts. Follow this step by step questionaire to figure out which method to use.
 
-- Does the library conform to Angular Package Spec 4.0?
+- Does the library conform to Angular Package Spec 5.0?
     YES: Will be bundled by `ngc`, inject the NgModule into your application, add to `closure.conf` and/or closure.lazy.conf
     NO: See next question
 
@@ -371,7 +352,6 @@ The production build relies heavily on Closure Compiler, which provides excellen
 - Is the library formatted with UMD modules?
     YES: Include the necessary library files in `closure.conf`
     NO: You must include the library globally via `<head>` or `SystemJS`. Add the necessary externs to `closure.externs.js`
-
 
 
 ### Configure SystemJS for the dev build
@@ -410,7 +390,7 @@ You can include third party dependencies with `SystemJS` instead of the `<head>`
 ```
 
 
-If a library must be loaded prior to bootstrap, add the folder name in `build.config.js` to have it copied into `build/lib`. It is optimal to only include the library files you need for production, not entire folders.
+If a library must be loaded prior to bootstrap, add the folder name in `ngr.config.js` to have it copied into `build/lib`. It is optimal to only include the library files you need for production, not entire folders.
 
 You must also edit `public/index.html` and the systemjs config files to load libraries prior to the app bootstrapping.
 
@@ -476,7 +456,7 @@ You may also need to inject `typings` for `ngc` to properly inject dependencies 
 
 Editing index.html
 
-`ngr` copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in `build.config.js`). You can then reference the library in `src/public/index.html` like so:
+`ngr` copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in `ngr.config.js`). You can then reference the library in `src/public/index.html` like so:
 
 ```
     <script src="/lib/core-js/client/shim.min.js"></script>

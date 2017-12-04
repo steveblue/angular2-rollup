@@ -1,3 +1,7 @@
+## 1.0.0
+
+- Version bump
+
 ## 1.0.0-rc.6
 
 - Updated protractor config to latest
@@ -6,9 +10,9 @@
 - Fixed typo in README regarding e2e testing
 - Fixed issue that could prevent lazy.config.json from being copied correctly in prod build
 - Added yarn to install messaging because why not?
-- Added Web Animations polyfill to default configuration 
+- Added Web Animations polyfill to default configuration
 
-## 1.0.0-rc.5 
+## 1.0.0-rc.5
 
 - Deprecated `build.config.js` in favor of namespaced file, new scaffolded apps default to `ngr.config.js`
 - Cleaned up default `ngr.config.js` to include the bare minimum
@@ -22,7 +26,7 @@
 If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`mv build.config.js ngr.config.js`) and update references to `build.config.js` in `server.js` and `router.js`. The build scripts will continue to check for build.config.js until we choose to deprecate backwards compatibility in a later release.
 
 
-## 1.0.0-rc.4 
+## 1.0.0-rc.4
 
 - Add `ngr.config.js` file to root of any existing project to use cli commands. This file can be empty. This feature allows library builds in an existing app.
 - Removed `rollup.config.json` from default scaffold, use `ngr scaffold --rollup` flag to get it back
