@@ -540,7 +540,7 @@ It is not recommended that you deploy the livereload script to production.
 
 ## VSCode Extensions
 
-We like [Visual Studio Code](https://code.visualstudio.com/). Below are some VS Code Extensions we've found useful when developing Angular applications.
+We like [Visual Studio Code](https://code.visualstudio.com/). Below are some VS Code Extensions we find useful when developing Angular applications.
 
 | Extension       | Description   |
 | ------------- |:-------------:|
