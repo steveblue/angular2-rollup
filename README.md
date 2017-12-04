@@ -36,17 +36,19 @@ CLI for bundling Angular with Rollup and Closure Compiler.
 ## Table of Contents
 
 * [Getting Started](#getting-started)
-    * [Dependencies](#dependencies)
     * [Install](#install)
     * [Server](#server)
     * [Config](#config)
     * [Scaffold](#scaffold)
     * [Update](#update)
-* [Develop](#develop)
+
+* [Development](#development)
     * [Build](#build)
+    * [Library Build](#library-build)
     * [Testing](#testing)
+
 * [CLI](#cli)
-* [Frequently Asked Questions](#faq)
+* [FAQ](#faq)
 * [License](#license)
 
 
@@ -148,7 +150,7 @@ Sometimes major cli releases have minimal breaking changes. Use `--cliVersion` f
 
 
 
-# Development
+## Development
 
 
 ## Build
@@ -183,7 +185,7 @@ If you scaffolded an app for electron use the `--electron` argument.
 
 
 
-### Package Format 5.0 Library Build
+### Library Build
 
 `ngr` provides a build for developing Angular libraries that conforms to the Angular Package Format 5.0.
 
@@ -332,12 +334,12 @@ Production builds do not require the CLI to be served with the default Express s
 
 # FAQ
 
-## Can I use the CLI in the context of an existing application?
+### Can I use the CLI in the context of an existing application?
 
 Yes. This feature became readily available in 1.0.0-rc.4. Just include a `ngr.config.js` file at the root of your application. The file can be empty, it just serves as a marker for the root of your application.
 
 
-## How do I include third party libraries?
+### How do I include third party libraries?
 
 The production build relies heavily on Closure Compiler, which provides excellent optimizations but unfortunately is not compatible with most third party libraries. Luckily, Closure Compiler can be configured to build referencing methods and variables found in external scripts. Follow this step by step questionaire to figure out which method to use.
 
@@ -354,9 +356,29 @@ The production build relies heavily on Closure Compiler, which provides excellen
     NO: You must include the library globally via `<head>` or `SystemJS`. Add the necessary externs to `closure.externs.js`
 
 
-### Configure SystemJS for the dev build
 
-You must configure `system.config.js` in order to inject third party libaries for development. An example is below:
+### How do I load a library in index.html?
+
+If a library must be loaded prior to bootstrap, add the folder name in `ngr.config.js` to have it copied into `build/lib` during the build. It is optimal to only include the library files you need for production, not entire folders.
+
+Add the script in the `<head>` or you can include third party dependencies with `SystemJS` instead of the `<head>`.
+
+```
+<script>
+
+   Promise.all([
+      System.import('firebase'),
+      System.import('app')
+   ]);
+
+</script>
+```
+
+
+### How do I configure SystemJS for dev for jit builds?
+
+
+You must configure `system.config.js` in order to inject third party libaries for development. Just map each request for a library to the umd bundle for the library. The build places wach library in the `build/lib` folder. SystemJS needs to know where the library is located in the `build/lib` folder.
 
 ```
    map: {
@@ -376,23 +398,9 @@ You must configure `system.config.js` in order to inject third party libaries fo
 ```
 
 
-You can include third party dependencies with `SystemJS` instead of the `<head>`.
-
-```
-<script>
-
-   Promise.all([
-      System.import('firebase'),
-      System.import('app')
-   ]);
-
-</script>
-```
 
 
-If a library must be loaded prior to bootstrap, add the folder name in `ngr.config.js` to have it copied into `build/lib`. It is optimal to only include the library files you need for production, not entire folders.
 
-You must also edit `public/index.html` and the systemjs config files to load libraries prior to the app bootstrapping.
 
 
 ```
@@ -421,7 +429,7 @@ module.exports = {
 ```
 
 
-#### Bundling libraries
+#### How do I import libraries the most optimal way for treeshaking?
 
 It is a best practice to tree shake and bundle third party libraries for production, however this process only works if the third party library is packaged with a module pattern such as ES2015 modules.
 
@@ -440,7 +448,7 @@ Closure Compiler cannot handle libraries that import ES2015 modules with `*`.
 
 
 
-#### Typings
+### How do I provide typings for external libraries?
 
 You may also need to inject `typings` for `ngc` to properly inject dependencies during AOT compilation.
 
@@ -471,7 +479,7 @@ Editing index.html
 The typical Angular dependencies are already included in the `<head>` tag in `index.html`.
 
 
-## How can I customize the different builds?
+### How can I customize the different builds?
 
 There are hooks in the current build scripts where you are inject custom functionality. Each build (jit, dev, prod, and lib) have a `pre` and `post` hook. All hooks except `post` require that you return a `Promise`. The `lib` build includes an additional `clean` hook for stripping out unnecessary files from the dist folder.
 
@@ -494,12 +502,12 @@ There are hooks in the current build scripts where you are inject custom functio
 If you require a new hook, submit a feature request in Github issues.
 
 
-## How do I update my project to the latest CLI?
+### How do I update my project to the latest CLI?
 
 `npm install -g angular-rollup@latest`
 
 
-## How do I update my project to the latest versions of Angular?
+### How do I update my project to the latest versions of Angular?
 
 After you have finished updating the `package.json`, run the following commands:
 
@@ -508,7 +516,7 @@ After you have finished updating the `package.json`, run the following commands:
 - `$ npm run clean:install`
 
 
-## Can I run LiveReload with the Production build?
+### Can I run LiveReload with the Production build?
 
 Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr build dev` for development, which uses AOT in --watch mode, mirroring the production build in a lot of ways. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr build prod --watch --serve`
 
@@ -535,31 +543,21 @@ Copy the livereload `script` to the `build:remove:dev` comment near the end of t
 It is not recommended that you deploy the livereload script to production.
 
 
-## How do I take advantage of TypeScript in VSCode?
+## VSCode Extensions
 
-Configure the jsconfig.json file.
+We like [Visual Studio Code](https://code.visualstudio.com/). Below are some VS Code Extensions we've found useful when developing Angular applications.
 
-Install the following packages:
+| Extension       | Description   |
+| ------------- |:-------------:|
+| Angular Language Service     | Editor services for Angular templates |
+| Angular Support      | Go to / peek angular specific definitions |
+| angular2-inline | Syntax highlighting of inline html and css |
+| SCSS Intellisense |  Autocompletion and refactoring of SCSS  |
+| Path Intellisense     | Autocomplete for paths in the project |
+| NPM Intellisense      | Autocomplete paths to node_modules |
+| Auto Import ES6 & TS | Auto import for TypeScript |
+| TypeScript Hero |  Additional tooling for the TypeScript language  |
 
-Angular Language Service : Editor services for Angular templates
-Angular Support : go to / peek angular specific definitions
-angular2-inline : syntax highlighting of inline html and css
-SCSS Intellisense: autocompletion and refactoring of SCSS
-Path Intellisense: autocomplete for paths in the project
-NPM Intellisense: autocomplete paths to node_modules
-Auto Import ES6 & TS: auto import for TypeScript
-TypeScript Hero: additional tooling for the TypeScript language
-
-
-
-#### Use a TypeScript-aware editor
-
-We have good experience using these editors:
-
-* [Visual Studio Code](https://code.visualstudio.com/)
-* [Webstorm 11+](https://www.jetbrains.com/webstorm/download/)
-* [Atom](https://atom.io/) with [TypeScript plugin](https://atom.io/packages/atom-typescript)
-* [Sublime Text](http://www.sublimetext.com/3) with [Typescript-Sublime-Plugin](https://github.com/Microsoft/Typescript-Sublime-plugin#installation)
 
 
 # License
