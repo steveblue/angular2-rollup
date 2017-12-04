@@ -46,6 +46,8 @@ CLI for bundling Angular with Rollup and Closure Compiler.
     * [Build](#build)
     * [Library Build](#library-build)
     * [Testing](#testing)
+    * [Code Generation](#code-generation)
+    * [Development Server](#development-server)
 
 * [CLI](#cli)
 * [FAQ](#faq)
@@ -252,13 +254,7 @@ e2e tests use Protractor and Selenium Webdriver. The process requires multiple t
 When debugging or first writing test suites, you may find it helpful to try out Protractor commands without starting up the entire test suite. You can do this with the element explorer. Learn more about [Protractor Interactive Mode here](https://github.com/angular/protractor/blob/master/docs/debugging.md#testing-out-protractor-interactively).
 
 
-# CLI
-
-
-The `angular-rollup` CLI includes a few more useful commands. Display all supported commands with `ngr --help`.
-
-
-#### generate
+## Code Generation
 
 `ngr generate` helps generate code quickly within your scaffoled app. The easiest way to generate code is to use the wizard.
 
@@ -319,7 +315,7 @@ Generate a unit test with the wizard (`ngr generate wizard`) or use the followin
 `ngr generate unit --dir src/app/shared/components/my-component --name my-component`
 
 
-#### --serve & --watch
+## Development Server
 
 You can choose to run an Express server in parallel with build tasks, with or without Livereload enabled
 
