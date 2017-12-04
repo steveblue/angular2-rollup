@@ -1,6 +1,7 @@
 ## 1.0.0
 
 - Version bump
+- Update README
 
 ## 1.0.0-rc.6
 
