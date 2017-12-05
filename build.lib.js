@@ -209,6 +209,17 @@ const compile = {
               path.normalize(libConfig.umd.outFile) +
               ' --out-file ' + path.normalize(libConfig.umd.outFile), function (code, output, error) {
 
+                let fetchHelpers = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel-external-helpers') +
+                ' --output-type global ', {silent: true}, function (code, output, error) {
+
+                  fs.readFile(path.normalize(libConfig.umd.outFile), 'utf8', function (err, contents) {
+                      if (!err) {
+                        contents = contents.replace("'use strict';", "'use strict';" + "\n" + output);
+                        fs.writeFile(path.normalize(libConfig.umd.outFile), contents, 'utf-8');
+                      }
+                  });
+                });
+
                 alert('babel', 'transpiled', path.normalize(libConfig.umd.outFile));
                 compile.es5Lib(libConfig);
 
@@ -290,6 +301,17 @@ const compile = {
               ' --source-maps' +
               ' --presets=es2015-rollup ' + (libConfig.es5.outFile) +
               ' --out-file ' + (libConfig.es5.outFile), function (code, output, error) {
+
+                // let fetchHelpers = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel-external-helpers') +
+                // ' --output-type global ', {silent: true}, function (code, output, error) {
+
+                //   fs.readFile(path.normalize(libConfig.es5.outFile), 'utf8', function (err, contents) {
+                //       if (!err) {
+                //         contents = output + '\n' + contents;
+                //         fs.writeFile(path.normalize(libConfig.es5.outFile), contents, 'utf-8');
+                //       }
+                //   });
+                // });
 
                 alert('babel', 'transpiled', path.normalize(libConfig.es5.outFile));
                 alert(colors.green('Build is ready'));

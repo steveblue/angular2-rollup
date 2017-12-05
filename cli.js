@@ -11,7 +11,7 @@ const prompt      = require('prompt');
 
 
 let cliCommand = '';
-let useVersion = '5.0.0';
+let useVersion = '^5.0.0';
 
 program
     .version(package.version)
