@@ -1,3 +1,10 @@
+## 1.0.1
+
+- Fixed an issue that prevented library from being injected in another app because paths to typings were incorrect
+
+To migrate an existing library, simply change the `baseUrl` property in the tsconfig files to "./src" and move all library files into `path/to/lib/src`, update paths in your `index.ts`.
+
+
 ## 1.0.0
 
 - Version bump
