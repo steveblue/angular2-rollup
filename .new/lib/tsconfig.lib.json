@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "rootDir": "../../tmp",
     "outDir": "../../ngfactory",
     "target": "es2015",

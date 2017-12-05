@@ -241,16 +241,22 @@ const compile = {
                 let fileName = filePath.replace(/^.*[\\\/]/, '');
 
                 if (fileName === (libConfig.filename+'.d.ts')) {
+                  // do nothing
+                }
+
+                else if (fileName === ('index.d.ts')) {
                   let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
                   fs.readFile(path.join('ngfactory', fileName), 'utf8', function (err, contents) {
                     if (!err) {
-                      contents = contents.replace('./index', './src/index');
-                      fs.writeFile(path.join(dir, fileName), contents, 'utf-8');
+                      // contents = contents.replace('./index', './src/index');
+                      fs.writeFile(path.join(dir, libConfig.filename + '.d.ts'), contents, 'utf-8');
                     }
                   });
-                } else {
+                }
 
-                  let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist/src'));
+                else {
+
+                  let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
                   if (!fs.existsSync(dir)) {
                     mkdir('-p', dir);
                   }

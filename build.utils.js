@@ -39,16 +39,16 @@ require('shelljs/global');
 
 const clim = require('clim');
 const cons = clim();
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 const findUp = require('find-up');
 const sass = require('node-sass');
 const MagicString = require('magic-string');
-const minifyHtml  = require('html-minifier').minify;
+const minifyHtml = require('html-minifier').minify;
 const escape = require('js-string-escape');
 const spawn = require('child_process').spawn;
 const cliRoot = path.dirname(fs.realpathSync(__filename));
-const processRoot = path.join(path.dirname(process.cwd()) , path.basename(process.cwd()));
+const processRoot = path.join(path.dirname(process.cwd()), path.basename(process.cwd()));
 const cliConfigPath = findUp.sync(['ngr.config.js', 'build.config.js']);
 const logger = require('./build.log.js');
 const moduleIdRegex = /moduleId\s*:(.*)/g;
@@ -66,25 +66,25 @@ const colors = logger.colors;
 
 let projectRoot = path.normalize(cliConfigPath.substring(0, cliConfigPath.replace(/\\/g, '/').lastIndexOf('/')));
 
-const scripts = require(projectRoot+'/package.json').scripts;
+const scripts = require(projectRoot + '/package.json').scripts;
 const angularVersion = require(projectRoot + '/package.json').dependencies['@angular/core'];
 
 
 /* Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz */
 
 function insertText(str, dir, preprocessor = res => res, processFilename = false) {
-  return str.replace(stringRegex, function (match, quote, url) {
-    const includePath = path.join(dir, url);
-    if (processFilename) {
-      let text = preprocessor(includePath);
-      text = escape(text);
-      return '"' + text + '"';
-    }
-    let text = fs.readFileSync(includePath).toString();
-    text = preprocessor(text, includePath);
-    text = escape(text);
-    return '"' + text + '"';
-  });
+    return str.replace(stringRegex, function (match, quote, url) {
+        const includePath = path.join(dir, url);
+        if (processFilename) {
+            let text = preprocessor(includePath);
+            text = escape(text);
+            return '"' + text + '"';
+        }
+        let text = fs.readFileSync(includePath).toString();
+        text = preprocessor(text, includePath);
+        text = escape(text);
+        return '"' + text + '"';
+    });
 }
 
 process.argv.forEach((arg) => {
@@ -108,7 +108,6 @@ if (fs.existsSync(projectRoot + '/ngr.config.js')) {
 config.cliRoot = cliRoot;
 config.processRoot = processRoot;
 config.projectRoot = projectRoot;
-
 // warn(JSON.stringify(config, null, 4));
 
 const utils = {
@@ -567,6 +566,10 @@ const utils = {
                 });
 
             });
+
+            if (!fs.existsSync(path.normalize(options.path + '/src'))) {
+                mkdir(path.normalize(options.path + '/src'));
+            }
 
         },
         replacePath: function (fileContent, length) {
