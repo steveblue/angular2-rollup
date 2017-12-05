@@ -302,16 +302,16 @@ const compile = {
               ' --presets=es2015-rollup ' + (libConfig.es5.outFile) +
               ' --out-file ' + (libConfig.es5.outFile), function (code, output, error) {
 
-                // let fetchHelpers = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel-external-helpers') +
-                // ' --output-type global ', {silent: true}, function (code, output, error) {
+                let fetchHelpers = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel-external-helpers') +
+                ' --output-type global ', {silent: true}, function (code, output, error) {
 
-                //   fs.readFile(path.normalize(libConfig.es5.outFile), 'utf8', function (err, contents) {
-                //       if (!err) {
-                //         contents = output + '\n' + contents;
-                //         fs.writeFile(path.normalize(libConfig.es5.outFile), contents, 'utf-8');
-                //       }
-                //   });
-                // });
+                  fs.readFile(path.normalize(libConfig.es5.outFile), 'utf8', function (err, contents) {
+                      if (!err) {
+                        contents = output + '\n' + contents;
+                        fs.writeFile(path.normalize(libConfig.es5.outFile), contents, 'utf-8');
+                      }
+                  });
+                });
 
                 alert('babel', 'transpiled', path.normalize(libConfig.es5.outFile));
                 alert(colors.green('Build is ready'));
