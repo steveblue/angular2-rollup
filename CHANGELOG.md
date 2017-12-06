@@ -1,7 +1,7 @@
 ## 1.0.2
 
 - Fixed issues with build when certain @angular package versions are in package.json
-- Fixed an issue that prevented lazy.config.json from being deployed to build folder in dev mode
+- Fixed an issue that prevented `lazy.config.json` from being deployed to build folder in dev mode
 
 
 ## 1.0.1
