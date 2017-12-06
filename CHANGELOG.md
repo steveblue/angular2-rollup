@@ -1,7 +1,10 @@
 ## 1.0.2
 
-- Fixed issues with build when certain @angular package versions are in package.json
-- Fixed an issue that prevented `lazy.config.json` from being deployed to build folder in dev mode
+- Fixed issues with build scripts when certain @angular package versions are in package.json
+- Fixed an issue that prevented `lazy.config.json` from being deployed to build folder when using `ngr build dev`
+- Fixed an issue that prevented library UMD and ES5 builds from working properly in the browser
+- Defaulted new projects to @angular ^5.0.0
+- Removed bogus script from `package.json`
 
 
 ## 1.0.1
