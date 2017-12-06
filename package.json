@@ -1,6 +1,6 @@
 {
   "name": "angular-rollup",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "repository": "https://github.com/steveblue/angular2-rollup",
   "contributors": [
@@ -11,7 +11,6 @@
     "clean": "rimraf node_modules ngfactory doc build && npm cache clean",
     "clean:install": "npm run clean && npm install",
     "clean:ngfactory": "rimraf ngfactory && mkdir ngfactory",
-    "copy:lib": "rsync -a --exclude=*.js ngfactory/ dist",
     "lint": "tslint --force \"src/app/**/*.ts\"",
     "e2e": "protractor protractor.config.js",
     "e2e:live": "protractor protractor.config.js --elementExplorer",

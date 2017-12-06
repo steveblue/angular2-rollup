@@ -248,8 +248,8 @@ const compile = {
 
     conf = conf.replace('#LIST_OF_FILES#', out);
 
-    if (conf.includes('package.json') && parseInt(utils.angularVersion.split('.')[0]) >= 5) {
-      conf += '--package_json_entry_names es2015' + '\n';
+    if (conf.includes('package.json') && parseInt(utils.angularVersion.split('.')[0].replace(/=|<|>|~|>=|<=|\^/g, '')) >= 5) {
+        conf += '--package_json_entry_names es2015' + '\n';
     }
     if (!conf.includes('--process_common_js_modules')) {
       conf += '--process_common_js_modules' + '\n';
@@ -577,7 +577,7 @@ const compile = {
 
     let conf = fs.readFileSync(path.normalize(config.projectRoot + '/closure.lazy.conf'), 'utf-8');
 
-    let tsConfig = (parseInt(utils.angularVersion.split('.')[0]) < 5) ? './tsconfig.prod.lazy.json' : './tsconfig.prod.json';
+    let tsConfig = (parseInt(utils.angularVersion.split('.')[0].replace(/=|<|>|~|>=|<=|\^/g, '')) < 5) ? './tsconfig.prod.lazy.json' : './tsconfig.prod.json';
 
     let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
       ' -p ' + path.normalize(tsConfig), { silent: true }, function (code, output, error) {

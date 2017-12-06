@@ -271,6 +271,12 @@ let init = () => {
 
     copy.lib();
     copy.public();
+
+    if (fs.existsSync(config.projectRoot + '/lazy.config.json')) {
+      cp(config.projectRoot + '/lazy.config.json', config.build + '/');
+      if (isVerbose) log('copied lazy.config.json to ' + config.build);
+    }
+
     allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');
     style.src({
       sassConfig: config.style.sass.dev,
