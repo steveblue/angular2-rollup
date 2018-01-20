@@ -19,6 +19,7 @@ let isLazy = false;
 let isElectron = false;
 let isBare = false;
 let hasRollup = false;
+let isUniversal = false;
 let hasServer = false;
 
 const projectPath = path.dirname(process.cwd()) + '/' + path.basename(process.cwd());
@@ -67,6 +68,9 @@ process.argv.forEach((arg)=>{
   }
   if (arg.includes('rollup')) {
       hasRollup = arg.toString().split('=')[1];
+  }
+  if (arg.includes('universal')) {
+      isUniversal = arg.toString().split('=')[1];
   }
   if (arg.includes('server')) {
       hasServer = arg.toString().split('=')[1];
@@ -132,7 +136,54 @@ const copy = {
             } else {
                 cp(cliPath + '/rollup.config.js', projectPath + '/rollup.config.js');
                 log('rollup.config.js', 'copied to', projectPath + '/');
+                log('please run npm install --save-dev rollup-plugin-replace rollup-plugin-node-resolve rollup-plugin-cleanup rollup-plugin-commonjs');
             }
+        }
+
+        if (isUniversal) {
+
+            if (fs.existsSync(projectPath + '/src/app/app.browser.module.ts')) {
+                warn('app.browser.module.ts' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/src-universal/app.browser.module.ts', projectPath + '/src/app');
+                log('app.browser.module.ts', 'copied to', projectPath + '/src');
+            }
+            if (fs.existsSync(projectPath + '/src/app/app.server.module.ts')) {
+                warn('app.server.module.ts' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/src-universal/app.server.module.ts', projectPath + '/src/app');
+                log('app.server.module.ts', 'copied to', projectPath + '/src');
+            }
+            if (fs.existsSync(projectPath + '/server.universal.js')) {
+                warn('server.universal.js' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/server.universal.js', projectPath + '/');
+                log('server.universal.ts', 'copied to', projectPath);
+            }
+
+            if (fs.existsSync(projectPath + '/tsconfig.browser.json')) {
+                warn('tsconfig.browser.json' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/tsconfig.browser.json', projectPath + '/');
+                log('tsconfig.browser.json', 'copied to', projectPath);
+            }
+
+            if (fs.existsSync(projectPath + '/tsconfig.server.json')) {
+                warn('tsconfig.server.json' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/tsconfig.server.json', projectPath + '/');
+                log('tsconfig.server.json', 'copied to', projectPath);
+            }
+
+            if (hasWarning === false) {
+                log('please run npm install --save @angular/platform-server @nguniversal/express-engine domino');
+            }
+
         }
 
         if (hasServer) {

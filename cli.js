@@ -45,6 +45,7 @@ program
     .option('scaffold, --scaffold [bool]', 'Scaffold a new project')
     .option('--lib [bool]', 'Scaffold a new project with support for library builds')
     .option('--rollup [bool]', 'Scaffold a new project with support for bundling with Rollup and Closure Compiler in SIMPLE_OPTIMIZATIONS mode')
+    .option('--universal [bool]', 'Scaffold a new project with support for server side rendering with Angular Universal')
     .option('--server [bool]', 'Scaffold a new project with an Express server')
     .option('--bare [bool]', 'Scaffold a new project with a simple Hello World, exclude the demo')
     .option('--dynamicRoutes [bool]', 'Scaffold a new project with support for routes configured by JSON prior to Bootstrap')
@@ -74,6 +75,10 @@ if (program.scaffold) {
 
     if (program.electron) {
         cliCommand += ' electron=true';
+    }
+
+    if (program.universal) {
+        cliCommand += ' universal=true';
     }
 
     if (program.lazy) {

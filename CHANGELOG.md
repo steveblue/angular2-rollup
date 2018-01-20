@@ -1,3 +1,9 @@
+## 1.0.3
+
+- Added EXPERIMENTAL support for scaffolding an app with server side rendering using `@angular/platform-server`. Use `ngr scaffold --universal`. Currently also requires `--rollup` for production build.
+- Added `--tsConfig --rollupConfig --template` options to `ngr build`, allows you to test different config with the current build without overwriting a stable config
+
+
 ## 1.0.2
 
 - Fixed issues with build scripts when certain @angular package versions are in package.json
