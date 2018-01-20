@@ -32,6 +32,8 @@ let postcssConfig = ' -u';
 let canServe = false;
 let isVerbose = false;
 let startElectron = false;
+let template = 'index.html';
+let tsConfig = './tsconfig.' + env + '.json';
 
 /* Test for arguments the ngr cli spits out */
 
@@ -50,6 +52,12 @@ process.argv.forEach((arg) => {
   }
   if (arg.includes('postcss')) {
     allowPostCSS = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+  if (arg.includes('template')) {
+    template = arg.split('=')[1].trim();
+  }
+  if (arg.includes('tsConfig')) {
+    tsConfig = arg.split('=')[1].trim();
   }
 });
 
@@ -83,7 +91,7 @@ const copy = {
     cp('-R', path.normalize(config.src + '/public/') + '.', path.normalize(path.join(config.build, '/')));
 
     exec(path.join(config.cliRoot, path.normalize('node_modules/.bin/htmlprocessor')) +
-      ' ' + path.normalize(path.join(config.build, '/') + 'index.html') +
+      ' ' + path.normalize(path.join(config.build, '/') + template) +
       ' -o ' + path.normalize(path.join(config.build, '/') + 'index.html') +
       ' -e ' + env, { silent: true }, function (code, output, error) {
         alert('htmlprocessor', 'formatted index.html');
@@ -213,12 +221,12 @@ const compile = {
         utils.alert('@angular/compiler started');
         readyMessage(true);
         spawn(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') + ' -p ' +
-          path.normalize('./tsconfig.dev.json') +
+          path.normalize(tsConfig) +
           ' --watch', { shell: true, stdio: 'inherit' });
       } else {
         utils.alert('@angular/compiler started');
         exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
-          ' -p ' + path.normalize('./tsconfig.dev.json'), { shell: true, stdio: 'inherit' }, function(){
+          ' -p ' + path.normalize(tsConfig), { shell: true, stdio: 'inherit' }, function(){
             utils.alert('@angular/compiler compiled');
             readyMessage();
           });

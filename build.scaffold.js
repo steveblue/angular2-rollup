@@ -43,7 +43,6 @@ const files = [
     'tsconfig.dev.json',
     'tsconfig.jit.json',
     'tsconfig.prod.json',
-    'tsconfig.prod.lazy.json',
     'tslint.json'
 ];
 
@@ -215,9 +214,6 @@ let init = function() {
     copy.scaffold(files.filter((filename) => {
 
         if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('main.prod.ts')) {
-            return false;
-        }
-        else if (parseInt(useVersion.split('.')[0]) >= 5 && filename.includes('tsconfig.prod.lazy.json')) {
             return false;
         }
         else {

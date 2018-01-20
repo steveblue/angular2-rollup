@@ -36,6 +36,10 @@ let allowPostCSS = true;
 let isRemote = false;
 let startElectron = false;
 let useExterns = true;
+let template = 'index.html';
+let rollupConfig = './rollup.config.js';
+let tsConfig = './tsconfig.'+env+'.json';
+let hasCustomTsConfig = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -67,6 +71,16 @@ process.argv.forEach((arg) => {
   if (arg.includes('externs')) {
     useExterns = arg.split('=')[1].trim() === 'true' ? true : false;
   }
+  if (arg.includes('template')) {
+    template = arg.split('=')[1].trim();
+  }
+  if (arg.includes('tsConfig')) {
+    hasCustomTsConfig = true;
+    tsConfig = arg.split('=')[1].trim();
+  }
+  if (arg.includes('rollupConfig')) {
+    rollupConfig = arg.split('=')[1].trim();
+  }
 });
 
 
@@ -81,6 +95,11 @@ if (!config.style || !config.style.sass || !config.style.sass.prod) {
     }
   }
 }
+
+if (isLazy === true && hasCustomTsConfig === false) {
+  tsConfig = (parseInt(utils.angularVersion.split('.')[0].replace(/=|<|>|~|>=|<=|\^/g, '')) < 5) ? './tsconfig.prod.lazy.json' : './tsconfig.prod.json';
+}
+
 
 /*
 
@@ -99,7 +118,7 @@ const copy = {
     cp('-R', path.normalize(config.src + '/public/') + '.', path.normalize(path.join(config.build)));
 
     exec(path.join(config.cliRoot, path.normalize('node_modules/.bin/htmlprocessor')) +
-      ' ' + path.normalize(path.join(config.build, '/') + 'index.html') +
+      ' ' + path.normalize(path.join(config.build, '/') + template) +
       ' -o ' + path.normalize(path.join(config.build, '/') + 'index.html') +
       ' -e ' + env, { silent: true }, function (code, output, error) {
         alert('htmlprocessor', 'formatted index.html');
@@ -182,7 +201,7 @@ const compile = {
 
     alert('rollup', 'started');
 
-    let bundle = exec(path.normalize(config.projectRoot + '/node_modules/.bin/rollup') + ' -c rollup.config.js', function (code, output, error) {
+    let bundle = exec(path.normalize(config.projectRoot + '/node_modules/.bin/rollup') + ' -c '+rollupConfig, function (code, output, error) {
       alert('rollup', 'bundled');
       alert('closure compiler', 'started');
 
@@ -577,8 +596,6 @@ const compile = {
 
     let conf = fs.readFileSync(path.normalize(config.projectRoot + '/closure.lazy.conf'), 'utf-8');
 
-    let tsConfig = (parseInt(utils.angularVersion.split('.')[0].replace(/=|<|>|~|>=|<=|\^/g, '')) < 5) ? './tsconfig.prod.lazy.json' : './tsconfig.prod.json';
-
     let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
       ' -p ' + path.normalize(tsConfig), { silent: true }, function (code, output, error) {
 
@@ -681,7 +698,7 @@ const compile = {
       alert('@angular/compiler', 'started');
 
       let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
-        ' -p ' + path.normalize('./tsconfig.prod.json'), { silent: true }, function (code, output, error) {
+        ' -p ' + path.normalize(tsConfig), { silent: true }, function (code, output, error) {
           if (error) {
             warn(error);
             return;

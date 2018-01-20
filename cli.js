@@ -24,6 +24,9 @@ program
     .option('--lazy [bool]', 'Bundle with ClosureCompiler with support for lazyloaded modules, generate a lazyloaded route, or scaffold an app with lazyloaded modules')
     .option('--remote [bool]', 'Bundle a lazyloaded route without a localized main bundle or sibling bundles, requires .MF copied into tmp directory in pre build step')
     .option('--rollup [bool]', 'Bundle with Rollup prior to optimizing with ClosureCompiler in SIMPLE_OPTIMIZATIONS mode')
+    .option('--tsConfig [string]', 'path to tsconfig.json needed for this build')
+    .option('--rollupConfig [string]', 'path to rollup.config.json needed for this build')
+    .option('--template [string]', 'path to index.html needed for this build')
     .option('--verbose [bool]', 'Log additional messages in build')
     .option('--deploy [bool]', 'Option to deploy build available in buildHooks.env.post arguments' )
     .option('--externs [bool]', 'Option to use or ignore closure.externs.js when counting vendor files during prod build, default is true')
@@ -211,6 +214,18 @@ let init = function() {
         }
         else {
             cliCommand += ' postcss=true';
+        }
+
+        if (program.template) {
+            cliCommand += ' template=' + program.template;
+        }
+
+        if (program.tsConfig) {
+            cliCommand += ' tsConfig=' + program.tsConfig;
+        }
+
+        if (program.rollupConfig) {
+            cliCommand += ' rollupConfig=' + program.rollupConfig;
         }
 
         if (program.rollup === true || program.build === 'lib') {
