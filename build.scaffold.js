@@ -149,6 +149,13 @@ const copy = {
                 cp(cliPath + '/src-universal/app.browser.module.ts', projectPath + '/src/app');
                 log('app.browser.module.ts', 'copied to', projectPath + '/src');
             }
+            if (fs.existsSync(projectPath + '/src/app/app.module.server.ts')) {
+                warn('app.module.server.ts' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/src-universal/app.module.server.ts', projectPath + '/src/app');
+                log('app.module.server.ts', 'copied to', projectPath + '/src');
+            }
             if (fs.existsSync(projectPath + '/src/app/app.server.module.ts')) {
                 warn('app.server.module.ts' + ' already exists');
                 hasWarning = true;

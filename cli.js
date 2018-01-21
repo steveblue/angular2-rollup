@@ -57,8 +57,6 @@ program
 
 if (program.scaffold) {
 
-    console.log(program);
-
     if (program.lib) {
         cliCommand = 'node ' + path.normalize(path.dirname(fs.realpathSync(__filename)) + '/build.scaffold.js') + ' --lib';
     } else {
@@ -171,17 +169,19 @@ let init = function() {
 
     if (program.serve && program.build === undefined) {
 
-        let serverCommand = 'npm run serve';
-
-        if (program.watch === true) {
-            serverCommand += ' watch=true';
+        if (program.universal === true) {
+            let serverCommand = 'npm run universal';
+            spawn(serverCommand, { shell: true, stdio: 'inherit' });
+        } else {
+            let serverCommand = 'npm run serve';
+            if (program.watch === true) {
+                serverCommand += ' watch=true';
+            }
+            else {
+                serverCommand += ' watch=false';
+            }
+            spawn(serverCommand, { shell: true, stdio: 'inherit' });
         }
-        else {
-            serverCommand += ' watch=false';
-        }
-
-        spawn(serverCommand, { shell: true, stdio: 'inherit' });
-
     }
 
     if (program.build) {
@@ -191,6 +191,12 @@ let init = function() {
         if (program.build === true) {
             utils.warn('Please use a proper argument for ngr build. i.e. prod, dev, jit');
             return;
+        }
+
+        if (program.build === 'universal') {
+            program.build = 'prod';
+            program.rollup = true;
+            program.universal = true;
         }
 
         if (program.build === 'dev' && program.jit === undefined && parseInt(projectPackage.dependencies['@angular/core'].split('.')[0]) < 5) {

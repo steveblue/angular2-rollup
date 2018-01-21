@@ -17,7 +17,8 @@ module.exports = {
             'core-js/client/shim.min.js.map',
             'systemjs/dist/system.js',
             'zone.js/dist/zone.js',
-            'web-animations-js/web-animations.min.js'
+            'web-animations-js/web-animations.min.js',
+            'web-animations-js/web-animations.min.js.map'
         ],
         src: './node_modules',
         dist: './build/lib'

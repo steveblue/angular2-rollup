@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ServerModule } from '@angular/platform-server';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.server';
 import { AppComponent } from './app.component';
 
 @NgModule({
