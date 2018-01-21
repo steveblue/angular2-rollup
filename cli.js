@@ -57,6 +57,8 @@ program
 
 if (program.scaffold) {
 
+    console.log(program);
+
     if (program.lib) {
         cliCommand = 'node ' + path.normalize(path.dirname(fs.realpathSync(__filename)) + '/build.scaffold.js') + ' --lib';
     } else {
@@ -219,6 +221,10 @@ let init = function() {
         }
         else {
             cliCommand += ' postcss=true';
+        }
+
+        if (program.universal) {
+            cliCommand += ' universal=true';
         }
 
         if (program.template) {

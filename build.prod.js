@@ -40,6 +40,8 @@ let template = 'index.html';
 let rollupConfig = './rollup.config.js';
 let tsConfig = './tsconfig.'+env+'.json';
 let hasCustomTsConfig = false;
+let isUniversal = false;
+let hasCompiledServerApp = false;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -81,7 +83,11 @@ process.argv.forEach((arg) => {
   if (arg.includes('rollupConfig')) {
     rollupConfig = arg.split('=')[1].trim();
   }
+  if (arg.includes('universal')) {
+    isUniversal = true;
+  }
 });
+
 
 
 if (!config.style || !config.style.sass || !config.style.sass.prod) {
@@ -98,6 +104,10 @@ if (!config.style || !config.style.sass || !config.style.sass.prod) {
 
 if (isLazy === true && hasCustomTsConfig === false) {
   tsConfig = (parseInt(utils.angularVersion.split('.')[0].replace(/=|<|>|~|>=|<=|\^/g, '')) < 5) ? './tsconfig.prod.lazy.json' : './tsconfig.prod.json';
+}
+
+if (isUniversal === true && hasCustomTsConfig === false) {
+  tsConfig = './tsconfig.browser.json';
 }
 
 
@@ -197,12 +207,52 @@ const compile = {
 
   },
 
+  bundleServerApp: () => {
+
+    alert('@angular/compiler', 'started');
+
+    tsConfig = './tsconfig.server.json';
+
+    let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
+      ' -p ' + path.normalize(tsConfig), { silent: true }, function (code, output, error) {
+        if (error) {
+          warn(error);
+          return;
+        }
+        alert('@angular/compiler', 'compiled server ngfactory');
+        hasCompiledServerApp = true;
+        rollupConfig = './rollup.config.universal.js';
+        compile.bundleRollup();
+    });
+
+  },
+
+  formatUniversalBuild: () => {
+
+    cp('-R', path.normalize(config.build+'/*'), path.normalize('./dist/frontend/'));
+
+    if (canServe === true) {
+      alert(colors.green('Ready to serve'));
+      utils.serve(canWatch, isUniversal);
+    } else {
+      alert(colors.green('Build is ready'));
+    }
+
+  },
+
   bundleRollup: () => {
 
     alert('rollup', 'started');
 
     let bundle = exec(path.normalize(config.projectRoot + '/node_modules/.bin/rollup') + ' -c '+rollupConfig, function (code, output, error) {
+
       alert('rollup', 'bundled');
+
+      if (isUniversal === true && hasCompiledServerApp === true) {
+        compile.formatUniversalBuild();
+        return;
+      }
+
       alert('closure compiler', 'started');
 
       let closure = exec(require(config.projectRoot + '/package.json').scripts['transpile:' + env], { silent: true }, function (code, output, error) {
@@ -211,7 +261,10 @@ const compile = {
           return;
         }
         alert('closure compiler optimized the bundle');
-        if (canServe === true) {
+        if (isUniversal === true && hasCompiledServerApp === false) {
+          compile.bundleServerApp();
+        }
+        else if (canServe === true) {
           alert(colors.green('Ready to serve'));
           utils.serve(canWatch);
         } else if (startElectron === true) {
@@ -761,6 +814,13 @@ let style = utils.style;
 let init = () => {
 
   const initProcesses = () => {
+
+    if (isUniversal === true) {
+      rm('-rf', path.normalize('./dist'));
+      mkdir(path.normalize('./dist'));
+      mkdir(path.normalize('./dist/frontend'));
+      mkdir(path.normalize('./dist/backend'));
+    }
 
     copy.lib();
     copy.public();

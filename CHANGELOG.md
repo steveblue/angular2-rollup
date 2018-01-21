@@ -1,7 +1,28 @@
 ## 1.0.3
 
-- Added EXPERIMENTAL support for scaffolding an app with server side rendering using `@angular/platform-server`. Use `ngr scaffold --universal`. Currently also requires `--rollup` for production build.
+- EXPERIMENTAL support for building an app for production using Angular Universal. `ngr build prod --universal`. Currently also requires `--rollup`.
+- Scaffold Angular Universal support with `ngr scaffold --universal`. Currently also requires `--rollup`.
 - Added `--tsConfig --rollupConfig --template` options to `ngr build`, allows you to test different config with the current build without overwriting a stable config
+
+In our first tests we found Angular Universal does not work with Closure Compiler in ADVANCED_OPTIMIZATIONS mode with the latest `@angular` packages. For now the browser module must be bundled with Rollup and Closure Compiler in SIMPLE_OPTIMIZATIONS mode. The server bundle is minified with Uglify for the time being.
+
+
+```
+ngr scaffold --rollup --universal
+ngr build prod --rollup --universal --serve
+
+```
+
+The universal build overwrites the dist folder and creates the following file/folder structure for deployment to production.
+
+```
+dist/frontend
+dist/backend
+package.json
+server.universal.js
+```
+
+This folder structure may change leading up to 1.0.3 release on the develop branch.
 
 
 ## 1.0.2

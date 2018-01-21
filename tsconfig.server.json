@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
+        "target": "es2015",
+        "module": "es2015",
         "declaration": true,
         "stripInternal": true,
         "sourceMap": true,
@@ -22,11 +22,10 @@
         ]
     },
     "angularCompilerOptions": {
-        "annotationsAs": "static fields",
-        "annotateForClosureCompiler": true,
         "skipMetadataEmit": false,
         "skipTemplateCodegen": false,
-        "entryModule": "./ngfactory/src/app/server.app.module#ServerAppModule"
+        "allowEmptyCodegenFiles": true,
+        "entryModule": "./ngfactory/src/app/app.server.module#ServerAppModule"
     },
     "files": [
         "./ngfactory/src/app/app.server.module.ts"

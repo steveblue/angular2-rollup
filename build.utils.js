@@ -128,18 +128,27 @@ const utils = {
     multilineComment: multilineComment,
     singleLineComment: singleLineComment,
     angularVersion: angularVersion,
-    serve: (watch) => {
+    serve: (watch, isUniversal) => {
 
-        let serverCommand = 'npm run serve';
+        if (isUniversal === true) {
 
-        if (watch === true) {
-            serverCommand += ' watch=true';
+            spawn('npm run universal', { shell: true, stdio: 'inherit' });
+
+        } else {
+
+            let serverCommand = 'npm run serve';
+
+            if (watch === true) {
+                serverCommand += ' watch=true';
+            }
+            else {
+                serverCommand += ' watch=false';
+            }
+            spawn(serverCommand, { shell: true, stdio: 'inherit' });
+
         }
-        else {
-            serverCommand += ' watch=false';
-        }
 
-        spawn(serverCommand, { shell: true, stdio: 'inherit' });
+
 
     },
     electron: (watch) => {

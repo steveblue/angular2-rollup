@@ -27,6 +27,7 @@
       "start": "ngr --build dev --watch --serve",
       "serve": "node server.js",
       "electron": "electron ./main.electron.js",
+      "universal": "node server.universal.js",
       "postinstall": ""
     },
     "dependencies": {

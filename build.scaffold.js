@@ -172,6 +172,14 @@ const copy = {
                 log('tsconfig.browser.json', 'copied to', projectPath);
             }
 
+            if (fs.existsSync(projectPath + '/rollup.config.universal.js')) {
+                warn('rollup.config.universal.js' + ' already exists');
+                hasWarning = true;
+            } else {
+                cp(cliPath + '/rollup.config.universal.js', projectPath + '/');
+                log('rollup.config.universal.js', 'copied to', projectPath);
+            }
+
             if (fs.existsSync(projectPath + '/tsconfig.server.json')) {
                 warn('tsconfig.server.json' + ' already exists');
                 hasWarning = true;
@@ -181,7 +189,8 @@ const copy = {
             }
 
             if (hasWarning === false) {
-                log('please run npm install --save @angular/platform-server @nguniversal/express-engine domino');
+                log('please run npm install --save @angular/platform-server @nguniversal/express-engine domino rollup-plugin-uglify');
+                log('universal build requires production build to be bundled with rollup. please run `ngr scaffold --rollup`');
             }
 
         }
