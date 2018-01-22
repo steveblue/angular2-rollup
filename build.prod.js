@@ -42,6 +42,7 @@ let tsConfig = './tsconfig.'+env+'.json';
 let hasCustomTsConfig = false;
 let isUniversal = false;
 let hasCompiledServerApp = false;
+let localeIndex = 0;
 
 /* Test for arguments the ngr cli spits out */
 
@@ -86,6 +87,9 @@ process.argv.forEach((arg) => {
   if (arg.includes('universal')) {
     isUniversal = true;
   }
+  if (arg.includes('locale')) {
+    config.locale = [arg.split('=')[1].trim()];
+  }
 });
 
 
@@ -107,10 +111,18 @@ if (isLazy === true && hasCustomTsConfig === false) {
 }
 
 if (isUniversal === true && hasCustomTsConfig === false) {
-  tsConfig = './tsconfig.browser.json';
+  if (config.locale) {
+    log('processing ' + config.locale[localeIndex] + ' locale');
+    tsConfig = './locale/' + config.locale[localeIndex] +'/'+config.locale[localeIndex]+'.browser.json';
+    //tsConfig = './tsconfig.browser.json';
+  } else {
+    tsConfig = './tsconfig.browser.json';
+  }
+
+
 }
 
-
+//console.log(tsConfig);
 /*
 
   Copy Tasks
@@ -211,7 +223,14 @@ const compile = {
 
     alert('@angular/compiler', 'started');
 
-    tsConfig = './tsconfig.server.json';
+    if (config.locale) {
+      tsConfig = './locale/' + config.locale[localeIndex] + '/' + config.locale[localeIndex] + '.server.json';
+      //tsConfig = './tsconfig.server.json';
+    } else {
+      tsConfig = './tsconfig.server.json';
+    }
+
+    //console.log(tsConfig);
 
     let ngc = exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
       ' -p ' + path.normalize(tsConfig), { silent: true }, function (code, output, error) {
@@ -229,14 +248,36 @@ const compile = {
 
   formatUniversalBuild: () => {
 
-    cp('-R', path.normalize(config.build+'/*'), path.normalize('./dist/frontend/'));
+    if(config.locale) {
 
-    if (canServe === true) {
-      alert(colors.green('Ready to serve'));
-      utils.serve(canWatch, isUniversal);
+      mkdir(path.normalize('./dist/' + config.locale[localeIndex]));
+      mkdir(path.normalize('./dist/' + config.locale[localeIndex] + '/frontend'))
+      mkdir(path.normalize('./dist/' + config.locale[localeIndex] + '/backend'))
+      cp('-R', path.normalize(config.build + '/*'), path.normalize('./dist/'+ config.locale[localeIndex] + '/frontend/'));
+      cp('-R', path.normalize('./dist/backend/*'), path.normalize('./dist/' + config.locale[localeIndex] + '/backend/'));
+      rm('-rf', path.normalize('./dist/backend'));
+      rm('-rf', path.normalize('./dist/frontend'));
+
+      if (canServe === true) {
+        alert(colors.green('Ready to serve'));
+        utils.serve(canWatch, isUniversal);
+      } else {
+        alert(colors.green('Build is ready'));
+      }
+
     } else {
-      alert(colors.green('Build is ready'));
+
+      cp('-R', path.normalize(config.build + '/*'), path.normalize('./dist/frontend/'));
+
+      if (canServe === true) {
+        alert(colors.green('Ready to serve'));
+        utils.serve(canWatch, isUniversal);
+      } else {
+        alert(colors.green('Build is ready'));
+      }
+
     }
+
 
   },
 
@@ -816,10 +857,19 @@ let init = () => {
   const initProcesses = () => {
 
     if (isUniversal === true) {
-      rm('-rf', path.normalize('./dist'));
-      mkdir(path.normalize('./dist'));
-      mkdir(path.normalize('./dist/frontend'));
-      mkdir(path.normalize('./dist/backend'));
+
+      if(!config.locale) {
+        rm('-rf', path.normalize('./dist'));
+        mkdir(path.normalize('./dist'));
+        mkdir(path.normalize('./dist/frontend'));
+        mkdir(path.normalize('./dist/backend'));
+      } else {
+        if (!fs.existsSync(path.normalize('./dist'))) {
+          rm('-rf', path.normalize('./dist'));
+          mkdir(path.normalize('./dist'));
+        }
+      }
+
     }
 
     copy.lib();

@@ -28,6 +28,7 @@ program
     .option('--rollupConfig [string]', 'path to rollup.config.json needed for this build')
     .option('--template [string]', 'path to index.html needed for this build')
     .option('--verbose [bool]', 'Log additional messages in build')
+    .option('--locale [bool]', 'Build using a specific i18n locale')
     .option('--deploy [bool]', 'Option to deploy build available in buildHooks.env.post arguments' )
     .option('--externs [bool]', 'Option to use or ignore closure.externs.js when counting vendor files during prod build, default is true')
     .option('-c, --config [string]', 'Path to configuration file for library build')
@@ -305,6 +306,10 @@ let init = function() {
 
         if (program.config && program.config.length > 0) {
             cliCommand += ' config=' + program.config;
+        }
+
+        if (program.locale) {
+            cliCommand += ' locale=' + program.locale;
         }
 
         spawn(cliCommand, { shell: true, stdio: 'inherit' });
