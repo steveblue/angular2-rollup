@@ -438,7 +438,10 @@ const compile = {
                 utils.config.buildHooks[env].post(process.argv);
               }
 
-              if (canServe === true) {
+              if (isUniversal === true && hasCompiledServerApp === false) {
+                compile.bundleServerApp();
+              }
+              else if (canServe === true) {
                 alert(colors.green('Ready to serve'));
                 utils.serve(canWatch);
               } else if (startElectron === true) {
@@ -745,7 +748,10 @@ const compile = {
 
       alert('closure compiler optimized bundle.js');
 
-      if (canServe === true) {
+      if (isUniversal === true && hasCompiledServerApp === false) {
+        compile.bundleServerApp();
+      }
+      else if (canServe === true) {
         alert(colors.green('Ready to serve'));
         utils.serve(canWatch);
       } else if (startElectron === true) {

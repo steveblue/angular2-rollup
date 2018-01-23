@@ -196,7 +196,6 @@ let init = function() {
 
         if (program.build === 'universal') {
             program.build = 'prod';
-            program.rollup = true;
             program.universal = true;
         }
 
