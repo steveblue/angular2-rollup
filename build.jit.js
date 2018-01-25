@@ -177,7 +177,7 @@ const compile = {
 
             if (!outFile.includes('style/')) {
 
-              cp(outFile, outFile.replace(config.src, 'build/src'));
+              cp(outFile, outFile.replace(config.src, 'build/'+config.src));
 
             }
 
