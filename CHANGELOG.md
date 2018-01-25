@@ -3,13 +3,12 @@
 - EXPERIMENTAL support for building an app for production using Angular Universal. `ngr build prod --universal`. Currently also requires `--rollup`.
 - Scaffold Angular Universal support with `ngr scaffold --universal`. Currently also requires `--rollup`.
 - Added `--tsConfig --rollupConfig --template` options to `ngr build`, allows you to test different config with the current build without overwriting a stable config
-
-In our first tests we found Angular Universal does not work with Closure Compiler in ADVANCED_OPTIMIZATIONS mode with the latest `@angular` packages. For now the browser module must be bundled with Rollup and Closure Compiler in SIMPLE_OPTIMIZATIONS mode. The server bundle is minified with Uglify for the time being.
+- Fixed issues when user changes the src directory to another folder
 
 
 ```
-ngr scaffold --rollup --universal
-ngr build prod --rollup --universal --serve
+ngr scaffold --universal
+ngr build prod --universal --serve
 
 ```
 
