@@ -85,7 +85,7 @@ let init = function () {
 
     if (includeLib) {
 
-        cp('-R', utils.config.cliRoot + '/src/lib/', utils.config.projectRoot + '/src');
+        cp('-R', utils.config.cliRoot + '/'+utils.config.src+'/lib/', utils.config.projectRoot + '/'+utils.config.src);
 
     }
 
@@ -98,20 +98,20 @@ let init = function () {
         prompt.get(['Are you sure?'], function (err, result) {
 
             if (validateEntry(result['Are you sure?'])) {
-                if (fs.existsSync(utils.config.projectRoot + '/src/app/app.config.ts')) {
-                    rm(utils.config.projectRoot + '/src/app/app.config.ts');
+                if (fs.existsSync(utils.config.projectRoot + '/'+utils.config.src+'/app/app.config.ts')) {
+                    rm(utils.config.projectRoot + '/'+utils.config.src+'/app/app.config.ts');
                 }
                 if (fs.existsSync(utils.config.projectRoot + '/lazy.config.json')) {
                     rm(utils.config.projectRoot + '/lazy.config.json');
                 }
-                if (fs.existsSync(utils.config.projectRoot + '/src/app/app.routes.ts')) {
-                    rm(utils.config.projectRoot + '/src/app/app.routes.ts');
+                if (fs.existsSync(utils.config.projectRoot + '/'+utils.config.src+'/app/app.routes.ts')) {
+                    rm(utils.config.projectRoot + '/'+utils.config.src+'/app/app.routes.ts');
                 }
-                rm(utils.config.projectRoot + '/src/app/app.module.ts');
+                rm(utils.config.projectRoot + '/'+utils.config.src+'/app/app.module.ts');
                 cp(utils.config.cliRoot + '/lazy.routes.config.json', utils.config.projectRoot + '/lazy.config.json');
-                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.routes.ts', utils.config.projectRoot + '/src/app/app.routes.ts');
-                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.config.ts', utils.config.projectRoot + '/src/app/app.config.ts');
-                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.module.ts', utils.config.projectRoot + '/src/app/app.module.ts');
+                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.routes.ts', utils.config.projectRoot + '/'+utils.config.src+'/app/app.routes.ts');
+                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.config.ts', utils.config.projectRoot + '/'+utils.config.src+'/app/app.config.ts');
+                cp(utils.config.cliRoot + '/src-dynamic-route/app/app.module.ts', utils.config.projectRoot + '/'+utils.config.src+'/app/app.module.ts');
                 utils.console.log('routes updated to support dynamic config');
             }
 

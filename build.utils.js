@@ -355,7 +355,7 @@ const utils = {
             let source = fs.readFileSync(filePath, 'utf-8');
             if (source.indexOf(`self['_S']`) == -1) {
               source = source.replace('//# sourceMappingURL',
-              `(self['_S']=self['_S']||[])["//${filePath.replace('./ngfactory/src/app/', '')}"]= {"${moduleFactoryName}": ${moduleFactoryName}};
+              `(self['_S']=self['_S']||[])["//${filePath.replace('./ngfactory/'+config.src+'/app/', '')}"]= {"${moduleFactoryName}": ${moduleFactoryName}};
           //# sourceMappingURL`);
               fs.writeFileSync(filePath, source, 'utf-8');
             }
@@ -576,8 +576,8 @@ const utils = {
 
             });
 
-            if (!fs.existsSync(path.normalize(options.path + '/src'))) {
-                mkdir(path.normalize(options.path + '/src'));
+            if (!fs.existsSync(path.normalize(options.path + '/'+config.src))) {
+                mkdir(path.normalize(options.path + '/'+config.src));
             }
 
         },

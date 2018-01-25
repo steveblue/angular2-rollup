@@ -9,6 +9,7 @@ module.exports = {
             'reflect-metadata/Reflect.js.map',
             'tslib/tslib.js',
             'web-animations-js/web-animations.min.js',
+            'web-animations-js/web-animations.min.js.map',
             '@angular',
             'rxjs'
         ],

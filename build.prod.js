@@ -98,7 +98,7 @@ if (!config.style || !config.style.sass || !config.style.sass.prod) {
   config.style = {
     sass: {
       prod: {
-        includePaths: ['src/style/'],
+        includePaths: [config.src+'/style/'],
         outputStyle: 'expanded',
         sourceComments: false
       }
@@ -420,7 +420,7 @@ const compile = {
         }
 
         exec('java -jar node_modules/google-closure-compiler/compiler.jar' +
-          ' --compilation_level=SIMPLE_OPTIMIZATIONS --js ./src/public/system.polyfill.js' +
+          ' --compilation_level=SIMPLE_OPTIMIZATIONS --js ./'+config.src+'/public/system.polyfill.js' +
           ' --js_output_file ./build/system.polyfill.js', { silent: true }, (code, output, error) => {
 
             if (error) {
@@ -526,7 +526,7 @@ const compile = {
     let source = fs.readFileSync(filePath, 'utf-8');
     if (source.indexOf(`self['_S']`) == -1) {
       source = source.replace('//# sourceMappingURL',
-        `(self['_S']=self['_S']||[])["//${filePath.replace('./ngfactory/src/app/', '')}"]= {"${moduleFactoryName}": ${moduleFactoryName}};
+        `(self['_S']=self['_S']||[])["//${filePath.replace('./ngfactory/'+config.src+'/app/', '')}"]= {"${moduleFactoryName}": ${moduleFactoryName}};
           //# sourceMappingURL`);
       fs.writeFileSync(filePath, source, 'utf-8');
     }
@@ -895,7 +895,7 @@ let init = () => {
       function (filePath, outFile) {
 
         if (!outFile.includes('style/')) {
-          cp(outFile, outFile.replace(config.src, 'ngfactory/src'));
+          cp(outFile, outFile.replace(config.src, 'ngfactory/'+config.src));
         }
 
         if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {
@@ -957,12 +957,12 @@ let watch = () => {
       if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
         copy.public();
       } else {
-        copy.file(filePath, filePath.replace(path.normalize('src/public/'), path.normalize(config.build + '/')));
+        copy.file(filePath, filePath.replace(path.normalize(config.src+'/public/'), path.normalize(config.build + '/')));
       }
 
     }
 
-    else if (filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
+    else if (filePath.indexOf('.html') > -1 && filePath.indexOf(config.src) > -1) {
 
       if (!isCompiling) {
         alert('change', filePath, 'triggered compile');
@@ -1002,7 +1002,7 @@ let watch = () => {
         function (filePath, outFile) {
 
           if (!outFile.includes('style/')) {
-            cp(outFile, outFile.replace(config.src, 'ngfactory/src'));
+            cp(outFile, outFile.replace(config.src, 'ngfactory/'+config.src));
           }
 
           if (utils.style.files.indexOf(filePath) === utils.style.files.length - 1 && hasCompletedFirstStylePass === false) {

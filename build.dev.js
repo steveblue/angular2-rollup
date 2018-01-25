@@ -66,7 +66,7 @@ if (!config.style || !config.style.sass || !config.style.sass.dev) {
   config.style = {
     sass: {
       dev: {
-        includePaths: ['src/style/'],
+        includePaths: [config.src+'/style/'],
         outputStyle: 'expanded',
         sourceComments: true
       }
@@ -174,7 +174,7 @@ const compile = {
 
     fs.readFile(path.join(config.projectRoot, 'main.prod.js'), 'utf8', function (err, contents) {
       if (!err) {
-        contents = contents.replace("./ngfactory/src/app/app.module.ngfactory", "src/app/app.module.ngfactory");
+        contents = contents.replace("./ngfactory/"+config.src+"/app/app.module.ngfactory", config.src+"/app/app.module.ngfactory");
         contents = contents.replace('import { enableProdMode } from "@angular/core";', '');
         contents = contents.replace("enableProdMode();", "");
         fs.writeFile(outFile, contents, function (err) {
@@ -374,7 +374,7 @@ let watch = () => {
       if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
         copy.public();
       } else {
-        copy.file(filePath, filePath.replace(path.normalize('src/public/'), path.normalize(config.build + '/')));
+        copy.file(filePath, filePath.replace(path.normalize(config.src+'/public/'), path.normalize(config.build + '/')));
       }
 
     }

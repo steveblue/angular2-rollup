@@ -65,7 +65,7 @@ if (!config.style || !config.style.sass || !config.style.sass.dev) {
   config.style = {
     sass: {
       dev: {
-        includePaths: ['src/style/'],
+        includePaths: [config.src+'/style/'],
         outputStyle: 'expanded',
         sourceComments: true
       }
@@ -371,12 +371,12 @@ let watch = () => {
       if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
         copy.public();
       } else {
-        copy.file(filePath, filePath.replace(path.normalize('src/public/'), path.normalize(config.build + '/')));
+        copy.file(filePath, filePath.replace(path.normalize(config.src+'/public/'), path.normalize(config.build + '/')));
       }
 
     }
 
-    else if (filePath.indexOf('.html') > -1 && filePath.indexOf('src') > -1) {
+    else if (filePath.indexOf('.html') > -1 && filePath.indexOf(config.src) > -1) {
 
       alert('change', filePath.replace(/^.*[\\\/]/, ''));
 
@@ -417,7 +417,7 @@ let watch = () => {
 
           if (!outFile.includes('style/')) {
 
-            cp(outFile, outFile.replace(config.src, 'build/src'));
+            cp(outFile, outFile.replace(config.src, 'build/'+config.src));
             compile.ts(); //outFile.replace('.css', '.ts')
 
           }

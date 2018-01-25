@@ -259,7 +259,7 @@ const compile = {
                   let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
                   fs.readFile(path.join('ngfactory', fileName), 'utf8', function (err, contents) {
                     if (!err) {
-                      // contents = contents.replace('./index', './src/index');
+                      // contents = contents.replace('./index', './'+config.src+'/index');
                       fs.writeFile(path.join(dir, libConfig.filename + '.d.ts'), contents, 'utf-8');
                     }
                   });
