@@ -114,7 +114,6 @@ if (isUniversal === true && hasCustomTsConfig === false) {
   if (config.locale) {
     log('processing ' + config.locale[localeIndex] + ' locale');
     tsConfig = './locale/' + config.locale[localeIndex] +'/tsconfig.'+config.locale[localeIndex]+'.browser.json';
-    //tsConfig = './tsconfig.browser.json';
   } else {
     tsConfig = './tsconfig.browser.json';
   }
