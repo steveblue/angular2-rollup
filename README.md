@@ -464,12 +464,6 @@ You must configure `system.config.js` in order to inject third party libaries fo
     }
 ```
 
-
-
-
-
-
-
 ```
 module.exports = {
     dep: {
@@ -544,6 +538,31 @@ Editing index.html
 `ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build. For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor);
 
 The typical Angular dependencies are already included in the `<head>` tag in `index.html`.
+
+
+### Can I move the src folder?
+
+Your app is scaffolded with the application code in the src folder. There are times you may want to move the application source code to another location. For example, when developing an Angular Universal app it is helpful to organize your folders into `/backend` and `/frontend`.
+
+The source folder is configured in ngr.config.js. Change the location here.
+
+`src: 'src'`
+
+A few files in the root directory still point to the old src folder. Please update them to the new source directory. The files that need to change vary on your build. Below is a list of some files that need to change.
+
+```
+main.prod.ts
+main.ts
+main.electron.ts
+rollup.config.universal.js
+tsconfig.dev.json
+tsconfig.prod.json
+tsconfig.server.json
+tsconfig.browser.json
+
+```
+
+If you build and the script errors on the src folder, chances are there is still a configuration file that needs to be updated. The folder of a library source must include a src folder, this folder cannot be renamed at this time.
 
 
 ### How can I customize the different builds?

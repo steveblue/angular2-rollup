@@ -1,9 +1,10 @@
 ## 1.0.3
 
-- EXPERIMENTAL support for building an app for production using Angular Universal. `ngr build prod --universal`. Currently also requires `--rollup`.
-- Scaffold Angular Universal support with `ngr scaffold --universal`. Currently also requires `--rollup`.
+- Support for building an app for production using Angular Universal. `ngr build prod --universal`.
+- Scaffold a new app with Angular Universal support by using the `--universal` flag with `ngr scaffold`. Currently also requires `--rollup` to bundle the production build.
+- Added support for i18n localization
 - Added `--tsConfig --rollupConfig --template` options to `ngr build`, allows you to test different config with the current build without overwriting a stable config
-- Fixed issues when user changes the src directory to another folder
+- Fixed issues when user changes the src directory to another folder, useful when coding Angular Universal project
 
 
 ```
@@ -20,8 +21,6 @@ dist/backend
 package.json
 server.universal.js
 ```
-
-This folder structure may change leading up to 1.0.3 release on the develop branch.
 
 
 ## 1.0.2

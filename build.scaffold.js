@@ -137,7 +137,7 @@ const copy = {
                 cp(cliPath + '/rollup.config.js', projectPath + '/rollup.config.js');
                 log('rollup.config.js', 'copied to', projectPath + '/');
             }
-            log('please run npm install --save-dev rollup-plugin-replace rollup-plugin-node-resolve rollup-plugin-cleanup rollup-plugin-commonjs');
+            log('please run npm install --save-dev rollup-plugin-replace rollup-plugin-node-resolve rollup-plugin-cleanup rollup-plugin-commonjs rollup-plugin-uglify');
         }
 
         if (isUniversal) {
@@ -195,7 +195,7 @@ const copy = {
                 log('tsconfig.server.json', 'copied to', projectPath);
             }
 
-            log('please run npm install --save @angular/platform-server @nguniversal/express-engine domino rollup-plugin-uglify');
+            log('please run npm install --save @angular/platform-server @nguniversal/express-engine domino');
             log('universal build requires production build to be bundled with rollup. please run `ngr scaffold --rollup`');
 
         }
