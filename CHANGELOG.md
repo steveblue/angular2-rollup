@@ -1,3 +1,7 @@
+## 1.0.4
+
+- Remove version message unless the user needs to update
+
 ## 1.0.3
 
 - Support for building an app for production using Angular Universal. `ngr build prod --universal`.
