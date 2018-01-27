@@ -121,7 +121,8 @@ if (isUniversal === true && hasCustomTsConfig === false) {
 }
 
 if (config.locale && isUniversal === false && hasCustomTsConfig === false) {
-    tsConfig = './locale/' + config.locale[localeIndex] + '/tsconfig.' + config.locale[localeIndex] + '.json';
+  log('processing ' + config.locale[localeIndex] + ' locale');
+  tsConfig = './locale/' + config.locale[localeIndex] + '/tsconfig.' + config.locale[localeIndex] + '.json';
 }
 
 /*
