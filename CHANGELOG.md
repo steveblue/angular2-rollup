@@ -2,7 +2,7 @@
 
 - Support for building an app for production using Angular Universal. `ngr build prod --universal`.
 - Scaffold a new app with Angular Universal support by using the `--universal` flag with `ngr scaffold`. Currently also requires `--rollup` to bundle the production build.
-- Added support for i18n localization
+- Added support for i18n localization in production and Universal builds
 - Added `--tsConfig --rollupConfig --template` options to `ngr build`, allows you to test different config with the current build without overwriting a stable config
 - Fixed issues when user changes the src directory to another folder, useful when coding Angular Universal project
 

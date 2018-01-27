@@ -113,16 +113,17 @@ if (isLazy === true && hasCustomTsConfig === false) {
 if (isUniversal === true && hasCustomTsConfig === false) {
   if (config.locale) {
     log('processing ' + config.locale[localeIndex] + ' locale');
-    tsConfig = './locale/' + config.locale[localeIndex] +'/'+config.locale[localeIndex]+'.browser.json';
+    tsConfig = './locale/' + config.locale[localeIndex] +'/tsconfig.'+config.locale[localeIndex]+'.browser.json';
     //tsConfig = './tsconfig.browser.json';
   } else {
     tsConfig = './tsconfig.browser.json';
   }
-
-
 }
 
-//console.log(tsConfig);
+if (config.locale && isUniversal === false && hasCustomTsConfig === false) {
+    tsConfig = './locale/' + config.locale[localeIndex] + '/tsconfig.' + config.locale[localeIndex] + '.json';
+}
+
 /*
 
   Copy Tasks
@@ -224,8 +225,7 @@ const compile = {
     alert('@angular/compiler', 'started');
 
     if (config.locale) {
-      tsConfig = './locale/' + config.locale[localeIndex] + '/' + config.locale[localeIndex] + '.server.json';
-      //tsConfig = './tsconfig.server.json';
+      tsConfig = './locale/' + config.locale[localeIndex] + '/tsconfig.' + config.locale[localeIndex] + '.server.json';
     } else {
       tsConfig = './tsconfig.server.json';
     }
