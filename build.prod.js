@@ -263,6 +263,7 @@ const compile = {
         utils.serve(canWatch, isUniversal);
       } else {
         alert(colors.green('Build is ready'));
+        console.log('\n');
       }
 
     } else {
@@ -274,6 +275,7 @@ const compile = {
         utils.serve(canWatch, isUniversal);
       } else {
         alert(colors.green('Build is ready'));
+        console.log('\n');
       }
 
     }
@@ -313,6 +315,7 @@ const compile = {
           utils.electron(canWatch);
         } else {
           alert(colors.green('Build is ready'));
+          console.log('\n');
         }
         //compile.clean();
         isCompiling = false;
@@ -449,6 +452,7 @@ const compile = {
                 utils.electron(canWatch);
               } else {
                 alert(colors.green('Build is ready'));
+                console.log('\n');
               }
 
             }
@@ -493,13 +497,6 @@ const compile = {
           });
         });
 
-
-        // if (canServe === true) {
-        //   alert(colors.green('Ready to serve'));
-        //   utils.serve(canWatch);
-        // } else {
-        //   alert(colors.green('Build is ready'));
-        // }
       });
 
     });
@@ -759,8 +756,9 @@ const compile = {
         utils.electron(canWatch);
       } else {
         alert(colors.green('Build is ready'));
+        console.log('\n');
       }
-      //compile.clean();
+
       isCompiling = false;
 
       if (utils.config.buildHooks && utils.config.buildHooks[env] && utils.config.buildHooks[env].post && hasInit === false) {

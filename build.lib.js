@@ -315,6 +315,7 @@ const compile = {
 
                 alert('babel', 'transpiled', path.normalize(libConfig.es5.outFile));
                 alert(colors.green('Build is ready'));
+                console.log('\n');
               });
 
             let copyCommand = 'cp ' + libConfig.src + '/package.json' + ' ' + libConfig.dist + '/package.json';

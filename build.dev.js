@@ -205,6 +205,7 @@ const compile = {
     let readyMessage = function(isAOTWatch) {
       if (!isAOTWatch) {
         alert(colors.green('Build is ready'));
+        console.log('\n');
       }
       if (canServe === true) {
         alert(colors.green('Ready to serve'));

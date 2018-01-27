@@ -566,14 +566,14 @@ if (!program.generate) {
 
         if (result.split('.')[0] === package.version.split('.')[0] &&
             result.includes('beta') && package.version.includes('rc')) {
-            devMessage(package.version);
+            //devMessage(package.version);
         }
         else if (isSameRelease(result, package) &&
             parseInt(package.version.split('.')[0]) > parseInt(result.split('.')[0]) ||
             parseInt(package.version.split('.')[1]) > parseInt(result.split('.')[1]) ||
             parseInt(package.version.split('.')[2]) > parseInt(result.split('.')[2]) ||
             parseInt(package.version.split('.')[3]) > parseInt(result.split('.')[3])) {
-            devMessage(package.version);
+            //devMessage(package.version);
         }
         else if (checkVersion(package, result, 0) || checkVersion(package, result, 1) || checkVersion(package, result, 2)) {
             updateMessage(result);

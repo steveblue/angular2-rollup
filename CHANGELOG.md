@@ -5,6 +5,8 @@
 - Added support for i18n localization in production and Universal builds
 - Added `--tsConfig --rollupConfig --template` options to `ngr build`, allows you to test different config with the current build without overwriting a stable config
 - Fixed issues when user changes the src directory to another folder, useful when coding Angular Universal project
+- Single line logging output
+- Tested builds with node 8.x
 
 
 ```

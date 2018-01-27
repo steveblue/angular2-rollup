@@ -3,12 +3,13 @@
 const colors = require('colors');
 const clim = require('clim');
 const cons = clim();
+const logger = require('single-line-log').stdout;
 
 const log = function (action, noun, next) {
     let a = action ? colors.dim(colors.white(action)) : '';
     let n = noun ? colors.dim(colors.white(noun)) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(a + ' ' + n + ' ' + x);
+    logger(a + ' ' + n + ' ' + x);
 };
 
 const alert = function (noun, verb, action, next) {
@@ -16,13 +17,13 @@ const alert = function (noun, verb, action, next) {
     let v = verb ? colors.white(verb) : '';
     let a = action ? colors.white(action) : '';
     let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(n + ' ' + v + ' ' + a + ' ' + x);
+    logger(n + ' ' + v + ' ' + a + ' ' + x);
 };
 
 const warn = function (action, noun) {
     let a = action ? colors.red(action) : '';
     let n = noun ? colors.white(noun) : '';
-    cons.warn(a + ' ' + n);
+    logger(a + ' ' + n);
 };
 
 

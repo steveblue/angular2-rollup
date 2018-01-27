@@ -193,6 +193,7 @@ const compile = {
                 utils.electron(canWatch);
               } else {
                 alert(colors.green('Build is ready'));
+                console.log('\n');
               }
 
             } else if (hasCompletedFirstStylePass === true) {
@@ -431,6 +432,7 @@ let watch = () => {
               alert(colors.green('Watcher listening for changes'));
             } else {
               alert(colors.green('Build is ready'));
+              console.log('\n');
             }
             hasCompletedFirstStylePass = true;
 
