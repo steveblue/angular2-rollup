@@ -583,7 +583,7 @@ if (!program.generate) {
                 updateMessage(result);
             }
         } else {
-            versionMessage(package.version);
+           //versionMessage(package.version);
         }
     });
 
