@@ -576,8 +576,8 @@ const utils = {
 
             });
 
-            if (!fs.existsSync(path.normalize(options.path + '/'+config.src))) {
-                mkdir(path.normalize(options.path + '/'+config.src));
+            if (!fs.existsSync(path.normalize(options.path + '/src'))) {
+                mkdir(path.normalize(options.path + '/src'));
             }
 
         },
