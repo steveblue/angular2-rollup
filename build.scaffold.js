@@ -6,10 +6,11 @@ const fs          = require('fs');
 const path        = require('path');
 const logger       = require('./build.log.js');
 
-const log = logger.log;
-const warn = logger.warn;
-const alert = logger.alert;
+const log = logger.llog;
+const warn = logger.lwarn;
+const alert = logger.lalert;
 const colors = logger.colors;
+const cons = logger.console;
 
 let lib = false;
 let useVersion = '^5.0.0';
@@ -137,7 +138,7 @@ const copy = {
                 cp(cliPath + '/rollup.config.js', projectPath + '/rollup.config.js');
                 log('rollup.config.js', 'copied to', projectPath + '/');
             }
-            log('please run npm install --save-dev rollup-plugin-replace rollup-plugin-node-resolve rollup-plugin-cleanup rollup-plugin-commonjs rollup-plugin-uglify');
+            cons.log(colors.white('please run npm install --save-dev rollup-plugin-replace rollup-plugin-node-resolve rollup-plugin-cleanup rollup-plugin-commonjs rollup-plugin-uglify'));
         }
 
         if (isUniversal) {
@@ -195,8 +196,8 @@ const copy = {
                 log('tsconfig.server.json', 'copied to', projectPath);
             }
 
-            log('please run npm install --save @angular/platform-server @nguniversal/express-engine domino');
-            log('universal build requires production build to be bundled with rollup. please run `ngr scaffold --rollup`');
+            cons.log(colors.white('please run npm install --save @angular/platform-server @nguniversal/express-engine domino'));
+            cons.log(colors.white('universal build requires production build to be bundled with rollup. please run `ngr scaffold --rollup`'));
 
         }
 
