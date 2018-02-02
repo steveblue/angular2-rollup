@@ -264,6 +264,9 @@ const utils = {
                 } else {
 
                     fs.writeFile(outFile, result.css, function (err) {
+                        if (err) {
+                            warn(err);
+                        }
                         if (!err && cssConfig.allowPostCSS === true) {
 
                             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
@@ -271,9 +274,11 @@ const utils = {
                                 (cssConfig.sourceMap === false ? ' --no-map true' : '') +
                                 ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cssConfig.env + '.js')) +
                                 ' -r ' + postcssConfig, { silent: true }, function (code, output, error) {
-                                    // if (error) {
-                                    //     utils.warn(error);
-                                    // }
+                                    
+                                    if (error) {
+                                        utils.warn(error);
+                                    }
+                  
                                     if (res) {
                                         if(cssConfig.isVerbose) log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
                                         res(filePath, outFile);
@@ -291,8 +296,10 @@ const utils = {
                                 }
 
                             } else {
-                                if (cssConfig.isVerbose) log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
-                                res(filePath, outFile);
+                                if (res) {
+                                    if (cssConfig.isVerbose) log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
+                                    res(filePath, outFile);
+                                }
                             }
                         }
                     });
