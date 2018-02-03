@@ -10,6 +10,7 @@ const chokidar = require('chokidar');
 const sass = require('node-sass');
 const postcss = require('./postcss.' + env + '.js');
 const minifyHtml = require('html-minifier').minify;
+const moment = require('moment');
 
 const console = utils.console;
 const colors = utils.colors;
@@ -39,6 +40,7 @@ let postcssConfig = ' -u';
 let isVerbose = false;
 let libConfig = null;
 let libConfigPath = null;
+let startTime = moment(new Date());
 
 /* Test for arguments the ngr cli spits out */
 
@@ -315,7 +317,12 @@ const compile = {
 
                 alert('babel', 'transpiled', path.normalize(libConfig.es5.outFile));
                 alert(colors.green('build is ready'));
-                console.log('\n');
+                
+                console.log('');
+                let endTime = moment(new Date());
+                let duration = moment.duration(endTime.diff(startTime));
+                console.log('ngr built in ' + duration.asSeconds() + 's');
+
               });
 
             let copyCommand = 'cp ' + libConfig.src + '/package.json' + ' ' + libConfig.dist + '/package.json';
@@ -366,6 +373,10 @@ let style = utils.style;
 let init = () => {
 
   const initProcesses = () => {
+
+    log('ngr started');
+    console.log('');
+    startTime = new Date();
 
     clean.lib(libConfig);
     //allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');

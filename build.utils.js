@@ -659,7 +659,7 @@ const utils = {
                    return;
                }
                log(fileName.replace('new', options.name), 'copied to', options.name);
-                console.log('');
+               console.log('');
                utils.generate.replace(path.normalize(config.cliRoot+'/.tmp/'+fileName), options).then((filePath)=>{
 
                    mv((options.force ? '-f' : '-n'), filePath, path.normalize(options.path+'/'+filePath.replace(/^.*[\\\/]/, '')));

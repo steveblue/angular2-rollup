@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const chokidar = require('chokidar');
 const utils = require('./build.utils.js');
-
+const moment = require('moment');
 
 /* References to shared tools are found in build.utils.js */
 
@@ -32,6 +32,7 @@ let isVerbose = false;
 let allowPostCSS = true;
 let template = 'index.html';
 let tsConfig = './tsconfig.' + env + '.json';
+let startTime = moment(new Date());
 
 /* Test for arguments the ngr cli spits out */
 
@@ -196,6 +197,10 @@ const compile = {
                 console.log('\n');
               }
 
+              let endTime = moment(new Date());
+              let duration = moment.duration(endTime.diff(startTime));
+              console.log('ngr built in ' + duration.asSeconds() + 's');
+
             } else if (hasCompletedFirstStylePass === true) {
               compile.ts();
             }
@@ -300,9 +305,14 @@ let style = utils.style;
 let init = () => {
 
   const initProcesses = () => {
+
+    log('ngr started');
+    console.log('');
+    startTime = new Date();
     copy.lib();
     copy.public();
     compile.ts();
+
   }
 
   alert(colors.green('ngr started ' + env));
@@ -435,6 +445,11 @@ let watch = () => {
               console.log('\n');
             }
             hasCompletedFirstStylePass = true;
+
+            console.log('');
+            let endTime = moment(new Date());
+            let duration = moment.duration(endTime.diff(startTime));
+            console.log('ngr built in ' + duration.asSeconds() + 's');
 
           } else if (hasCompletedFirstStylePass === false) {
             compile.ts();

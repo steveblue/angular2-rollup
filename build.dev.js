@@ -10,6 +10,7 @@ const chokidar = require('chokidar');
 const sass = require('node-sass');
 const postcss = require('./postcss.' + env + '.js');
 const spawn = require('child_process').spawn;
+const moment = require('moment');
 
 /* References to shared tools are found in build.utils.js */
 
@@ -34,6 +35,7 @@ let isVerbose = false;
 let startElectron = false;
 let template = 'index.html';
 let tsConfig = './tsconfig.' + env + '.json';
+let startTime = moment(new Date());
 
 /* Test for arguments the ngr cli spits out */
 
@@ -217,6 +219,10 @@ const compile = {
         alert(colors.green('ready to serve'));
         utils.electron(canWatch);
       }
+      console.log('');
+      let endTime = moment(new Date());
+      let duration = moment.duration(endTime.diff(startTime));
+      console.log('ngr built in ' + duration.asSeconds() + 's');
     }
 
     let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
@@ -280,6 +286,10 @@ let style = utils.style;
 let init = () => {
 
   const initProcesses = () => {
+
+    log('ngr started');
+    console.log('');
+    startTime = new Date();
 
     copy.lib();
     copy.public();

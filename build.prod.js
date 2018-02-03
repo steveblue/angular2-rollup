@@ -9,10 +9,10 @@ const utils = require('./build.utils.js');
 const chokidar = require('chokidar');
 const sass = require('node-sass');
 const postcss = require('./postcss.' + env + '.js');
+const moment = require('moment');
 
 /* References to shared tools are found in build.utils.js */
 
-const console = utils.console;
 const colors = utils.colors;
 const scripts = utils.scripts;
 const config = utils.config;
@@ -43,6 +43,7 @@ let hasCustomTsConfig = false;
 let isUniversal = false;
 let hasCompiledServerApp = false;
 let localeIndex = 0;
+let startTime = moment(new Date());
 
 /* Test for arguments the ngr cli spits out */
 
@@ -265,6 +266,7 @@ const compile = {
         alert(colors.green('build is ready'));
         console.log('\n');
       }
+      
 
     } else {
 
@@ -279,6 +281,11 @@ const compile = {
       }
 
     }
+
+    console.log('');
+    let endTime = moment(new Date());
+    let duration = moment.duration(endTime.diff(startTime));
+    console.log('ngr built in ' + duration.asSeconds() + 's');
 
 
   },
@@ -317,6 +324,11 @@ const compile = {
           alert(colors.green('build is ready'));
           console.log('\n');
         }
+
+        console.log('');
+        let endTime = moment(new Date());
+        let duration = moment.duration(endTime.diff(startTime));
+        console.log('ngr built in ' + duration.asSeconds() + 's');
         //compile.clean();
         isCompiling = false;
 
@@ -454,6 +466,11 @@ const compile = {
                 alert(colors.green('build is ready'));
                 console.log('\n');
               }
+
+              console.log('');
+              let endTime = moment(new Date());
+              let duration = moment.duration(endTime.diff(startTime));
+              console.log('ngr built in ' + duration.asSeconds() + 's');
 
             }
 
@@ -759,6 +776,11 @@ const compile = {
         console.log('\n');
       }
 
+      console.log('');
+      let endTime = moment(new Date());
+      let duration = moment.duration(endTime.diff(startTime));
+      console.log('ngr built in ' + duration.asSeconds() + 's');
+
       isCompiling = false;
 
       if (utils.config.buildHooks && utils.config.buildHooks[env] && utils.config.buildHooks[env].post && hasInit === false) {
@@ -860,6 +882,10 @@ let init = () => {
 
   const initProcesses = () => {
 
+    log('ngr started');
+    console.log('');
+    startTime = new Date();
+    
     if (isUniversal === true) {
 
       if(!config.locale) {
