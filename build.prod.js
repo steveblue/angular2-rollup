@@ -259,10 +259,10 @@ const compile = {
       rm('-rf', path.normalize('./dist/frontend'));
 
       if (canServe === true) {
-        alert(colors.green('Ready to serve'));
+        alert(colors.green('ready to serve'));
         utils.serve(canWatch, isUniversal);
       } else {
-        alert(colors.green('Build is ready'));
+        alert(colors.green('build is ready'));
         console.log('\n');
       }
 
@@ -271,10 +271,10 @@ const compile = {
       cp('-R', path.normalize(config.build + '/*'), path.normalize('./dist/frontend/'));
 
       if (canServe === true) {
-        alert(colors.green('Ready to serve'));
+        alert(colors.green('ready to serve'));
         utils.serve(canWatch, isUniversal);
       } else {
-        alert(colors.green('Build is ready'));
+        alert(colors.green('build is ready'));
         console.log('\n');
       }
 
@@ -308,13 +308,13 @@ const compile = {
           compile.bundleServerApp();
         }
         else if (canServe === true) {
-          alert(colors.green('Ready to serve'));
+          alert(colors.green('ready to serve'));
           utils.serve(canWatch);
         } else if (startElectron === true) {
-          alert(colors.green('Ready to serve'));
+          alert(colors.green('ready to serve'));
           utils.electron(canWatch);
         } else {
-          alert(colors.green('Build is ready'));
+          alert(colors.green('build is ready'));
           console.log('\n');
         }
         //compile.clean();
@@ -445,13 +445,13 @@ const compile = {
                 compile.bundleServerApp();
               }
               else if (canServe === true) {
-                alert(colors.green('Ready to serve'));
+                alert(colors.green('ready to serve'));
                 utils.serve(canWatch);
               } else if (startElectron === true) {
-                alert(colors.green('Ready to serve'));
+                alert(colors.green('ready to serve'));
                 utils.electron(canWatch);
               } else {
-                alert(colors.green('Build is ready'));
+                alert(colors.green('build is ready'));
                 console.log('\n');
               }
 
@@ -749,13 +749,13 @@ const compile = {
         compile.bundleServerApp();
       }
       else if (canServe === true) {
-        alert(colors.green('Ready to serve'));
+        alert(colors.green('ready to serve'));
         utils.serve(canWatch);
       } else if (startElectron === true) {
-        alert(colors.green('Ready to serve'));
+        alert(colors.green('ready to serve'));
         utils.electron(canWatch);
       } else {
-        alert(colors.green('Build is ready'));
+        alert(colors.green('build is ready'));
         console.log('\n');
       }
 

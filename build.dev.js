@@ -13,7 +13,6 @@ const spawn = require('child_process').spawn;
 
 /* References to shared tools are found in build.utils.js */
 
-const console = utils.console;
 const colors = utils.colors;
 const scripts = utils.scripts;
 const config = utils.config;
@@ -21,6 +20,7 @@ const log = utils.log;
 const warn = utils.warn;
 const alert = utils.alert;
 const clean = utils.clean;
+const logger = utils.logger;
 
 let allowPostCSS = false;
 let canWatch = false;
@@ -204,14 +204,17 @@ const compile = {
 
     let readyMessage = function(isAOTWatch) {
       if (!isAOTWatch) {
-        alert(colors.green('Build is ready'));
-        console.log('\n');
+        alert(colors.green('build is ready'));
+      }
+      if (canWatch === true) {
+        alert('compiling...');
+        console.log('');
       }
       if (canServe === true) {
-        alert(colors.green('Ready to serve'));
+        alert(colors.green('ready to serve'));
         utils.serve(canWatch);
       } else if (startElectron === true) {
-        alert(colors.green('Ready to serve'));
+        alert(colors.green('ready to serve'));
         utils.electron(canWatch);
       }
     }

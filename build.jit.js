@@ -186,13 +186,13 @@ const compile = {
               allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
               hasCompletedFirstStylePass = true;
               if (canServe === true) {
-                alert(colors.green('Ready to serve'));
+                alert(colors.green('ready to serve'));
                 utils.serve(canWatch);
               } else if (startElectron === true) {
-                alert(colors.green('Ready to serve'));
+                alert(colors.green('ready to serve'));
                 utils.electron(canWatch);
               } else {
-                alert(colors.green('Build is ready'));
+                alert(colors.green('build is ready'));
                 console.log('\n');
               }
 
@@ -428,10 +428,10 @@ let watch = () => {
             allowPostCSS ? alert('libsass and postcss', 'compiled') : alert('libsass', 'compiled');
 
             if (canWatch === true) {
-              alert(colors.green('Ready to serve'));
+              alert(colors.green('ready to serve'));
               alert(colors.green('Watcher listening for changes'));
             } else {
-              alert(colors.green('Build is ready'));
+              alert(colors.green('build is ready'));
               console.log('\n');
             }
             hasCompletedFirstStylePass = true;

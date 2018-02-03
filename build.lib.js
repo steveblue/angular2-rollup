@@ -215,7 +215,7 @@ const compile = {
                   fs.readFile(path.normalize(libConfig.umd.outFile), 'utf8', function (err, contents) {
                       if (!err) {
                         contents = contents.replace("'use strict';", "'use strict';" + "\n" + output);
-                        fs.writeFile(path.normalize(libConfig.umd.outFile), contents, 'utf-8');
+                        fs.writeFile(path.normalize(libConfig.umd.outFile), contents, 'utf-8', ()=>{});
                       }
                   });
                 });
@@ -260,7 +260,7 @@ const compile = {
                   fs.readFile(path.join('ngfactory', fileName), 'utf8', function (err, contents) {
                     if (!err) {
                       // contents = contents.replace('./index', './'+config.src+'/index');
-                      fs.writeFile(path.join(dir, libConfig.filename + '.d.ts'), contents, 'utf-8');
+                      fs.writeFile(path.join(dir, libConfig.filename + '.d.ts'), contents, 'utf-8', ()=>{});
                     }
                   });
                 }
@@ -308,13 +308,13 @@ const compile = {
                   fs.readFile(path.normalize(libConfig.es5.outFile), 'utf8', function (err, contents) {
                       if (!err) {
                         contents = output + '\n' + contents;
-                        fs.writeFile(path.normalize(libConfig.es5.outFile), contents, 'utf-8');
+                        fs.writeFile(path.normalize(libConfig.es5.outFile), contents, 'utf-8', ()=>{});
                       }
                   });
                 });
 
                 alert('babel', 'transpiled', path.normalize(libConfig.es5.outFile));
-                alert(colors.green('Build is ready'));
+                alert(colors.green('build is ready'));
                 console.log('\n');
               });
 

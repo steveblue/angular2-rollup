@@ -116,6 +116,7 @@ const utils = {
     console: cons,
     paths: config,
     scripts: scripts,
+    logger: logger.logger,
     log : log,
     warn : warn,
     alert: alert,
@@ -522,6 +523,7 @@ const utils = {
                         if (!fileName.includes('new')) {
                             cp((options.force ? '-f' : '-n'), path.normalize(config.cliRoot + '/.tmp') + '/' + fileName, path.normalize(options.path + '/' + fileName));
                             log(fileName.replace('new', options.name), 'copied to', options.name);
+                            console.log('');
                         }
 
                     });
@@ -538,12 +540,14 @@ const utils = {
                 utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.directive.spec.ts'), options).then((filePath) => {
                     mv((options.force ? '-f' : '-n'), filePath, path.normalize(options.path + '/' + filePath.replace(/^.*[\\\/]/, '')));
                     log(filePath.replace(/^.*[\\\/]/, '').replace('new', options.name), 'copied to', options.name);
+                    console.log('');
                 });
             } else {
                 cp(path.normalize(config.cliRoot + '/.new/' + 'component' + '/new.component.spec.ts'), path.normalize(config.cliRoot + '/.tmp/'));
                 utils.generate.replace(path.normalize(config.cliRoot + '/.tmp/new.component.spec.ts'), options).then((filePath) => {
                     mv((options.force ? '-f' : '-n'), filePath, path.normalize(options.path + '/' + filePath.replace(/^.*[\\\/]/, '')));
                     log(filePath.replace(/^.*[\\\/]/, '').replace('new', options.name), 'copied to', options.name);
+                    console.log('');
                 });
             }
         },
@@ -564,6 +568,7 @@ const utils = {
 
                     if (fileName.includes('lib.config')) {
                         log(options.path);
+                        console.log('');
                         data = data.replace('"src": "src/lib"', '"src": "' + path.relative(config.projectRoot, options.path) + '"')
                     }
 
@@ -575,6 +580,7 @@ const utils = {
                         } else {
                             mv(path.normalize(config.cliRoot + '/.tmp/' + fileName), options.path);
                             log(fileName, 'copied to', options.path);
+                            console.log('');
                         }
 
                     });
@@ -653,6 +659,7 @@ const utils = {
                    return;
                }
                log(fileName.replace('new', options.name), 'copied to', options.name);
+                console.log('');
                utils.generate.replace(path.normalize(config.cliRoot+'/.tmp/'+fileName), options).then((filePath)=>{
 
                    mv((options.force ? '-f' : '-n'), filePath, path.normalize(options.path+'/'+filePath.replace(/^.*[\\\/]/, '')));
