@@ -288,7 +288,6 @@ let init = () => {
   const initProcesses = () => {
 
     log('ngr started');
-    console.log('');
     startTime = new Date();
 
     copy.lib();

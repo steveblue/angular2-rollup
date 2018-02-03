@@ -102,6 +102,7 @@ if (fs.existsSync(projectRoot + '/ngr.config.js')) {
     config = require(projectRoot + '/build.config.js');
 } else {
     warn('ngr.config.js is not found. Please include ngr.config.js at the root of your project to continue.');
+    console.log('');
     return;
 }
 
@@ -262,11 +263,13 @@ const utils = {
             sass.render(cssConfig.sassConfig, function (error, result) {
                 if (error) {
                     warn(error.message, 'LINE: ' + error.line);
+                    console.log('');
                 } else {
 
                     fs.writeFile(outFile, result.css, function (err) {
                         if (err) {
                             warn(err);
+                            console.log('');
                         }
                         if (!err && cssConfig.allowPostCSS === true) {
 
@@ -275,11 +278,12 @@ const utils = {
                                 (cssConfig.sourceMap === false ? ' --no-map true' : '') +
                                 ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cssConfig.env + '.js')) +
                                 ' -r ' + postcssConfig, { silent: true }, function (code, output, error) {
-                                    
-                                    if (error) {
-                                        utils.warn(error);
+
+                                    if (error && error.includes('Finished') === false) {
+                                        warn(error);
+                                        console.log('');
                                     }
-                  
+
                                     if (res) {
                                         if(cssConfig.isVerbose) log(filePath.replace(/^.*[\\\/]/, ''), 'compiled to', outFile.replace(/^.*[\\\/]/, ''));
                                         res(filePath, outFile);
@@ -290,6 +294,7 @@ const utils = {
                         } else {
                             if (err) {
                                 warn(err);
+                                console.log('');
                             }
                             else if (rej && utils.style.files.indexOf(filePath) === utils.style.files.length - 1) {
                                 if (rej) {
@@ -380,6 +385,8 @@ const utils = {
                 fs.readFile(fileName, 'utf8', function (err, data) {
 
                     if (err) {
+                        warn(err);
+                        console.log('');
                         return warn(err);
                     }
 
@@ -559,6 +566,8 @@ const utils = {
                 fs.readFile(path.normalize(config.cliRoot + '/.tmp/'+fileName), 'utf8', function (err, data) {
 
                     if (err) {
+                        warn(err);
+                        console.log('');
                         return warn(err);
                     }
 
@@ -576,6 +585,7 @@ const utils = {
 
                         if (fs.existsSync(path.normalize(options.path + '/' + fileName))) {
                             warn(fileName + ' already exists. Please move or delete and try again.');
+                            console.log('');
                             rm(path.normalize(config.cliRoot + '/.tmp/' + fileName));
                         } else {
                             mv(path.normalize(config.cliRoot + '/.tmp/' + fileName), options.path);
@@ -636,6 +646,7 @@ const utils = {
 
             if (!fs.existsSync(path.normalize(config.cliRoot + '/.new/' + options.type))) {
                 warn('Unavailable type. The available types are module, component, directive, enum, e2e, guard, interface, pipe, service, lib.');
+                console.log('');
                 return;
             }
 

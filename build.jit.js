@@ -307,15 +307,12 @@ let init = () => {
   const initProcesses = () => {
 
     log('ngr started');
-    console.log('');
     startTime = new Date();
     copy.lib();
     copy.public();
     compile.ts();
 
   }
-
-  alert(colors.green('ngr started ' + env));
 
   rm('-rf', path.normalize('./tmp/'));
   rm('-rf', path.normalize('./ngfactory'));

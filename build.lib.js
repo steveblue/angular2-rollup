@@ -317,7 +317,7 @@ const compile = {
 
                 alert('babel', 'transpiled', path.normalize(libConfig.es5.outFile));
                 alert(colors.green('build is ready'));
-                
+
                 console.log('');
                 let endTime = moment(new Date());
                 let duration = moment.duration(endTime.diff(startTime));
@@ -375,7 +375,6 @@ let init = () => {
   const initProcesses = () => {
 
     log('ngr started');
-    console.log('');
     startTime = new Date();
 
     clean.lib(libConfig);

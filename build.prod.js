@@ -250,10 +250,11 @@ const compile = {
   formatUniversalBuild: () => {
 
     if(config.locale) {
-
-      mkdir(path.normalize('./dist/' + config.locale[localeIndex]));
-      mkdir(path.normalize('./dist/' + config.locale[localeIndex] + '/frontend'))
-      mkdir(path.normalize('./dist/' + config.locale[localeIndex] + '/backend'))
+      if (!fs.existsSync(path.normalize('./dist/' + config.locale[localeIndex]))) {
+        mkdir(path.normalize('./dist/' + config.locale[localeIndex]));
+        mkdir(path.normalize('./dist/' + config.locale[localeIndex] + '/frontend'))
+        mkdir(path.normalize('./dist/' + config.locale[localeIndex] + '/backend'))
+      }
       cp('-R', path.normalize(config.build + '/*'), path.normalize('./dist/'+ config.locale[localeIndex] + '/frontend/'));
       cp('-R', path.normalize('./dist/backend/*'), path.normalize('./dist/' + config.locale[localeIndex] + '/backend/'));
       rm('-rf', path.normalize('./dist/backend'));
@@ -266,7 +267,7 @@ const compile = {
         alert(colors.green('build is ready'));
         console.log('\n');
       }
-      
+
 
     } else {
 
@@ -281,12 +282,6 @@ const compile = {
       }
 
     }
-
-    console.log('');
-    let endTime = moment(new Date());
-    let duration = moment.duration(endTime.diff(startTime));
-    console.log('ngr built in ' + duration.asSeconds() + 's');
-
 
   },
 
@@ -313,6 +308,7 @@ const compile = {
         alert('closure compiler optimized the bundle');
         if (isUniversal === true && hasCompiledServerApp === false) {
           compile.bundleServerApp();
+          return;
         }
         else if (canServe === true) {
           alert(colors.green('ready to serve'));
@@ -322,13 +318,14 @@ const compile = {
           utils.electron(canWatch);
         } else {
           alert(colors.green('build is ready'));
-          console.log('\n');
         }
 
-        console.log('');
-        let endTime = moment(new Date());
-        let duration = moment.duration(endTime.diff(startTime));
-        console.log('ngr built in ' + duration.asSeconds() + 's');
+        if (isUniversal === false) {
+          console.log('');
+          let endTime = moment(new Date());
+          let duration = moment.duration(endTime.diff(startTime));
+          console.log('ngr built in ' + duration.asSeconds() + 's');
+        }
         //compile.clean();
         isCompiling = false;
 
@@ -455,6 +452,7 @@ const compile = {
 
               if (isUniversal === true && hasCompiledServerApp === false) {
                 compile.bundleServerApp();
+                return;
               }
               else if (canServe === true) {
                 alert(colors.green('ready to serve'));
@@ -464,13 +462,14 @@ const compile = {
                 utils.electron(canWatch);
               } else {
                 alert(colors.green('build is ready'));
-                console.log('\n');
               }
 
-              console.log('');
-              let endTime = moment(new Date());
-              let duration = moment.duration(endTime.diff(startTime));
-              console.log('ngr built in ' + duration.asSeconds() + 's');
+              if (isUniversal === false) {
+                console.log('');
+                let endTime = moment(new Date());
+                let duration = moment.duration(endTime.diff(startTime));
+                console.log('ngr built in ' + duration.asSeconds() + 's');
+              }
 
             }
 
@@ -776,10 +775,12 @@ const compile = {
         console.log('\n');
       }
 
-      console.log('');
-      let endTime = moment(new Date());
-      let duration = moment.duration(endTime.diff(startTime));
-      console.log('ngr built in ' + duration.asSeconds() + 's');
+      if (isUniversal === false) {
+        console.log('');
+        let endTime = moment(new Date());
+        let duration = moment.duration(endTime.diff(startTime));
+        console.log('ngr built in ' + duration.asSeconds() + 's');
+      }
 
       isCompiling = false;
 
@@ -885,7 +886,7 @@ let init = () => {
     log('ngr started');
     console.log('');
     startTime = new Date();
-    
+
     if (isUniversal === true) {
 
       if(!config.locale) {
