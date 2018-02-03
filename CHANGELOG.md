@@ -1,3 +1,10 @@
+## 1.0.5
+
+- Enhanced build logs with duration of the build inspired by Parcel
+- Fixed several issues with logs
+- Fixed an issue when global scss filenames began with underscore
+- Fixed an issue when generating a library with a custom source name defined in ngr.config.js
+
 ## 1.0.4
 
 - Remove version message unless the user needs to update
