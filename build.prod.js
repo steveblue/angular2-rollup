@@ -884,7 +884,6 @@ let init = () => {
   const initProcesses = () => {
 
     log('ngr started');
-    console.log('');
     startTime = new Date();
 
     if (isUniversal === true) {
