@@ -26,27 +26,6 @@ const warn = function (action, noun) {
     logger(a + ' ' + n);
 };
 
-const llog = function (action, noun, next) {
-    let a = action ? colors.dim(colors.white(action)) : '';
-    let n = noun ? colors.dim(colors.white(noun)) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(a + ' ' + n + ' ' + x);
-};
-
-const lalert = function (noun, verb, action, next) {
-    let n = noun ? colors.white(noun) : '';
-    let v = verb ? colors.white(verb) : '';
-    let a = action ? colors.white(action) : '';
-    let x = next ? colors.dim(colors.white(next)) : '';
-    cons.log(n + ' ' + v + ' ' + a + ' ' + x);
-};
-
-const lwarn = function (action, noun) {
-    let a = action ? colors.red(action) : '';
-    let n = noun ? colors.white(noun) : '';
-    cons.warn(a + ' ' + n);
-};
-
 
 clim.getTime = function () {
     let now = new Date();
@@ -73,9 +52,7 @@ module.exports = {
     log: log,
     warn: warn,
     alert: alert,
-    llog: llog,
-    lwarn: lwarn,
-    lalert: lalert,
     colors: colors,
-    console: cons
+    console: cons,
+    logger: logger
 };

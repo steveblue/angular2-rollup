@@ -4,13 +4,14 @@ require('shelljs/global');
 
 const fs          = require('fs');
 const path        = require('path');
-const logger       = require('./build.log.js');
+const logs       = require('./build.log.js');
 
-const log = logger.llog;
-const warn = logger.lwarn;
-const alert = logger.lalert;
-const colors = logger.colors;
-const cons = logger.console;
+const log = logs.log;
+const warn = logs.warn;
+const alert = logs.alert;
+const logger = logs.logger;
+const colors = logs.colors;
+const cons = logs.console;
 
 let lib = false;
 let useVersion = '^5.0.0';
@@ -94,16 +95,19 @@ const copy = {
     file: (p) => {
         if (fs.existsSync(projectPath + '/' + p.split('/')[p.split('/').length - 1])) {
             warn(p.split('/')[p.split('/').length - 1] + ' already exists');
+            console.log('');
             hasWarning = true;
         } else {
             cp('-R', p, projectPath + '/');
             log(p.split('/')[p.split('/').length - 1], 'copied to', projectPath + '/');
+            console.log('');
         }
     },
     scaffold: (files) => {
 
         if (fs.existsSync(projectPath + '/' + 'src')) {
             warn('src' + ' already exists');
+            console.log('');
             hasWarning = true;
         } else {
             mkdir(projectPath + '/' + 'src');
@@ -113,14 +117,17 @@ const copy = {
                 cp('-R', cliPath + '/src/*', projectPath + '/' + 'src');
             }
             log('src', 'copied to', projectPath + '/');
+            console.log('');
         }
 
         if (fs.existsSync(projectPath + '/' + '.gitignore')) {
             warn('.gitignore' + ' already exists');
+            console.log('');
             hasWarning = true;
         } else {
             cp(cliPath + '/' + 'gitignore.scaffold', projectPath + '/' + '.gitignore');
             log('.gitignore', 'copied to', projectPath + '/');
+            console.log('');
         }
 
         files.forEach((filename)=>{
@@ -133,77 +140,97 @@ const copy = {
         if (hasRollup) {
             if (fs.existsSync(projectPath + '/rollup.config.js')) {
                 warn('rollup.config.js' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/rollup.config.js', projectPath + '/rollup.config.js');
                 log('rollup.config.js', 'copied to', projectPath + '/');
+                console.log('');
             }
-            cons.log(colors.white('please run npm install --save-dev rollup-plugin-replace rollup-plugin-node-resolve rollup-plugin-cleanup rollup-plugin-commonjs rollup-plugin-uglify'));
+            alert('please run npm install --save-dev rollup-plugin-replace rollup-plugin-node-resolve rollup-plugin-cleanup rollup-plugin-commonjs rollup-plugin-uglify');
+            console.log('');
         }
 
         if (isUniversal) {
 
             if (fs.existsSync(projectPath + '/src/app/app.browser.module.ts')) {
                 warn('app.browser.module.ts' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/src-universal/app.browser.module.ts', projectPath + '/src/app');
                 log('app.browser.module.ts', 'copied to', projectPath + '/src');
+                console.log('');
             }
             if (fs.existsSync(projectPath + '/src/app/app.module.server.ts')) {
                 warn('app.module.server.ts' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/src-universal/app.module.server.ts', projectPath + '/src/app');
                 log('app.module.server.ts', 'copied to', projectPath + '/src');
+                console.log('');
             }
             if (fs.existsSync(projectPath + '/src/app/app.server.module.ts')) {
                 warn('app.server.module.ts' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/src-universal/app.server.module.ts', projectPath + '/src/app');
                 log('app.server.module.ts', 'copied to', projectPath + '/src');
+                console.log('');
             }
             if (fs.existsSync(projectPath + '/server.universal.js')) {
                 warn('server.universal.js' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/server.universal.js', projectPath + '/');
                 log('server.universal.ts', 'copied to', projectPath);
+                console.log('');
             }
 
             if (fs.existsSync(projectPath + '/tsconfig.browser.json')) {
                 warn('tsconfig.browser.json' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/tsconfig.browser.json', projectPath + '/');
                 log('tsconfig.browser.json', 'copied to', projectPath);
+                console.log('');
             }
 
             if (fs.existsSync(projectPath + '/rollup.config.universal.js')) {
                 warn('rollup.config.universal.js' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/rollup.config.universal.js', projectPath + '/');
                 log('rollup.config.universal.js', 'copied to', projectPath);
+                console.log('');
             }
 
             if (fs.existsSync(projectPath + '/tsconfig.server.json')) {
                 warn('tsconfig.server.json' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/tsconfig.server.json', projectPath + '/');
                 log('tsconfig.server.json', 'copied to', projectPath);
+                console.log('');
             }
 
-            cons.log(colors.white('please run npm install --save @angular/platform-server @nguniversal/express-engine domino'));
-            cons.log(colors.white('universal build requires production build to be bundled with rollup. please run `ngr scaffold --rollup`'));
+            alert('please run npm install --save @angular/platform-server @nguniversal/express-engine domino');
+            console.log('');
+            alert('universal build requires production build to be bundled with rollup. please run `ngr scaffold --rollup`');
+            console.log('');
 
         }
 
         if (hasServer) {
             if (fs.existsSync(projectPath + '/server.js')) {
                 warn('server.js' + ' already exists');
+                console.log('');
                 hasWarning = true;
             } else {
                 cp(cliPath + '/server.config.dev.js', projectPath + '/server.config.dev.js');
@@ -211,9 +238,13 @@ const copy = {
                 cp(cliPath + '/server.js', projectPath + '/server.js');
                 cp(cliPath + '/router.js', projectPath + '/router.js');
                 log('server.config.dev.js', 'copied to', projectPath + '/');
+                console.log('');
                 log('server.config.prod.js', 'copied to', projectPath + '/');
+                console.log('');
                 log('server.js', 'copied to', projectPath + '/');
+                console.log('');
                 log('router.js', 'copied to', projectPath + '/');
+                console.log('');
             }
         }
 
@@ -237,8 +268,10 @@ const copy = {
             rm(projectPath + '/src/app/shared/components/lazy/lazy.module.ts');
             cp(cliPath + '/closure.lazy.conf', projectPath + '/closure.lazy.conf');
             log('closure.lazy.conf', 'copied to', projectPath + '/');
+            console.log('');
             cp(cliPath + '/lazy.config.json', projectPath + '/lazy.config.json');
             log('lazy.config.json', 'copied to', projectPath + '/');
+            console.log('');
             cp(cliPath + '/src-lazy/app/app.module.ts', projectPath + '/src/app/app.module.ts');
             cp(cliPath + '/src-lazy/app/app.routes.ts', projectPath + '/src/app/app.routes.ts');
             cp(cliPath + '/src-lazy/public/system.polyfill.js', projectPath + '/src/public/system.polyfill.js');
@@ -258,6 +291,7 @@ const copy = {
             rm(projectPath + '/lazy.config.json');
             cp(cliPath + '/lazy.routes.config.json', projectPath + '/lazy.config.json');
             log('lazy.routes.config.json', 'copied to', projectPath + '/');
+            console.log('');
             cp(cliPath + '/src-dynamic-route/app/app.config.ts', projectPath + '/src/app/app.config.ts');
             cp(cliPath + '/src-dynamic-route/app/app.module.ts', projectPath + '/src/app/app.module.ts');
         }
@@ -268,7 +302,9 @@ const copy = {
             cp(cliPath + '/src-electron/public/renderer.js', projectPath + '/src/public/renderer.js');
             cp(cliPath + '/main.electron.js', projectPath + '/main.electron.js');
             log('renderer.js', 'copied to', projectPath + '/src/public/');
+            console.log('');
             log('main.electron.js', 'copied to', projectPath + '/');
+            console.log('');
         }
 
     }
@@ -314,6 +350,7 @@ let init = function() {
 
     if (hasWarning == true) {
         warn('Please move or delete existing files to prevent overwiting.');
+        console.log('');
         return;
     }
 
@@ -342,12 +379,17 @@ let init = function() {
         });
 
         fs.writeFile(projectPath+'/package.json', JSON.stringify(script, null, 4), function (err) {
-            if (err) log(err);
+            if (err) log(err); console.log('');
             alert('ngr scaffolded ' + path.basename(process.cwd()) + ' with', 'angular@'+ useVersion);
+            console.log('');
             alert(colors.green('run npm install or yarn install'));
+            console.log('');
             alert('ngr build dev --watch --serve', 'to start up Express server, enable a watcher, and build Angular for development');
+            console.log('');
             alert('ngr build prod --serve', 'to compile your project AOT for production, start up Express server');
+            console.log('');
             alert('ngr --help', 'for more CLI commands' );
+            console.log('');
         });
 
       });
