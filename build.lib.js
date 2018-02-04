@@ -63,7 +63,7 @@ if (!config.style || !config.style.sass || !config.style.sass.prod) {
   config.style = {
     sass: {
       prod: {
-        includePaths: ['src/style/'],
+        includePaths: [config.src+'/style/'],
         outputStyle: 'expanded',
         sourceComments: false
       }
@@ -378,6 +378,7 @@ let init = () => {
     startTime = new Date();
 
     clean.lib(libConfig);
+
     //allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');
     style.src({
       sassConfig: config.style.sass.prod,
