@@ -620,6 +620,35 @@ After you have finished updating the `package.json`, run the following commands:
 - `$ npm run clean:install`
 
 
+### How do I deploy?
+
+The build command has an optional `--deploy` flag. All cli arguments pass through to build hooks.
+
+Use the post build hook in ngr.config.json to deploy a build. The following example is for a library, but you could use a similar hook for a production build.
+
+Below is an example of copying the dist folder to a sibling directory that also is a git repository. The example uses `shelljs`.
+
+```
+
+    buildHooks: {
+        lib: {
+            post: (args) => {
+                cp('-R', './dist/.', '../'+folderName);
+                rm('-rf', './dist');
+
+                if (args.indexOf('deploy=true')) {
+                    cd('../'+folderName);
+                    exec('git add --all .');
+                    exec('git commit -a -m "version bump"');
+                    exec('git push origin master');
+                }
+            }
+        }
+    }
+
+```
+
+
 ### Can I run LiveReload with the Production build?
 
 Livereload is still available in this mode, however you have to go an extra step to unlock this feature for the prod build. We recommend using `ngr build dev` for development, which uses AOT in --watch mode, mirroring the production build in a lot of ways. In cases where you want to test the production build on a local machine with the watcher you can use the following command: `ngr build prod --watch --serve`

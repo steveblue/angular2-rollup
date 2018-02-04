@@ -30,6 +30,7 @@ program
     .option('--verbose [bool]', 'Log additional messages in build')
     .option('--locale [bool]', 'Build using a specific i18n locale')
     .option('--deploy [bool]', 'Option to deploy build available in buildHooks.env.post arguments' )
+    .option('--message [string]', 'Option to set a custom commit message when deploying a library with the deploy command')
     .option('--externs [bool]', 'Option to use or ignore closure.externs.js when counting vendor files during prod build, default is true')
     .option('-c, --config [string]', 'Path to configuration file for library build')
     .option('g, generate [type]', 'Generates new code from templates')
