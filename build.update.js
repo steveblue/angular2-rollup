@@ -214,10 +214,10 @@ let init = function () {
                             "'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject', \n"+
                             "'rxjs/Subscription': 'lib:rxjs/Subscription', \n"+
                             "'rxjs/Observer': 'lib:rxjs/Observer', \n"+
-                            "'rxjs/operators': 'lib:rxjs/operators/index.js', \n"+
+                            "'rxjs/operators': 'lib:rxjs/operators', \n"+
                             "'rxjs/operator': 'lib:rxjs/operator', \n"+
                             "'rxjs/add/operator': 'lib:rxjs/add/operator', \n"+
-                            "'rxjs/add/operators': 'lib:rxjs/operators/index.js', \n"+
+                            "'rxjs/add/operators': 'lib:rxjs/add/operators', \n"+
                             "'rxjs/util/EmptyError': 'lib:rxjs/util/EmptyError', \n"+
                             "'tslib': 'lib:tslib/tslib.js'");
                 utils.alert('closure.conf and closure.lazy.conf must be updated to support --package_json_entry_names');

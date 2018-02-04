@@ -33,7 +33,7 @@
       'rxjs/observable/interval': 'lib:rxjs/observable/interval',
       'rxjs/observable/forkJoin': 'lib:rxjs/observable/forkJoin',
       'rxjs/observable/fromPromise': 'lib:rxjs/observable/fromPromise',
-      'rxjs/operators': 'lib:rxjs/operators/index.js',
+      'rxjs/operators': 'lib:rxjs/operators',
       'rxjs/operator/share': 'lib:rxjs/operator/share',
       'rxjs/operator/concatMap': 'lib:rxjs/operator/concatMap',
       'rxjs/operator/filter': 'lib:rxjs/operator/filter',
