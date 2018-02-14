@@ -415,19 +415,19 @@ const compile = {
           warn(error);
           hasError = true;
           if (error.includes('JS files specified')) {
-            log('There is a mismatch between the number of dependencies detected the and files provided');
-            log('There may be an issue with how externs defined in closure.externs.js');
-            log('Please follow this format exactly when defining an extern: var System = function(){};')
-            log('A library or script may not be properly imported for treeshaking in your app');
+            console.log('There is a mismatch between the number of dependencies detected the and files provided');
+            console.log('There may be an issue with how externs defined in closure.externs.js');
+            console.log('Please follow this format exactly when defining an extern: var System = function(){};')
+            console.log('A library or script may not be properly imported for treeshaking in your app');
           }
           if (error.includes('WARNING - Failed to load module "@angular/')) {
-            log('There is an issue with how @angular packages are declared in closure.lazy.conf');
+            console.log('There is an issue with how @angular packages are declared in closure.lazy.conf');
           }
-          log('Inspect closure/closure.lazy.conf for problems in the configuration of the final build, manually fix the issue and run the following command' + '\n' +
+          console.log('Inspect closure/closure.lazy.conf for problems in the configuration of the final build, manually fix the issue and run the following command' + '\n' +
             '----------------------------------------------------------------------------------------------------' + '\n' +
             finalExec.split('\\').join('').replace(/\r?\n|\r/g, '') + '\n' +
             '----------------------------------------------------------------------------------------------------');
-          log('If the problem persists, there may be an issue with the build. Report the issue here (https://github.com/steveblue/angular2-rollup/issues)');
+          console.log('If the problem persists, there may be an issue with the build. Report the issue here (https://github.com/steveblue/angular2-rollup/issues)');
           finalBuild.kill();
         }
 
@@ -547,7 +547,7 @@ const compile = {
 
   prepareVendorFilesForManifest: (conf, main, bundles) => {
 
-    let moduleRegex = /(node_modules)(\/)([a-zA-Z@-_]+)(\/)/;
+    let moduleRegex = /(node_modules)(\/)([a-zA-Z@-_-]+)(\/)/;
     let externsRegex = /(var|let)( )([a-zA-Z]+)( )(=)( )(function\(\){};)/;
 
     // add vendor files from main bundle to vendorFiles Array
@@ -573,12 +573,11 @@ const compile = {
 
         if (fileName.includes('node_modules')) {
 
-          let packageMatch = moduleRegex.exec(fileName);
           let index = vendorFiles.length - 1;
           let lastIndex = null;
 
           for (; index >= 0; index--) { // insert dependency at last index of known dependencies
-
+            console.log(moduleRegex.exec(vendorFiles[index]), moduleRegex.exec(fileName)[3] );
             if (moduleRegex.exec(vendorFiles[index])[3] === moduleRegex.exec(fileName)[3]) {
               lastIndex = index;
               vendorFiles.splice(lastIndex, 0, fileName);
@@ -679,8 +678,10 @@ const compile = {
               }).then((bundle) => {
 
                 lazyBundles.push(bundle);
+              
 
                 if (lazyBundles.length === Object.keys(config.lazyOptions.bundles).length) {
+                  if (isVerbose) log('preparing manifest');
                   compile.prepareVendorFilesForManifest(conf, main, lazyBundles);
                 } else {
                   bundleIndex++;
