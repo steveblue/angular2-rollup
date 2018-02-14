@@ -577,7 +577,7 @@ const compile = {
           let lastIndex = null;
 
           for (; index >= 0; index--) { // insert dependency at last index of known dependencies
-            console.log(moduleRegex.exec(vendorFiles[index]), moduleRegex.exec(fileName)[3] );
+           
             if (moduleRegex.exec(vendorFiles[index])[3] === moduleRegex.exec(fileName)[3]) {
               lastIndex = index;
               vendorFiles.splice(lastIndex, 0, fileName);
