@@ -1,3 +1,9 @@
+## 1.0.6
+
+- Fixed issue with lazy build when angular library package name contains special character
+- Fixed logs with production build when closure compiler fails
+
+
 ## 1.0.5
 
 - Enhanced build logs with duration of the build inspired by Parcel
