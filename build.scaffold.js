@@ -338,12 +338,12 @@ let init = function() {
         fs.readFile(projectPath + '/tsconfig.dev.json', (err, contents) => {
             let script = JSON.parse(contents);
             script.files = script.files.splice(script.files.indexOf('./src/app/shared/components/lazy/lazy.module.ts') - 1, 1);
-            fs.writeFile(projectPath + '/tsconfig.dev.json', JSON.stringify(script, null, 4));
+            fs.writeFile(projectPath + '/tsconfig.dev.json', JSON.stringify(script, null, 4), 'utf-8', ()=>{});
         });
         fs.readFile(projectPath + '/tsconfig.prod.json', (err, contents) => {
             let script = JSON.parse(contents);
             script.files = script.files.splice(script.files.indexOf('./ngfactory/src/app/shared/components/lazy/lazy.module.ts') - 1, 1);
-            fs.writeFile(projectPath + '/tsconfig.prod.json', JSON.stringify(script, null, 4));
+            fs.writeFile(projectPath + '/tsconfig.prod.json', JSON.stringify(script, null, 4), 'utf-8', ()=>{});
         });
     }
 
@@ -378,7 +378,7 @@ let init = function() {
             }
         });
 
-        fs.writeFile(projectPath+'/package.json', JSON.stringify(script, null, 4), function (err) {
+        fs.writeFile(projectPath+'/package.json', JSON.stringify(script, null, 4), 'utf-8', (err) => {
             if (err) log(err); console.log('');
             alert('ngr scaffolded ' + path.basename(process.cwd()) + ' with', 'angular@'+ useVersion);
             console.log('');
