@@ -9,7 +9,6 @@ const spawn       = require('child_process').spawn;
 const package     = require(__dirname + '/package.json');
 const prompt      = require('prompt');
 
-
 let cliCommand = '';
 let useVersion = '^5.0.0';
 
@@ -28,6 +27,7 @@ program
     .option('--rollupConfig [string]', 'path to rollup.config.json needed for this build')
     .option('--template [string]', 'path to index.html needed for this build')
     .option('--verbose [bool]', 'Log additional messages in build')
+    .option('--env [string]', 'Use an environment variable')
     .option('--locale [bool]', 'Build using a specific i18n locale')
     .option('--deploy [bool]', 'Option to deploy build available in buildHooks.env.post arguments' )
     .option('--message [string]', 'Option to set a custom commit message when deploying a library with the deploy command')
@@ -302,6 +302,10 @@ let init = function() {
         }
         else {
             cliCommand += ' externs=true';
+        }
+
+        if (program.env) {
+            cliCommand += ' env='+program.env;
         }
 
         if (program.config && program.config.length > 0) {
