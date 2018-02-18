@@ -1,3 +1,22 @@
+## 1.0.7
+
+- Added --env argument for build command
+
+In this release, angular/rollup will pass an environment variable to process.argv. Below is an example of how you could use environment variables with a pattern similar to @angular/cli with ngr.config.js.
+
+```
+buildHooks: {
+        prod: {
+            pre: (argv) => {
+                var env = argv.find(a => a.includes('env')).split('=')[1];
+                return new Promise((res, rej)=>{
+                    cp('environments/environment.'+env+'.ts', 'src/app/environment.ts');
+                    res();
+                });
+            }
+        }
+}
+```
 ## 1.0.6
 
 - Fixed issue with lazy build when angular library package name contains special character
