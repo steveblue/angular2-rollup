@@ -26,6 +26,7 @@
       // other libraries
       'rxjs/Subject': 'lib:rxjs/Subject',
       'rxjs/BehaviorSubject': 'lib:rxjs/BehaviorSubject',
+      'rxjs/Subscription': 'lib:rxjs/Subscription',
       'rxjs/Observable': 'lib:rxjs/Observable',
       'rxjs/observable/merge': 'lib:rxjs/observable/merge',
       'rxjs/observable/of': 'lib:rxjs/observable/of',
