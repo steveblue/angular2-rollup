@@ -1,13 +1,14 @@
 ## 1.0.7
 
 - Added --env argument for build command
+- Added rxjs/Subscription to default paths mapped in system.config.js
 
-In this release, angular/rollup will pass an environment variable to process.argv. Below is an example of how you could use environment variables with a pattern similar to @angular/cli with ngr.config.js.
+In this release, angular/rollup will pass an environment variable to process.argv. Below is an example of how you could use environment variables with a pattern similar to @angular/cli with ngr.config.js. `angular-rollup` gives you control over how you implement environment variables. Copy the current environment file into the src/app folder or any other folder you desire so it can be imported into source code.
 
 ```
 buildHooks: {
         prod: {
-            pre: (argv) => {
+            pre: (argv) => {å
                 var env = argv.find(a => a.includes('env')).split('=')[1];
                 return new Promise((res, rej)=>{
                     cp('environments/environment.'+env+'.ts', 'src/app/environment.ts');
