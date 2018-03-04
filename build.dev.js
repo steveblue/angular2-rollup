@@ -225,7 +225,7 @@ const compile = {
       console.log('ngr built in ' + duration.asSeconds() + 's');
     }
 
-    let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
+
 
       if (canWatch === true) {
         utils.alert('@angular/compiler started');
@@ -246,7 +246,6 @@ const compile = {
 
       hasInit = true;
 
-    });
 
   }
 
@@ -298,6 +297,8 @@ let init = () => {
       if (isVerbose) log('copied lazy.config.json to ' + config.build);
     }
 
+    let clean = exec(scripts['clean:ngfactory'], function (code, output, error) {
+
     allowPostCSS ? alert('libsass and postcss', 'started') : alert('libsass', 'started');
     style.src({
       sassConfig: config.style.sass.dev,
@@ -327,6 +328,8 @@ let init = () => {
         }
       });
     compile.main();
+
+    });
 
   }
 
