@@ -16,7 +16,7 @@ class Util {
 
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
-      this.log('ngr built in ' + duration.asSeconds() + 's');
+      console.log('ngr built in ' + duration.asSeconds() + 's');
 
     }
 
@@ -58,8 +58,6 @@ class Util {
             rm('-rf', path.normalize('./ngfactory'));
             mkdir(path.normalize('./ngfactory'));
             mkdir(path.normalize('./closure'));
-            cp('-R', path.normalize(config.src + '/'), path.normalize('./ngfactory'));
-            this.log(config.src + '/*.ts', 'copied to', 'ngfactory/*.ts');
             res();
         });
 

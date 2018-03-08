@@ -32,8 +32,8 @@ class Watcher {
             }
 
         }).on('unlink', filePath => util.warn(filePath, 'has been removed'))
-          .on('error', error => util.warn('ERROR:', error))
-          .on('ready', error => util.log('listening for changes in' + path.normalize('./' + config.src + '/**/*.*')));
+          .on('error', error => util.warn('ERROR:', error));
+          //.on('ready', error => util.log('listening for changes'));
 
         return watcher;
 

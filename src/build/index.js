@@ -1,7 +1,10 @@
+const moment = require('moment');
 
 class Build {
 
-    constructor() {}
+    constructor() {
+        this.startTime = moment(new Date());
+    }
 
 }
 

@@ -1,7 +1,6 @@
 
 const path           = require('path');
 const fs             = require('fs');
-const moment         = require('moment');
 const Build          = require('./index.js');
 const SassBuilder    = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
@@ -15,33 +14,17 @@ class DevBuild extends Build {
 
     constructor() {
         super();
-        this.startTime = moment(new Date());
     }
 
     init() {
-
-        if (cli.program.clean === true) {
-          util.cleanBuild();
-        }
-
-        if (util.hasHook('pre')) {
-
-           config.buildHooks[cli.env].pre(process.argv).then(() => {
-              this.build();
-           });
-
-        } else {
-
-          this.build();
-          
-        }
-
+       this.pre();
     }
+
 
     build() {
 
       const sassBuilder = new SassBuilder({ dist: config.build });
-      const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: false });
+      const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
       const aotBuilder = new AOTBuilder();
 
       (async () => {
@@ -54,8 +37,7 @@ class DevBuild extends Build {
         const sass = await sassBuilder.src();
         const postcss = await postcssBuilder.batch(sass);
         const src = await aotBuilder.compileSrc();
-        util.getTime(this.startTime);
-        if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+        this.post();
       })();
 
       fs.readFile(path.resolve('build', 'main.ts'), 'utf8', (err, content) => {
@@ -66,10 +48,35 @@ class DevBuild extends Build {
         }
       });
 
-      if (cli.program.watch === true) {
-         const watcher = new Watcher();
+    }
+
+    pre() {
+
+      if (cli.program.clean === true) {
+        util.cleanBuild();
       }
 
+      if (util.hasHook('pre')) {
+
+        config.buildHooks[cli.env].pre(process.argv).then(() => {
+          this.build();
+        });
+
+      } else {
+
+        this.build();
+
+      }
+
+    }
+
+    post() {
+      
+      if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+      if (cli.program.watch === true) {
+        const watcher = new Watcher();
+      }
+      util.getTime(this.startTime);
 
     }
 
