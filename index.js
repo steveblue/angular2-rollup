@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const fs       = require('fs');
+const fs      = require('fs');
 const program = require('commander');
 const package = require(__dirname + '/package.json');
 
