@@ -52,7 +52,7 @@ class ProdBuild extends Build {
       }
 
       cp('-R', path.normalize(config.src + '/'), path.normalize('./ngfactory'));
-      this.log(config.src + '/*.ts', 'copied to', 'ngfactory/*.ts');
+      util.log(config.src + '/*.ts', 'copied to', 'ngfactory/*.ts');
 
       // remove moduleId prior to ngc build. TODO: look for another method.
       ls(path.normalize('ngfactory/**/*.ts')).forEach(function (file) {
@@ -76,6 +76,7 @@ class ProdBuild extends Build {
     post() {
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+      console.log('');
       util.getTime(this.startTime); 
 
     }
