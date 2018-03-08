@@ -19,7 +19,6 @@ class AOTBuilder {
             if (cli.program.watch) {
 
                 util.log('@angular/compiler started');
-                console.log('');
 
                 const child = exec(path.resolve('node_modules', '.bin', 'ngc') + ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json') + ' --watch');
 

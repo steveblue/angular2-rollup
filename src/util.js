@@ -16,14 +16,19 @@ class Util {
 
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
-      console.log('');
-      console.log('ngr built in ' + duration.asSeconds() + 's');
+      this.log('ngr built in ' + duration.asSeconds() + 's');
 
     }
 
     getFilePath(filePath) {
 
         return path.normalize(filePath.substring(0, filePath.replace(/\\/g, '/').lastIndexOf('/')));
+
+    }
+
+    getFileName(filePath) {
+
+        return filePath.replace(/^.*[\\\/]/, '');
 
     }
 

@@ -6,6 +6,7 @@ const Build          = require('./index.js');
 const SassBuilder    = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
 const AOTBuilder     = require('./../compile/ngc.js');
+const Watcher        = require('./../watch.js');
 const util           = require('./../util.js');
 const config         = require('./../config');
 const cli            = require('./../../cli.config.json');
@@ -40,7 +41,7 @@ class DevBuild extends Build {
     build() {
 
       const sassBuilder = new SassBuilder({ dist: config.build });
-      const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
+      const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: false });
       const aotBuilder = new AOTBuilder();
 
       (async () => {
@@ -64,6 +65,10 @@ class DevBuild extends Build {
           });
         }
       });
+
+      if (cli.program.watch === true) {
+         const watcher = new Watcher();
+      }
 
 
     }

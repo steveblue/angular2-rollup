@@ -46,8 +46,8 @@ class PostCSS {
             const postcssConfigFile = require(config.projectRoot + '/postcss.' + cli.env + '.js');
 
             let postcssConfig = ' -u';
-            let srcPath = filePath.substring(0, filePath.replace(/\\/g, "/").lastIndexOf("/"));
-            let filename = filePath.replace(/^.*[\\\/]/, '');
+            let srcPath = util.getFilePath(filePath);
+            let filename = util.getFileName(filePath);
             let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(filePath.replace(config.src, this.cssConfig.dist).replace('.scss', '.css')) : filePath.replace('.scss', '.css');
 
             if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {

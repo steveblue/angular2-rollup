@@ -3,19 +3,17 @@ const findup = require('findup');
 const path = require('path');
 const utils = require('./util');
 const chokidar = require('chokidar');
+const SassBuilder = require('./style/sass.js');
+const PostCSSBuilder = require('./style/postcss.js');
 const config = require('./config');
 const util = require('./util');
 const cli = require('./../cli.config.json');
 
 class Watcher {
-    constructor() {}
-
-
-
-    watch() {
+    constructor() {
 
         const sassBuilder = new SassBuilder({ dist: config.build });
-        const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
+        const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: (cli.env === 'dev') ? false : true });
 
         const watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
             ignored: /[\/\\]\./,
@@ -26,22 +24,18 @@ class Watcher {
                 this.updatePublic(filePath);
             }
             else if (filePath.indexOf('.scss') > -1) {
-                const sass = await sassBuilder.file(filePath);
-                const postcss = await postcssBuilder.file(sass);
-                util.log('libass and postcss compiled ', postcss);
+                (async () => {
+                    const sass = await sassBuilder.file(filePath);
+                    const postcss = await postcssBuilder.file(sass);
+                    util.log('libass and postcss compiled', util.getFileName(postcss));
+                })();
             }
 
-        })
-        .on('add', filePath => {
-            util.log(`File ${path} has been added`);
-            if (filePath.includes(path.join(config.src, 'public'))) {
-                this.updatePublic(filePath);
-            }
-        })
-        .on('unlink', filePath => util.warn(filePath, 'has been removed'));
+        }).on('unlink', filePath => util.warn(filePath, 'has been removed'))
+          .on('error', error => util.warn('ERROR:', error))
+          .on('ready', error => util.log('listening for changes in' + path.normalize('./' + config.src + '/**/*.*')));
 
-        watcher
-            .on('error', error => warn('ERROR:', error));
+        return watcher;
 
     }
 
@@ -50,11 +44,10 @@ class Watcher {
         if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
             util.formatIndex(path.normalize(config.src + '/public/index.html'));
         } else {
-            console.log(filePath, path.normalize(config.build + '/'));
-            // util.copyFile(filePath, path.normalize(config.build + '/')));
+            util.copyFile(filePath, path.normalize(config.build + '/'));
         }
 
     }
 }
 
-module.exports = new Watcher();
+module.exports = Watcher;
