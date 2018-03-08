@@ -12,8 +12,13 @@ class ClosureBuilder {
         return new Promise((res, rej) => {
 
             util.log('closure compiler started');
-
-            let closure = exec(require(config.projectRoot + '/package.json').scripts['bundle:closure'],
+ 
+            let closure = exec(//`java -jar node_modules/google-closure-compiler/compiler.jar 
+                               // --warning_level=QUIET 
+                               // --flagfile closure.conf 
+                               // --js_output_file ./${config.build}/bundle.js 
+                               // --output_manifest=closure/manifest.MF`,
+                require(config.projectRoot + '/package.json').scripts['bundle:closure'],
                 { silent: true },
                 (error, stdout, stderr) => {
                     
