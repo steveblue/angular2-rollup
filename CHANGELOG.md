@@ -5,7 +5,7 @@
 
 ### IMPROVEMENTS
 
-- Add `src/style/**/*.scss` and `src/style/**/*.css` to `excludes` Array in tconfig.dev.json. This will force ngc to ignore global styles and prevent compilation.
+- Add `src/style/**/*.scss` and `src/style/**/*.css` to `excludes` Array in tsconfig.dev.json. This will force ngc to ignore global styles and prevent compilation.
 
 ### BREAKING CHANGES
 
