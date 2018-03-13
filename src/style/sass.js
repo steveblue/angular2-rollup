@@ -18,10 +18,11 @@ class Sass {
 
         return new Promise((res, rej) => {
 
+
             if (!fs.existsSync(path.join(this.sassConfig.dist, 'style'))) {
                 mkdir('-p', path.join(this.sassConfig.dist, 'style'));
             }
-
+          
             if (ls(path.normalize(config.src + '/**/*.scss')).length > 0) {
 
                 try {

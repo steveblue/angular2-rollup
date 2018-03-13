@@ -41,7 +41,7 @@ class AOTBuilder {
                 let ngc = exec(path.normalize(path.resolve('node_modules', '.bin', 'ngc') +
                     ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json')), { silent: true }, function (code, output, error) {
                         if (error) {
-                            warn(error);
+                            util.warn(error);
                             return;
                         } else {
                             res('done');
