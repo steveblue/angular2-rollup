@@ -50,6 +50,10 @@ class Util {
         return (config.buildHooks && config.buildHooks[cli.env] && config.buildHooks[cli.env][step]) ? true : false;
     }
 
+    hasConfigProperty(prop, obj) {
+        return obj ? obj.hasOwnProperty(prop) : config.hasOwnProperty(prop);
+    }
+
     cleanBuild() {
 
         return new Promise((res, rej) => {
