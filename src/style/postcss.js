@@ -70,7 +70,7 @@ class PostCSS {
                 ' -r ' + postcssConfig, { silent: true }, (code, output, error) => {
 
                     if (error && error.includes('Finished') === false) {
-                        warn(error);
+                        util.warn(error);
                         console.log('');
                         rej(error);
                     }

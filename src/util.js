@@ -115,7 +115,7 @@ class Util {
                     if (!fs.existsSync( path.join(dist, paths[i]) )) {
                         cp('-R', path.join(src, paths[i]), path.join(dist, paths[i]));
                         this.log(paths[i]);
-                }
+                    }
 
                 }
 

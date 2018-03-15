@@ -28,7 +28,9 @@ class DevBuild extends Build {
       const aotBuilder = new AOTBuilder();
 
       (async () => {
-        const lib = await util.copyLib(config.lib[cli.env], config.lib.src, config.lib.dist);
+        const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['lib'], 
+                                       config.lib && config.lib[cli.env] ? config.lib.src : config.dep.src, 
+                                       config.lib && config.lib[cli.env] ? config.lib.dist : config.dep.dist);
         const publicDir = await util.copyDir(path.normalize(config.src + '/public/'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
       })();
