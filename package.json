@@ -29,6 +29,7 @@
     "findup": "^0.1.5",
     "html-minifier": "^3.5.11",
     "htmlprocessor": "^0.2.6",
+    "js-string-escape": "^1.0.1",
     "magic-string": "^0.23.2",
     "moment": "^2.21.0",
     "node-sass": "^4.7.2",

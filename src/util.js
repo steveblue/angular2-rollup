@@ -5,6 +5,7 @@ const logger      = require('single-line-log').stdout;
 const path        = require('path');
 const fs          = require('fs');
 const MagicString = require('magic-string');
+const escape      = require('js-string-escape');
 const minifyHtml  = require('html-minifier').minify;
 const moment      = require('moment');
 const config      = require('./config');
@@ -147,6 +148,7 @@ class Util {
     }
 
     inline(filePath) {
+
         const outFile = filePath ? filePath : path.normalize('./' + this.libConfig.dist + '/bundle.js');
         let inline = '';
 
@@ -202,6 +204,7 @@ class Util {
                     return '"' + text + '"';
                 }
                 let text = fs.readFileSync(includePath).toString();
+               
                 text = preprocessor(text, includePath);
                 text = escape(text);
                 return '"' + text + '"';

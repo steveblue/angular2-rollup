@@ -26,6 +26,8 @@ class LibBuild extends Build {
 
     build() {
 
+        // TODO: figure out best way to abstract styling tasks for the builds, should be able to support LESS, Stylus, etc.
+
         const sassBuilder = new SassBuilder({ dist: this.libConfig.dist, sourceMap: false });
         const postcssBuilder = new PostCSSBuilder({ dist: this.libConfig.dist, sourceMap: false });
 
@@ -38,18 +40,35 @@ class LibBuild extends Build {
                 const postcss = await postcssBuilder.batch(sass);
                 const bundle = await this.bundleLib();
             })();
+
    
-        } else {
+        }
+        else if (ls(path.normalize(this.libConfig.src + '/**/*.css')).length > 0) {
+
+            const cssFileList = ls(path.normalize(this.libConfig.src + '/**/*.css'));
+
             (async () => {
+                const postcss = await postcssBuilder.batch(cssFileList);
                 const bundle = await this.bundleLib();
-            })(); 
+            })();
+
+
+        } else { // dont barf on a lib without styling
+            this.bundleLib(); 
         }
 
+        // process global styles 
         if (ls(path.normalize(config.src + '/style/*.scss')).length > 0) {
+
             (async () => {
                 const sass = await sassBuilder.globalFiles();
                 const postcss = await postcssBuilder.batch(sass);
             })();
+
+        }
+        else if (ls(path.normalize(config.src + '/style/*.css')).length > 0) {
+            const globalCSSFileList = ls(path.normalize(config.src + '/**/*.css'));
+            postcssBuilder.batch(globalCSSFileList);
         }
 
     }
@@ -77,7 +96,7 @@ class LibBuild extends Build {
                 const post = await this.checkBuild();
             })();
 
-        })
+        });
     }
 
     checkBuild() {
@@ -108,11 +127,12 @@ class LibBuild extends Build {
 
     }
 
-    cleanDist() {
+    processTypeDefinitions() {
+
         return new Promise((res, rej) => {
 
             try {
-
+                // process d.ts files and copy to dist
                 find(path.normalize('./ngfactory/'))
                     .filter(function (file) { return file.match(/\.d.ts$/); })
                     .forEach((filePath) => {
@@ -127,7 +147,7 @@ class LibBuild extends Build {
                             fs.readFile(path.join('ngfactory', fileName), 'utf8', (err, contents) => {
                                 if (err) rej(err);
                                 if (!err) {
-                                    fs.writeFile(path.join(dir, this.libConfig.filename + '.d.ts'), contents, 'utf-8', () => { });
+                                    fs.writeFile(path.join(dir, this.libConfig.filename + '.d.ts'), contents, 'utf-8', () => {});
                                 }
                             });
                         }
@@ -141,13 +161,16 @@ class LibBuild extends Build {
 
                     });
 
-                rm(path.join(path.normalize(this.libConfig.dist), this.libConfig.filename)+'.es5.d.ts');
-                cp(path.normalize(path.join('./ngfactory', this.libConfig.filename + '.metadata.json')), path.normalize(this.libConfig.dist));
+                // remove extra d.ts
+                rm(path.join(path.normalize(this.libConfig.dist), this.libConfig.filename)+'.es5.d.ts'); 
+                // copy metadata
+                cp(path.normalize(path.join('./ngfactory', this.libConfig.filename + '.metadata.json')), path.normalize(this.libConfig.dist)); 
                 util.log('d.ts, metadata.json', 'copied to', './' + this.libConfig.dist);
-
+                // remove .ts files from dist
                 find(path.normalize('./' + this.libConfig.dist)).filter((file) => {
 
                     if (util.hasHook('clean')) {
+                        util.log('processing clean task');
                         config.buildHooks.lib.clean(process.argv, file);
                     } else {
                         if (file.match(/component.ts$/) || file.match(/directive.ts$/) || file.match(/injectable.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
@@ -156,15 +179,8 @@ class LibBuild extends Build {
                     }
 
                 });
-
-                exec('cp ' + this.libConfig.src + '/package.json' + ' ' + this.libConfig.dist + '/package.json', () => {
-
-                    util.log('package.json', 'copied to', './' + this.libConfig.dist);
-                    res();
-
-                });
-
-             
+                res();
+           
 
             }
             catch(err) {
@@ -184,7 +200,7 @@ class LibBuild extends Build {
             rm('-rf', this.libConfig.dist);
             mkdir('-p', this.libConfig.dist);
 
-            cp('-R', path.normalize(this.libConfig.src + '/'), path.normalize('./tmp'));
+            cp('-R', path.normalize(this.libConfig.src + '/')+'.', path.normalize('./tmp'));
 
             // remove moduleId prior to ngc build, inline template and styles
             ls(path.normalize('tmp/**/*.ts')).forEach((file) => {
@@ -192,9 +208,8 @@ class LibBuild extends Build {
                 util.inline(file);
             });
 
-
             if (util.hasHook('pre')) {
-
+                util.log('processing pre task');
                 config.buildHooks[cli.env].pre(process.argv).then(() => {
                     this.build();
                 });
@@ -219,14 +234,21 @@ class LibBuild extends Build {
             return;
         }
 
-        this.cleanDist().then((res) => {
+        this.processTypeDefinitions().then((res) => {
 
+            // copy package.json to dist
+            exec('cp ' + this.libConfig.src + '/package.json' + ' ' + this.libConfig.dist + '/package.json', () => {
 
-            if (util.hasHook('post')) {
-                config.buildHooks[cli.env].post(process.argv);
-            }
-       
-            util.getTime(this.startTime);
+                util.log('package.json', 'copied to', './' + this.libConfig.dist);
+                if (util.hasHook('post')) {
+                    util.log('processing post task');
+                    config.buildHooks[cli.env].post(process.argv);
+                }
+                util.getTime(this.startTime);
+
+            });
+          
+            
         });  
 
     }
