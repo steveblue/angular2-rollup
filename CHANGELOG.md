@@ -1,17 +1,21 @@
 ## 2.0.0
 
 - Refactored build scripts for easier maintanence over time
-- Improvements to the development build script allow for faster build times 
+- Improvements to build scripts allow for faster build times 
 
 ### IMPROVEMENTS
 
-- Add `src/style/**/*.scss` and `src/style/**/*.css` to `excludes` Array in tsconfig.dev.json. This will force ngc to ignore global styles and prevent compilation.
+- Add `src/style/**/*.scss` and `src/style/**/*.css` to `excludes` Array in tsconfig.dev.json. This will force ngc to ignore global styles and prevent compilation. Updates to global styling can now happen without browser reload.
+- Deprecated requirement for Babel in library build
 
 ### BREAKING CHANGES
 
-- In ngr.config.js please change the model for declaring library packages. The new config should look like this:
+- Upgrade `rollup` to `^0.55.0`. The library build now supports `input` and `output` syntax by default
+- Arguments passed to buildHooks may change, please check and update where necessary
+- Change the model for declaring library packages in `ngr.config.js`. The new config should look like this:
 
 BEFORE:
+
 ```
 dep: {
     lib: [],

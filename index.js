@@ -7,8 +7,10 @@ program
     .version(package.version)
     .usage('<keywords>')
     .option('build [env]', 'build the application')
-    .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
     .option('--clean [bool]', 'destroy the build folder prior to compilation, automatic for prod')
+    .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
+    .option('--config [string]', 'path to configuration file for library build')
+    .option('--deploy [bool]', 'pass argument to post buildHook for deployment')
     .parse(process.argv);
 
 fs.writeFileSync(__dirname + '/cli.config.json', JSON.stringify({

@@ -77,10 +77,6 @@ class Sass {
 
         return new Promise((res, rej) => {
 
-            if (!fs.existsSync(path.join(this.sassConfig.dist, 'style'))) {
-                mkdir('-p', path.join(this.sassConfig.dist, 'style'));
-            }
-
             try {
                 const files = fileList.filter((filePath, index) => {
 
@@ -130,7 +126,10 @@ class Sass {
                 }
 
             }
-
+            if (this.sassConfig.sourceMap) {
+                config.style.sass[cli.env].sourceMap = this.sassConfig.sourceMap;
+            }
+            
             sass.render(config.style.sass[cli.env], (error, result) => {
                 if (error) {
 

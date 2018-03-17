@@ -9,7 +9,25 @@ class AOTBuilder {
 
     constructor() {}
 
-    // TODO: Allow any tsconfig
+    compile(tsConfigPath) {
+
+        return new Promise((res, rej) => {
+
+            let ngc = exec(path.normalize(config.processRoot + '/node_modules/.bin/ngc') +
+                ' -p ' + tsConfigPath, { silent: true }, (code, output, error) => {
+                    if (error) {
+                        util.warn(error);
+                        rej();
+                    } else {
+                        util.log('@angular/compiler compiled ngfactory');
+                        res();
+                    }
+                });
+
+        });
+    }
+
+
     compileSrc() {
 
         let hasCompiled = false;
@@ -39,14 +57,14 @@ class AOTBuilder {
 
         
                 let ngc = exec(path.normalize(path.resolve('node_modules', '.bin', 'ngc') +
-                    ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json')), { silent: true }, function (code, output, error) {
-                        if (error) {
-                            util.warn(error);
-                            return;
-                        } else {
-                            res('done');
-                        }
-                    });
+                ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json')), { silent: true }, function (code, output, error) {
+                    if (error) {
+                        util.warn(error);
+                        rej(error);
+                    } else {
+                        res('done');
+                    }
+                });
                 
 
             }
@@ -89,6 +107,7 @@ class AOTBuilder {
 
         });
     }
+
 
  
 }

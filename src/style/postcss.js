@@ -43,7 +43,15 @@ class PostCSS {
 
         return new Promise((res, rej) => {
 
-            const postcssConfigFile = require(config.projectRoot + '/postcss.' + cli.env + '.js');
+            let env;
+
+            if (cli.env === 'lib') {
+                env = 'prod'
+            } else {
+                env = cli.env;
+            }
+
+            const postcssConfigFile = require(config.projectRoot + '/postcss.' + env + '.js');
 
             let postcssConfig = ' -u';
             let srcPath = util.getFilePath(filePath);
@@ -66,7 +74,7 @@ class PostCSS {
             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
                 ' ' + outFile +
                 (this.cssConfig.sourceMap === false ? ' --no-map true' : '') +
-                ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + cli.env + '.js')) +
+                ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + env + '.js')) +
                 ' -r ' + postcssConfig, { silent: true }, (code, output, error) => {
 
                     if (error && error.includes('Finished') === false) {
