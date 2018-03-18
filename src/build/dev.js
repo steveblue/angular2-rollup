@@ -27,8 +27,8 @@ class DevBuild extends Build {
       const aotBuilder = new AOTBuilder();
 
       (async () => {
-        const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['lib'], 
-                                       config.lib && config.lib[cli.env] ? config.lib.src : config.dep.src, 
+        const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['lib'],
+                                       config.lib && config.lib[cli.env] ? config.lib.src : config.dep.src,
                                        config.lib && config.lib[cli.env] ? config.lib.dist : config.dep.dist);
         const publicDir = await util.copyDir(path.normalize(config.src + '/public/'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
@@ -37,17 +37,17 @@ class DevBuild extends Build {
       (async () => {
         const sass = await sassBuilder.src();
         const postcss = await postcssBuilder.batch(sass);
-        const src = await aotBuilder.compileSrc();
+        const src = await aotBuilder.compile('tsconfig.' + cli.env + '.json');
         this.post();
       })();
 
-      fs.readFile(path.resolve('build', 'main.ts'), 'utf8', (err, content) => {
-        if (err || content.includes('enableProdMode();')) {
-          const main = aotBuilder.compileMain().then((res) => {
-            util.log('compiled main.ts');
-          });
-        }
-      });
+      if (!fs.existsSync(path.join(config.build, 'main.ts'))) {
+        (async () => {
+          const main = await aotBuilder.compileMain().then((res) => {
+                  util.log('compiled main.js');
+                });
+        })();
+      }
 
     }
 
@@ -72,7 +72,7 @@ class DevBuild extends Build {
     }
 
     post() {
-      
+
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
       if (cli.program.watch === true) {
         const watcher = new Watcher();

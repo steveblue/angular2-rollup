@@ -79,7 +79,7 @@ class Util {
         });
 
     }
-  
+
     formatIndex(template) {
 
         return new Promise((res, rej) => {
@@ -98,7 +98,7 @@ class Util {
 
         });
 
- 
+
     }
 
     copyLib(paths, src, dist) {
@@ -124,7 +124,7 @@ class Util {
                     }
 
                 } else { // is folder
-                
+
                     if (!fs.existsSync( path.join(dist, paths[i]) )) {
                         cp('-R', path.join(src, paths[i]), path.join(dist, paths[i]));
                         this.log(paths[i]);
@@ -191,7 +191,7 @@ class Util {
 
     inlineHTMLandCSS(options, source, dir) {
 
-        
+
         let stringRegex = this.stringRegex;
 
         /* Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz */
@@ -204,7 +204,7 @@ class Util {
                     return '"' + text + '"';
                 }
                 let text = fs.readFileSync(includePath).toString();
-               
+
                 text = preprocessor(text, includePath);
                 text = escape(text);
                 return '"' + text + '"';
@@ -226,7 +226,7 @@ class Util {
         while ((match = this.componentRegex.exec(source)) !== null) {
             start = match.index;
             end = start + match[0].length;
-        
+
             replacement = match[0]
                 .replace(this.templateUrlRegex, function (match, url) {
                     hasReplacements = true;

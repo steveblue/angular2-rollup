@@ -28,8 +28,8 @@ class ProdBuild extends Build {
       const closureBuilder = new ClosureBuilder();
 
       (async () => {
-        const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['prodLib'], 
-                                       config.lib && config.lib[cli.env] ? config.lib.src : config.dep.src, 
+        const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['prodLib'],
+                                       config.lib && config.lib[cli.env] ? config.lib.src : config.dep.src,
                                        config.lib && config.lib[cli.env] ? config.lib.dist : config.dep.dist);
         const publicDir = await util.copyDir(path.normalize(config.src + '/public/'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
@@ -39,10 +39,10 @@ class ProdBuild extends Build {
         const sass = await sassBuilder.src();
         const postcss = await postcssBuilder.batch(sass);
         const copycss = await postcssBuilder.copyToNgFactory(postcss);
-        const src = await aotBuilder.compileSrc();
+        const src = await aotBuilder.compile('tsconfig.' + cli.env + '.json');
         const bundle = await closureBuilder.bundle();
-        util.getTime(this.startTime);
         if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+        util.getTime(this.startTime);
       })();
 
     }
@@ -79,7 +79,7 @@ class ProdBuild extends Build {
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
       console.log('');
-      util.getTime(this.startTime); 
+      util.getTime(this.startTime);
 
     }
 

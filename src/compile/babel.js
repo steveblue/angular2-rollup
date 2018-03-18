@@ -11,7 +11,7 @@ class BabelBuilder {
 
     compileUMD(outFile) {
         return new Promise((res, rej) => {
-            console.log(outFile);
+
             let transpile = exec(path.normalize(config.processRoot + '/node_modules/.bin/babel') +
                 ' --source-maps' +
                 ' --presets=es2015-rollup ' +
