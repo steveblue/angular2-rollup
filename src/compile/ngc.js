@@ -28,7 +28,7 @@ class AOTBuilder {
                     if (data.includes('error')) {
                         util.error(data);
                     }
-                    if (hasCompiled === false && data.includes('Compilation complete.')) {
+                    if (hasCompiled == false && data.includes('Compilation complete.')) {
                         hasCompiled = true;
                         res();
                     }
