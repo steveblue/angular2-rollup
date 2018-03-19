@@ -333,7 +333,7 @@ class Util {
             process.stdout.write('\n');
             console.log( colors.red(err) );
         } else {
-            let msg = ' '+err.message.replace(/'(.*?)'/g, colors.red("'$1'") );
+            let msg = ' '+err.message.replace(/'(.*?)'/g, colors.white("'")+colors.red("$1")+colors.white("'") );
             console.log('\n\n'+
             colors.red(' ' +err.service.toUpperCase()+' ERROR') + ' '+
             colors.white(this.getFileName(err.file)) + colors.grey(' ('+ err.line + ' | '+ err.column +')') + '\n\n' +
