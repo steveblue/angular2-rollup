@@ -34,7 +34,7 @@ class Util {
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
       console.log('');
-      console.log('ngr built in ' + colors.green(duration.asSeconds() + 's'));
+      this.alert('ngr built in ' + colors.green(duration.asSeconds() + 's'));
       if (this.hasArg('serve')) {
         this.serve(cli.program.watch);
       }
@@ -125,7 +125,7 @@ class Util {
                 ' ' + path.normalize(template) +
                 ' -o ' + path.normalize(path.join(config.build, '/') + 'index.html') +
                 ' -e ' + env, { silent: true }, (error, stdout, stderr) => {
-                    this.log('htmlprocessor', 'formatted ' + template);
+                    this.log('htmlprocessor', 'formatted ' + this.getFileName(template));
                     if (error) {
                         this.warn(error);
                         if (rej) rej(error);
@@ -293,7 +293,7 @@ class Util {
         let a = action ? colors.dim(colors.white(action)) : '';
         let n = noun ? colors.dim(colors.white(noun)) : '';
         let x = next ? colors.dim(colors.white(next)) : '';
-        logger(a + ' ' + n + ' ' + x);
+        logger(' ' + a + ' ' + n + ' ' + x);
     }
 
     alert(noun, verb, action, next) {
@@ -301,7 +301,7 @@ class Util {
         let v = verb ? colors.white(verb) : '';
         let a = action ? colors.white(action) : '';
         let x = next ? colors.dim(colors.white(next)) : '';
-        console.log(n + ' ' + v + ' ' + a + ' ' + x);
+        console.log(' ' + n + ' ' + v + ' ' + a + ' ' + x);
     }
 
     warn(action, noun) {
