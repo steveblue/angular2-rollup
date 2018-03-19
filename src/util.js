@@ -23,6 +23,9 @@ class Util {
         this.stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
         this.multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
         this.singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
+        this.lastError = {
+            message : ''
+        };
     }
 
     hasArg(arg) {
@@ -289,6 +292,19 @@ class Util {
 
     }
 
+    formatTSError(str) {
+        let lineNumbers = str.slice(str.indexOf('(')+1, str.indexOf(')')).split(',');
+        let err = {
+            service: 'TypeScript',
+            file: str.slice(0, str.indexOf('(')),
+            line: lineNumbers[0],
+            column: lineNumbers[1],
+            message: str.slice(str.indexOf(':')+2, str.length)
+        }
+        this.lastError = err;
+        return err;
+    }
+
     log(action, noun, next) {
         let a = action ? colors.dim(colors.white(action)) : '';
         let n = noun ? colors.dim(colors.white(noun)) : '';
@@ -311,9 +327,18 @@ class Util {
         process.stdout.write(a);
     }
 
-    error(str) {
-        process.stdout.write('\n');
-        console.log( colors.red(str) );
+    error(err) {
+
+        if (typeof err === 'string') {
+            process.stdout.write('\n');
+            console.log( colors.red(err) );
+        } else {
+            console.log('\n\n'+
+            colors.red(' ' +err.service.toUpperCase()+' ERROR') + ' '+
+            colors.white(this.getFileName(err.file)) + colors.grey(' ('+ err.line + ' | '+ err.column +')') + '\n\n' +
+            colors.red(' '+err.message) +' ');
+        }
+
         //process.exit();
     }
 

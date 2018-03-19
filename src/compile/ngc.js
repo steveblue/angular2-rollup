@@ -11,11 +11,12 @@ class AOTBuilder {
 
     compile(tsConfigPath) {
 
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             let hasCompiled = false;
 
-            if (cli.program.watch) {
+            if (util.hasArg('watch')) {
+                let lastData = '';
 
                 util.log('@angular/compiler started AOT compilation');
 
@@ -25,9 +26,16 @@ class AOTBuilder {
                     if (data.includes('Compilation complete.')) {
                         util.log(data);
                     }
-                    if (data.includes('error')) {
-                        util.warn(data);
+
+                    if (data.includes('error') && data !== lastData) {
+                        let err = data.split('\n').filter((e) => {
+                            return e.length > 0;
+                        }).forEach((e) => {
+                            util.error(util.formatTSError(e));
+                        });
+                        lastData = data;
                     }
+
                     if (hasCompiled == false && data.includes('Compilation complete.')) {
                         hasCompiled = true;
                         res();
@@ -41,8 +49,11 @@ class AOTBuilder {
                 ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json')), { silent: true }, function (code, output, error) {
                     if (error) {
 
-                        if (rej) rej(error);
-                        util.error(error);
+                        let err = error.split('\n').filter((e) => {
+                            return e.length > 0;
+                        }).forEach((e) => {
+                            util.error(util.formatTSError(e));
+                        });
 
                     } else {
                         util.log('Compilation complete.');
@@ -58,7 +69,7 @@ class AOTBuilder {
 
     compileMain() {
 
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             const outFile = path.join(config.projectRoot, config.build, 'main.ts');
             const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
@@ -76,8 +87,7 @@ class AOTBuilder {
                                             (error, stdout, stderr) => {
                                                 rm(outFile);
                                                 if(error.killed) {
-                                                    if (rej) rej(error);
-                                                    util.error(error);
+                                                    util.error(util.formatTSError(error));
                                                 } else {
                                                     res();
                                                 }

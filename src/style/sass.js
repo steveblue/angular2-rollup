@@ -79,7 +79,7 @@ class Sass {
             return this.batch(ls(path.normalize(config.src + '/**/* d.scss')));
         }
         util.log('preprocessing '+outFile);
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             config.style.sass[env].file = filePath;
             config.style.sass[env].outFile = outFile;
@@ -95,15 +95,16 @@ class Sass {
             sass.render(config.style.sass[env], (error, result) => {
                 if (error) {
 
-                    if (rej) rej(error);
-                    util.error('ERROR - '+ error.message + ' LINE - ' + error.line + ' FILE - '+filename);
+                    error.service = 'sass';
+                    util.error(error);
 
                 } else {
 
                     fs.writeFile(outFile, result.css, (err) => {
 
                         if (err) {
-                            if (rej) rej(err);
+
+                            err.service = 'sass';
                             util.error(err);
                         }
                         if (res) {
