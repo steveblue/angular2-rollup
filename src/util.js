@@ -7,6 +7,7 @@ const fs          = require('fs');
 const MagicString = require('magic-string');
 const escape      = require('js-string-escape');
 const minifyHtml  = require('html-minifier').minify;
+const spawn       = require('child_process').spawn;
 const moment      = require('moment');
 const config      = require('./config');
 const cli         = require('./../cli.config.json');
@@ -24,12 +25,19 @@ class Util {
         this.singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
     }
 
+    hasArg(arg) {
+        return process.argv.indexOf(arg) > -1 || process.argv.indexOf('--'+arg) > -1;
+    }
+
     getTime(startTime) {
 
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
       console.log('');
-      console.log('ngr built in ' + duration.asSeconds() + 's');
+      console.log('ngr built in ' + colors.green(duration.asSeconds() + 's'));
+      if (this.hasArg('serve')) {
+        this.serve(cli.program.watch);
+      }
 
     }
 
@@ -68,7 +76,7 @@ class Util {
     copyFile(src, dist) {
 
         cp(src, dist);
-        this.log(filePath, 'copied to', dist);
+        this.log(this.getFileName(src), 'copied to', this.getFilePath(dist));
 
     }
 
@@ -76,7 +84,7 @@ class Util {
 
         if (!fs.existsSync(dist)) mkdir('-p', dist);
         cp('-R', src + '.', path.normalize(path.join(dist, '/')));
-        this.log(src, 'copied to', dist);
+        this.log(this.getFileName(src), 'copied to',this.getFilePath(dist));
 
     }
 
@@ -306,7 +314,29 @@ class Util {
     error(str) {
         process.stdout.write('\n');
         console.log( colors.red(str) );
-        process.exit();
+        //process.exit();
+    }
+
+    serve(watch, isUniversal) {
+
+        if (isUniversal === true) {
+
+            spawn('npm run universal', { shell: true, stdio: 'inherit' });
+
+        } else {
+
+            let serverCommand = 'npm run serve';
+
+            if (watch === true) {
+                serverCommand += ' watch=true';
+            }
+            else {
+                serverCommand += ' watch=false';
+            }
+            spawn(serverCommand, { shell: true, stdio: 'inherit' });
+
+        }
+
     }
 
 }

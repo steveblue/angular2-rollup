@@ -17,7 +17,7 @@ class ClosureBuilder {
     }
 
     bundle() {
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             util.log('closure compiler started');
             // console.log(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`);
@@ -31,7 +31,6 @@ class ClosureBuilder {
                     }
                     else if (stderr.includes('ERROR')) {
 
-                        if (rej) rej(stderr);
                         util.error(stderr);
 
                     }

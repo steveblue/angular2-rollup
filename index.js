@@ -13,19 +13,39 @@ program
     .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
     .option('--config [string]', 'path to configuration file for library build')
     .option('--deploy [bool]', 'pass argument to post buildHook for deployment')
+    .option('serve, --serve [bool]', 'spawn the local express server')
     .parse(process.argv);
 
 if (!fs.existsSync(path.normalize(config.cliRoot + '/src/build/'+program.build+'.js'))) {
     util.error(program.build + ' build does not exist.');
 }
 
-fs.writeFileSync(__dirname + '/cli.config.json', JSON.stringify({
+fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
     env: program.build,
     program: program
-}, null, 4), 'utf-8');
+}, null, 4), 'utf-8', () => {
+    if (program.build) {
+        const BuildScript = require('./src/build/'+program.build+'.js');
+        let build = new BuildScript().init();
+    }
+});
 
-if (program.build) {
-    const BuildScript = require('./src/build/'+program.build+'.js');
-    let build = new BuildScript().init();
 
+let exitHandler = (options, err) => {
+    //util.cleanOnExit();
+    // if (err) util.error(err);
+    if (options.exit) process.exit();
 }
+
+// do something when app is closing
+process.on('exit', exitHandler.bind(null,{cleanup:true}));
+
+// catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, {exit:true}));
+
+// catches "kill pid" (for example: nodemon restart)
+process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
+process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
+
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null, {exit:true}));

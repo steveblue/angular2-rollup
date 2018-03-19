@@ -1,7 +1,8 @@
 ## 2.0.0
 
 - Refactored build scripts for easier maintanence over time
-- Improvements to build scripts allow for faster build times 
+- Improvements to build scripts allow for faster build times
+- Fixed an issue that prevented styles from compiling in library builds
 
 ### IMPROVEMENTS
 
@@ -10,8 +11,27 @@
 
 ### BREAKING CHANGES
 
+- `main.js`, `main.prod.js` and `main.prod.ts` are now deprecated. These files can be removed. The build now automatically handles `main.ts` for dev and jit builds.
 - Upgrade `rollup` to `^0.55.0`. The library build now supports `input` and `output` syntax by default
-- Arguments passed to buildHooks may change, please check and update where necessary
+- Arguments passed to buildHooks and server.js may change, please check and update where necessary
+
+For example, in previous scaffolds `server.js` contained this conditional checking for `--watch` but `canWatch` supposes there is an `=`. In 2.0.0 only `watch` is exposed, not anything after the `=`:
+
+BEFORE:
+
+```
+  if (arg.includes('watch')) {
+    canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+```
+
+AFTER:
+```
+  if (arg.includes('watch')) {
+    canWatch = true;
+  }
+```
+
 - Change the model for declaring library packages in `ngr.config.js`. The new config should look like this:
 
 BEFORE:

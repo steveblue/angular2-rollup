@@ -77,7 +77,9 @@ class DevBuild extends Build {
       if (cli.program.watch === true) {
         const watcher = new Watcher();
       }
+
       util.getTime(this.startTime);
+
 
     }
 
