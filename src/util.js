@@ -45,6 +45,26 @@ class Util {
 
     }
 
+    copyBatch(fileList, dist) {
+
+        return new Promise((res, rej) => {
+            try {
+
+                fileList.forEach((filePath, index) => {
+                    if (!fs.existsSync(path.join(dist, this.getFilePath(filePath)))) mkdir('-p', path.join(dist, this.getFilePath(filePath)));
+                    cp(filePath, path.join(dist, filePath));
+                    this.log(this.getFileName(filePath), 'copied to', dist);
+                });
+
+                res();
+            }
+            catch(err) {
+                rej(err);
+            }
+        })
+
+    }
+
     copyFile(src, dist) {
 
         cp(src, dist);
@@ -54,6 +74,7 @@ class Util {
 
     copyDir(src, dist) {
 
+        if (!fs.existsSync(dist)) mkdir('-p', dist);
         cp('-R', src + '.', path.normalize(path.join(dist, '/')));
         this.log(src, 'copied to', dist);
 
@@ -84,10 +105,18 @@ class Util {
 
         return new Promise((res, rej) => {
 
+            let env;
+
+            if (cli.env === 'jit') {
+                env = 'dev';
+            } else {
+                env = cli.env;
+            }
+
             exec(path.join(config.cliRoot, path.normalize('node_modules/.bin/htmlprocessor')) +
                 ' ' + path.normalize(template) +
                 ' -o ' + path.normalize(path.join(config.build, '/') + 'index.html') +
-                ' -e ' + cli.env, { silent: true }, (error, stdout, stderr) => {
+                ' -e ' + env, { silent: true }, (error, stdout, stderr) => {
                     this.log('htmlprocessor', 'formatted ' + template);
                     if (error) {
                         this.warn(error);
@@ -191,7 +220,6 @@ class Util {
 
     inlineHTMLandCSS(options, source, dir) {
 
-
         let stringRegex = this.stringRegex;
 
         /* Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz */
@@ -271,11 +299,14 @@ class Util {
     warn(action, noun) {
         let a = action ? colors.red(action) : '';
         let n = noun ? colors.white(noun) : '';
-        console.log(a + ' ' + n);
+        process.stdout.write('\n');
+        process.stdout.write(a);
     }
 
     error(str) {
-        console.log(str);
+        process.stdout.write('\n');
+        console.log( colors.red(str) );
+        process.exit();
     }
 
 }

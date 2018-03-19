@@ -5,6 +5,7 @@ const utils = require('./util');
 const chokidar = require('chokidar');
 const SassBuilder = require('./style/sass.js');
 const PostCSSBuilder = require('./style/postcss.js');
+const TSBuilder      = require('./compile/tsc.js');
 const config = require('./config');
 const util = require('./util');
 const cli = require('./../cli.config.json');
@@ -14,7 +15,7 @@ class Watcher {
 
         const sassBuilder = new SassBuilder({ dist: config.build });
         const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: (cli.env === 'dev') ? false : true });
-
+        const jitBuilder = new TSBuilder();
         const watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
             ignored: /[\/\\]\./,
             persistent: true
@@ -30,6 +31,12 @@ class Watcher {
                     util.log('libass and postcss compiled', util.getFileName(postcss));
                 })();
             }
+            else if (filePath.indexOf('.ts') > -1 && cli.env === 'jit') {
+                jitBuilder.compile('tsconfig.' + cli.env + '.json');
+            }
+            else if (filePath.indexOf('.html') > -1 && cli.env === 'jit') {
+                util.copyFile(filePath, path.join(config.build, filePath));
+            }
 
         }).on('unlink', filePath => util.warn(filePath, 'has been removed'))
           .on('error', error => util.warn('ERROR:', error));
@@ -40,7 +47,7 @@ class Watcher {
     }
 
     updatePublic(filePath) {
- 
+
         if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
             util.formatIndex(path.normalize(config.src + '/public/index.html'));
         } else {

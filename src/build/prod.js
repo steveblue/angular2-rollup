@@ -36,6 +36,7 @@ class ProdBuild extends Build {
       })();
 
       (async () => {
+
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
         const copycss = await postcssBuilder.copyToNgFactory(postcss);
@@ -43,6 +44,7 @@ class ProdBuild extends Build {
         const bundle = await closureBuilder.bundle();
         if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
         util.getTime(this.startTime);
+
       })();
 
     }
@@ -54,6 +56,7 @@ class ProdBuild extends Build {
       }
 
       cp('-R', path.normalize(config.src + '/'), path.normalize('./ngfactory'));
+      cp('main.ts', 'main.js');
       util.log(config.src + '/*.ts', 'copied to', 'ngfactory/*.ts');
 
       // remove moduleId prior to ngc build. TODO: look for another method.
@@ -78,6 +81,7 @@ class ProdBuild extends Build {
     post() {
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+      rm('main.js');
       console.log('');
       util.getTime(this.startTime);
 

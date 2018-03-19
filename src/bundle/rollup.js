@@ -9,7 +9,7 @@ class RollupBuilder {
     constructor() {}
 
     bundle(rollupConfigPath) {
-       
+
         return new Promise((res, rej) => {
 
             util.log('rollup started');
@@ -18,8 +18,9 @@ class RollupBuilder {
                 ' -c ' + rollupConfigPath, {silent: true}, (error, stdout, stderr) => {
 
                     if (stderr.includes('Error')) {
-                        util.warn(stderr);
-                        rej(error);
+                        if (rej) rej(error);
+                        util.error(stderr);
+
                     } else {
                         util.log(stderr);
                         res();

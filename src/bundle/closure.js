@@ -6,7 +6,7 @@ const cli = require('./../../cli.config.json');
 
 class ClosureBuilder {
 
-    constructor() { 
+    constructor() {
 
         this.jarPath = util.hasConfigProperty('jarPath', config.prodOptions) ? config.prodOptions.jarPath : path.resolve('node_modules', 'google-closure-compiler', 'compiler.jar');
         this.warningLevel = util.hasConfigProperty('warningLevel', config.prodOptions) ? config.prodOptions.warningLevel : 'QUIET';
@@ -24,22 +24,26 @@ class ClosureBuilder {
             let closure = exec(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`,
                 { silent: true },
                 (error, stdout, stderr) => {
-                    
+
                     if (stdout.includes('ERROR')) {
-                        util.error(error);
-                        if (rej) {
-                            rej(error);
-                        }
-                    } else {
-                        util.log('closure compiler bundled');
-                        console.log('');
+                        if (rej) rej(error);
+                        util.error(error)
+                    }
+                    else if (stderr.includes('ERROR')) {
+
+                        if (rej) rej(stderr);
+                        util.error(stderr);
+
+                    }
+                     else {
+                        util.log('Compilation complete.');
                         if (res) {
                             res('done');
                         }
                     }
 
                 });
-        }) 
+        })
     }
 
 }

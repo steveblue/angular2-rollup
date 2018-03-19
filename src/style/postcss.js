@@ -31,7 +31,8 @@ class PostCSS {
             }
             catch (err) {
 
-                rej(err);
+                if (rej) rej(err);
+                util.error(err);
 
             }
 
@@ -47,6 +48,9 @@ class PostCSS {
 
             if (cli.env === 'lib') {
                 env = 'prod'
+            }
+            if (cli.env === 'jit') {
+                env = 'dev'
             } else {
                 env = cli.env;
             }
@@ -75,12 +79,13 @@ class PostCSS {
                 ' ' + outFile +
                 (this.cssConfig.sourceMap === false ? ' --no-map true' : '') +
                 ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + env + '.js')) +
-                ' -r ' + postcssConfig, { silent: true }, (code, output, error) => {
+                ' -r ' + postcssConfig, { silent: true }, (error, stdout, stderr) => {
 
-                    if (error && error.includes('Finished') === false) {
-                        util.warn(error);
-                        console.log('');
-                        rej(error);
+                    if (stderr && error.includes('Finished') === false) {
+
+                        if (rej) rej(stderr);
+                        util.error(stderr);
+
                     }
 
                     if (res) {
@@ -89,7 +94,7 @@ class PostCSS {
                     }
 
                 });
-        
+
         });
 
     }
@@ -102,17 +107,18 @@ class PostCSS {
                     if (!file.includes('style/')) {
                         return file;
                     }
-                }).map((file) => { 
+                }).map((file) => {
                     cp(file, file.replace(config.src, 'ngfactory/' + config.src));
                     return file.replace(config.src, 'ngfactory/' + config.src);
-                });    
+                });
                 res(copiedFiles);
             }
             catch(err) {
-                rej(err);
+                if (rej) rej(err);
+                util.error(err);
             }
         });
-        
+
     }
 
 }

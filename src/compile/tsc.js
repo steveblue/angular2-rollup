@@ -5,53 +5,26 @@ const util = require('./../util.js');
 const config = require('./../config');
 const cli = require('./../../cli.config.json');
 
-class AOTBuilder {
+class TSBuilder {
 
     constructor() {}
 
     compile(tsConfigPath) {
 
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             let hasCompiled = false;
+            util.log('typescript started');
 
-            if (cli.program.watch) {
-
-                util.log('@angular/compiler started AOT compilation');
-
-                const ngc = exec(path.join('node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch');
-
-                ngc.stderr.on('data', (data) => {
-                    if (data.includes('Compilation complete.')) {
-                        util.log(data);
-                    }
-                    if (data.includes('error')) {
-                        util.warn(data);
-                    }
-                    if (hasCompiled == false && data.includes('Compilation complete.')) {
-                        hasCompiled = true;
-                        res();
-                    }
-                });
-
-            } else {
-
-
-                let ngc = exec(path.normalize(path.resolve('node_modules', '.bin', 'ngc') +
-                ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json')), { silent: true }, function (code, output, error) {
-                    if (error) {
-
-                        if (rej) rej(error);
-                        util.error(error);
-
-                    } else {
-                        util.log('Compilation complete.');
-                        res('done');
-                    }
-                });
-
-
-            }
+            let tsc = exec(path.normalize(path.resolve('node_modules', '.bin', 'tsc') +
+            ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json')), {}, function (error, stdout, stderr) {
+                if (error) {
+                    util.warn(stdout);
+                } else {
+                    util.log('Compilation complete.');
+                    res('done');
+                }
+            });
 
         });
     }
@@ -61,13 +34,20 @@ class AOTBuilder {
         return new Promise((res, rej) => {
 
             const outFile = path.join(config.projectRoot, config.build, 'main.ts');
+            const compiledFile = path.join(config.projectRoot, 'main.jit.js');
+            const compiledFileMap = path.join(config.projectRoot, 'main.jit.js.map');
             const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
 
             fs.readFile(path.join(config.projectRoot, 'main.ts'), 'utf8', (err, contents) => {
+
                 if (!err) {
-                    contents = contents.replace("./ngfactory/" + config.src + "/app/app.module.ngfactory", config.src + "/app/app.module.ngfactory");
+                    contents = contents.replace("./ngfactory/" + config.src + "/app/app.module.ngfactory", config.src + "/app/app.module");
                     contents = contents.replace("import { enableProdMode } from '@angular/core';", '');
                     contents = contents.replace("enableProdMode();", "");
+                    contents = contents.replace(/platformBrowser/g, "platformBrowserDynamic");
+                    contents = contents.replace(/AppModuleNgFactory/g, "AppModule");
+                    contents = contents.replace("@angular/platform-browser", "@angular/platform-browser-dynamic");
+                    contents = contents.replace("bootstrapModuleFactory", "bootstrapModule");
                     fs.writeFile(outFile, contents, (err) => {
                         if (!err) {
 
@@ -100,4 +80,4 @@ class AOTBuilder {
 }
 
 
-module.exports = AOTBuilder;
+module.exports = TSBuilder;

@@ -37,7 +37,8 @@ class Sass {
             }
             catch (err) {
 
-                rej(err);
+                if (rej) rej(err);
+                util.error(err);
 
             }
 
@@ -48,58 +49,62 @@ class Sass {
 
     file(filePath)  {
 
+        let env;
+
+        if (cli.env === 'jit') {
+            env = 'dev'
+        } else {
+            env = cli.env;
+        }
+
         const srcPath = util.getFilePath(filePath);
         const filename = util.getFileName(filePath);
         // determine if file is global or not, swap .scss to .css in filename
-        const outFile = filePath.indexOf(config.src + '/style') > -1 ?
-                      path.normalize(filePath.replace(config.src, this.sassConfig.dist).replace('.scss', '.css')) :
-                      filePath.replace('.scss', '.css'); // TODO: make style dir configurable
-        const outFilePath = util.getFilePath(outFile);
+        let outFile = filePath.indexOf(config.src + '/style') > -1 ?
+                      path.normalize(filePath.replace(config.src, this.sassConfig.dist)) :
+                      filePath; // TODO: make style dir configurable
+        let outFilePath = util.getFilePath(outFile);
+
+        if (cli.env === 'dev' || cli.env === 'prod' || cli.env === 'lib') {
+            outFilePath = util.getFilePath(outFile);
+        }
+        if (cli.env === 'jit' && srcPath.indexOf(config.src + '/style') === -1) {
+            outFilePath = util.getFilePath(path.join(this.sassConfig.dist, outFile));
+        }
+
+        outFile = path.join(outFilePath, filename.replace('scss', 'css'));
 
         // this file is global w/ underscore and should not be compiled, compile global files instead
         if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
-            return this.batch(ls(path.normalize(config.src + '/**/*.scss')));
+            return this.batch(ls(path.normalize(config.src + '/**/* d.scss')));
         }
-
+        util.log('preprocessing '+outFile);
         return new Promise((res, rej) => {
 
-            config.style.sass[cli.env].file = filePath;
-            config.style.sass[cli.env].outFile = outFile;
+            config.style.sass[env].file = filePath;
+            config.style.sass[env].outFile = outFile;
 
-            if ( cli.env === 'prod' ) { // TODO: add config for AOT
-
-                if ( fs.existsSync(path.normalize('ngfactory/' + outFilePath)) == false ) {
-                    mkdir('-p', path.normalize('ngfactory/' + outFilePath));
-                }
-
-                if (filePath.indexOf(config.src + '/style') === -1) {
-
-                    if ( !fs.existsSync(path.normalize('ngfactory/' + outFilePath)) ) {
-                        mkdir('-p', path.normalize('ngfactory/' +  outFilePath));
-                    }
-
-                }
-
+            if ( fs.existsSync(outFilePath) == false ) {
+                mkdir('-p', outFilePath);
             }
 
             if (this.sassConfig.sourceMap) {
-                config.style.sass[cli.env].sourceMap = this.sassConfig.sourceMap;
+                config.style.sass[env].sourceMap = this.sassConfig.sourceMap;
             }
 
-            sass.render(config.style.sass[cli.env], (error, result) => {
+            sass.render(config.style.sass[env], (error, result) => {
                 if (error) {
 
-                    util.warn(error.message, 'LINE: ' + error.line);
-                    console.log('');
+                    if (rej) rej(error);
+                    util.error('ERROR - '+ error.message + ' LINE - ' + error.line + ' FILE - '+filename);
 
                 } else {
 
                     fs.writeFile(outFile, result.css, (err) => {
 
                         if (err) {
-                            if (rej) {
-                                rej(err);
-                            }
+                            if (rej) rej(err);
+                            util.error(err);
                         }
                         if (res) {
                             res(outFile);

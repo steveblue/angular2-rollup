@@ -1,15 +1,16 @@
+require('shelljs/global');
 const path           = require('path');
 const fs             = require('fs');
 const Build          = require('./index.js');
 const SassBuilder    = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
-const AOTBuilder     = require('./../compile/ngc.js');
+const TSBuilder      = require('./../compile/tsc.js');
 const Watcher        = require('./../watch.js');
 const util           = require('./../util.js');
 const config         = require('./../config');
 const cli            = require('./../../cli.config.json');
 
-class DevBuild extends Build {
+class JitBuild extends Build {
 
     constructor() {
         super();
@@ -22,14 +23,16 @@ class DevBuild extends Build {
 
     build() {
 
+      const env = 'dev';
       const sassBuilder = new SassBuilder({ dist: config.build });
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
-      const aotBuilder = new AOTBuilder();
+      const jitBuilder = new TSBuilder();
 
       (async () => {
-        const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['lib'],
-                                       config.lib && config.lib[cli.env] ? config.lib.src : config.dep.src,
-                                       config.lib && config.lib[cli.env] ? config.lib.dist : config.dep.dist);
+        const lib = await util.copyLib(config.lib && config.lib[env] ? config.lib[env] : config.dep['lib'],
+                                       config.lib && config.lib[env] ? config.lib.src : config.dep.src,
+                                       config.lib && config.lib[env] ? config.lib.dist : config.dep.dist);
+        const html = await util.copyBatch(ls(path.normalize(config.src + '/app/**/*.html')), config.build);
         const publicDir = await util.copyDir(path.normalize(config.src + '/public/'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
       })();
@@ -37,17 +40,17 @@ class DevBuild extends Build {
       (async () => {
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
-        const src = await aotBuilder.compile('tsconfig.' + cli.env + '.json');
+        const src = await jitBuilder.compile('tsconfig.' + cli.env + '.json');
         this.post();
       })();
 
-      if (!fs.existsSync(path.join(config.build, 'main.js'))) {
+      //if (!fs.existsSync(path.join(config.build, 'main.js'))) {
         (async () => {
-          const main = await aotBuilder.compileMain().then((res) => {
+          const main = await jitBuilder.compileMain().then((res) => {
               util.log('compiled main.js');
           });
         })();
-      }
+      //}
 
     }
 
@@ -83,4 +86,4 @@ class DevBuild extends Build {
 
 }
 
-module.exports = DevBuild;
+module.exports = JitBuild;
