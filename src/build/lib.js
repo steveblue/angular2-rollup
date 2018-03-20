@@ -8,6 +8,7 @@ const AOTBuilder = require('./../compile/ngc.js');
 const RollupBuilder = require('./../bundle/rollup.js');
 const Watcher = require('./../watch.js');
 const util = require('./../util.js');
+const log = require('./../log.js');
 const config = require('./../config');
 const cli = require('./../../cli.config.json');
 
@@ -165,12 +166,12 @@ class LibBuild extends Build {
                 rm(path.join(path.normalize(this.libConfig.dist), this.libConfig.filename)+'.es5.d.ts'); 
                 // copy metadata
                 cp(path.normalize(path.join('./ngfactory', this.libConfig.filename + '.metadata.json')), path.normalize(this.libConfig.dist)); 
-                util.log('d.ts, metadata.json', 'copied to', './' + this.libConfig.dist);
+                log.message('d.ts, metadata.json', 'copied to', './' + this.libConfig.dist);
                 // remove .ts files from dist
                 find(path.normalize('./' + this.libConfig.dist)).filter((file) => {
 
                     if (util.hasHook('clean')) {
-                        util.log('processing clean task');
+                        log.message('processing clean task');
                         config.buildHooks.lib.clean(process.argv, file);
                     } else {
                         if (file.match(/component.ts$/) || file.match(/directive.ts$/) || file.match(/injectable.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
@@ -209,7 +210,7 @@ class LibBuild extends Build {
             });
 
             if (util.hasHook('pre')) {
-                util.log('processing pre task');
+                log.message('processing pre task');
                 config.buildHooks[cli.env].pre(process.argv).then(() => {
                     this.build();
                 });
@@ -221,7 +222,7 @@ class LibBuild extends Build {
             }
 
         }).catch((err) => {
-            util.warn(err); // TODO: exit process
+            log.warn(err); // TODO: exit process
         })
    
     }
@@ -239,9 +240,9 @@ class LibBuild extends Build {
             // copy package.json to dist
             exec('cp ' + this.libConfig.src + '/package.json' + ' ' + this.libConfig.dist + '/package.json', () => {
 
-                util.log('package.json', 'copied to', './' + this.libConfig.dist);
+                log.message('package.json', 'copied to', './' + this.libConfig.dist);
                 if (util.hasHook('post')) {
-                    util.log('processing post task');
+                    log.message('processing post task');
                     config.buildHooks[cli.env].post(process.argv);
                 }
                 util.getTime(this.startTime);

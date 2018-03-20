@@ -1,7 +1,6 @@
 require('shelljs/global');
 
 const colors      = require('colors');
-const logger      = require('single-line-log').stdout;
 const path        = require('path');
 const fs          = require('fs');
 const MagicString = require('magic-string');
@@ -11,6 +10,7 @@ const spawn       = require('child_process').spawn;
 const moment      = require('moment');
 const config      = require('./config');
 const cli         = require('./../cli.config.json');
+const log         = require('./log');
 
 class Util {
 
@@ -36,8 +36,8 @@ class Util {
 
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
-      console.log('');
-      this.alert('ngr built in ' + colors.green(duration.asSeconds() + 's'));
+      log.break();
+      log.alert('ngr built in ' + colors.green(duration.asSeconds() + 's'));
       if (this.hasArg('serve')) {
         this.serve(cli.program.watch);
       }
@@ -64,7 +64,7 @@ class Util {
                 fileList.forEach((filePath, index) => {
                     if (!fs.existsSync(path.join(dist, this.getFilePath(filePath)))) mkdir('-p', path.join(dist, this.getFilePath(filePath)));
                     cp(filePath, path.join(dist, filePath));
-                    this.log(this.getFileName(filePath), 'copied to', dist);
+                    log.message(filePath, 'copied to', dist);
                 });
 
                 res();
@@ -79,7 +79,7 @@ class Util {
     copyFile(src, dist) {
 
         cp(src, dist);
-        this.log(this.getFileName(src), 'copied to', this.getFilePath(dist));
+        log.message(src, 'copied to',  dist);
 
     }
 
@@ -87,7 +87,7 @@ class Util {
 
         if (!fs.existsSync(dist)) mkdir('-p', dist);
         cp('-R', src + '.', path.normalize(path.join(dist, '/')));
-        this.log(this.getFileName(src), 'copied to',this.getFilePath(dist));
+        log.message(src, 'copied to', dist);
 
     }
 
@@ -128,9 +128,9 @@ class Util {
                 ' ' + path.normalize(template) +
                 ' -o ' + path.normalize(path.join(config.build, '/') + 'index.html') +
                 ' -e ' + env, { silent: true }, (error, stdout, stderr) => {
-                    this.log('htmlprocessor', 'formatted ' + this.getFileName(template));
+                    log.message('htmlprocessor', 'formatted ' + this.getFileName(template));
                     if (error) {
-                        this.warn(error);
+                        log.warn(error);
                         if (rej) rej(error);
                     }
                     if (res) res();
@@ -167,13 +167,13 @@ class Util {
 
                     if (!fs.existsSync( path.join(dist, paths[i]) )) {
                         cp('-R', path.join(src, paths[i]), path.join(dist, paths[i]));
-                        this.log(paths[i]);
+                        log.message(paths[i]);
                     }
 
                 }
 
                     if (i === paths.length - 1) {
-                        this.log(src.replace('./', ''), 'copied to', dist.replace('./', ''));
+                        log.message(src.replace('./', ''), 'copied to', dist.replace('./', ''));
                         res();
                     }
 
@@ -217,13 +217,13 @@ class Util {
 
                 fs.writeFile(outFile, contents, (err) => {
                     if (!err && this.getFileName(outFile).includes('component')) {
-                        this.log('inline template and styles in', outFile);
+                        log.message('inline template and styles in', outFile);
                     } else if (err){
-                        this.warn(err);
+                        log.warn(err);
                     }
                 });
             } else {
-                this.warn(err);
+                log.warn(err);
             }
 
         });
@@ -290,57 +290,6 @@ class Util {
 
         return result;
 
-    }
-
-    formatTSError(str) {
-        let lineNumbers = str.slice(str.indexOf('(')+1, str.indexOf(')')).split(',');
-        let err = {
-            service: 'TypeScript',
-            file: str.slice(0, str.indexOf('(')),
-            line: lineNumbers[0],
-            column: lineNumbers[1],
-            message: str.slice(str.indexOf(':')+2, str.length)
-        }
-        this.lastError = err;
-        return err;
-    }
-
-    log(action, noun, next) {
-        let a = action ? colors.dim(colors.white(action)) : '';
-        let n = noun ? colors.dim(colors.white(noun)) : '';
-        let x = next ? colors.dim(colors.white(next)) : '';
-        logger(' ' + a + ' ' + n + ' ' + x);
-    }
-
-    alert(noun, verb, action, next) {
-        let n = noun ? colors.white(noun) : '';
-        let v = verb ? colors.white(verb) : '';
-        let a = action ? colors.white(action) : '';
-        let x = next ? colors.dim(colors.white(next)) : '';
-        console.log(' ' + n + ' ' + v + ' ' + a + ' ' + x);
-    }
-
-    warn(action, noun) {
-        let a = action ? colors.red(action) : '';
-        let n = noun ? colors.white(noun) : '';
-        process.stdout.write('\n');
-        process.stdout.write(a);
-    }
-
-    error(err) {
-
-        if (typeof err === 'string') {
-            process.stdout.write('\n');
-            console.log( colors.red(err) );
-        } else {
-            let msg = ' '+err.message.replace(/'(.*?)'/g, colors.white("'")+colors.red("$1")+colors.white("'") );
-            console.log('\n\n'+
-            colors.red(' ' +err.service.toUpperCase()+' ERROR') + ' '+
-            colors.white(this.getFileName(err.file)) + colors.grey(' ('+ err.line + ' | '+ err.column +')') + '\n\n' +
-            colors.grey(msg) +' ');
-        }
-
-        //process.exit();
     }
 
     serve(watch, isUniversal) {

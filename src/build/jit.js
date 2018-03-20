@@ -7,6 +7,7 @@ const PostCSSBuilder = require('./../style/postcss.js');
 const TSBuilder      = require('./../compile/tsc.js');
 const Watcher        = require('./../watch.js');
 const util           = require('./../util.js');
+const log            = require('./../log.js');
 const config         = require('./../config');
 const cli            = require('./../../cli.config.json');
 
@@ -47,7 +48,7 @@ class JitBuild extends Build {
       //if (!fs.existsSync(path.join(config.build, 'main.js'))) {
         (async () => {
           const main = await jitBuilder.compileMain().then((res) => {
-              util.log('compiled main.js');
+              log.message('compiled main.js');
           });
         })();
       //}

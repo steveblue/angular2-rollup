@@ -6,6 +6,7 @@ const PostCSSBuilder = require('./../style/postcss.js');
 const AOTBuilder     = require('./../compile/ngc.js');
 const Watcher        = require('./../watch.js');
 const util           = require('./../util.js');
+const log            = require('./../log.js');
 const config         = require('./../config');
 const cli            = require('./../../cli.config.json');
 
@@ -44,7 +45,7 @@ class DevBuild extends Build {
       if (!fs.existsSync(path.join(config.build, 'main.js'))) {
         (async () => {
           const main = await aotBuilder.compileMain().then((res) => {
-              util.log('compiled main.js');
+              log.message('compiled main.js');
           });
         })();
       }

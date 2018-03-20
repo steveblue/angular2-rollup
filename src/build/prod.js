@@ -7,6 +7,7 @@ const PostCSSBuilder  = require('./../style/postcss.js');
 const AOTBuilder      = require('./../compile/ngc.js');
 const ClosureBuilder  = require('./../bundle/closure.js');
 const util            = require('./../util.js');
+const log             = require('./../log.js');
 const config          = require('./../config');
 const cli             = require('./../../cli.config.json');
 
@@ -77,7 +78,7 @@ class ProdBuild extends Build {
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
       rm('main.js');
-      console.log('');
+      log.break();
       util.getTime(this.startTime);
 
     }

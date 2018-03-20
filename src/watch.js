@@ -8,6 +8,7 @@ const PostCSSBuilder = require('./style/postcss.js');
 const TSBuilder      = require('./compile/tsc.js');
 const config = require('./config');
 const util = require('./util');
+const log = require('./log');
 const cli = require('./../cli.config.json');
 
 class Watcher {
@@ -28,7 +29,7 @@ class Watcher {
                 (async () => {
                     const sass = await sassBuilder.file(filePath);
                     const postcss = await postcssBuilder.file(sass);
-                    util.log('libass and postcss compiled', util.getFileName(postcss));
+                    log.message('libass and postcss compiled', util.getFileName(postcss));
                 })();
             }
             else if (filePath.indexOf('.ts') > -1 && cli.env === 'jit') {
@@ -38,9 +39,9 @@ class Watcher {
                 util.copyFile(filePath, path.join(config.build, filePath));
             }
 
-        }).on('unlink', filePath => util.warn(filePath, 'has been removed'))
-          .on('error', error => util.warn('ERROR:', error));
-          //.on('ready', error => util.log('listening for changes'));
+        }).on('unlink', filePath => log.warn(filePath, 'has been removed'))
+          .on('error', error => log.warn('ERROR:', error));
+          //.on('ready', error => log.message('listening for changes'));
 
         return watcher;
 

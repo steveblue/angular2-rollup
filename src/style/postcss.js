@@ -4,6 +4,7 @@ const sass      = require('node-sass');
 const path      = require('path');
 const fs        = require('fs');
 const util      = require('./../util.js');
+const log       = require('./../log.js');
 const config    = require('./../config');
 const cli       = require('./../../cli.config.json');
 
@@ -15,7 +16,7 @@ class PostCSS {
 
     batch(fileList) {
 
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             try {
                 const files = fileList.filter((filePath, index) => {
@@ -31,8 +32,7 @@ class PostCSS {
             }
             catch (err) {
 
-                if (rej) rej(err);
-                util.error(err);
+                log.error(err);
 
             }
 
@@ -42,7 +42,7 @@ class PostCSS {
 
     file(filePath) {
 
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             let env;
 
@@ -63,7 +63,7 @@ class PostCSS {
             let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(filePath.replace(config.src, this.cssConfig.dist).replace('.scss', '.css')) : filePath.replace('.scss', '.css');
 
             if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
-                utils.style.globalFiles(config, res, rej);
+                utils.style.globalFiles(config, res);
                 return;
             } // this file is global w/ underscore and should not be compiled, compile global files instead
 
@@ -82,14 +82,10 @@ class PostCSS {
                 ' -r ' + postcssConfig, { silent: true }, (error, stdout, stderr) => {
 
                     if (stderr && error.includes('Finished') === false) {
-
-                        if (rej) rej(stderr);
-                        util.error(stderr);
-
+                        log.error(stderr);
                     }
 
                     if (res) {
-
                         res(filePath, outFile);
                     }
 
@@ -101,7 +97,7 @@ class PostCSS {
 
     copyToNgFactory(files) {
 
-        return new Promise((res, rej)=>{
+        return new Promise((res)=>{
             try {
                 let copiedFiles = files.filter((file) => {
                     if (!file.includes('style/')) {
@@ -114,8 +110,7 @@ class PostCSS {
                 res(copiedFiles);
             }
             catch(err) {
-                if (rej) rej(err);
-                util.error(err);
+                log.error(err);
             }
         });
 

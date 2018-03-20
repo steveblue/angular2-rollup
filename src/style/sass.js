@@ -3,8 +3,8 @@ require('shelljs/global');
 const sass      = require('node-sass');
 const path      = require('path');
 const fs        = require('fs');
-const util     = require('./../util.js');
-
+const util      = require('./../util.js');
+const log       = require('./../log.js');
 const config    = require('./../config');
 const cli       = require('./../../cli.config.json');
 
@@ -21,7 +21,7 @@ class Sass {
             mkdir('-p', path.join(this.sassConfig.dist, 'style'));
         }
 
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             try {
                 const files = fileList.filter((filePath, index) => {
@@ -36,10 +36,7 @@ class Sass {
 
             }
             catch (err) {
-
-                if (rej) rej(err);
-                util.error(err);
-
+                log.error(err);
             }
 
 
@@ -78,7 +75,9 @@ class Sass {
         if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
             return this.batch(ls(path.normalize(config.src + '/**/* d.scss')));
         }
-        util.log('preprocessing '+outFile);
+
+        log.message('preprocessing '+outFile);
+
         return new Promise((res) => {
 
             config.style.sass[env].file = filePath;
@@ -94,18 +93,18 @@ class Sass {
 
             sass.render(config.style.sass[env], (error, result) => {
                 if (error) {
-
+                    log.line();
                     error.service = 'sass';
-                    util.error(error);
+                    log.error(error);
 
                 } else {
 
                     fs.writeFile(outFile, result.css, (err) => {
 
                         if (err) {
-
+                            log.line();
                             err.service = 'sass';
-                            util.error(err);
+                            log.error(err);
                         }
                         if (res) {
                             res(outFile);

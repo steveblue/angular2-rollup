@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const exec = require('child_process').exec;
 const util = require('./../util.js');
+const log = require('./../log.js');
 const config = require('./../config');
 const cli = require('./../../cli.config.json');
 
@@ -14,14 +15,14 @@ class TSBuilder {
         return new Promise((res) => {
 
             let hasCompiled = false;
-            util.log('typescript started');
+            log.message('typescript started');
 
             let tsc = exec(path.normalize(path.resolve('node_modules', '.bin', 'tsc') +
             ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json')), {}, function (error, stdout, stderr) {
                 if (error) {
-                    util.warn(stdout);
+                    log.warn(stdout);
                 } else {
-                    util.log('Compilation complete.');
+                    log.message('Compilation complete.');
                     res('done');
                 }
             });
@@ -31,7 +32,7 @@ class TSBuilder {
 
     compileMain() {
 
-        return new Promise((res, rej) => {
+        return new Promise((res) => {
 
             const outFile = path.join(config.projectRoot, config.build, 'main.ts');
             const compiledFile = path.join(config.projectRoot, 'main.jit.js');
@@ -56,8 +57,7 @@ class TSBuilder {
                                             (error, stdout, stderr) => {
                                                 rm(outFile);
                                                 if(error.killed) {
-                                                    if (rej) rej(error);
-                                                    util.error(error);
+                                                    log.error(error);
                                                 } else {
                                                     res();
                                                 }

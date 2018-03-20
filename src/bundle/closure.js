@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const util = require('./../util.js');
+const log = require('./../log.js');
 const config = require('./../config');
 const cli = require('./../../cli.config.json');
 
@@ -19,7 +20,7 @@ class ClosureBuilder {
     bundle() {
         return new Promise((res) => {
 
-            util.log('closure compiler started');
+            log.message('closure compiler started');
             // console.log(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`);
             let closure = exec(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`,
                 { silent: true },
@@ -27,15 +28,15 @@ class ClosureBuilder {
 
                     if (stdout.includes('ERROR')) {
                         if (rej) rej(error);
-                        util.error(error)
+                        log.error(error)
                     }
                     else if (stderr.includes('ERROR')) {
 
-                        util.error(stderr);
+                        log.error(stderr);
 
                     }
                      else {
-                        util.log('Compilation complete.');
+                        log.message('Compilation complete.');
                         if (res) {
                             res('done');
                         }
