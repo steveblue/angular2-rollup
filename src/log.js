@@ -45,6 +45,7 @@ class Log {
     }
 
     error(err) {
+
         if (typeof err === 'string') {
             process.stdout.write('\n');
             console.log(colors.red(err));
