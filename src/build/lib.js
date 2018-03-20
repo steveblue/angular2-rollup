@@ -62,7 +62,7 @@ class LibBuild extends Build {
         if (ls(path.normalize(config.src + '/style/*.scss')).length > 0) {
 
             (async () => {
-                const sass = await sassBuilder.globalFiles();
+                const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/style/*.scss')));
                 const postcss = await postcssBuilder.batch(sass);
             })();
 

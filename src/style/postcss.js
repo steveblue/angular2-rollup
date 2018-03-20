@@ -49,12 +49,12 @@ class PostCSS {
             if (cli.env === 'lib') {
                 env = 'prod'
             }
-            if (cli.env === 'jit') {
+            else if (cli.env === 'jit') {
                 env = 'dev'
             } else {
                 env = cli.env;
             }
-
+            
             const postcssConfigFile = require(config.projectRoot + '/postcss.' + env + '.js');
 
             let postcssConfig = ' -u';
