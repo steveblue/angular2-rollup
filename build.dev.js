@@ -203,14 +203,11 @@ const compile = {
   src: () => {
 
     isCompiling = true;
+    let hasCompiled = false;
 
     let readyMessage = function(isAOTWatch) {
       if (!isAOTWatch) {
         alert(colors.green('build is ready'));
-      }
-      if (canWatch === true) {
-        alert('compiling...');
-        console.log('');
       }
       if (canServe === true) {
         alert(colors.green('ready to serve'));
@@ -225,23 +222,54 @@ const compile = {
       console.log('ngr built in ' + duration.asSeconds() + 's');
     }
 
-
-
       if (canWatch === true) {
+
         utils.alert('@angular/compiler started');
-        readyMessage(true);
-        spawn(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') + ' -p ' +
-          path.normalize(tsConfig) +
-          ' --watch', { shell: true, stdio: 'inherit' });
+        const ngc = require('child_process').exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
+        ' -p ' + path.normalize(tsConfig)+ ' --watch');
+
+        ngc.stderr.on('data', (data) => {
+
+            if (data.includes('Compilation complete.')) {
+                log(data);
+            }
+            else if (data.includes('Compilation failed.')) {
+                log(data);
+            }
+            else if (data.includes('error') && data.includes('Compilation failed.') == false) {
+
+                let err = data.split('\n').filter((e) => {
+                    return e.length > 0;
+                }).forEach((e) => {
+                    console.log('\n');
+                    console.log(colors.red(e));
+                });
+
+            } else {
+              log(data);
+            }
+
+            if (hasCompiled == false && data.includes('Compilation complete.')) {
+                hasCompiled = true;
+                if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].post) {
+                  config.buildHooks[env].post(process.argv);
+                  readyMessage(true);
+                }
+            }
+
+        });
+
       } else {
         utils.alert('@angular/compiler started');
         exec(path.normalize(config.projectRoot + '/node_modules/.bin/ngc') +
           ' -p ' + path.normalize(tsConfig), { shell: true, stdio: 'inherit' }, function(){
             utils.alert('@angular/compiler compiled');
+            if (config.buildHooks && config.buildHooks[env] && config.buildHooks[env].post) {
+              config.buildHooks[env].post(process.argv);
+            }
             readyMessage();
           });
       }
-
 
 
       hasInit = true;

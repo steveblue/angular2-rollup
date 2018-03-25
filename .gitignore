@@ -77,3 +77,4 @@ cli.config.js
 closure/
 yarn.lock
 package-lock.json
+cli.config.json

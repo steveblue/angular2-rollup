@@ -1,3 +1,9 @@
+## 1.0.8
+
+- Fixed issue that prevented post buildHook from firing in dev build
+- Fixed timing issues when logging the dev build
+
+
 ## 1.0.7
 
 - Added --env argument for build command
