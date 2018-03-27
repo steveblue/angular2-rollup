@@ -24,29 +24,36 @@ class AOTBuilder {
                 
                 const ngc = exec(path.join('node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch');
          
-                ngc.stdout.on('data', (data) => {
-                    console.log(data);
-                });
-                ngc.stderr.on('data', (data) => {
-                    
-                    if (data.includes('Compilation complete.')) {
-                        log.message(data);
+
+                ngc.stderr.on('data', (stderr) => {
+          
+                    if (stderr.includes('Compilation complete.')) {
+                        log.message(stderr);
                         lastData = '';
                     }
-                    if (data.includes('Compilation failed.')) {
-                        console.log(colors.white(data).dim);
+                    else if (stderr.includes('Compilation failed.') || stderr.includes('File change')) {
+                        console.log(colors.white(stderr).dim);
                     }
-                    if (data.includes('error') && data.includes('Compilation failed.') == false && data !== lastData) {
+                    else {
+                        
                         log.line();
-                        let err = data.split('\n').filter((e) => {
+
+                        let tsError = stderr.split('\n').filter((e) => {
                             return e.length > 0;
                         }).forEach((e) => {
-                            log.error(log.formatTSError(e));
+                            if (e.includes('error')) {
+                                log.error(log.formatTSError(e));
+                            }
                         });
-                        lastData = data;
-                    }
 
-                    if (hasCompiled == false && data.includes('Compilation complete.')) {
+                        let templateErr = stderr.split(/\n:\s/g).filter((e) => {
+                            return e.includes('error') === false;
+                        }).forEach((e) => {
+                            log.error(log.formatTemplateError(e));
+                        });
+
+                    }
+                    if (hasCompiled == false && stderr.includes('Compilation complete.')) {
                         hasCompiled = true;
                         res();
                     }
@@ -59,15 +66,25 @@ class AOTBuilder {
                     if (stderr) {
 
                         log.line();
-                        let err = stderr.split('\n').filter((e) => {
+
+                        let tsError = stderr.split('\n').filter((e) => {
                             return e.length > 0;
                         }).forEach((e) => {
-                            log.error(log.formatTSError(e));
+                            if (e.includes('error')) {
+                              log.error(log.formatTSError(e));
+                            }
                         });
 
+                        let templateErr = stderr.split(/\n:\s/g).filter((e) => {
+                            return e.includes('error') === false;
+                        }).forEach((e) => {
+                            log.error(log.formatTemplateError(e));
+                        });
+
+            
                     } else {
                         log.message('Compilation complete.');
-                        res('done');
+                        res();
                     }
                 });
 
@@ -76,6 +93,8 @@ class AOTBuilder {
 
         });
     }
+
+
 
     compileMain() {
 

@@ -149,7 +149,7 @@ class Util {
 
                 for (var i = 0; i < paths.length; i++) {
 
-                if (paths[i].split('/').pop().split('.').length > 1) { // is file
+                    if (fs.lstatSync(path.join('node_modules', paths[i])).isFile()) { // is file
 
                     let file = path.join(dist, paths[i]);
 
@@ -163,7 +163,7 @@ class Util {
                         cp(path.join(src, paths[i]), path.join(dist, paths[i]));
                     }
 
-                } else { // is folder
+                } else if (fs.lstatSync(path.join('node_modules', paths[i])).isDirectory()) { // is folder
 
                     if (!fs.existsSync( path.join(dist, paths[i]) )) {
                         cp('-R', path.join(src, paths[i]), path.join(dist, paths[i]));
@@ -172,10 +172,10 @@ class Util {
 
                 }
 
-                    if (i === paths.length - 1) {
-                        log.message(src.replace('./', ''), 'copied to', dist.replace('./', ''));
-                        res();
-                    }
+                if (i === paths.length - 1) {
+                    log.message(src.replace('./', ''), 'copied to', dist.replace('./', ''));
+                    res();
+                }
 
                 }
 

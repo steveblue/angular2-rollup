@@ -19,6 +19,7 @@ class Log {
             line +=  '\u2500';
         }
         line +='💥';
+        line += '\n\n';
         process.stdout.write(colors.red(line).dim);
     }
 
@@ -45,21 +46,27 @@ class Log {
     }
 
     error(err) {
-
+  
         if (typeof err === 'string') {
             process.stdout.write('\n');
             console.log(colors.red(err));
         } else {
-            let msg = ' ' + err.message.replace(/'(.*?)'/g, colors.red("'") + colors.red("$1") + colors.red("'"))
-                                       .replace(/(error)( )((?:TS[a-z0-9]*))(:)/g, colors.white("$1$2$3").dim);
-            let link = err.file.includes(config.projectRoot) ?
-                colors.dim(' vscode://file/' + err.file + ':' + err.line + ':' + err.column) + '\n' :
-                colors.dim(' vscode://file/' + config.projectRoot + '/' + err.file + ':' + err.line + ':' + err.column) + '\n';
-            console.log('\n\n' +
-                colors.red(' ' + err.service.toUpperCase() + ' ERROR') + ' ' +
-                colors.white(colors.dim(err.file) + colors.white(' ' + err.line + ':' + err.column + ' ').dim) + '\n\n' +
+            let msg = ' ';
+            let link = '';
+
+            if (err.file.length) {
+                msg += err.message.replace(/'(.*?)'/g, colors.red("'") + colors.red("$1") + colors.red("'"))
+                    .replace(/(error)( )((?:TS[a-z0-9]*))(:)/g, colors.white("$1$2$3").dim);
+                link += err.file.includes(config.projectRoot) ?
+                    colors.dim(' vscode://file/' + err.file + ':' + err.line + ':' + err.column) + '\n' :
+                    colors.dim(' vscode://file/' + config.projectRoot + '/' + err.file + ':' + err.line + ':' + err.column) + '\n';
+            } else {
+                msg = err.message;
+            } 
+            console.log(colors.red(' ' + err.service.toUpperCase() + ' ERROR') + ' ' +
+                ((err.file.length) ? colors.white(colors.dim(err.file) + colors.white(' ' + err.line + ':' + err.column + ' ').dim) : '') + '\n\n' +
                 colors.white(msg) + '\n\n'+
-                link);
+                ((err.file.length) ? link : ''));
         }
 
         //process.exit();
@@ -74,6 +81,39 @@ class Log {
     getFileName(filePath) {
 
         return filePath.replace(/^.*[\\\/]/, '');
+
+    }
+
+    formatTemplateError(str) {
+
+        let msg = (/^(.*?)\(/).exec(str);
+        let code = (/\(([^)]+)\)/).exec(str);
+        let lookup = (/\(([^)]+)\)/).exec(str);
+
+        if (msg != null && code != null) {
+
+            msg[1] = colors.dim(msg[1]);
+            code[1] = code[1].replace('[ERROR ->]', colors.red('[ERROR ->]'));
+            lookup[1] = lookup[1].replace('[ERROR ->]', '').substr(1).slice(0, -1);
+
+            //TODO: figure out if this is possible
+            // exec("grep -rnw './src/app' -e '" +lookup[1] + "'", (error, stdout, stderr) => {
+            //     console.log(error, stdout, stderr);
+            // });
+
+
+            let err = {
+                service: 'Template',
+                file: '',
+                line: '',
+                column: '',
+                message: msg[1] + '\n\n' + code[1].substr(1).slice(0, -1)
+            }
+            return err;
+
+        } else {
+            return str;
+        }
 
     }
 
