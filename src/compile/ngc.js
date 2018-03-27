@@ -32,25 +32,32 @@ class AOTBuilder {
                         lastData = '';
                     }
                     else if (stderr.includes('Compilation failed.') || stderr.includes('File change')) {
-                        console.log(colors.white(stderr).dim);
+                       log.message(colors.white(stderr).dim);
                     }
                     else {
 
                         log.line();
 
-                        let tsError = stderr.split('\n').filter((e) => {
-                            return e.length > 0;
-                        }).forEach((e) => {
-                            if (e.includes('error')) {
-                                log.error(log.formatTSError(e));
-                            }
-                        });
+                        if (stderr.split('\n').length > 0) {
 
-                        let templateErr = stderr.split(/\n:\s/g).filter((e) => {
-                            return e.includes('error') === false;
-                        }).forEach((e) => {
-                            log.error(log.formatTemplateError(e));
-                        });
+                            let tsError = stderr.split('\n').filter((e) => {
+                                return e.length > 0;
+                            }).forEach((e) => {
+                                if (e.includes('error')) {
+                                    log.formatTSError(e)
+                                }
+                            });
+
+                        }
+                        if (stderr.split(/\n:\s/g).length > 0) {
+
+                            let templateErr = stderr.split(/\n:\s/g).filter((e) => {
+                                return e.includes('error') === false;
+                            }).forEach((e) => {
+                                log.formatTemplateError(e)
+                            });
+
+                        }
 
                     }
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
@@ -67,22 +74,27 @@ class AOTBuilder {
 
                         log.line();
 
-                        let tsError = stderr.split('\n').filter((e) => {
-                            return e.length > 0;
-                        }).forEach((e) => {
-                            if (e.includes('error')) {
-                              //log.error(log.formatTSError(e));
-                              log.formatTSError(e);
-                            }
-                        });
 
-                        let templateErr = stderr.split(/\n:\s/g).filter((e) => {
-                            return e.includes('error') === false;
-                        }).forEach((e) => {
-                            //log.error(log.formatTemplateError(e));
-                           log.formatTemplateError(e);
-                        });
+                        if (stderr.split('\n').length > 0) {
 
+                            let tsError = stderr.split('\n').filter((e) => {
+                                return e.length > 0;
+                            }).forEach((e) => {
+                                if (e.includes('error')) {
+                                    log.formatTSError(e)
+                                }
+                            });
+
+                        }
+                        if (stderr.split(/\n:\s/g).length > 0) {
+
+                            let templateErr = stderr.split(/\n:\s/g).filter((e) => {
+                                return e.includes('error') === false;
+                            }).forEach((e) => {
+                                log.formatTemplateError(e)
+                            });
+
+                        }
 
                     } else {
                         log.message('Compilation complete.');
