@@ -88,36 +88,56 @@ class Log {
 
     formatTemplateError(str) {
 
+        str = str.replace('Template parse errors:\n', '');
+ 
         let msg = (/^(.*?)\(/).exec(str);
         let code = (/\(([^)]+)\)/).exec(str);
         let lookup = (/\(([^)]+)\)/).exec(str);
+
+        let lineNumberLookup = str.split('"):');
 
         if (msg != null && code != null) {
 
             msg[1] = msg[1].replace(': ', '');
             code[1] = code[1].replace('[ERROR ->]', colors.red('[ERROR ->]'));
-            lookup[1] = lookup[1].substr(1).slice(0, -1); //.replace('[ERROR ->]', '')
+   
+            if (lineNumberLookup.length === 1) {
 
-            // let errorLine = lookup[1].split('\n').filter((line) => {
-            //     return line.includes('[ERROR ->]');
-            // });
+                lookup[1] = lookup[1].substr(1).slice(0, -1); //.replace('[ERROR ->]', '')
 
-            // errorLine = errorLine[0].replace('[ERROR ->]', '');
+                // let errorLine = lookup[1].split('\n').filter((line) => {
+                //     return line.includes('[ERROR ->]');
+                // });
 
-            let cmd = "grep -rlw '"+config.src+"' -e '" +  lookup[1] + "'";
+                // errorLine = errorLine[0].replace('[ERROR ->]', '');
 
-            //TODO: figure out if this is possible
-            exec(cmd, {silent: true}, (error, stdout, stderr) => {
+                let cmd = "grep -rlw '"+config.src+"' -e '" +  lookup[1] + "'";
+   
+
+                //TODO: figure out if this is possible
+                exec(cmd, {silent: true}, (error, stdout, stderr) => {
+                
+                    this.error({
+                        service: 'Template',
+                        file: stdout.replace('\n', ''),
+                        line: '',
+                        column: '',
+                        message: msg[1] + '\n\n' + code[1].substr(1).slice(0, -1)
+                    });
+
+                });
+
+            } else {
+                lineNumberLookup = lineNumberLookup[lineNumberLookup.length - 1].replace(/\n/g, '').split('@');
 
                 this.error({
                     service: 'Template',
-                    file: stdout.replace('\n', ''),
-                    line: '',
-                    column: '',
+                    file: lineNumberLookup[0].trim(),
+                    line: lineNumberLookup[1].split(':')[0],
+                    column: lineNumberLookup[1].split(':')[1],
                     message: msg[1] + '\n\n' + code[1].substr(1).slice(0, -1)
                 });
-
-            });
+            }
 
         } else {
            this.error(str);
