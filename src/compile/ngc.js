@@ -21,12 +21,12 @@ class AOTBuilder {
                 let lastData = '';
 
                 log.message('@angular/compiler started AOT compilation');
-                
+
                 const ngc = exec(path.join('node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch');
-         
+
 
                 ngc.stderr.on('data', (stderr) => {
-          
+
                     if (stderr.includes('Compilation complete.')) {
                         log.message(stderr);
                         lastData = '';
@@ -35,7 +35,7 @@ class AOTBuilder {
                         console.log(colors.white(stderr).dim);
                     }
                     else {
-                        
+
                         log.line();
 
                         let tsError = stderr.split('\n').filter((e) => {
@@ -71,17 +71,19 @@ class AOTBuilder {
                             return e.length > 0;
                         }).forEach((e) => {
                             if (e.includes('error')) {
-                              log.error(log.formatTSError(e));
+                              //log.error(log.formatTSError(e));
+                              log.formatTSError(e);
                             }
                         });
 
                         let templateErr = stderr.split(/\n:\s/g).filter((e) => {
                             return e.includes('error') === false;
                         }).forEach((e) => {
-                            log.error(log.formatTemplateError(e));
+                            //log.error(log.formatTemplateError(e));
+                           log.formatTemplateError(e);
                         });
 
-            
+
                     } else {
                         log.message('Compilation complete.');
                         res();

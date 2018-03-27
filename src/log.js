@@ -46,27 +46,29 @@ class Log {
     }
 
     error(err) {
-  
+
         if (typeof err === 'string') {
             process.stdout.write('\n');
             console.log(colors.red(err));
         } else {
             let msg = ' ';
             let link = '';
+            let lineNumbers = (err.line.length > 0) ? colors.white(err.line + ':' + err.column).dim : '';
 
-            if (err.file.length) {
+            if (err.file.length > 0) {
                 msg += err.message.replace(/'(.*?)'/g, colors.red("'") + colors.red("$1") + colors.red("'"))
                     .replace(/(error)( )((?:TS[a-z0-9]*))(:)/g, colors.white("$1$2$3").dim);
                 link += err.file.includes(config.projectRoot) ?
-                    colors.dim(' vscode://file/' + err.file + ':' + err.line + ':' + err.column) + '\n' :
-                    colors.dim(' vscode://file/' + config.projectRoot + '/' + err.file + ':' + err.line + ':' + err.column) + '\n';
+                    colors.dim(' vscode://file/' + err.file + ':' + lineNumbers) + '\n' :
+                    colors.dim(' vscode://file/' + config.projectRoot + '/' + err.file + ':' + lineNumbers) + '\n';
             } else {
                 msg = err.message;
-            } 
+            }
+
             console.log(colors.red(' ' + err.service.toUpperCase() + ' ERROR') + ' ' +
-                ((err.file.length) ? colors.white(colors.dim(err.file) + colors.white(' ' + err.line + ':' + err.column + ' ').dim) : '') + '\n\n' +
+                ((err.file.length > 0) ? colors.white(colors.dim(err.file) + ' ' + lineNumbers) : '') + '\n\n' +
                 colors.white(msg) + '\n\n'+
-                ((err.file.length) ? link : ''));
+                ((err.file.length > 0) ? link : ''));
         }
 
         //process.exit();
@@ -92,27 +94,33 @@ class Log {
 
         if (msg != null && code != null) {
 
-            msg[1] = colors.dim(msg[1]);
+            msg[1] = msg[1].replace(': ', '');
             code[1] = code[1].replace('[ERROR ->]', colors.red('[ERROR ->]'));
-            lookup[1] = lookup[1].replace('[ERROR ->]', '').substr(1).slice(0, -1);
+            lookup[1] = lookup[1].substr(1).slice(0, -1); //.replace('[ERROR ->]', '')
 
-            //TODO: figure out if this is possible
-            // exec("grep -rnw './src/app' -e '" +lookup[1] + "'", (error, stdout, stderr) => {
-            //     console.log(error, stdout, stderr);
+            // let errorLine = lookup[1].split('\n').filter((line) => {
+            //     return line.includes('[ERROR ->]');
             // });
 
+            // errorLine = errorLine[0].replace('[ERROR ->]', '');
 
-            let err = {
-                service: 'Template',
-                file: '',
-                line: '',
-                column: '',
-                message: msg[1] + '\n\n' + code[1].substr(1).slice(0, -1)
-            }
-            return err;
+            let cmd = "grep -rlw '"+config.src+"' -e '" +  lookup[1] + "'";
+
+            //TODO: figure out if this is possible
+            exec(cmd, {silent: true}, (error, stdout, stderr) => {
+
+                this.error({
+                    service: 'Template',
+                    file: stdout.replace('\n', ''),
+                    line: '',
+                    column: '',
+                    message: msg[1] + '\n\n' + code[1].substr(1).slice(0, -1)
+                });
+
+            });
 
         } else {
-            return str;
+           this.error(str);
         }
 
     }
@@ -126,7 +134,7 @@ class Log {
             column: lineNumbers[1],
             message: str.slice(str.indexOf(':') + 2, str.length)
         }
-        return err;
+        this.error(err);
     }
 
 
