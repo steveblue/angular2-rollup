@@ -26,22 +26,20 @@ class AOTBuilder {
 
 
                 ngc.stderr.on('data', (stderr) => {
-                    
+
                     if (stderr.includes('Compilation complete.')) {
-                        //log.break();
-                        log.message(stderr);
+                        log.clear();
+                        log.message(colors.green(stderr));
                         lastData = '';
                     }
                     else if (stderr.includes('File change')) {
-                       log.break();
                        log.message(colors.white(stderr).dim);
                     }
                     else if (stderr.includes('Compilation failed.')) {
-                        log.break();
                         log.message(colors.white(stderr).dim);
                     }
                     else {
-             
+
                         log.line();
 
                         if (stderr.split('\n').length > 0) {
@@ -56,7 +54,7 @@ class AOTBuilder {
 
                         }
                         if (stderr.split(/\n:\s/g).length > 0) {
-                            
+
                             let templateErr = stderr.split(/\n:\s/g).filter((e) => {
                                 return e.includes('error TS') === false;
                             }).forEach((e) => {

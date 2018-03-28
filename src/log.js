@@ -10,8 +10,11 @@ class Log {
         process.stdout.write('\n');
     }
 
+    clear () {
+        logger.clear();
+    }
+
     line() {
-        process.stdout.write('\n');
         process.stdout.write('\n');
         const col = process.stdout.columns;
         let line = ' ';
@@ -19,7 +22,7 @@ class Log {
             line +=  '\u2500';
         }
         line +='💥';
-        line += '\n\n';
+        line += '\n';
         process.stdout.write(colors.red(line).dim);
     }
 
@@ -68,7 +71,8 @@ class Log {
             console.log(colors.red(' ' + err.service.toUpperCase() + ' ERROR') + ' ' +
                 ((err.file.length > 0) ? colors.white(colors.dim(err.file) + ' ' + lineNumbers) : '') + '\n\n' +
                 colors.white(msg) + '\n\n'+
-                ((err.file.length > 0) ? link : ''));
+                ((err.file.length > 0) ? link : '') + '\n');
+            this.break();
         }
 
         //process.exit();
@@ -89,7 +93,7 @@ class Log {
     formatTemplateError(str) {
 
         str = str.replace('Template parse errors:\n', '');
- 
+
         let msg = (/^(.*?)\(/).exec(str);
         let code = (/\(([^)]+)\)/).exec(str);
         let lookup = (/\(([^)]+)\)/).exec(str);
@@ -100,7 +104,7 @@ class Log {
 
             msg[1] = msg[1].replace(': ', '');
             code[1] = code[1].replace('[ERROR ->]', colors.red('[ERROR ->]'));
-   
+
             if (lineNumberLookup.length === 1) {
 
                 lookup[1] = lookup[1].substr(1).slice(0, -1); //.replace('[ERROR ->]', '')
@@ -112,11 +116,11 @@ class Log {
                 // errorLine = errorLine[0].replace('[ERROR ->]', '');
 
                 let cmd = "grep -rlw '"+config.src+"' -e '" +  lookup[1] + "'";
-   
+
 
                 //TODO: figure out if this is possible
                 exec(cmd, {silent: true}, (error, stdout, stderr) => {
-                
+
                     this.error({
                         service: 'Template',
                         file: stdout.replace('\n', ''),
