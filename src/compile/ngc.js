@@ -13,57 +13,63 @@ class AOTBuilder {
 
     compile(tsConfigPath) {
 
+
         return new Promise((res) => {
 
             let hasCompiled = false;
 
             if (util.hasArg('watch')) {
-                let lastData = '';
-
+                
                 log.message('@angular/compiler started AOT compilation');
 
                 const ngc = exec(path.join('node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch', { silent: true });
 
-
                 ngc.stderr.on('data', (stderr) => {
+                    //console.log('STDERR:', stderr);
+                    let hasLine = false;
 
                     if (stderr.includes('Compilation complete.')) {
-                        log.clear();
-                        log.message(colors.green(stderr));
-                        lastData = '';
+                        log.destroy();
+                        log.success(stderr);
                     }
                     else if (stderr.includes('File change')) {
-                       log.message(colors.white(stderr).dim);
+                        log.message(stderr);
                     }
-                    else if (stderr.includes('Compilation failed.')) {
-                        log.message(colors.white(stderr).dim);
+                    else if (stderr === ': Compilation failed. Watching for file changes.') {
+                        //  console.log('FAIL:', e);
+                        log.destroy();
+                        log.fail(stderr);
                     }
                     else {
 
-                        log.line();
-
                         if (stderr.split('\n').length > 0) {
-
+                            //if (!hasLine) log.line();
+                            //hasLine = true;
                             let tsError = stderr.split('\n').filter((e) => {
                                 return e.length > 0;
                             }).forEach((e) => {
                                 if (e.includes('error TS')) {
+                                    //console.log('TS ERROR:', e);
                                     log.formatTSError(e)
                                 }
                             });
-
+ 
                         }
-                        if (stderr.split(/\n:\s/g).length > 0) {
 
+                        if (stderr.split(/\n:\s/g).length > 0) {
+                            //if (!hasLine) log.line();
+                            //hasLine = true;
                             let templateErr = stderr.split(/\n:\s/g).filter((e) => {
                                 return e.includes('error TS') === false;
                             }).forEach((e) => {
+                                //console.log('Template ERROR:', e);
                                 log.formatTemplateError(e)
                             });
 
                         }
 
                     }
+            
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
                         hasCompiled = true;
                         res();
@@ -76,31 +82,57 @@ class AOTBuilder {
 
                     if (stderr) {
 
-                        log.line();
 
-                        if (stderr.split('\n').length > 0) {
+                        if (stderr.includes('Compilation complete.')) {
+                            log.destroy();
+                            log.success(stderr);
+                        }
+                        else if (stderr.includes('File change')) {
+                            log.message(stderr);
+                        }
+                        else if (stderr === ': Compilation failed. Watching for file changes.') {
+                            //  console.log('FAIL:', e);
+                            log.destroy();
+                            log.fail(stderr);
+                        }
+                        else {
 
-                            let tsError = stderr.split('\n').filter((e) => {
-                                return e.length > 0;
-                            }).forEach((e) => {
-                                if (e.includes('error TS')) {
-                                    log.formatTSError(e)
-                                }
-                            });
+                            if (stderr.split('\n').length > 0) {
+                                //if (!hasLine) log.line();
+                                //hasLine = true;
+                                let tsError = stderr.split('\n').filter((e) => {
+                                    return e.length > 0;
+                                }).forEach((e) => {
+                                    if (e.includes('error TS')) {
+                                        //console.log('TS ERROR:', e);
+                                        log.formatTSError(e)
+                                    }
+                                });
+
+                            }
+
+                            if (stderr.split(/\n:\s/g).length > 0) {
+                                //if (!hasLine) log.line();
+                                //hasLine = true;
+                                let templateErr = stderr.split(/\n:\s/g).filter((e) => {
+                                    return e.includes('error TS') === false;
+                                }).forEach((e) => {
+                                    //console.log('Template ERROR:', e);
+                                    log.formatTemplateError(e)
+                                });
+
+                            }
 
                         }
-                        if (stderr.split(/\n:\s/g).length > 0) {
 
-                            let templateErr = stderr.split(/\n:\s/g).filter((e) => {
-                                return e.includes('error TS') === false;
-                            }).forEach((e) => {
-                                log.formatTemplateError(e)
-                            });
-
-                        }
 
                     } else {
-                        log.message('Compilation complete.');
+                        log.success('Compilation complete.');
+                        
+                        if (cli.env === 'dev') {
+                            log.break();
+                        }
+                       
                         res();
                     }
                 });

@@ -5,6 +5,8 @@ const program = require('commander');
 const package = require(__dirname + '/package.json');
 const util    = require ('./src/util');
 const config  = require('./src/config');
+const log     = require('./src/log');
+
 program
     .version(package.version)
     .usage('<keywords>')
@@ -25,6 +27,7 @@ fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
     program: program
 }, null, 4), 'utf-8', () => {
     if (program.build) {
+        log.break();
         const BuildScript = require('./src/build/'+program.build+'.js');
         let build = new BuildScript().init();
     }
