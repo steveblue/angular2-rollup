@@ -21,7 +21,7 @@ class PostCSS {
             try {
                 const files = fileList.filter((filePath, index) => {
 
-                    if (filePath.replace(/^.*[\\\/]/, '')[0] !== '_') {
+                    if (filePath && filePath.replace(/^.*[\\\/]/, '')[0] !== '_') {
                         return this.file(filePath);
                     }
 
@@ -54,18 +54,14 @@ class PostCSS {
             } else {
                 env = cli.env;
             }
-            
+
             const postcssConfigFile = require(config.projectRoot + '/postcss.' + env + '.js');
 
             let postcssConfig = ' -u';
+
             let srcPath = util.getFilePath(filePath);
             let filename = util.getFileName(filePath);
             let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(filePath.replace(config.src, this.cssConfig.dist).replace('.scss', '.css')) : filePath.replace('.scss', '.css');
-
-            if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
-                utils.style.globalFiles(config, res);
-                return;
-            } // this file is global w/ underscore and should not be compiled, compile global files instead
 
             for (let cssProp in postcssConfigFile.plugins) {
                 postcssConfig += ' ' + cssProp;

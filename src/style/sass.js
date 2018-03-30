@@ -57,6 +57,7 @@ class Sass {
         const srcPath = util.getFilePath(filePath);
         const filename = util.getFileName(filePath);
         // determine if file is global or not, swap .scss to .css in filename
+       ;
         let outFile = filePath.indexOf(config.src + '/style') > -1 ?
                       path.normalize(filePath.replace(config.src, this.sassConfig.dist)) :
                       filePath; // TODO: make style dir configurable
@@ -73,7 +74,7 @@ class Sass {
 
         // this file is global w/ underscore and should not be compiled, compile global files instead
         if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
-            return this.batch(ls(path.normalize(config.src + '/**/* d.scss')));
+            return this.file(path.normalize(config.src + '/style/style.scss'));
         }
 
         log.message('processing '+outFile);

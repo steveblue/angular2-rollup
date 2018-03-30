@@ -17,20 +17,32 @@ class Watcher {
         const sassBuilder = new SassBuilder({ dist: config.build });
         const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: (cli.env === 'dev') ? false : true });
         const jitBuilder = new TSBuilder();
-        const watcher = chokidar.watch(path.normalize('./' + config.src + '/**/*.*'), {
+        const watcher = chokidar.watch([path.normalize('./' + config.src + '/**/*.ts'),
+                                        path.normalize('./' + config.src + '/**/*.scss'),
+                                        path.normalize('./' + config.src + '/**/*.html')
+                                       ], {
             ignored: /[\/\\]\./,
             persistent: true
         }).on('change', filePath => {
-
+            if (cli.program.verbose) log.message(filePath + ' changed');
             if (filePath.includes(path.join(config.src, 'public'))) {
                 this.updatePublic(filePath);
             }
             else if (filePath.indexOf('.scss') > -1) {
-                console.log(filePath);
+
                 (async () => {
+
                     const sass = await sassBuilder.file(filePath);
-                    const postcss = await postcssBuilder.file(sass);
-                    log.message('libass and postcss compiled', util.getFileName(postcss));
+
+                    if (Array.isArray(sass)) {
+                        const postcss = await postcssBuilder.batch(sass);
+                        log.message('libass and postcss compiled');
+                    } else {
+                        const postcss = await postcssBuilder.file(sass);
+                        log.message('libass and postcss compiled');
+                    }
+
+
                 })();
             }
             else if (filePath.indexOf('.ts') > -1 && cli.env === 'jit') {

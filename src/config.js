@@ -9,7 +9,7 @@ const cliRoot = findup.sync(__dirname, 'package.json');
 
 class Config {
     constructor() {
-       
+
         let config = require(projectRoot + '/ngr.config.js');
 
         config.processRoot = processRoot;

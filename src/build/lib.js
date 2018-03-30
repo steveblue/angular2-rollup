@@ -42,7 +42,7 @@ class LibBuild extends Build {
                 const bundle = await this.bundleLib();
             })();
 
-   
+
         }
         else if (ls(path.normalize(this.libConfig.src + '/**/*.css')).length > 0) {
 
@@ -55,10 +55,10 @@ class LibBuild extends Build {
 
 
         } else { // dont barf on a lib without styling
-            this.bundleLib(); 
+            this.bundleLib();
         }
 
-        // process global styles 
+        // process global styles
         if (ls(path.normalize(config.src + '/style/*.scss')).length > 0) {
 
             (async () => {
@@ -110,7 +110,7 @@ class LibBuild extends Build {
                 res(); // fail silently
             }
         });
-  
+
     }
 
     fetchLibConfig() {
@@ -163,9 +163,9 @@ class LibBuild extends Build {
                     });
 
                 // remove extra d.ts
-                rm(path.join(path.normalize(this.libConfig.dist), this.libConfig.filename)+'.es5.d.ts'); 
+                rm(path.join(path.normalize(this.libConfig.dist), this.libConfig.filename)+'.es5.d.ts');
                 // copy metadata
-                cp(path.normalize(path.join('./ngfactory', this.libConfig.filename + '.metadata.json')), path.normalize(this.libConfig.dist)); 
+                cp(path.normalize(path.join('./ngfactory', this.libConfig.filename + '.metadata.json')), path.normalize(this.libConfig.dist));
                 log.message('d.ts, metadata.json', 'copied to', './' + this.libConfig.dist);
                 // remove .ts files from dist
                 find(path.normalize('./' + this.libConfig.dist)).filter((file) => {
@@ -181,13 +181,13 @@ class LibBuild extends Build {
 
                 });
                 res();
-           
+
 
             }
             catch(err) {
                 rej(err);
             }
-            
+
         });
     }
 
@@ -224,7 +224,7 @@ class LibBuild extends Build {
         }).catch((err) => {
             log.warn(err); // TODO: exit process
         })
-   
+
     }
 
     post() {
@@ -248,9 +248,9 @@ class LibBuild extends Build {
                 util.getTime(this.startTime);
 
             });
-          
-            
-        });  
+
+
+        });
 
     }
 
