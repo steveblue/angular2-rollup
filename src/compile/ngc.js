@@ -13,63 +13,22 @@ class AOTBuilder {
 
     compile(tsConfigPath) {
 
-
         return new Promise((res) => {
 
             let hasCompiled = false;
 
             if (util.hasArg('watch')) {
-                
+
                 log.message('@angular/compiler started AOT compilation');
 
-                const ngc = exec(path.join('node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch', { silent: true });
+                const ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch', { silent: true });
 
                 ngc.stderr.on('data', (stderr) => {
                     //console.log('STDERR:', stderr);
                     let hasLine = false;
 
-                    if (stderr.includes('Compilation complete.')) {
-                        log.destroy();
-                        log.success(stderr);
-                    }
-                    else if (stderr.includes('File change')) {
-                        log.message(stderr);
-                    }
-                    else if (stderr === ': Compilation failed. Watching for file changes.') {
-                        //  console.log('FAIL:', e);
-                        log.destroy();
-                        log.fail(stderr);
-                    }
-                    else {
+                    this.handleError(stderr);
 
-                        if (stderr.split('\n').length > 0) {
-                            //if (!hasLine) log.line();
-                            //hasLine = true;
-                            let tsError = stderr.split('\n').filter((e) => {
-                                return e.length > 0;
-                            }).forEach((e) => {
-                                if (e.includes('error TS')) {
-                                    //console.log('TS ERROR:', e);
-                                    log.formatTSError(e)
-                                }
-                            });
- 
-                        }
-
-                        if (stderr.split(/\n:\s/g).length > 0) {
-                            //if (!hasLine) log.line();
-                            //hasLine = true;
-                            let templateErr = stderr.split(/\n:\s/g).filter((e) => {
-                                return e.includes('error TS') === false;
-                            }).forEach((e) => {
-                                //console.log('Template ERROR:', e);
-                                log.formatTemplateError(e)
-                            });
-
-                        }
-
-                    }
-            
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
                         hasCompiled = true;
                         res();
@@ -78,61 +37,17 @@ class AOTBuilder {
 
             } else {
 
-                let ngc = exec(path.join('node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
+                let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
 
                     if (stderr) {
-
-
-                        if (stderr.includes('Compilation complete.')) {
-                            log.destroy();
-                            log.success(stderr);
-                        }
-                        else if (stderr.includes('File change')) {
-                            log.message(stderr);
-                        }
-                        else if (stderr === ': Compilation failed. Watching for file changes.') {
-                            //  console.log('FAIL:', e);
-                            log.destroy();
-                            log.fail(stderr);
-                        }
-                        else {
-
-                            if (stderr.split('\n').length > 0) {
-                                //if (!hasLine) log.line();
-                                //hasLine = true;
-                                let tsError = stderr.split('\n').filter((e) => {
-                                    return e.length > 0;
-                                }).forEach((e) => {
-                                    if (e.includes('error TS')) {
-                                        //console.log('TS ERROR:', e);
-                                        log.formatTSError(e)
-                                    }
-                                });
-
-                            }
-
-                            if (stderr.split(/\n:\s/g).length > 0) {
-                                //if (!hasLine) log.line();
-                                //hasLine = true;
-                                let templateErr = stderr.split(/\n:\s/g).filter((e) => {
-                                    return e.includes('error TS') === false;
-                                }).forEach((e) => {
-                                    //console.log('Template ERROR:', e);
-                                    log.formatTemplateError(e)
-                                });
-
-                            }
-
-                        }
-
-
+                        this.handleError(stderr);
                     } else {
                         log.success('Compilation complete.');
-                        
+
                         if (cli.env === 'dev') {
                             log.break();
                         }
-                       
+
                         res();
                     }
                 });
@@ -143,6 +58,51 @@ class AOTBuilder {
         });
     }
 
+    handleError(stderr) {
+
+        if (stderr.includes('Compilation complete.')) {
+            log.destroy();
+            log.success(stderr);
+        }
+        else if (stderr.includes('File change')) {
+            log.message(stderr);
+        }
+        else if (stderr === ': Compilation failed. Watching for file changes.') {
+            //  console.log('FAIL:', e);
+            log.destroy();
+            log.fail(stderr);
+        }
+        else {
+
+            if (stderr.split('\n').length > 0) {
+                //if (!hasLine) log.line();
+                //hasLine = true;
+                let tsError = stderr.split('\n').filter((e) => {
+                    return e.length > 0;
+                }).forEach((e) => {
+                    if (e.includes('error TS')) {
+                        //console.log('TS ERROR:', e);
+                        log.formatTSError(e)
+                    }
+                });
+
+            }
+
+            if (stderr.split(/\n:\s/g).length > 0) {
+                //if (!hasLine) log.line();
+                //hasLine = true;
+                let templateErr = stderr.split(/\n:\s/g).filter((e) => {
+                    return e.includes('error TS') === false;
+                }).forEach((e) => {
+                    //console.log('Template ERROR:', e);
+                    log.formatTemplateError(e)
+                });
+
+            }
+
+        }
+
+    }
 
 
     compileMain() {

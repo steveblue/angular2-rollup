@@ -14,7 +14,8 @@ program
     .option('--clean [bool]', 'destroy the build folder prior to compilation, automatic for prod')
     .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
     .option('--config [string]', 'path to configuration file for library build')
-    .option('--deploy [bool]', 'pass argument to post buildHook for deployment')
+    .option('--deploy [bool]', 'call deploy buildHook')
+    .option('--verbose [bool]', 'log all messages in list format')
     .option('serve, --serve [bool]', 'spawn the local express server')
     .parse(process.argv);
 

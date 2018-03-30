@@ -26,6 +26,7 @@ class Watcher {
                 this.updatePublic(filePath);
             }
             else if (filePath.indexOf('.scss') > -1) {
+                console.log(filePath);
                 (async () => {
                     const sass = await sassBuilder.file(filePath);
                     const postcss = await postcssBuilder.file(sass);

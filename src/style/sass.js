@@ -76,7 +76,7 @@ class Sass {
             return this.batch(ls(path.normalize(config.src + '/**/* d.scss')));
         }
 
-        log.message('preprocessing '+outFile);
+        log.message('processing '+outFile);
 
         return new Promise((res) => {
 

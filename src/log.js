@@ -1,8 +1,9 @@
 'use strict';
 
-const colors = require('colors');
-const logger = require('single-line-log').stdout;
-const config = require('./config');
+const colors      = require('colors');
+const logger      = require('single-line-log').stdout;
+const config      = require('./config');
+const cli         = require('./../cli.config.json');
 
 class Log {
 
@@ -13,11 +14,15 @@ class Log {
     }
 
     clear () {
-        logger.clear();
+        if (!cli.program.verbose) {
+            logger.clear();
+        }
     }
 
     destroy() {
-        process.stdout.write('\x1B[2J\x1B[0f');
+        if (!cli.program.verbose) {
+            process.stdout.write('\x1B[2J\x1B[0f');
+        }
     }
 
     line() {
@@ -46,18 +51,21 @@ class Log {
     message(msg) {
         msg = msg ? ' ' + colors.white(msg).dim : '';
         logger(msg);
+        if (cli.program.verbose) this.break();
     }
 
     success(msg) {
         msg = msg ? ' ' + colors.green(msg) : '';
         logger(msg);
+        if (cli.program.verbose) this.break();
     }
 
     fail(msg) {
         msg = msg ? ' ' + colors.red(msg) : '';
         logger(msg);
+        if (cli.program.verbose) this.break();
     }
-    
+
     alert(msg) {
         msg = msg ? ' ' + colors.white(msg) : '';
         process.stdout.write(msg);
@@ -72,13 +80,11 @@ class Log {
 
     error(err) {
 
-
         if (typeof err === 'string') {
             process.stdout.write('\n');
             process.stdout.write(colors.red(err));
         } else {
 
-            //this.line();
             this.break();
             let msg = ' ';
             let link = '';
@@ -102,12 +108,8 @@ class Log {
 
             this.line();
 
-
         }
 
-   
-
-        //process.exit();
     }
 
     getFilePath(filePath) {
@@ -123,14 +125,16 @@ class Log {
     }
 
     catchError(str, type) {
+
         if (str.length) {
             this.error(str);
         }
+
     }
 
     formatTemplateError(str) {
 
-        
+
         str = str.replace('Template parse errors:\n', '');
 
         let msg = (/^(.*?)\(/).exec(str);
@@ -161,11 +165,11 @@ class Log {
                     let cmd = "grep -rnw '" + config.src + "' -e '" + code[1].replace('[ERROR ->]', '') + "'";
                     //TODO: figure out if this is possible
                     exec(cmd, {silent: true}, (error, stdout, stderr) => {
-        
+
                         try {
                             let lineNumber = stdout.replace('\n', '');
                             let columnNumber = errorLines[0].indexOf('[ERROR ->]');
-                        
+
                             lineNumber = parseInt(lineNumber.match(/(:)(\d)(:)/)[2]) - 1; //TODO: figure out if - 1 is always true
                             if (lineNumber < 1) lineNumber = 0;
 
@@ -188,9 +192,10 @@ class Log {
                         }
 
                     });
-                
+
                 }
                 catch(e) {
+                   if (cli.program.verbose) this.message(e);
                    this.catchError(str, 'Template');
                 }
 
@@ -199,7 +204,7 @@ class Log {
                 try {
                     let lineNoRegex = /\(([1-9]\d{0,5})(,)([1-9]\d{0,5})\)/g;
 
- 
+
                     if (str.indexOf(': :') > 0) { // this is janky may need better regex here
 
                         let lineNumber = lineNumberLookup[lineNumberLookup.length - 1].match(lineNoRegex)[0].replace('(', '').replace(')', '');
@@ -212,7 +217,7 @@ class Log {
                             message: lineNumberLookup[0].trim().split(': :')[1],
                         });
 
-     
+
                     } else {
 
                         let line = lineNumberLookup[lineNumberLookup.length - 1].replace(/\n/g, '').split('@');
@@ -227,15 +232,16 @@ class Log {
 
                     }
 
-     
-                } catch(err) {
 
+                } catch(e) {
+
+                    if (cli.program.verbose) this.message(e);
                     this.catchError(str, 'Template');
                     // this.error(str);
 
                 }
-                
-          
+
+
             }
 
         } else {
@@ -258,9 +264,10 @@ class Log {
             this.error(err);
         }
         catch(e) {
+            if (cli.program.verbose) this.message(e);
             this.catchError(str, 'TypeScript');
         }
-   
+
     }
 
 

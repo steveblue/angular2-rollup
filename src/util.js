@@ -79,7 +79,7 @@ class Util {
     copyFile(src, dist) {
 
         cp(src, dist);
-        log.message(src, 'copied to',  dist);
+        log.message(src+ ' copied to '+  dist);
 
     }
 
@@ -87,7 +87,7 @@ class Util {
 
         if (!fs.existsSync(dist)) mkdir('-p', dist);
         cp('-R', src + '.', path.normalize(path.join(dist, '/')));
-        log.message(src, 'copied to', dist);
+        log.message(src+  'copied to '+ dist);
 
     }
 
@@ -128,7 +128,7 @@ class Util {
                 ' ' + path.normalize(template) +
                 ' -o ' + path.normalize(path.join(config.build, '/') + 'index.html') +
                 ' -e ' + env, { silent: true }, (error, stdout, stderr) => {
-                    log.message('htmlprocessor', 'formatted ' + this.getFileName(template));
+                    log.message('htmlprocessor' + ' formatted ' + this.getFileName(template));
                     if (error) {
                         log.warn(error);
                         if (rej) rej(error);
@@ -167,13 +167,13 @@ class Util {
 
                     if (!fs.existsSync( path.join(dist, paths[i]) )) {
                         cp('-R', path.join(src, paths[i]), path.join(dist, paths[i]));
-                        log.message(paths[i]);
+                        log.message(src, paths[i])+ ' copied to ' + path.join(dist, paths[i]);
                     }
 
                 }
 
                 if (i === paths.length - 1) {
-                    log.message(src.replace('./', ''), 'copied to', dist.replace('./', ''));
+                    log.message(src.replace('./', '')+ ' copied to ' +  dist.replace('./', ''));
                     res();
                 }
 
