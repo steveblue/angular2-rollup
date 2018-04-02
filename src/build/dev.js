@@ -54,20 +54,27 @@ class DevBuild extends Build {
 
     pre() {
 
-      if (cli.program.clean === true) {
-        util.cleanBuild();
+      let build = () => {
+        if (util.hasHook('pre')) {
+
+          config.buildHooks[cli.env].pre(process.argv).then(() => {
+            this.build();
+          });
+
+        } else {
+
+          this.build();
+
+        }
+
       }
 
-      if (util.hasHook('pre')) {
-
-        config.buildHooks[cli.env].pre(process.argv).then(() => {
-          this.build();
+      if (cli.program.clean !== false) {
+        util.cleanBuild().then(()=>{
+          build();
         });
-
       } else {
-
-        this.build();
-
+        build();
       }
 
     }
