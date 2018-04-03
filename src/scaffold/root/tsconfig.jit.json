@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "removeComments": false,
+    "allowUnreachableCode": false,
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "typeRoots": [ "node_modules/@types" ],
+    "types": [
+       "node",
+       "jasmine",
+       "jasminewd2",
+       "karma"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  },
+  "exclude": [
+    "build",
+    "dist",
+    "tmp",
+    "node_modules",
+    "main.prod.ts"
+  ],
+  "compileOnSave": false,
+  "buildOnSave": false
+}

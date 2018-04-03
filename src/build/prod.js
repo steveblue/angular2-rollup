@@ -6,10 +6,12 @@ const SassBuilder     = require('./../style/sass.js');
 const PostCSSBuilder  = require('./../style/postcss.js');
 const AOTBuilder      = require('./../compile/ngc.js');
 const ClosureBuilder  = require('./../bundle/closure.js');
+const RollupBuilder   = require('./../bundle/rollup.js');
 const util            = require('./../util.js');
 const log             = require('./../log.js');
 const config          = require('./../config');
 const cli             = require('./../../cli.config.json');
+
 
 class ProdBuild extends Build {
 
@@ -27,6 +29,7 @@ class ProdBuild extends Build {
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
       const aotBuilder = new AOTBuilder();
       const closureBuilder = new ClosureBuilder();
+      const rollupBuilder = new RollupBuilder();
 
       (async () => {
         const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['prodLib'],
@@ -46,10 +49,17 @@ class ProdBuild extends Build {
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
         const copycss = await postcssBuilder.copyToNgFactory(postcss);
-        const src = await aotBuilder.compile('tsconfig.' + cli.env + '.json');
-        const bundle = await closureBuilder.bundle();
+        const src = await aotBuilder.compile(path.join('config', 'tsconfig.' + cli.env + '.json'));
+
+        if (cli.program.rollup) {
+          const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.prod.js'));
+        } else {
+          const bundle = await closureBuilder.bundle();
+        }
+   
         if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
         util.getTime(this.startTime);
+
       })();
 
     }

@@ -18,7 +18,7 @@ class TSBuilder {
             log.message('typescript started');
 
             let tsc = exec(path.normalize(path.resolve('node_modules', '.bin', 'tsc') +
-            ' -p ' + path.normalize('./tsconfig.' + cli.env + '.json')), {}, function (error, stdout, stderr) {
+                ' -p ' + tsConfigPath), {}, function (error, stdout, stderr) {
                 if (error) {
                     log.warn(stdout);
                 } else {

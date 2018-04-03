@@ -1,0 +1,8 @@
+<div class="is--center">
+    <a [routerLink]="['']" class="app__icon">
+        <img [@intro]="angularMode"
+        src="./assets/angular.png" 
+        [ngClass]="{'is--active' : angularMode === 'active',
+                    'is--inactive' : angularMode === 'inactive'}">
+    </a>
+</div>

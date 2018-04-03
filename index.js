@@ -16,6 +16,7 @@ program
     .option('--config [string]', 'path to configuration file for library build')
     .option('--deploy [bool]', 'call deploy buildHook')
     .option('--verbose [bool]', 'log all messages in list format')
+    .option('--rollup [bool]', 'use rollup to bundle instead of closure compiler')
     .option('serve, --serve [bool]', 'spawn the local express server')
     .parse(process.argv);
 

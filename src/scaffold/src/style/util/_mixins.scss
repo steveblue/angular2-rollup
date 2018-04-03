@@ -1,0 +1,157 @@
+//-----------------------------------------
+//  Responsive
+//-----------------------------------------
+
+$sm-breakpoint: 0px;
+$md-breakpoint: 768px;
+$lg-breakpoint: 1025px;
+$xl-breakpoint: 1441px;
+
+
+//-----------------------------------------
+//  Media Queries
+//-----------------------------------------
+
+// Use these mixins to ensure similar media queries are used throughout the project, mqpacker will collapse all instances into one block
+
+@mixin media-sm {
+  @media (max-width: #{$md-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin media-md {
+  @media (min-width: #{$md-breakpoint}) and (max-width: #{$lg-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin media-lg {
+  @media (min-width: #{$lg-breakpoint}) and (max-width: #{$xl-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin media-xl {
+  @media (min-width: #{$xl-breakpoint} ) {
+    @content;
+  }
+}
+
+
+
+//-----------------------------------------
+//  Font Weight
+//-----------------------------------------
+@mixin font-weight($weight) {
+  font-weight: $weight;
+}
+
+// font anti-aliasing
+%anti-aliasing {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;  
+}
+
+
+//-----------------------------------------
+//  Font Size
+//-----------------------------------------
+
+/**
+ * Convert font-size from px to rem with px fallback
+ *
+ * @param $size - the value in pixel you want to convert
+ *
+ * e.g. p {@include fontSize(12px);}
+ *
+ */
+
+// Function for converting a px based font-size to rem.
+@function calculate-rem($size) {
+  $remSize: $size / 16px;
+//Default font size on html element is 100%, equivalent to 16px;
+  @return #{$remSize}rem;
+}
+
+// Mixin that will include the fall back px declaration as well as the calculated rem value.
+@mixin font-size($size) {
+  font-size: $size;
+  font-size: calculate-rem($size);
+}
+
+
+//-----------------------------------------
+//  Cross Browser CSS Transforms
+//-----------------------------------------
+
+
+@function str-replace($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+  @return $string;
+}
+
+@mixin transform2($trans...) {
+  $fallback: unquote(str-replace(str-replace("#{$trans}", '3d', ''), ', 0)', ')'));
+  -ms-transform: $fallback;
+  
+  $prefixes: (ms, moz, o, webkit);
+  @each $prefix in $prefixes {
+    #{'-' + $prefix + '-transform'}: $trans;
+  }
+  
+  transform: $trans;
+}
+
+
+//-----------------------------------------
+//  Layout
+//-----------------------------------------
+@mixin vertical-align {
+  position: relative;
+  top: 50%;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+}
+
+@mixin horizontal-align {
+  position: relative;
+  left: 50%;
+      -webkit-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+      transform: translateX(-50%);
+}
+
+//-----------------------------------------
+//  clearfix
+//-----------------------------------------
+
+
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+//-----------------------------------------
+//  Reset
+//-----------------------------------------
+
+@mixin ul-reset() {
+  padding: 0;
+	margin: 0;
+  list-style: none;
+  -webkit-margin-start: 0px;
+  -webkit-margin-end: 0px;
+  -webkit-padding-start: 0px;
+  -webkit-margin-before: 0px;
+  -webkit-margin-after: 0px;
+
+}
+

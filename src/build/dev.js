@@ -38,7 +38,7 @@ class DevBuild extends Build {
       (async () => {
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
-        const src = await aotBuilder.compile('tsconfig.' + cli.env + '.json');
+        const src = await aotBuilder.compile(path.join('config', 'tsconfig.' + cli.env + '.json'));
         this.post();
       })();
 

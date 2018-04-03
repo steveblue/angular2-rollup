@@ -1,0 +1,20 @@
+{
+    "src": "src/lib",
+    "dist": "dist",
+    "filename": "default-lib",
+    "es2015": {
+        "tsConfig": "tsconfig.lib.json",
+        "rollupConfig": "rollup.config.lib.js",
+        "outFile": "dist/default-lib.js"
+    },
+    "es5": {
+        "tsConfig": "tsconfig.lib.es5.json",
+        "rollupConfig": "rollup.config.lib-es5.js",
+        "outFile": "dist/default-lib.es5.js"
+    },
+    "umd": {
+        "tsConfig": "tsconfig.lib.es5.json",
+        "rollupConfig": "rollup.config.lib-umd.js",
+        "outFile": "dist/bundles/default-lib.umd.js"
+    }
+}
