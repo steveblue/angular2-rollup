@@ -11,7 +11,7 @@ class TSBuilder {
     constructor() {}
 
     compile(tsConfigPath) {
-
+      
         return new Promise((res) => {
 
             let hasCompiled = false;

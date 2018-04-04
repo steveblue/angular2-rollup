@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig.json",
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "compilerOptions": {
+    "outDir": "../build/src/app",
+    "target": "es5",
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "removeComments": false,
+    "typeRoots": [ "node_modules/@types" ],
+    "types": [
+       "jasminewd2"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  },
+  "include": [
+    "../src/**/*.ts"
+  ]
+}

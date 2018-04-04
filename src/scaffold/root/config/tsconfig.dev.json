@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../build",
+    "target": "es5",
+    "module": "commonjs",
+    "noImplicitAny": false
+  },
+  "angularCompilerOptions": {
+    "skipMetadataEmit": true
+  },
+  "include": [
+    "../src/**/*.ts"
+  ]
+}

@@ -55,7 +55,7 @@ class PostCSS {
                 env = cli.env;
             }
 
-            const postcssConfigFile = require(config.projectRoot + '/postcss.' + env + '.js');
+            const postcssConfigFile = require(path.join(config.projectRoot, 'config', 'postcss.' + env + '.js'));
 
             let postcssConfig = ' -u';
 

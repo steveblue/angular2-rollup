@@ -1,25 +1,15 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "target": "es2015",
     "module": "es2015",
-    "declaration": true,
     "stripInternal": true,
-    "sourceMap": true,
     "inlineSources": true,
     "skipLibCheck": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "removeComments": true,
-    "allowUnreachableCode": false,
-    "moduleResolution": "node",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-      "node"
-    ]
+    "allowUnreachableCode": false
   },
   "angularCompilerOptions": {
     "annotationsAs": "static fields",
@@ -27,7 +17,7 @@
     "skipMetadataEmit": false
   },
   "files": [
-    "./ngfactory/src/app/app.module.ts",
-    "./ngfactory/src/app/shared/components/lazy/lazy.module.ts"
+    "../ngfactory/src/app/app.module.ts",
+    "../ngfactory/src/app/shared/components/lazy/lazy.module.ts"
   ]
 }

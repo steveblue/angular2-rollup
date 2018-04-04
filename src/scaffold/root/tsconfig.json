@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "declaration": false,
+        "sourceMap": true,
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "types": [
+            "node",
+            "jasmine",
+            "karma"
+        ],
+        "lib": [
+            "es2017",
+            "dom"
+        ]
+    }
+}
