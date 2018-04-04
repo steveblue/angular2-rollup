@@ -6,10 +6,12 @@ const package = require(__dirname + '/package.json');
 const util    = require ('./src/util');
 const config  = require('./src/config');
 const log     = require('./src/log');
+const Scaffold = require('./src/scaffold/index');
 
 program
     .version(package.version)
     .usage('<keywords>')
+    .option('scaffold [bool]', 'scaffold new application in current directory')
     .option('build [env]', 'build the application')
     .option('--clean [bool]', 'destroy the build folder prior to compilation, automatic for prod')
     .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
@@ -20,9 +22,18 @@ program
     .option('serve, --serve [bool]', 'spawn the local express server')
     .parse(process.argv);
 
-if (!fs.existsSync(path.normalize(config.cliRoot + '/src/build/'+program.build+'.js'))) {
-    util.error(program.build + ' build does not exist.');
+if (program.scaffold) {
+    let scaffold = new Scaffold();
+    scaffold.basic();
 }
+
+if (program.build) {
+    if (!fs.existsSync(path.normalize(config.cliRoot + '/src/build/' + program.build + '.js'))) {
+        util.error(program.build + ' build does not exist.');
+    }
+}
+
+
 
 fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
     env: program.build,

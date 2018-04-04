@@ -60,7 +60,7 @@
         "autoprefixer": "^7.1.1",
         "codelyzer": "^4.0.1",
         "css-mqpacker": "^6.0.1",
-        "google-closure-compiler": "20180319.0.0",
+        "google-closure-compiler": "20171023.0.1",
         "jasmine-core": "^2.8.0",
         "jasmine-spec-reporter": "^4.2.0",
         "karma": "^1.7.0",

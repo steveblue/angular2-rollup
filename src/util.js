@@ -64,7 +64,7 @@ class Util {
                 fileList.forEach((filePath, index) => {
                     if (!fs.existsSync(path.join(dist, this.getFilePath(filePath)))) mkdir('-p', path.join(dist, this.getFilePath(filePath)));
                     cp(filePath, path.join(dist, filePath));
-                    log.message(filePath, 'copied to', dist);
+                    log.message(filePath, ' copied to ', dist);
                 });
 
                 res();
@@ -86,8 +86,8 @@ class Util {
     copyDir(src, dist) {
 
         if (!fs.existsSync(dist)) mkdir('-p', dist);
-        cp('-R', src + '.', path.normalize(path.join(dist, '/')));
-        log.message(src+  'copied to '+ dist);
+        cp('-R', path.normalize(src + '/*'), path.normalize(path.join(dist, '/')));
+        log.message(src+  ' copied to '+ dist);
 
     }
 

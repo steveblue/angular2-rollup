@@ -34,7 +34,7 @@ class JitBuild extends Build {
                                        config.lib && config.lib[env] ? config.lib.src : config.dep.src,
                                        config.lib && config.lib[env] ? config.lib.dist : config.dep.dist);
         const html = await util.copyBatch(ls(path.normalize(config.src + '/app/**/*.html')), config.build);
-        const publicDir = await util.copyDir(path.normalize(config.src + '/public/'), config.build);
+        const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
       })();
 

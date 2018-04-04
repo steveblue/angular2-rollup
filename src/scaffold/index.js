@@ -10,7 +10,13 @@ const cli = require('./../../cli.config.json');
 
 
 class Scaffold {
+
     constructor() {}
+
+    basic() {
+        util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), config.projectRoot);
+        util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/src'), path.join(config.projectRoot, 'src'));
+    }
     
 }
 

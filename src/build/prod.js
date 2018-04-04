@@ -35,7 +35,7 @@ class ProdBuild extends Build {
         const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['prodLib'],
                                        config.lib && config.lib[cli.env] ? config.lib.src : config.dep.src,
                                        config.lib && config.lib[cli.env] ? config.lib.dist : config.dep.dist);
-        const publicDir = await util.copyDir(path.normalize(config.src + '/public/'), config.build);
+        const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
       })();
 
