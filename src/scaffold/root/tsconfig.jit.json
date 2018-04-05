@@ -1,9 +1,9 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "./tsconfig.json",
   "compileOnSave": false,
   "buildOnSave": false,
   "compilerOptions": {
-    "outDir": "../build/src/app",
+    "outDir": "./build/src/app",
     "target": "es5",
     "module": "commonjs",
     "noImplicitAny": false,
@@ -18,6 +18,6 @@
     ]
   },
   "include": [
-    "../src/**/*.ts"
+    "./src/**/*.ts"
   ]
 }

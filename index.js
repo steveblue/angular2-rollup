@@ -1,17 +1,25 @@
 #!/usr/bin/env node
-const fs      = require('fs');
-const path    = require('path');
+
+require('shelljs/global');
+const findup = require('findup');
+const fs = require('fs');
+const path = require('path');
 const program = require('commander');
+const cliRoot = findup.sync(__dirname, 'package.json');
 const package = require(__dirname + '/package.json');
-const util    = require ('./src/util');
-const config  = require('./src/config');
-const log     = require('./src/log');
-const Scaffold = require('./src/scaffold/index');
+
+if (process.argv.indexOf('scaffold') > -1) {
+    cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'), 
+       path.join(path.dirname(process.cwd()), path.basename(process.cwd())));
+    process.argv.push('--verbose');
+}
 
 program
     .version(package.version)
     .usage('<keywords>')
     .option('scaffold [bool]', 'scaffold new application in current directory')
+    .option('--noinstall [bool]', 'prevents install during scaffold')
+    .option('--yarn [bool]', 'use yarn instead of npm to install')
     .option('build [env]', 'build the application')
     .option('--clean [bool]', 'destroy the build folder prior to compilation, automatic for prod')
     .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
@@ -22,29 +30,36 @@ program
     .option('serve, --serve [bool]', 'spawn the local express server')
     .parse(process.argv);
 
-if (program.scaffold) {
-    let scaffold = new Scaffold();
-    scaffold.basic();
-}
+let cli = () => {
 
-if (program.build) {
-    if (!fs.existsSync(path.normalize(config.cliRoot + '/src/build/' + program.build + '.js'))) {
-        util.error(program.build + ' build does not exist.');
+    const util = require('./src/util');
+    const config = require('./src/config');
+    const log = require('./src/log');
+    const Scaffold = require('./src/scaffold/index');
+
+    if (program.build) {
+
+        if (!fs.existsSync(path.normalize(config.cliRoot + '/src/build/' + program.build + '.js'))) {
+            util.error(program.build + ' build does not exist.');
+        }
+        else {
+            log.break();
+            const BuildScript = require('./src/build/' + program.build + '.js');
+            let build = new BuildScript().init();
+        }
     }
+
+    if (program.scaffold) {
+        let scaffold = new Scaffold();
+        scaffold.basic();
+    }
+
 }
-
-
 
 fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
     env: program.build,
     program: program
-}, null, 4), 'utf-8', () => {
-    if (program.build) {
-        log.break();
-        const BuildScript = require('./src/build/'+program.build+'.js');
-        let build = new BuildScript().init();
-    }
-});
+}, null, 4), 'utf-8', cli);
 
 
 let exitHandler = (options, err) => {

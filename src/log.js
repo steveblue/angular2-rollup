@@ -48,6 +48,11 @@ class Log {
         process.stdout.write(colors.red(line).dim);
     }
 
+    bare(msg) {
+        logger(msg);
+        if (cli.program.verbose) this.break();
+    }
+
     message(msg) {
         msg = msg ? ' ' + colors.white(msg).dim : '';
         logger(msg);

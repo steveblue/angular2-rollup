@@ -87,7 +87,7 @@ class Util {
 
         if (!fs.existsSync(dist)) mkdir('-p', dist);
         cp('-R', path.normalize(src + '/*'), path.normalize(path.join(dist, '/')));
-        log.message(src+  ' copied to '+ dist);
+        log.message(this.getFileName(src)+  ' copied to '+ this.getFileName(dist));
 
     }
 
