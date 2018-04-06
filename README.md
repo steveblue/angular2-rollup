@@ -1,4 +1,7 @@
-# ngr
+# angular-rollup
+
+### 2.0.0-beta.0
+
 
 cli for building angular apps
 
@@ -20,34 +23,29 @@ How do I use this build now?
 - `git checkout next`
 - `npm link` in the root directory of the repo
 
+# How To Update
 
-If you want to revert back just checkout the master branch or run `npm unlink` to use the global.
+`npm install -g angular-rollup@2.0.0-beta.0`
 
 
-This build is backwards compatible with 1.x with one notible exception.
+# ngr --help
 
-The format of ngr.config.json has changed for libraries.
+There are new cli arguments. Review the changes by running `ngr --help`.
 
-Before :
+# Report Issues
 
-```
-{
-    dep: {
-        lib:[],
-        prodLib:[]
-    }
-}
-```
+[https://github.com/steveblue/angular2-rollup/issues](https://github.com/steveblue/angular2-rollup/issues)
 
-After :
+# Not All Builds Are Fully Operational
 
-```
-{
-    lib: {
-        dev:[],
-        prod:[]
-    }
-}
+2.0.0-beta currently only supports building a single bundle. Lazyloading, Universal, Electron, and i18n are not yet ready for consumption. If your app relies on any of these builds, stay with 1.x until these features are rolled into 2.0.0-beta.
 
-```
+
+# Upgrade Existing Project
+
+The easiest way to upgrade is to scaffold a new app (`ngr scaffold`) and overwrite the `ngr.config.json` and `src` directory with the old.
+
+
+
+
 
