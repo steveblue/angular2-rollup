@@ -56,7 +56,7 @@ class ProdBuild extends Build {
         } else {
           const bundle = await closureBuilder.bundle();
         }
-   
+
         if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
         util.getTime(this.startTime);
 

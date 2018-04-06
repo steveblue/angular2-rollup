@@ -9,7 +9,7 @@ const cliRoot = findup.sync(__dirname, 'package.json');
 const package = require(__dirname + '/package.json');
 
 if (process.argv.indexOf('scaffold') > -1) {
-    cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'), 
+    cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'),
        path.join(path.dirname(process.cwd()), path.basename(process.cwd())));
     process.argv.push('--verbose');
 }
@@ -18,6 +18,7 @@ program
     .version(package.version)
     .usage('<keywords>')
     .option('scaffold [bool]', 'scaffold new application in current directory')
+    .option('--src [string]', 'specify a path to the src folder')
     .option('--noinstall [bool]', 'prevents install during scaffold')
     .option('--yarn [bool]', 'use yarn instead of npm to install')
     .option('build [env]', 'build the application')
@@ -52,6 +53,10 @@ let cli = () => {
     if (program.scaffold) {
         let scaffold = new Scaffold();
         scaffold.basic();
+    }
+
+    if (program.serve && !program.build) {
+        util.serve();
     }
 
 }

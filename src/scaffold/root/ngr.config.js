@@ -1,3 +1,6 @@
+const spawn = require('child_process').spawn;
+const fs = require('fs');
+
 module.exports = {
     dep: {
         lib: [
@@ -56,5 +59,40 @@ module.exports = {
     dist: 'dist',
     classPrefix: 'My',
     componentPrefix: 'cmp',
-    directivePrefix: 'dir'
+    directivePrefix: 'dir',
+    buildHooks: {
+        prod: {
+            pre: () => {
+                return new Promise((res) => {
+
+                    let editFile = (filePath) => {
+                        return new Promise((res) => {
+                            fs.readFile(filePath, 'utf-8', (error, stdout, stderr) => {
+                                let package = JSON.parse(stdout);
+                                package.es2015 = package.es2015.replace('_esm2015', '_fesm2015');
+                                console.log('editing ' + filePath);
+                                fs.writeFile(filePath, JSON.stringify(package), () => {
+                                    res(filePath);
+                                })
+                            });
+                        });
+                    };
+
+                    let rollup = spawn('npm', ['run', 'rollup:closure'], {shell: true, stdio: 'inherit'});
+                    rollup.on('exit', () => {
+                        console.log('rollup completed');
+                        Promise.all([editFile('node_modules/rxjs/package.json'),
+                                     editFile('node_modules/rxjs/operators/package.json'),
+                                     editFile('node_modules/rxjs/ajax/package.json'),
+                                     editFile('node_modules/rxjs/testing/package.json'),
+                                     editFile('node_modules/rxjs/websocket/package.json')])
+                                     .then(data => {
+                                         res();
+                                      });
+
+                    });
+                });
+            }
+        }
+    }
 }
