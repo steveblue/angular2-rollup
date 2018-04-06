@@ -7,15 +7,7 @@
     "target": "es5",
     "module": "commonjs",
     "noImplicitAny": false,
-    "removeComments": false,
-    "typeRoots": [ "node_modules/@types" ],
-    "types": [
-       "jasminewd2"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ]
+    "removeComments": false
   },
   "include": [
     "./src/**/*.ts"
