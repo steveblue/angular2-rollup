@@ -1,9 +1,9 @@
 {
-    "extends": "./tsconfig.json",
+    "extends": "../tsconfig.json",
     "compilerOptions": {
-        "outDir": "../../dist/esm5",
+        "outDir": "../../../ngfactory/esm2015",
         "module": "es2015",
-        "target": "es5"
+        "target": "es2015"
     },
     "angularCompilerOptions": {
         "strictMetadataEmit": true,
