@@ -1,8 +1,18 @@
-## 2.0.0
+## 2.0.0-beta.1
 
-- Refactored build scripts for easier maintanence over time
-- Improvements to build scripts allow for faster build times
+- Supports building libraries with Package Format 6.0
+- Moved configuration files for library packages to config directory to clean up source
+- Fixed issue that prevented logs from displaying libraries that are copied
+- Resequenced development build making it faster for large scale projects
+- Development build doesnt clean build folder by default, use --clean flag when coming from prod build
+
+
+## 2.0.0-beta.0
+
+- All new build architecture allows for easier maintainance, human readibility
+- Async build scripts make the builds 4x faster in some cases
 - Fixed an issue that prevented styles from compiling in library builds
+
 
 ### IMPROVEMENTS
 
