@@ -217,7 +217,7 @@ class Util {
 
                 fs.writeFile(outFile, contents, (err) => {
                     if (!err && this.getFileName(outFile).includes('component')) {
-                        log.message('inline template and styles in', outFile);
+                        log.message('inline template and styles for '+ this.getFileName(outFile));
                     } else if (err){
                         log.warn(err);
                     }

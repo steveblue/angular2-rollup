@@ -1,34 +1,12 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "rootDir": "../../tmp",
     "outDir": "../../ngfactory",
     "target": "es2015",
-    "module": "es2015",
-    "declaration": true,
-    "stripInternal": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": false,
-    "removeComments": true,
-    "allowUnreachableCode": false,
-    "moduleResolution": "node",
-    "lib": ["es2015", "dom"],
-    "skipLibCheck": true,
-    "types": []
+    "module": "es2015"
   },
   "angularCompilerOptions": {
-   "strictMetadataEmit": true,
-   "skipTemplateCodegen": true,
-   "annotateForClosureCompiler": true,
-   "flatModuleOutFile": "default-lib.js",
-   "flatModuleId": "default-lib",
-   "debug": false
-  },
-  "files": [
-    "../../tmp/index.ts"
-  ],
-  "compileOnSave": false,
-  "buildOnSave": false
+    "flatModuleOutFile": "default-lib.js",
+    "flatModuleId": "default-lib"
+  }
 }

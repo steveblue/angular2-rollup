@@ -84,16 +84,28 @@ class LibBuild extends Build {
             (async () => {
                 const compileFESM = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es2015.tsConfig));
                 const rollupFESM = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.es2015.rollupConfig));
-                const post = await this.checkBuild();
-            })();
-            (async () => {
                 const compileUMD = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es5.tsConfig));
                 const rollupUMD = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.umd.rollupConfig));
+                const compileES5 = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es5.tsConfig));
+                const rollupES5 = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.es5.rollupConfig));
+                const post = await this.checkBuild();
+            })();
+            // (async () => {
+            //     const compileUMD = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es5.tsConfig));
+            //     const rollupUMD = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.umd.rollupConfig));
+            //     const post = await this.checkBuild();
+            // })();
+            // (async () => {
+            //     const compileES5 = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es5.tsConfig));
+            //     const rollupES5 = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.es5.rollupConfig));
+            //     const post = await this.checkBuild();
+            // })();
+            (async () => {
+                const compileESM5 = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.esm5.tsConfig));
                 const post = await this.checkBuild();
             })();
             (async () => {
-                const compileES5 = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es5.tsConfig));
-                const rollupES5 = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.es5.rollupConfig));
+                const compileESM2015 = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.esm2015.tsConfig));
                 const post = await this.checkBuild();
             })();
 
@@ -103,7 +115,11 @@ class LibBuild extends Build {
     checkBuild() {
 
         return new Promise((res, rej) => {
-            if (fs.existsSync(this.libConfig.es2015.outFile) && fs.existsSync(this.libConfig.es5.outFile) && fs.existsSync(this.libConfig.umd.outFile)) {
+            if (fs.existsSync(this.libConfig.es2015.outFile) && 
+                fs.existsSync(this.libConfig.es5.outFile) &&
+                fs.existsSync(this.libConfig.umd.outFile) && 
+                fs.existsSync(this.libConfig.esm5.outFile) && 
+                fs.existsSync(this.libConfig.esm2015.outFile)) {
                 this.post();
                 res();
             } else {

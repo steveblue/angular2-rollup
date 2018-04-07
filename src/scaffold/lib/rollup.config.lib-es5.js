@@ -1,10 +1,12 @@
 // rollup.config.lib-es5.js
 
 export default {
-  entry: 'ngfactory/default-lib.js',
-  moduleName: 'default-lib',
-  dest: 'dist/default-lib.es5.js',
-  sourceMap: false,
+  input: 'ngfactory/default-lib.js',
+  output: {
+    file: 'dist/fesm5/default-lib.js',
+    format: 'es',
+    sourcemap: true
+  },
   onwarn: function ( message ) {
 
     return;
