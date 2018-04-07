@@ -152,22 +152,24 @@ class Util {
                     if (fs.lstatSync(path.join('node_modules', paths[i])).isFile()) { // is file
 
                     let file = path.join(dist, paths[i]);
+                
 
                     if (!fs.existsSync(this.getFilePath(file))) {
 
-                    mkdir('-p', this.getFilePath(file));
+                        mkdir('-p', this.getFilePath(file));
 
                     } // catch folders if they dont exist
 
                     if (!fs.existsSync(path.join(dist, paths[i]))) {
                         cp(path.join(src, paths[i]), path.join(dist, paths[i]));
+                        log.message(path.join(src.replace('node_modules', ''), paths[i]) + ' copied to ' + path.join(dist, paths[i]));
                     }
 
                 } else if (fs.lstatSync(path.join('node_modules', paths[i])).isDirectory()) { // is folder
 
                     if (!fs.existsSync( path.join(dist, paths[i]) )) {
                         cp('-R', path.join(src, paths[i]), path.join(dist, paths[i]));
-                        log.message(src, paths[i])+ ' copied to ' + path.join(dist, paths[i]);
+                        log.message(path.join(src.replace('node_modules', ''), paths[i])+ ' copied to ' + path.join(dist, paths[i]));
                     }
 
                 }

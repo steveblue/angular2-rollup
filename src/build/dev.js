@@ -38,17 +38,22 @@ class DevBuild extends Build {
       (async () => {
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
+        log.message('styled components');
+        if (!fs.existsSync(path.join(config.build, 'main.js'))) {
+          (async () => {
+            const main = await aotBuilder.compileMain().then((res) => {
+                log.message('compiled main.js');
+                log.message('compiling...');
+            });
+          })();
+        }
+       
         const src = await aotBuilder.compile(path.join('tsconfig.' + cli.env + '.json'));
+      
         this.post();
       })();
 
-      if (!fs.existsSync(path.join(config.build, 'main.js'))) {
-        (async () => {
-          const main = await aotBuilder.compileMain().then((res) => {
-              log.message('compiled main.js');
-          });
-        })();
-      }
+   
 
     }
 
@@ -69,7 +74,7 @@ class DevBuild extends Build {
 
       }
 
-      if (cli.program.clean !== false) {
+      if (cli.program.clean) {
         util.cleanBuild().then(()=>{
           build();
         });
