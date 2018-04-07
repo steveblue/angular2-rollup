@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "rootDir": "../../tmp",
+        "declaration": true,
+        "stripInternal": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "allowUnreachableCode": false,
+        "moduleResolution": "node",
+        "lib": [
+            "es2015",
+            "dom"
+        ],
+        "skipLibCheck": true,
+        "types": []
+    },
+    "angularCompilerOptions": {
+        "strictMetadataEmit": true,
+        "skipTemplateCodegen": true,
+        "annotateForClosureCompiler": true,
+        "debug": false
+    },
+    "files": [
+        "../../tmp/index.ts"
+    ],
+    "compileOnSave": false,
+    "buildOnSave": false
+}

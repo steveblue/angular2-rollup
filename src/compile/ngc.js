@@ -42,7 +42,7 @@ class AOTBuilder {
                     if (stderr) {
                         this.handleError(stderr);
                     } else {
-                        log.success('Compilation complete.');
+                        log.message('Compilation complete.');
 
                         if (cli.env === 'dev') {
                             log.break();

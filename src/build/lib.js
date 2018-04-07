@@ -42,7 +42,6 @@ class LibBuild extends Build {
                 const bundle = await this.bundleLib();
             })();
 
-
         }
         else if (ls(path.normalize(this.libConfig.src + '/**/*.css')).length > 0) {
 
@@ -59,6 +58,7 @@ class LibBuild extends Build {
         }
 
         // process global styles
+
         if (ls(path.normalize(config.src + '/style/*.scss')).length > 0) {
 
             (async () => {
@@ -81,19 +81,29 @@ class LibBuild extends Build {
 
         return new Promise((res, rej) => {
 
+            log.message('compiling...');
+
             (async () => {
-                const compileFESM = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es2015.tsConfig));
-                const rollupFESM = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.es2015.rollupConfig));
+                const compileFESM = await aotBuilder.compile(path.join(this.libConfig.src, 'config', this.libConfig.es2015.tsConfig));
+                const rollupFESM = await rollupBuilder.bundle(path.join(this.libConfig.src, 'config', this.libConfig.es2015.rollupConfig));
                 const post = await this.checkBuild();
             })();
             (async () => {
-                const compileUMD = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es5.tsConfig));
-                const rollupUMD = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.umd.rollupConfig));
+                const compileUMD = await aotBuilder.compile(path.join(this.libConfig.src, 'config', this.libConfig.es5.tsConfig));
+                const rollupUMD = await rollupBuilder.bundle(path.join(this.libConfig.src, 'config', this.libConfig.umd.rollupConfig));
                 const post = await this.checkBuild();
             })();
             (async () => {
-                const compileES5 = await aotBuilder.compile(path.join(this.libConfig.src, this.libConfig.es5.tsConfig));
-                const rollupES5 = await rollupBuilder.bundle(path.join(this.libConfig.src, this.libConfig.es5.rollupConfig));
+                const compileES5 = await aotBuilder.compile(path.join(this.libConfig.src, 'config', this.libConfig.es5.tsConfig));
+                const rollupES5 = await rollupBuilder.bundle(path.join(this.libConfig.src, 'config', this.libConfig.es5.rollupConfig));
+                const post = await this.checkBuild();
+            })();
+            (async () => {
+                const compileESM5 = await aotBuilder.compile(path.join(this.libConfig.src, 'config', this.libConfig.esm5.tsConfig));
+                const post = await this.checkBuild();
+            })();
+            (async () => {
+                const compileESM2015 = await aotBuilder.compile(path.join(this.libConfig.src, 'config', this.libConfig.esm2015.tsConfig));
                 const post = await this.checkBuild();
             })();
 
@@ -103,7 +113,11 @@ class LibBuild extends Build {
     checkBuild() {
 
         return new Promise((res, rej) => {
-            if (fs.existsSync(this.libConfig.es2015.outFile) && fs.existsSync(this.libConfig.es5.outFile) && fs.existsSync(this.libConfig.umd.outFile)) {
+            if (fs.existsSync(this.libConfig.es2015.outFile) && 
+                fs.existsSync(this.libConfig.es5.outFile) &&
+                fs.existsSync(this.libConfig.umd.outFile) &&
+                fs.existsSync(path.join('ngfactory', 'esm5', 'index.js')) && 
+                fs.existsSync(path.join('ngfactory', 'esm2015', 'index.js'))) {
                 this.post();
                 res();
             } else {
@@ -128,60 +142,42 @@ class LibBuild extends Build {
 
     }
 
-    processTypeDefinitions() {
+    processESM() {
 
         return new Promise((res, rej) => {
 
+            let copyFile = (filePath, distFilePath) => {
+                if (!fs.existsSync(util.getFilePath(distFilePath))) {
+                    mkdir('-p', util.getFilePath(distFilePath));
+                }
+                cp('-R', filePath, distFilePath);
+            };
+
             try {
-                // process d.ts files and copy to dist
-                find(path.normalize('./ngfactory/'))
+
+                // copy typings
+                find(path.normalize('./ngfactory/esm5'))
                     .filter(function (file) { return file.match(/\.d.ts$/); })
                     .forEach((filePath) => {
-
-                        let fileName = filePath.replace(/^.*[\\\/]/, '');
-
-                        if (fileName === (this.libConfig.filename + '.d.ts')) {
-                            // do nothing
-                        }
-                        else if (fileName === ('index.d.ts')) {
-                            let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
-                            fs.readFile(path.join('ngfactory', fileName), 'utf8', (err, contents) => {
-                                if (err) rej(err);
-                                if (!err) {
-                                    fs.writeFile(path.join(dir, this.libConfig.filename + '.d.ts'), contents, 'utf-8', () => {});
-                                }
-                            });
-                        }
-                        else {
-                            let dir = path.normalize(filePath.substring(0, filePath.lastIndexOf("/")).replace('ngfactory', 'dist'));
-                            if (!fs.existsSync(dir)) {
-                                mkdir('-p', dir);
-                            }
-                            cp(filePath, path.join(dir, fileName));
-                        }
-
+                        copyFile(filePath, path.join('dist', filePath.replace(path.normalize('ngfactory/esm5'), '')));
                     });
+                // copy esm5
+                find(path.normalize('./ngfactory/esm5'))
+                    .filter(function (file) { return file.match(/\.js$/); })
+                    .forEach((filePath) => {
+                        copyFile(filePath, path.join('dist', filePath.replace('ngfactory', '')));
+                    });
+                // copy esm2015
+                find(path.normalize('./ngfactory/esm2015'))
+                    .filter(function (file) { return file.match(/\.js$/); })
+                    .forEach((filePath) => {
+                        copyFile(filePath, path.join('dist', filePath.replace('ngfactory', '')));
+                    });
+                // cophy meteadata 
+                cp(path.join('ngfactory', 'esm2015', this.libConfig.filename + '.metadata.json'), 
+                   path.join(this.libConfig.dist, this.libConfig.filename + '.metadata.json') );
 
-                // remove extra d.ts
-                rm(path.join(path.normalize(this.libConfig.dist), this.libConfig.filename)+'.es5.d.ts');
-                // copy metadata
-                cp(path.normalize(path.join('./ngfactory', this.libConfig.filename + '.metadata.json')), path.normalize(this.libConfig.dist));
-                log.message('d.ts, metadata.json', 'copied to', './' + this.libConfig.dist);
-                // remove .ts files from dist
-                find(path.normalize('./' + this.libConfig.dist)).filter((file) => {
-
-                    if (util.hasHook('clean')) {
-                        log.message('processing clean task');
-                        config.buildHooks.lib.clean(process.argv, file);
-                    } else {
-                        if (file.match(/component.ts$/) || file.match(/directive.ts$/) || file.match(/injectable.ts$/) || file.match(/module.ts$/) || file.match(/.html$/) || file.match(/.scss$/)) {
-                            rm(file);
-                        }
-                    }
-
-                });
-                res();
-
+               res();
 
             }
             catch(err) {
@@ -229,13 +225,8 @@ class LibBuild extends Build {
 
     post() {
 
-        if (!this.hasInit) {
-            this.hasInit = true;
-        } else {
-            return;
-        }
 
-        this.processTypeDefinitions().then((res) => {
+        this.processESM().then((res) => {
 
             // copy package.json to dist
             exec('cp ' + this.libConfig.src + '/package.json' + ' ' + this.libConfig.dist + '/package.json', () => {
@@ -250,6 +241,8 @@ class LibBuild extends Build {
             });
 
 
+        }).catch((err) => {
+            log.warn(err);
         });
 
     }
