@@ -38,7 +38,7 @@ The easiest way to upgrade is to scaffold a new app (`ngr scaffold`) and overwri
 
 -------------------------------------------------------------------------------------------------------------
 
-# 1.x
+# 1.x README
 
 ## Main Features
 
