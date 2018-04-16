@@ -1,10 +1,10 @@
 # angular-rollup
 
-### 2.0.0-beta.0
+### 2.0.0-beta
 
 cli for building angular apps
 
-2.0.0-beta.0 is the next generation of angular-rollup. 2.0.0 will be released once we reach feature parity with 1.x.
+2.0.0-beta is the next generation of angular-rollup. 2.0.0 will be released once we reach feature parity with 1.x.
 
 Currently only a few commands are supported.
 
@@ -15,7 +15,7 @@ Currently only a few commands are supported.
 
 # How To Update
 
-`npm install -g angular-rollup@2.0.0-beta.0`
+`npm install -g angular-rollup@2.0.0-beta.1`
 
 # ngr --help
 
@@ -24,6 +24,7 @@ There are new cli arguments. Review the changes by running `ngr --help`.
 # Report Issues
 
 [https://github.com/steveblue/angular2-rollup/issues](https://github.com/steveblue/angular2-rollup/issues)
+
 
 # Not All Builds Are Fully Operational
 
