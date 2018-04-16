@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "es2015",
+    "stripInternal": true,
+    "inlineSources": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "allowUnreachableCode": false
+  },
+  "angularCompilerOptions": {
+    "annotationsAs": "static fields",
+    "annotateForClosureCompiler": true,
+    "skipMetadataEmit": false
+  },
+  "include": [
+    "./ngfactory/src/**/*.ts"
+  ]
+}

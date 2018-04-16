@@ -1,0 +1,28 @@
+{
+    "src": "src/lib",
+    "dist": "dist",
+    "filename": "default-lib",
+    "es2015": {
+        "tsConfig": "tsconfig.lib.json",
+        "rollupConfig": "rollup.config.lib.js",
+        "outFile": "dist/fesm2015/default-lib.js"
+    },
+    "es5": {
+        "tsConfig": "tsconfig.lib.es5.json",
+        "rollupConfig": "rollup.config.lib-es5.js",
+        "outFile": "dist/fesm5/default-lib.js"
+    },
+    "umd": {
+        "tsConfig": "tsconfig.lib.umd.json",
+        "rollupConfig": "rollup.config.lib-umd.js",
+        "outFile": "dist/bundles/default-lib.umd.js"
+    },
+    "esm5": {
+        "tsConfig": "tsconfig.lib.esm5.json",
+        "outFile": "dist/esm5/default-lib.js"
+    },
+    "esm2015": {
+        "tsConfig": "tsconfig.lib.esm2015.json",
+        "outFile": "dist/esm2015/default-lib.js"
+    }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../ngfactory/es2015",
+    "target": "es2015",
+    "module": "es2015"
+  },
+  "angularCompilerOptions": {
+    "flatModuleOutFile": "default-lib.js",
+    "flatModuleId": "default-lib"
+  }
+}

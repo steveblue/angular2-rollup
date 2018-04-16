@@ -1,0 +1,19 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../../ngfactory/esm5",
+        "module": "es2015",
+        "target": "es5"
+    },
+    "angularCompilerOptions": {
+        "strictMetadataEmit": true,
+        "skipTemplateCodegen": true,
+        "annotateForClosureCompiler": true,
+        "debug": false,
+        "flatModuleOutFile": "default-lib.js",
+        "flatModuleId": "default-lib"
+    },
+    "files": [
+        "../../tmp/index.ts"
+    ]
+}

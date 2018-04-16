@@ -1,7 +1,83 @@
+## 2.0.0-beta.2
+
+- Streamline file copy tasks
+
+-------------------------------------------------------------------------------------------------------------
+
+## 2.0.0-beta.1
+
+- Supports building libraries with Package Format 6.0
+- Moved configuration files for library packages to config directory to clean up source
+- Fixed issue that prevented logs from displaying libraries that are copied
+- Resequenced development build making it faster for large scale projects
+- Development build doesnt clean build folder by default, use --clean flag when coming from prod build
+
+-------------------------------------------------------------------------------------------------------------
+
+## 2.0.0-beta.0
+
+- All new build architecture allows for easier maintainance, human readibility
+- Async build scripts make the builds 4x faster in some cases
+- Fixed an issue that prevented styles from compiling in library builds
+
+
+### IMPROVEMENTS
+
+- Add `src/style/**/*.scss` and `src/style/**/*.css` to `excludes` Array in tsconfig.dev.json. This will force ngc to ignore global styles and prevent compilation. Updates to global styling can now happen without browser reload.
+- Deprecated requirement for Babel in library build
+
+### BREAKING CHANGES
+
+- `main.js`, `main.prod.js` and `main.prod.ts` are now deprecated. These files can be removed. The build now automatically handles `main.ts` for dev and jit builds.
+- Upgrade `rollup` to `^0.55.0`. The library build now supports `input` and `output` syntax by default
+- Arguments passed to buildHooks and server.js may change, please check and update where necessary
+
+For example, in previous scaffolds `server.js` contained this conditional checking for `--watch` but `canWatch` supposes there is an `=`. In 2.0.0 only `watch` is exposed, not anything after the `=`:
+
+BEFORE:
+
+```
+  if (arg.includes('watch')) {
+    canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
+  }
+```
+
+AFTER:
+```
+  if (arg.includes('watch')) {
+    canWatch = true;
+  }
+```
+
+- Change the model for declaring library packages in `ngr.config.js`. The new config should look like this:
+
+BEFORE:
+
+```
+dep: {
+    lib: [],
+    prodLib: []
+}
+
+```
+
+AFTER:
+```
+lib: {
+    dev: [],
+    prod: []
+}
+
+```
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.8
 
 - Fixed issue that prevented post buildHook from firing in dev build
 - Fixed timing issues when logging the dev build
+
+-------------------------------------------------------------------------------------------------------------
 
 
 ## 1.0.7
@@ -24,12 +100,16 @@ buildHooks: {
         }
 }
 ```
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.6
 
 - Fixed issue with lazy build when angular library package name contains special character
 - Fixed logs with production build when closure compiler fails
 - Fixed warnings during ngr scaffold
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.5
 
@@ -38,9 +118,13 @@ buildHooks: {
 - Fixed an issue when global scss filenames began with underscore
 - Fixed an issue when generating a library with a custom source name defined in ngr.config.js
 
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.4
 
 - Remove version message unless the user needs to update
+
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.3
 
@@ -68,6 +152,7 @@ package.json
 server.universal.js
 ```
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.2
 
@@ -77,6 +162,7 @@ server.universal.js
 - Defaulted new projects to @angular ^5.0.0
 - Removed bogus script from `package.json`
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.1
 
@@ -84,11 +170,14 @@ server.universal.js
 
 To migrate an existing library, simply change the `baseUrl` property in the tsconfig files to "./src" and move all library files into `path/to/lib/src`, update paths in your `index.ts`.
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0
 
 - Version bump
 - Update README
+
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.6
 
@@ -99,6 +188,8 @@ To migrate an existing library, simply change the `baseUrl` property in the tsco
 - Fixed issue that could prevent lazy.config.json from being copied correctly in prod build
 - Added yarn to install messaging because why not?
 - Added Web Animations polyfill to default configuration
+
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.5
 
@@ -113,6 +204,7 @@ To migrate an existing library, simply change the `baseUrl` property in the tsco
 
 If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`mv build.config.js ngr.config.js`) and update references to `build.config.js` in `server.js` and `router.js`. The build scripts will continue to check for build.config.js until we choose to deprecate backwards compatibility in a later release.
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.4
 
@@ -124,6 +216,8 @@ If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`m
 - Deprecated `jsconfig.json`
 - Update README with instructions for `ngr.config.js` and using buildHooks in `build.config.js`
 
+-------------------------------------------------------------------------------------------------------------
+
 
 ## 1.0.0-rc.3
 
@@ -132,6 +226,8 @@ If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`m
 - Fixed an issue that could cause modules to not be generated when using `ngr generate module`
 - Fixed an issue that could prevent global stylesheet from being generated in dist folder
 - Updated README
+
+-------------------------------------------------------------------------------------------------------------
 
 
 ## 1.0.0-rc.2
@@ -157,6 +253,8 @@ Generate a unit test either use the wizard (`ngr generate wizard`) or use the fo
 Optionally, generate a unit test for a directive with the --spec argument.
 
 `ngr generate unit --dir src/app/shared/components/my-component --name my-directive --spec directive`
+
+-------------------------------------------------------------------------------------------------------------
 
 
 ## 1.0.0-rc.1
@@ -229,15 +327,21 @@ You can now use the `--config` argument to build a library package like so:
 
 This of course brings the added benefit of developing multiple library packages in the same application. Before, developers were limited to one library package per application since the build was bound to the configuration found in `build.config.js`. The new format allows secondary entry points to be compiled, per the Package Format spec. This older config should still work, but it is recommended to update to this latest format to ensure future compatibility.
 
+-------------------------------------------------------------------------------------------------------------
+
 
 ## 1.0.0-rc.0
 
 - Version bump
 - Update README
 
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.0-beta.13
 
 - Use `ngr update --angularVersion 5.0.0` for help updating an existing scaffolded app to Angular 5.0.0
+
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-beta.12
 
@@ -584,9 +688,8 @@ To build for production with support for lazyloaded routes:
 
 `ngr build prod --closure --lazy`
 
-
-
 -------------------------------------------------------------------------------------------------------------
+
 ## 1.0.0-beta.0
 
 - Updated npm package name to `angular-rollup`, `angular2-rollup` is deprecated
@@ -604,544 +707,3 @@ Minimal changes will be required to upgrade to `angular-rollup`.
 `npm install angular2-rollup@4.4.0-RC.0`
 
 -------------------------------------------------------------------------------------------------------------
-
-## 5.0.0-beta.6
-
-BREAKING CHANGES
-
-- New dev build uses AOT in `--watch` mode, JIT has been deprecated for development environment but is still available with `ngr build jit`
-- Migrated `tsconfig.prod.json` to 5.0.0-beta.6.
-- Scaffold new projects with a specific `@angular` version using `--angularVersion`
-
-If your project is < 5.0.0 use `ngr build jit` instead of `ngr build dev`.
-
-To update existing projects, migrate `main.prod.ts`, `tsconfig.dev.json` and `tsconfig.prod.json`. The `ngr` CLI by default will now include the configurations for `>5.0.0`. Use the examples below to downgrade to `4.0.0-4.4.0`. Further changes are required to downgrade to `2.0.0` but it is possible.
-
-NOTE: `ngr build lib` is broken in `5.0.0-beta.4-5.0.0-beta.6`. If you want to test this build use `ngr scaffold --angularVersion 5.0.0-beta.3` to scaffold your app.
-
-### Prior to 5.0.0
-
-`main.prod.ts`
-
-```
-import { platformBrowser } from '@angular/platform-browser';
-import { enableProdMode } from '@angular/core';
-import { AppModuleNgFactory } from './ngfactory/tmp/app/app.module.ngfactory';
-enableProdMode();
-platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
-```
-
-`tsconfig.prod.json`
-
-```
-{
-  "compilerOptions": {
-    "target": "es2015",
-    "module": "es2015",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": false,
-    "removeComments": true,
-    "allowUnreachableCode": false,
-    "moduleResolution": "node",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-       "node"
-    ]
-  },
-  "angularCompilerOptions": {
-    "genDir": "./ngfactory",
-    "annotateForClosureCompiler": true,
-    "skipMetadataEmit": false
-  },
-  "files": [
-    "./tmp/app/app.module.ts",
-    "main.prod.ts"
-  ]
-}
-
-```
-
-
-`tsconfig.dev.json`  / `tsconfig.jit.json`. < 5.0.0 dev and jit builds are the same
-
-```
-{
-    "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "noImplicitAny": false,
-        "removeComments": false,
-        "allowUnreachableCode": false,
-        "moduleResolution": "node",
-        "outDir": "./build",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "types": [
-            "node",
-            "jasmine",
-            "karma"
-        ],
-        "lib": [
-            "es2017",
-            "dom"
-        ]
-    },
-    "exclude": [
-        "build",
-        "dist",
-        "tmp",
-        "node_modules",
-        "main.prod.ts"
-    ],
-    "compileOnSave": false,
-    "buildOnSave": false
-}
-```
-
-
-### After 5.0.0
-
-`main.prod.ts`
-
-This file is unnecessary.
-
-Prior to 5.0.0 `main.prod.ts` needed to be included for `ngc`. After 5.0.0 `ngc` can use just `app.module.ts` as an entry point. Rollup still uses `main.prod.js` as an entry point.
-
-`tsconfig.dev.json`
-
-```
-{
-  "compilerOptions": {
-    "outDir": "./build",
-    "target": "es5",
-    "module": "commonjs",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": false,
-    "removeComments": true,
-    "allowUnreachableCode": false,
-    "moduleResolution": "node",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-      "node",
-      "jasmine",
-      "karma"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ]
-  },
-  "angularCompilerOptions": {
-    "skipMetadataEmit": true
-  },
-  "files": [
-    "./src/app/app.module.ts"
-  ]
-}
-
-```
-
-`tsconfig.jit.json`
-
-```
-{
-    "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "noImplicitAny": false,
-        "removeComments": false,
-        "allowUnreachableCode": false,
-        "moduleResolution": "node",
-        "outDir": "./build",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "types": [
-            "node",
-            "jasmine",
-            "karma"
-        ],
-        "lib": [
-            "es2017",
-            "dom"
-        ]
-    },
-    "exclude": [
-        "build",
-        "dist",
-        "tmp",
-        "node_modules",
-        "main.prod.ts"
-    ],
-    "compileOnSave": false,
-    "buildOnSave": false
-}
-```
-
-
-`tsconfig.prod.json`
-
-```
-{
-  "compilerOptions": {
-    "outDir": "./build",
-    "target": "es2015",
-    "module": "es2015",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": false,
-    "removeComments": true,
-    "allowUnreachableCode": false,
-    "moduleResolution": "node",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-       "node"
-    ]
-  },
-  "angularCompilerOptions": {
-   "annotateForClosureCompiler": true,
-   "skipMetadataEmit": false
-  },
-  "files": [
-    "./src/app/app.module.ts"
-  ]
-}
-
-```
-
-
-## 4.4.0-RC.0
-
-MAJOR BREAKING CHANGES in this release. This release is primarily to improve the CLI, make writing custom builds easier. This release decouples the CLI from project code.
-
-- CLI must now be installed globally `npm i -g angular2-rollup`
-- Project dependencies are now decoupled from CLI dependencies
-- Scaffold a new app with `ngr scaffold`, with `--lib` for library builds
-- CLI output has new look and feel in terminal
-- Added build hooks so users can insert custom logic into parts of each build
-- e2e spec files can now be generated with `ngr --generate e2e`
-- Project dependencies are now decoupled from CLI dependencies
-- Normalized CLI commands, use build instead of --build or generate instead of --generate
-
-
-### MIGRATING from 4.3.6 to 4.4.0-RC.0
-
-Install the CLI globally. `npm install -g angular2-rollup`
-
-Remove all build files except `build.config.js` unless you have made changes to the build.
-
--  build.dev.js
--  build.lib.js
--  build.prod.js
--  build.scaffold.js
--  build.utils.js
-
-If you have changed the builds, it is recommended that you migrate any tasks to the new build hooks included with this update.
-
-If a build has diverged significantly, you can include the build file in your local project and it will override the original. This is not recommended and results may vary.
-
-Remove `cli.js`
-
-Rename `./conf/config.local.js` to `./server.config.dev.js`
-Rename `./conf/config.prod.js` to `./server.config.prod.js`
-
-The only file referencing these files is `server.js`. Change the paths in the `require()` lines at the top of the file.
-
-Update `package.json`
-
-The necessary scripts in the `package.json` have been greatly reduced. Below is an example of the package.json shipped with 5.0.0. Remove any deprecated scripts.
-
-```
-"scripts": {
-      "clean": "rimraf node_modules ngfactory doc build && npm cache clean",
-      "clean:install": "npm run clean && npm install",
-      "clean:build": "rimraf build",
-      "clean:tmp": "rimraf tmp",
-      "clean:ngfactory": "rimraf ngfactory && mkdir ngfactory",
-      "copy:lib": "rsync -a --exclude=*.js ngfactory/ dist",
-      "copy:package": "cp ./src/lib/package.json ./dist/package.json",
-      "transpile:prod": "java -jar node_modules/google-closure-compiler/compiler.jar --warning_level=QUIET --language_in=ES6 --language_out=ES5 --js ./build/bundle.es2015.js --js_output_file ./build/bundle.js",
-      "webdriver:update": "webdriver-manager update",
-      "webdriver:start": "webdriver-manager start",
-      "lint": "tslint --force \"src/app/**/*.ts\"",
-      "e2e": "protractor protractor.config.js",
-      "e2e:live": "protractor protractor.config.js --elementExplorer",
-      "pretest": "",
-      "test": "karma start karma.conf.js",
-      "test:watch": "karma start karma.conf.js --no-single-run --auto-watch",
-      "ci": "npm run e2e && npm run test",
-      "ci:watch": "npm run e2e && npm run test:watch",
-      "start": "ngr --build dev --watch --serve",
-      "serve": "node server.js",
-      "postinstall": "npm run webdriver:update"
-    }
-```
-
-Update `@angular` dependencies in `package.json`
-
-```
-    "dependencies": {
-      "@angular/animations": "4.4.0-RC.0",
-      "@angular/common": "4.4.0-RC.0",
-      "@angular/core": "4.4.0-RC.0",
-      "@angular/forms": "4.4.0-RC.0",
-      "@angular/http": "4.4.0-RC.0",
-      "@angular/platform-browser": "4.4.0-RC.0",
-      "@angular/platform-browser-dynamic": "4.4.0-RC.0",
-      "@angular/platform-server": "4.4.0-RC.0",
-      "@angular/router": "4.4.0-RC.0",
-
-    "devDependencies": {
-      "@angular/compiler": "4.4.0-RC.0",
-      "@angular/compiler-cli": "4.4.0-RC.0",
-      "@angular/language-service": "4.4.0-RC.0",
-```
-
-
-
-
-## 4.3.6
-
-- Updated to Angular 4.3.6
-- Fixed issue in library build that prevented global CSS form compiling minified
-
-
-## 4.3.5
-
-- Updated to Angular 4.3.5
-- Deprecated `@types/core-js` and instead configured `compilerOptions.lib` for the dev build
-
-
-## 4.3.0
-
-- Updated to Angular 4.3.0
-- Updated RxJs to ~5.4.2 and TypeScript to ^4.2.0, included TypeScript fix in RxJs
-- Fixed an issue that prevented the Express Server from running without LiveReload
-- Production builds now include only the specific library files production requires instead of entire library packages
-- Fixed an issue copying library files with deep directory structures
-- Removed system.js polyfills from index.html because they were deprecated in the package
-
-BREAKING CHANGES
-
-
-The production build now requires a new Object in build.config.js with the property name `prodLib`.
-
-```
-    dep: {
-        lib: [
-            'angular-srcs/shims_for_IE.js',
-            'core-js',
-            'reflect-metadata',
-            'zone.js',
-            'systemjs',
-            '@angular',
-            'rxjs'
-        ],
-        prodLib: [
-            'angular-srcs/shims_for_IE.js',
-            'core-js/client/shim.min.js',
-            'core-js/client/shim.min.js.map',
-            'systemjs/dist/system.js',
-            'zone.js/dist/zone.js'
-        ]
-```
-
-
-## 4.3.0-beta.0
-
-- Updated to Angular 4.3.0-beta.0
-- Updated packages to latest compatible versions
-- Commented and cleaned up build scripts
-- PostCSS now defaults `autoprefixer` to `last 20 versions` for better IE support
-
-BREAKING CHANGES
-
-- postcss-cli config files must be migrated from pre 2.6.0 format to post 2.6.0 format
-
-EXAMPLE:
-
-BEFORE:
-
-```
-{
-    "use": ["autoprefixer"],
-    "local-plugins": true,
-    "autoprefixer": {
-        "browsers": "> 5%"
-    }
-}
-
-```
-
-AFTER:
-
-```
-module.exports = {
-  plugins: {
-    'autoprefixer': {
-        browsers: '> 5%'
-    }
-  }
-}
-
-```
-
-NOTE: Only the Object format is supported currently NOT the Array format. The build tools will parse the Object properties for the `--use` option.
-
-For more information: https://github.com/postcss/postcss-cli/wiki/Migrating-from-v2-to-v3
-
-
-
-
-----------------------------------------------------------------------------------------------------
-
-
-## 4.2.0
-
-- Updated to Angular 4.2.0
-- Fixed issue when updating global SASS, livereload and CSS would not update when editing certain files
-- Fixed an issue when users move library build to another location
-- Updated library build, ES5 and UMD builds are now correctly transpiled
-- Updated support for external libraries, now you can specify single file instead of just folders
-- Updated boilerplate to support IE9
-
-----------------------------------------------------------------------------------------------------
-
-## 4.0.3
-
-- Updated to Angular 4.0.3
-- New CLI commands, run `npm i -g` to use in your project
-- Revised README
-
-```
-  $ ngr --help
-
-  Usage: ngr <keywords>
-
-  Options:
-
-    -h, --help             output usage information
-    -V, --version          output the version number
-    -b, --build [env]      Build the application by environment
-    -w, --watch [bool]     Enable file watchers to detect changes and build
-    -g, --generate [type]  Generates new code from templates
-    -n, --name [string]    The name of the new code to be generated (kebab-case)
-    -f, --force [bool]     Force overwrite during code generate
-    -d, --dir [path]       Path the code should be generated in (relative)
-    -s, --spec [bool]      Include spec files in code generation
-    -r, --route [bool]     Include route files in code generation
-    -t, --test [bool]      Run unit tests
-    --serve [bool]         Run Express Server
-
-```
-
-----------------------------------------------------------------------------------------------------
-
-## 4.0.2
-
-- Updated to Angular 4.0.2
-
-----------------------------------------------------------------------------------------------------
-
-## 4.0.1
-
-
-- Updated to Angular 4.0.1
-- Added more configuration to `build.config.js`, renamed from `paths.config.js`
-- Added new `lib` build for distributing libraries in ES6 and ES5
-- Refactored build process to default to `build` folder, `dist` is now the default for library files
-- Use `npm run build:dev` instead of `npm start` for development server
-- Added `npm run build:prod` for AOT production builds
-- Added `npm run build:lib` for building library files
-- Use `watch=true` to watch prod and lib builds, disabled by default
-- Fixed watcher in dev and prod modes, will now detect css changes properly
-- Fixed an issue in prod build that could cause it to fail after libsass and PostCSS
-- Added documnetation for running livereload and watcher with `npm run build:prod`
-- Updated README
-- Created CHANGELOG
-
-
-To Upgrade `build.config.js`:
-
-1. Move the `dep` Array to `dep.lib` and `src` to `dep.src`, `dist` to `dep.dist`.
-
-BEFORE:
-
-```
-module.exports = {
-    dep: [
-            'core-js',
-            'reflect-metadata',
-            'zone.js',
-            'systemjs',
-            '@angular',
-            'rxjs'
-        ]
-    },
-    src: './node_modules',
-    dist: './dist/lib'
-}
-```
-
-AFTER:
-
-```
-module.exports = {
-    dep: {
-        lib: [
-            'core-js',
-            'reflect-metadata',
-            'zone.js',
-            'systemjs',
-            '@angular',
-            'rxjs'
-        ],
-        src: './node_modules',
-        dist:  './build/lib'
-    }
-}
-```
-
-2. Add the project `src`, `build`, and `dist` (optional) directories. These properties point to the source directory, the folder the project should be built in, and in the case of a distributing a library, the `dist` that will be used by other projects.
-
-```
-module.exports = {
-    dep: {
-        lib: [
-            'core-js',
-            'reflect-metadata',
-            'zone.js',
-            'systemjs',
-            '@angular',
-            'rxjs'
-        ],
-        src: './node_modules',
-        dist: './build/lib'
-    },
-    clean:{
-      files:[],
-      folders:[]
-    },
-    src: 'src',
-    build: 'build',
-    dist: 'dist',
-    lib: 'src/lib',
-    libFilename: 'default-lib'
-}
-

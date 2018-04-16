@@ -1,9 +1,44 @@
 # angular-rollup
 
-CLI for bundling Angular with Rollup and Closure Compiler.
+cli for building angular apps with Rollup and Closure Compiler.
 
 [![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+## 2.0.0-beta
+
+2.0.0-beta is the next generation of angular-rollup. 2.0.0 will be released once we reach feature parity with 1.x.
+
+Currently only a few commands are supported.
+
+- `ngr scaffold`
+- `ngr build prod`
+- `ngr build dev --watch`
+- `ngr build jit`
+- `ngr build lib`
+
+## How To Update
+
+`npm install -g angular-rollup@2.0.0-beta.1`
+
+## ngr --help
+
+There are new cli arguments. Review the changes by running `ngr --help`.
+
+## Report Issues
+
+[https://github.com/steveblue/angular2-rollup/issues](https://github.com/steveblue/angular2-rollup/issues)
+
+## Not All Builds Are Fully Operational in 2.0.0-beta
+
+2.0.0-beta currently only supports building a single bundle. Lazyloading, Universal, Electron, and i18n are not yet ready for consumption. If your app relies on any of these builds, stay with 1.x until these features are rolled into 2.0.0-beta.
+
+## Upgrade Existing Project
+
+The easiest way to upgrade is to scaffold a new app (`ngr scaffold`) and overwrite the `ngr.config.json` and `src` directory with the old.
+
+-------------------------------------------------------------------------------------------------------------
+
+# 1.x README
 
 ## Main Features
 
