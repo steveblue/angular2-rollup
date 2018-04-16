@@ -30,11 +30,15 @@ class ProdBuild extends Build {
       const aotBuilder = new AOTBuilder();
       const closureBuilder = new ClosureBuilder();
       const rollupBuilder = new RollupBuilder();
+      const libCheck = config.lib && config.lib[cli.env];
 
       (async () => {
-        const lib = await util.copyLib(config.lib && config.lib[cli.env] ? config.lib[cli.env] : config.dep['prodLib'],
-                                       config.lib && config.lib[cli.env] ? config.lib.src : config.dep.src,
-                                       config.lib && config.lib[cli.env] ? config.lib.dist : config.dep.dist);
+        const lib = await util.copyLib(libCheck ? config.lib[cli.env] : config.dep['prodLib'],
+                                       libCheck ? config.lib.src : config.dep.src,
+                                       libCheck ? config.lib.dist : config.dep.dist);
+      })();
+
+      (async () => {
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
       })();

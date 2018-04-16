@@ -91,6 +91,22 @@ class Util {
 
     }
 
+    copyTo(filePath, dist) {
+
+        const outFile = path.join(dist, filePath.replace(/(node_modules)[\\\/]/g, ''));
+        return new Promise((res) => {
+            if (!fs.existsSync(outFile)) {
+                if (!fs.existsSync(path.dirname(outFile))) {
+                    mkdir('-p', path.dirname(outFile));
+                }
+                cp('-R', path.join(filePath), outFile);
+                log.message(this.getFileName(filePath)+ ' copied to ' + dist);
+                res();
+            }
+        });
+
+    }
+
     hasHook(step) {
         return (config.buildHooks && config.buildHooks[cli.env] && config.buildHooks[cli.env][step]) ? true : false;
     }
@@ -141,52 +157,12 @@ class Util {
 
     }
 
-    copyLib(paths, src, dist) {
+    copyLib(fileList, src, dist) {
 
-        return new Promise((res, rej) => {
+        return Promise.all(fileList.map((filePath) => {
+            return this.copyTo(path.join('node_modules', filePath), dist);
+        }));
 
-            try {
-
-                for (var i = 0; i < paths.length; i++) {
-
-                    if (fs.lstatSync(path.join('node_modules', paths[i])).isFile()) { // is file
-
-                    let file = path.join(dist, paths[i]);
-                
-
-                    if (!fs.existsSync(this.getFilePath(file))) {
-
-                        mkdir('-p', this.getFilePath(file));
-
-                    } // catch folders if they dont exist
-
-                    if (!fs.existsSync(path.join(dist, paths[i]))) {
-                        cp(path.join(src, paths[i]), path.join(dist, paths[i]));
-                        log.message(path.join(src.replace('node_modules', ''), paths[i]) + ' copied to ' + path.join(dist, paths[i]));
-                    }
-
-                } else if (fs.lstatSync(path.join('node_modules', paths[i])).isDirectory()) { // is folder
-
-                    if (!fs.existsSync( path.join(dist, paths[i]) )) {
-                        cp('-R', path.join(src, paths[i]), path.join(dist, paths[i]));
-                        log.message(path.join(src.replace('node_modules', ''), paths[i])+ ' copied to ' + path.join(dist, paths[i]));
-                    }
-
-                }
-
-                if (i === paths.length - 1) {
-                    log.message(src.replace('./', '')+ ' copied to ' +  dist.replace('./', ''));
-                    res();
-                }
-
-                }
-
-            }
-            catch(err) {
-                rej(err);
-            }
-
-        });
     }
 
     inline(filePath) {
