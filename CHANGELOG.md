@@ -1,3 +1,9 @@
+## 2.0.0-beta.2
+
+- Streamline file copy tasks
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 2.0.0-beta.1
 
 - Supports building libraries with Package Format 6.0
@@ -6,6 +12,7 @@
 - Resequenced development build making it faster for large scale projects
 - Development build doesnt clean build folder by default, use --clean flag when coming from prod build
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 2.0.0-beta.0
 
