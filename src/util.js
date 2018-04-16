@@ -56,26 +56,6 @@ class Util {
 
     }
 
-    copyBatch(fileList, dist) {
-
-        return new Promise((res, rej) => {
-            try {
-
-                fileList.forEach((filePath, index) => {
-                    if (!fs.existsSync(path.join(dist, this.getFilePath(filePath)))) mkdir('-p', path.join(dist, this.getFilePath(filePath)));
-                    cp(filePath, path.join(dist, filePath));
-                    log.message(filePath, ' copied to ', dist);
-                });
-
-                res();
-            }
-            catch(err) {
-                rej(err);
-            }
-        })
-
-    }
-
     copyFile(src, dist) {
 
         cp(src, dist);
@@ -104,6 +84,22 @@ class Util {
                 res();
             }
         });
+
+    }
+
+    copyLib(fileList, src, dist) {
+
+        return Promise.all(fileList.map((filePath) => {
+            return this.copyTo(path.join(src, filePath), dist);
+        }));
+
+    }
+
+    copyBatch(fileList, dist) {
+
+        return Promise.all(fileList.map((filePath) => {
+            return this.copyTo(filePath, dist);
+        }));
 
     }
 
@@ -154,14 +150,6 @@ class Util {
 
         });
 
-
-    }
-
-    copyLib(fileList, src, dist) {
-
-        return Promise.all(fileList.map((filePath) => {
-            return this.copyTo(path.join('node_modules', filePath), dist);
-        }));
 
     }
 

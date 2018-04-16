@@ -28,11 +28,15 @@ class JitBuild extends Build {
       const sassBuilder = new SassBuilder({ dist: config.build });
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
       const jitBuilder = new TSBuilder();
+      const libCheck = config.lib && config.lib[env];
 
       (async () => {
-        const lib = await util.copyLib(config.lib && config.lib[env] ? config.lib[env] : config.dep['lib'],
-                                       config.lib && config.lib[env] ? config.lib.src : config.dep.src,
-                                       config.lib && config.lib[env] ? config.lib.dist : config.dep.dist);
+      const lib = await util.copyLib(libCheck ? config.lib[env] : config.dep['lib'],
+                                     libCheck ? config.lib.src : config.dep.src,
+                                     libCheck ? config.lib.dist : config.dep.dist);
+      })();
+
+      (async () => {
         const html = await util.copyBatch(ls(path.normalize(config.src + '/app/**/*.html')), config.build);
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
