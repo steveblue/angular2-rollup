@@ -1,16 +1,14 @@
-## 2.0.0-beta.2
-
-- Streamline file copy tasks
-
--------------------------------------------------------------------------------------------------------------
 
 ## 2.0.0-beta.1
 
-- Supports building libraries with Package Format 6.0
+- Support Angular 6.0.0-rc. Apps scaffolded in 2.0.0 will default to 6.0.0 once it is released.
+- Support building libraries with Package Format 6.0
 - Moved configuration files for library packages to config directory to clean up source
 - Fixed issue that prevented logs from displaying libraries that are copied
 - Resequenced development build making it faster for large scale projects
 - Development build doesnt clean build folder by default, use --clean flag when coming from prod build
+- Streamline file copy tasks
+- Fix issue preventing files in public directory from being copied in --watch mode
 
 -------------------------------------------------------------------------------------------------------------
 
