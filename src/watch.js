@@ -17,10 +17,7 @@ class Watcher {
         const sassBuilder = new SassBuilder({ dist: config.build });
         const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: (cli.env === 'dev') ? false : true });
         const jitBuilder = new TSBuilder();
-        const watcher = chokidar.watch([path.normalize('./' + config.src + '/**/*.ts'),
-                                        path.normalize('./' + config.src + '/**/*.scss'),
-                                        path.normalize('./' + config.src + '/**/*.html')
-                                       ], {
+        const watcher = chokidar.watch([config.src], {
             ignored: /[\/\\]\./,
             persistent: true
         }).on('change', filePath => {
@@ -65,7 +62,7 @@ class Watcher {
         if (filePath.includes(path.join(config.src, 'public', 'index.html'))) {
             util.formatIndex(path.normalize(config.src + '/public/index.html'));
         } else {
-            util.copyFile(filePath, path.normalize(config.build + '/'));
+            util.copyFile(filePath, path.join(config.build, filePath.replace(path.normalize('src/public/'), '')));
         }
 
     }
