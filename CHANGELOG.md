@@ -1,4 +1,10 @@
 
+## 2.0.0-beta.2
+
+- Fixed an issue that prevented the user from reading SASS or PostCSS error messages in --watch mode
+- Styled errors produced by Closure Compiler
+
+
 ## 2.0.0-beta.1
 
 - Support Angular 6.0.0-rc. Apps scaffolded in 2.0.0 will default to 6.0.0 once it is released.
