@@ -8,9 +8,11 @@ const cli         = require('./../cli.config.json');
 
 const NGR_LOG_CACHE = Symbol('ngrProcess_'+uuid());
 
+
 global[NGR_LOG_CACHE] = {
   process: {}
 };
+
 
 class Log {
 
@@ -40,7 +42,7 @@ class Log {
             line += '\u2500';
         }
         line += '\n';
-        process.stdout.write(colors.red(line));
+        process.stdout.write(colors.white(colors.dim(line)));
     }
 
     errorLine() {
@@ -71,18 +73,25 @@ class Log {
         if (!this.hasError()) {
           this.destroy();
         }
-        msg = msg ? ' ' + colors.white(msg) : '';
+        msg = '\n'+ (msg ? ' ' + colors.white(msg) : '');
         logger(msg);
+        //if (!cli.program.verbose) this.line();
         if (cli.program.verbose) this.break();
     }
 
     fail(msg) {
+        // if (!this.hasError()) {
+        //   this.destroy();
+        // }
         msg = msg ? ' ' + colors.red(msg) : '';
         logger(msg);
         if (cli.program.verbose) this.break();
     }
 
     alert(msg) {
+        // if (!this.hasError()) {
+        //   this.destroy();
+        // }
         msg = msg ? ' ' + colors.white(msg) : '';
         process.stdout.write(msg);
         process.stdout.write('\n');
@@ -304,7 +313,7 @@ class Log {
                 line: lineNumbers[0],
                 column: lineNumbers[1],
                 message: str.slice(str.indexOf(':') + 2, str.length)
-            }
+            };
             this.error(err);
         }
         catch(e) {
@@ -313,6 +322,26 @@ class Log {
         }
 
     }
+
+    formatClosureError(str) {
+
+      let lineNumber = str.match(/:([0-9]+):/) ? str.match(/:([0-9]+):/)[1] : null;
+      try {
+        let err = {
+          service: 'Closure',
+          file: str.slice(0, str.indexOf(':')),
+          line: lineNumber ? lineNumber : '',
+          column: '',
+          message: str.slice(str.indexOf('ERROR'), str.length).length ? str.slice(str.indexOf('ERROR'), str.length).replace(/\n/g, '\n ') : str
+        };
+        this.error(err);
+      }
+      catch(e) {
+        if (cli.program.verbose) this.message(e);
+        this.catchError(str, 'Closure');
+      }
+
+  }
 
 
 }

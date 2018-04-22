@@ -27,14 +27,14 @@ class ClosureBuilder {
                 (error, stdout, stderr) => {
 
                     if (stdout.includes('ERROR')) {
-                        if (rej) rej(error);
-                        stderr.service = 'closure';
-                        log.error(error)
+                       error.split(/\n\n/g).forEach((str) => {
+                         log.formatClosureError(str);
+                       });
                     }
                     else if (stderr.includes('ERROR')) {
-                        stderr.service = 'closure';
-                        log.error(stderr);
-
+                       stderr.split(/\n\n/g).forEach((str) => {
+                          log.formatClosureError(str);
+                       });
                     }
                      else {
                         log.success('Optimization complete.', ['closure']);
