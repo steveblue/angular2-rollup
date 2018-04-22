@@ -4,6 +4,7 @@ require('shelljs/global');
 const findup = require('findup');
 const fs = require('fs');
 const path = require('path');
+const colors = require('colors');
 const program = require('commander');
 const cliRoot = findup.sync(__dirname, 'package.json');
 const package = require(__dirname + '/package.json');
@@ -69,7 +70,7 @@ fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
 
 let exitHandler = (options, err) => {
     //util.cleanOnExit();
-    // if (err) util.error(err);
+    if (err) console.log(colors.red('NGR ERROR', err));
     if (options.exit) process.exit();
 }
 

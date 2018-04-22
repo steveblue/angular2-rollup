@@ -36,6 +36,7 @@ class Sass {
 
             }
             catch (err) {
+                err.service = 'sass';
                 log.error(err);
             }
 

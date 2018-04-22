@@ -33,10 +33,12 @@ class Watcher {
 
                     if (Array.isArray(sass)) {
                         const postcss = await postcssBuilder.batch(sass);
-                        log.message('libass and postcss compiled');
+                        log.cancelError('sass');
+                        log.cancelError('postcss');
+                        log.success('libass and postcss compiled', ['sass', 'postcss']);
                     } else {
                         const postcss = await postcssBuilder.file(sass);
-                        log.message('libass and postcss compiled');
+                        log.success('libass and postcss compiled', ['sass', 'postcss']);
                     }
 
 

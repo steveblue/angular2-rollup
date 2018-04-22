@@ -31,7 +31,7 @@ class PostCSS {
 
             }
             catch (err) {
-
+                err.service = 'postcss';
                 log.error(err);
 
             }
@@ -78,6 +78,7 @@ class PostCSS {
                 ' -r ' + postcssConfig, { silent: true }, (error, stdout, stderr) => {
 
                     if (stderr && error.includes('Finished') === false) {
+                        stderr.service = 'postcss';
                         log.error(stderr);
                     }
 

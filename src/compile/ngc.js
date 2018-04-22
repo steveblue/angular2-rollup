@@ -27,11 +27,12 @@ class AOTBuilder {
                     //console.log('STDERR:', stderr);
                     let hasLine = false;
 
-                    this.handleError(stderr);
-
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
                         hasCompiled = true;
+                        log.success('Compilation complete.', ['TypeScript']);
                         res();
+                    } else {
+                      this.handleError(stderr);
                     }
                 });
 
@@ -42,7 +43,7 @@ class AOTBuilder {
                     if (stderr) {
                         this.handleError(stderr);
                     } else {
-                        log.message('Compilation complete.');
+                        log.success('Compilation complete.', ['TypeScript']);
 
                         if (cli.env === 'dev') {
                             log.break();
@@ -61,16 +62,13 @@ class AOTBuilder {
     handleError(stderr) {
 
         if (stderr.includes('Compilation complete.')) {
-            log.destroy();
-            log.success(stderr);
-        }
-        else if (stderr.includes('File change')) {
-            log.message(stderr);
+          log.success(stderr, ['TypeScript']);
         }
         else if (stderr === ': Compilation failed. Watching for file changes.') {
-            //  console.log('FAIL:', e);
-            log.destroy();
-            log.fail(stderr);
+          log.fail(stderr);
+        }
+        else if (stderr.includes('File change')) {
+          log.message(stderr, ['TypeScript']);
         }
         else {
 
@@ -125,7 +123,7 @@ class AOTBuilder {
                                             (error, stdout, stderr) => {
                                                 rm(outFile);
                                                 if(error.killed) {
-                                                    log.error(log.formatTSError(error));
+                                                  log.formatTSError(error);
                                                 } else {
                                                     res();
                                                 }

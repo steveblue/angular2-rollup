@@ -28,15 +28,16 @@ class ClosureBuilder {
 
                     if (stdout.includes('ERROR')) {
                         if (rej) rej(error);
+                        stderr.service = 'closure';
                         log.error(error)
                     }
                     else if (stderr.includes('ERROR')) {
-
+                        stderr.service = 'closure';
                         log.error(stderr);
 
                     }
                      else {
-                        log.message('Compilation complete.');
+                        log.success('Optimization complete.', ['closure']);
                         if (res) {
                             res('done');
                         }

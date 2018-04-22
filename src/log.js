@@ -3,7 +3,14 @@
 const colors      = require('colors');
 const logger      = require('single-line-log').stdout;
 const config      = require('./config');
+const uuid        = require('uuid/v4');
 const cli         = require('./../cli.config.json');
+
+const NGR_LOG_CACHE = Symbol('ngrProcess_'+uuid());
+
+global[NGR_LOG_CACHE] = {
+  process: {}
+};
 
 class Log {
 
@@ -59,8 +66,12 @@ class Log {
         if (cli.program.verbose) this.break();
     }
 
-    success(msg) {
-        msg = msg ? ' ' + colors.green(msg) : '';
+    success(msg, services) {
+        services.forEach((service) => { this.cancelError(service); });
+        if (!this.hasError()) {
+          this.destroy();
+        }
+        msg = msg ? ' ' + colors.white(msg) : '';
         logger(msg);
         if (cli.program.verbose) this.break();
     }
@@ -85,6 +96,8 @@ class Log {
 
     error(err) {
 
+        this.registerError(err);
+
         if (typeof err === 'string') {
             process.stdout.write('\n');
             process.stdout.write(colors.red(err));
@@ -93,6 +106,14 @@ class Log {
             this.break();
             let msg = ' ';
             let link = '';
+
+            if (typeof err.line === 'number') {
+              err.line = err.line.toString();
+            }
+
+            if (typeof err.column === 'number') {
+              err.column = err.column.toString();
+            }
 
             let lineNumbers = (err.line.length > 0) ? colors.white(err.line + ':' + err.column).dim : '';
 
@@ -117,16 +138,35 @@ class Log {
 
     }
 
+    hasError() {
+      for (let prop in global[NGR_LOG_CACHE].process) {
+        if (global[NGR_LOG_CACHE].process[prop].length > 0) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    registerError(err) {
+      if (!err || !err.service) {
+        return;
+      }
+      if (!global[NGR_LOG_CACHE].process[err.service.toLowerCase()]) {
+        global[NGR_LOG_CACHE].process[err.service.toLowerCase()] = [];
+      }
+      global[NGR_LOG_CACHE].process[err.service.toLowerCase()].push(err);
+    }
+
+    cancelError(service) {
+      delete global[NGR_LOG_CACHE].process[service.toLowerCase()];
+    }
+
     getFilePath(filePath) {
-
         return path.normalize(filePath.substring(0, filePath.replace(/\\/g, '/').lastIndexOf('/')));
-
     }
 
     getFileName(filePath) {
-
         return filePath.replace(/^.*[\\\/]/, '');
-
     }
 
     catchError(str, type) {
@@ -138,7 +178,6 @@ class Log {
     }
 
     formatTemplateError(str) {
-
 
         str = str.replace('Template parse errors:\n', '');
 
@@ -168,7 +207,7 @@ class Log {
                     if (code[1][0] === '"') code[1] = code[1].substr(1);
                     if (code[1][code[1].length -1] === '"') code[1] = code[1].slice(0, -1);
                     let cmd = "grep -rnw '" + config.src + "' -e '" + code[1].replace('[ERROR ->]', '') + "'";
-                    //TODO: figure out if this is possible
+                    //TODO: figure out if this is possible in Windows
                     exec(cmd, {silent: true}, (error, stdout, stderr) => {
 
                         try {

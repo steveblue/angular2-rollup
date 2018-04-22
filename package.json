@@ -35,7 +35,8 @@
     "moment": "^2.21.0",
     "node-sass": "^4.7.2",
     "shelljs": "^0.8.1",
-    "single-line-log": "^1.1.2"
+    "single-line-log": "^1.1.2",
+    "uuid": "^3.2.1"
   },
   "bin": {
     "ngr": "index.js"

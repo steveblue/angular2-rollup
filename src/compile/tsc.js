@@ -11,7 +11,7 @@ class TSBuilder {
     constructor() {}
 
     compile(tsConfigPath) {
-      
+
         return new Promise((res) => {
 
             let hasCompiled = false;
@@ -22,7 +22,7 @@ class TSBuilder {
                 if (error) {
                     log.warn(stdout);
                 } else {
-                    log.message('Compilation complete.');
+                    log.success('Compilation complete.', ['TypeScript']);
                     res('done');
                 }
             });
