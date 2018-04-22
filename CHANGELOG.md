@@ -4,6 +4,7 @@
 - Fixed an issue that prevented the user from reading SASS or PostCSS error messages in --watch mode
 - Styled errors produced by Closure Compiler
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 2.0.0-beta.1
 
