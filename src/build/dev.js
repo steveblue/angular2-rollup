@@ -51,7 +51,7 @@ class DevBuild extends Build {
             });
           })();
         }
-        const src = await aotBuilder.compile(path.join('tsconfig.' + cli.env + '.json'));
+        const src = await aotBuilder.compile(path.join('src','tsconfig.' + cli.env + '.json'));
         this.post();
       })();
 

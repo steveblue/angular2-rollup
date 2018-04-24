@@ -7,20 +7,19 @@ const path = require('path');
 const colors = require('colors');
 const program = require('commander');
 const cliRoot = findup.sync(__dirname, 'package.json');
+const processRoot = path.join(path.dirname(process.cwd()), path.basename(process.cwd()));
 const package = require(__dirname + '/package.json');
 
 if (process.argv.indexOf('scaffold') > -1) {
-    cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'),
-       path.join(path.dirname(process.cwd()), path.basename(process.cwd())));
     process.argv.push('--verbose');
 }
 
 program
     .version(package.version)
     .usage('<keywords>')
-    .option('scaffold [bool]', 'scaffold new application in current directory')
+    .option('scaffold [string]', 'scaffold new application in directory')
     .option('--src [string]', 'specify a path to the src folder')
-    .option('--noinstall [bool]', 'prevents install during scaffold')
+    .option('--skip-install [bool]', 'prevents install during scaffold')
     .option('--yarn [bool]', 'use yarn instead of npm to install')
     .option('build [env]', 'build the application')
     .option('--clean [bool]', 'destroy the build folder prior to compilation, automatic for prod')
@@ -33,11 +32,10 @@ program
     .parse(process.argv);
 
 let cli = () => {
-
-    const util = require('./src/util');
-    const config = require('./src/config');
-    const log = require('./src/log');
-    const Scaffold = require('./src/scaffold/index');
+    let config = require('./src/config');
+    let util = require('./src/util');
+    let log = require('./src/log');
+    let Scaffold = require('./src/scaffold/index');
 
     if (program.build) {
 
@@ -52,7 +50,7 @@ let cli = () => {
     }
 
     if (program.scaffold) {
-        let scaffold = new Scaffold();
+        let scaffold = new Scaffold(program.scaffold, path.join(processRoot, program.scaffold));
         scaffold.basic();
     }
 
@@ -61,10 +59,19 @@ let cli = () => {
     }
 
 }
+if (process.argv.indexOf('scaffold') > -1) {
+    if (fs.existsSync(path.join(processRoot, program.scaffold))) {
+        console.log(colors.red(program.scaffold + ' already exists'));
+        process.exit();
+    }
+    if (!fs.existsSync(path.join(processRoot, program.scaffold))) mkdir(path.join(processRoot, program.scaffold));
+    cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'), path.join(processRoot, program.scaffold));
+}
 
 fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
     env: program.build,
-    program: program
+    program: program,
+    projectRoot: program.scaffold ? path.join(processRoot, program.scaffold) : processRoot
 }, null, 4), 'utf-8', cli);
 
 

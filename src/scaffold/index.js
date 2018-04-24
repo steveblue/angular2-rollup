@@ -1,9 +1,12 @@
+
 require('shelljs/global');
 
 const path = require('path');
 const fs = require('fs');
 const detectInstalled = require('detect-installed');
+const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
+const colors = require('colors');
 const util = require('./../util.js');
 const log = require('./../log.js');
 const config = require('./../config');
@@ -13,30 +16,83 @@ const srcDir = cli.program.src || path.normalize(config.cliRoot + '/src/scaffold
 
 class Scaffold {
 
-    constructor() {}
+    constructor(cliName, path) {
+        this.path = path || config.processRoot;
+        this.cliName = cliName;
+    }
+
+    formatCreateMsg(msg) {
+        msg = msg.replace('create ', colors.green('create '));
+        if ((msg.match(/\([0-9]* bytes\)/))) {
+            msg = msg.replace((msg.match(/\([0-9]* bytes\)/)[0]), colors.cyan((msg.match(/\([0-9]* bytes\)/)[0])));
+        }
+        return msg;
+    }
 
     basic() {
 
-        util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), config.projectRoot);
-        util.copyDir(srcDir, path.join(config.projectRoot, 'src'));
-        this.done();
+        exec('ng new '+this.cliName+ ' --skip-install --style scss',
+             {}, (error, stdout, stderr) => {
+
+                stdout.split('\n').forEach((msg) => { console.log(this.formatCreateMsg(msg.trim())); });
+
+                if (stdout.includes('successfully created.')) {
+
+                    console.log("Project '"+this.cliName+"' is merging with angular-rollup.");
+                    rm('-rf', path.join(this.path, 'src', 'app'));
+
+                    util.copyDir(srcDir, path.join(this.path, 'src'), {silent: true});
+                    ls(srcDir).forEach((file) => {
+                        console.log(this.formatCreateMsg('create '+path.join(this.cliName, 'src', file)+' ('+fs.statSync(path.join(srcDir,file)).size+' bytes)'));
+                    });
+
+                    util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
+                    ls(path.normalize(config.cliRoot + '/src/scaffold/root')).forEach((file) => {
+                        console.log(this.formatCreateMsg('create '+path.join(this.cliName, file)+' ('+fs.statSync(path.join(config.cliRoot, 'src', 'scaffold', 'root', file)).size+' bytes)'));
+                    });
+
+                    this.editPackage();
+
+                }
+
+
+             });
+
+    }
+
+    editPackage() {
+
+        fs.readFile(path.normalize(config.cliRoot + '/src/scaffold/standalone/package.json'),
+        'utf8', (err, data) => {
+            let cliPackage = JSON.parse(data);
+            fs.readFile(path.join(this.path, 'package.json'),
+                        'utf8', (err, data) => {
+                            let projectPackage = JSON.parse(data);
+                            projectPackage.dependencies = Object.assign(cliPackage.dependencies, projectPackage.dependencies);
+                            projectPackage.devDependencies = Object.assign(cliPackage.devDependencies, projectPackage.devDependencies);
+                            projectPackage.scripts = Object.assign(cliPackage.scripts, projectPackage.scripts);
+                            fs.writeFileSync(path.join(this.path, 'package.json'), JSON.stringify(projectPackage, null, 4));
+                            this.done();
+                        });
+        });
+
     }
 
     done() {
 
-        if (cli.program.noinstall === true) {
+        if (cli.program.skipInstall === true) {
 
-            log.message(util.getFileName(config.projectRoot) + ' is ready');
+            log.message(util.getFileName(this.path) + ' is ready');
             log.break();
 
         } else {
 
             if (cli.program.yarn) {
-                spawn('yarn', ['install'], { shell: true, stdio: 'inherit'});
+                spawn('yarn', ['install'], { cwd: this.path, shell: true, stdio: 'inherit'});
             }
             else if (npmExists) {
                 log.message('npm install');
-                spawn('npm', ['install'], { shell: true, stdio: 'inherit'});
+                spawn('npm', ['install'], { cwd: this.path, shell: true, stdio: 'inherit'});
             }
 
         }

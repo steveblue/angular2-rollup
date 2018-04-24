@@ -2,13 +2,13 @@
 const findup = require('findup');
 const path = require('path');
 const utils = require('./util');
-
 const processRoot = path.join(path.dirname(process.cwd()), path.basename(process.cwd()));
-const projectRoot = findup.sync(processRoot, 'ngr.config.js');
 const cliRoot = findup.sync(__dirname, 'package.json');
+const projectRoot = require(path.join(cliRoot, 'cli.config.json')).projectRoot;
 
 class Config {
     constructor() {
+
 
         let config = require(projectRoot + '/ngr.config.js');
 

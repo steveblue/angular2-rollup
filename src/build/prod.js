@@ -53,7 +53,7 @@ class ProdBuild extends Build {
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
         const copycss = await postcssBuilder.copyToNgFactory(postcss);
-        const src = await aotBuilder.compile(path.join('tsconfig.' + cli.env + '.json'));
+        const src = await aotBuilder.compile(path.join('src','tsconfig.' + cli.env + '.json'));
 
         if (cli.program.rollup) {
           const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.prod.js'));

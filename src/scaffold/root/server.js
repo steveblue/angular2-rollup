@@ -16,20 +16,14 @@ const serverConfig = {
 let env = process.env.NODE_ENV || 'dev';
 const port = serverConfig[env].port || process.env.PORT;
 const host = serverConfig[env].origin;
-let ssl = false;
 let canWatch = false;
 let server;
 
 process.argv.forEach(function(arg){
 
-  if(arg === '--https') {
-    ssl = true;
-  }
-
   if (arg.includes('watch')) {
     canWatch = arg.split('=')[1].trim() === 'true' ? true : false;
   }
-
 
 });
 
@@ -52,35 +46,11 @@ let live = function() {
 
 // Create Server
 
-if ( env === 'prod' ) {
+server = http.createServer(app);
 
-  if ( ssl === true ) {
-    const options = {
-                  key: fs.readFileSync('./conf/ssl/key.pem'),
-                  cert: fs.readFileSync('./conf/ssl/cert.pem')
-              };
-    server = https.createServer(options, app);
-  } else {
-    server = http.createServer(app);
-  }
+if (canWatch === true) {
 
-  if (canWatch === true) {
-    live();
-  }
-
-
-}
-
-if ( env === 'dev' ) {
-
-  server = http.createServer(app);
-
-  if (canWatch === true) {
-
-    live();
-
-  }
-
+  live();
 
 }
 

@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "./../tsconfig.json",
   "compilerOptions": {
     "target": "es2015",
     "module": "es2015",
@@ -17,6 +17,6 @@
     "skipMetadataEmit": false
   },
   "include": [
-    "./ngfactory/src/**/*.ts"
+    "./../ngfactory/src/**/*.ts"
   ]
 }
