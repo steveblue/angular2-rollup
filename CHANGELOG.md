@@ -1,4 +1,45 @@
 
+## 2.0.0-beta.3
+
+This release marks a monumental shift in strategy for the angular-rollup project. Instead of being a standalone cli, `ngr` can now be used in tandem with `ng` commands from the `@angular/cli` project. This was possible before, but only if both projects were manually merged together. 2.0.0-beta.3 scaffolds new applications with `@angular/cli` by default then merges its config with `angular-rollup`. The new `ngr merge` command will copy files needed by `ngr` into an existing `@angular/cli` project.
+
+The downside to this approach is now you must maintain a Webpack config and the config for angular-rollup. The advantages far outway the disavantages. Now you have access to `ng upgrade`, scaffolds, and all the wonderful tooling provided by `@angular/cli`.
+
+In order for both `ng` and `ngr` to coexist, it currently requires the following:
+
+- The project must use SCSS or SASS for styling
+- Assets must be stored in `src/public/assets` not `src/assets`
+- favicon.ico must be located in `src/public/favicon.ico` not `src/favicon.ico`
+
+angular-rollup will not respect public files in the src folder. Public files must be stored in src/public.
+
+angular-rollup now defers to `@angular/cli` for unit and e2e test configurations. If you used the previous test config you may still do so, but it will not be supported in future scaffolds. It is recommended to use `ng test` instead.
+
+If you want angular-rollup to support LESS, Stylus, PostCSS without SASS or just plain CSS please submit a PR with the necessary changes. This support is currently in the backlog and help would be appreciated to make it happen.
+
+CHANGES
+
+- New apps are scaffolded with `@angular/cli` and then merged with `angular-rollup`
+- Scaffold a new app with an existing src
+- `ngr merge` in existing `@angular/cli` project will copy over necessary files for `angular-rollup`
+- `--no-install` flag has changed to `--skip-install` for the scaffold command
+
+
+BREAKING CHANGES
+
+- tsconfig.dev.json, tsconfig.prod.json, and tsconfig.jit.json have moved to src folder
+- angular-rollup now defers to `@angular/cli` for unit and e2e test configuration
+
+
+To update an existing app built with angular-rollup, it is best to scaffold a new app, then move the files into the old repo.
+
+`ngr scaffold my-new-app --skip-install --src path/to/old/src`
+
+Then compare package.json and ngr.config.json with the existing files, make necessary changes, then run `npm install`.
+
+-------------------------------------------------------------------------------------------------------------
+
+
 ## 2.0.0-beta.2
 
 - Fixed an issue that prevented the user from reading SASS or PostCSS error messages in --watch mode
