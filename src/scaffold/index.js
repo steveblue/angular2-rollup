@@ -62,20 +62,37 @@ class Scaffold {
 
     editPackage() {
 
-        fs.readFile(path.normalize(config.cliRoot + '/src/scaffold/standalone/package.json'),
-        'utf8', (err, data) => {
+        fs.readFile(path.normalize(config.cliRoot + '/src/scaffold/standalone/package.json'), 'utf8',
+        (err, data) => {
             let cliPackage = JSON.parse(data);
             fs.readFile(path.join(this.path, 'package.json'),
                         'utf8', (err, data) => {
-                            let projectPackage = JSON.parse(data);
-                            projectPackage.dependencies = Object.assign(cliPackage.dependencies, projectPackage.dependencies);
-                            projectPackage.devDependencies = Object.assign(cliPackage.devDependencies, projectPackage.devDependencies);
-                            projectPackage.scripts = Object.assign(cliPackage.scripts, projectPackage.scripts);
-                            fs.writeFileSync(path.join(this.path, 'package.json'), JSON.stringify(projectPackage, null, 4));
-                            this.done();
-                        });
+                let projectPackage = JSON.parse(data);
+                projectPackage.dependencies = Object.assign(cliPackage.dependencies, projectPackage.dependencies);
+                projectPackage.devDependencies = Object.assign(cliPackage.devDependencies, projectPackage.devDependencies);
+                projectPackage.scripts = Object.assign(cliPackage.scripts, projectPackage.scripts);
+                fs.writeFileSync(path.join(this.path, 'package.json'), JSON.stringify(projectPackage, null, 4));
+                this.editCli();
+            });
         });
 
+    }
+
+    editCli() {
+
+        fs.readFile(path.join(this.path, '.angular-cli.json'), 'utf8',
+        (err, data) => {
+
+            let cliConfig = JSON.parse(data);
+            cliConfig.apps[0].assets = ['public/assets', 'public/favicon.ico'];
+            cliConfig.apps[0].styles[0] = 'style/style.scss';
+            fs.writeFileSync(path.join(this.path, '.angular-cli.json'), JSON.stringify(cliConfig, null, 4));
+            rm(path.join(this.path, 'src', 'styles.scss'));
+            rm(path.join(this.path, 'src', 'favicon.ico'));
+            rm('-rf', path.join(this.path, 'src', 'assets'));
+            this.done();
+
+        });
     }
 
     done() {
