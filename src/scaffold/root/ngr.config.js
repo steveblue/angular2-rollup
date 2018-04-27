@@ -36,6 +36,9 @@ module.exports = {
         dist: './build/lib'
     },
     style: {
+        files: [
+            'src/style/style.scss'
+        ],
         sass: {
             dev: {
                 includePaths: ['src/style/'],

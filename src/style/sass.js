@@ -75,7 +75,8 @@ class Sass {
 
         // this file is global w/ underscore and should not be compiled, compile global files instead
         if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
-            return this.file(path.normalize(config.src + '/style/style.scss'));
+            let file = config.style.files && config.style.files[0] ? config.style.files[0] : 'src/style/style.scss';
+            return this.file(path.normalize(config.style.files[0]));
         }
 
         log.message('processing '+outFile);
