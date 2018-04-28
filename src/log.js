@@ -106,7 +106,7 @@ class Log {
     error(err) {
 
         this.registerError(err);
-        console.log(err);
+
         if (typeof err === 'string') {
             process.stdout.write('\n');
             process.stdout.write(colors.red(err));
