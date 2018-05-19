@@ -77,8 +77,8 @@ class PostCSS {
                 ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + env + '.js')) +
                 ' -r ' + postcssConfig, { silent: true }, (error, stdout, stderr) => {
 
-                    if (stderr && error.includes('Finished') === false) {
-                        stderr.service = 'postcss';
+                    if (stderr) {
+                        //stderr.service = 'postcss';
                         log.error(stderr);
                     }
 

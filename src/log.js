@@ -116,6 +116,14 @@ class Log {
             let msg = ' ';
             let link = '';
 
+            if (!err.line) {
+                err.line = '';
+            }
+            
+            if (!err.column) {
+                err.column = '';
+            }
+
             if (typeof err.line === 'number') {
               err.line = err.line.toString();
             }
@@ -123,6 +131,7 @@ class Log {
             if (typeof err.column === 'number') {
               err.column = err.column.toString();
             }
+
 
             let lineNumbers = (err.line.length > 0) ? colors.white(err.line + ':' + err.column).dim : '';
 
