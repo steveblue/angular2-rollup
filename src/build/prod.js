@@ -12,7 +12,6 @@ const log             = require('./../log.js');
 const config          = require('./../config');
 const cli             = require('./../../cli.config.json');
 
-
 class ProdBuild extends Build {
 
     constructor() {
@@ -53,7 +52,8 @@ class ProdBuild extends Build {
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
         const copycss = await postcssBuilder.copyToNgFactory(postcss);
-        const src = await aotBuilder.compile(path.join('src','tsconfig.' + cli.env + '.json'));
+
+        const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.env + '.json'));
 
         if (cli.program.rollup) {
           const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.prod.js'));
@@ -71,6 +71,7 @@ class ProdBuild extends Build {
     pre() {
 
       let build = () => {
+
         if (util.hasHook('pre')) {
 
           config.buildHooks[cli.env].pre(process.argv).then(() => {
@@ -86,10 +87,12 @@ class ProdBuild extends Build {
       }
 
       if (cli.program.clean !== false) {
+
         util.cleanBuild().then(()=>{
           build();
         });
       } else {
+
         build();
       }
 

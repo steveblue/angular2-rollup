@@ -67,7 +67,6 @@ if (process.argv.indexOf('scaffold') > -1) {
     if (!fs.existsSync(path.join(processRoot, program.scaffold))) mkdir(path.join(processRoot, program.scaffold));
     cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'), path.join(processRoot, program.scaffold));
 }
-
 fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
     env: program.build,
     program: program,

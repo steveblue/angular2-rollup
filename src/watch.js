@@ -45,7 +45,7 @@ class Watcher {
                 })();
             }
             else if (filePath.indexOf('.ts') > -1 && cli.env === 'jit') {
-                jitBuilder.compile('tsconfig.' + cli.env + '.json');
+                jitBuilder.compile(path.join('src','tsconfig.' + cli.env + '.json'));
             }
             else if (filePath.indexOf('.html') > -1 && cli.env === 'jit') {
                 util.copyFile(filePath, path.join(config.build, filePath));

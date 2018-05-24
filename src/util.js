@@ -8,7 +8,7 @@ const escape      = require('js-string-escape');
 const minifyHtml  = require('html-minifier').minify;
 const spawn       = require('child_process').spawn;
 const moment      = require('moment');
-const config      = require('./config');
+const config      = require('./config.js');
 const cli         = require('./../cli.config.json');
 const log         = require('./log');
 

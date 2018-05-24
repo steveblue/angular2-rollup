@@ -45,7 +45,7 @@ class JitBuild extends Build {
       (async () => {
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
-        const src = await jitBuilder.compile(path.join('src','tsconfig.' + cli.env + '.json'));
+        const src = await jitBuilder.compile(path.join('src', 'tsconfig.' + cli.env + '.json'));
         this.post();
       })();
 
