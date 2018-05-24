@@ -12,6 +12,13 @@ const log = function (action, noun, next) {
     logger(a + ' ' + n + ' ' + x);
 };
 
+const msg = function (action, noun, next) {
+    let a = action ? colors.dim(colors.white(action)) : '';
+    let n = noun ? colors.dim(colors.white(noun)) : '';
+    let x = next ? colors.dim(colors.white(next)) : '';
+    cons.log(a + ' ' + n + ' ' + x);
+};
+
 const alert = function (noun, verb, action, next) {
     let n = noun ? colors.white(noun) : '';
     let v = verb ? colors.white(verb) : '';
@@ -50,6 +57,7 @@ clim.logWrite = function (level, prefixes, msg) {
 
 module.exports = {
     log: log,
+    msg: msg,
     warn: warn,
     alert: alert,
     colors: colors,

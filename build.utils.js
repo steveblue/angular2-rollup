@@ -60,6 +60,7 @@ const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
 const multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
 const singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
 const log = logger.log;
+const msg = logger.msg;
 const warn = logger.warn;
 const alert = logger.alert;
 const colors = logger.colors;
@@ -119,6 +120,7 @@ const utils = {
     scripts: scripts,
     logger: logger.logger,
     log : log,
+    msg: msg,
     warn : warn,
     alert: alert,
     moduleIdRegex: moduleIdRegex,
@@ -149,8 +151,6 @@ const utils = {
             spawn(serverCommand, { shell: true, stdio: 'inherit' });
 
         }
-
-
 
     },
     electron: (watch) => {
@@ -529,7 +529,7 @@ const utils = {
 
                         if (!fileName.includes('new')) {
                             cp((options.force ? '-f' : '-n'), path.normalize(config.cliRoot + '/.tmp') + '/' + fileName, path.normalize(options.path + '/' + fileName));
-                            log(fileName.replace('new', options.name), 'copied to', options.name);
+                            msg(fileName.replace('new', options.name), 'copied to', options.name);
                             console.log('');
                         }
 

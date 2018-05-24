@@ -351,11 +351,11 @@ let init = function() {
                 }
             };
 
-            utils.console.log(utils.colors.green('ngr codegen wizard'));
-            utils.console.log('filename: ' + utils.colors.gray('kabab-case filename i.e. global-header'));
-            utils.console.log('directory: ' + utils.colors.gray('path/to/folder i.e. src/app/shared/components/global-header'));
-            utils.console.log('type: ' + utils.colors.gray('module, component, directive, enum, e2e, guard, interface, pipe, service, lib'));
-            utils.console.log(utils.colors.bold('Follow the prompts after selecting a type'));
+            utils.msg(utils.colors.green('ngr codegen wizard'));
+            utils.msg('filename: ' + utils.colors.gray('kabab-case filename i.e. global-header'));
+            utils.msg('directory: ' + utils.colors.gray('path/to/folder i.e. src/app/shared/components/global-header'));
+            utils.msg('type: ' + utils.colors.gray('module, component, directive, enum, e2e, guard, interface, pipe, service, lib'));
+            utils.msg(utils.colors.bold('Follow the prompts after selecting a type'));
 
             prompt.message = '';
             prompt.start();
