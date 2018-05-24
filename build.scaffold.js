@@ -14,7 +14,7 @@ const colors = logs.colors;
 const cons = logs.console;
 
 let lib = false;
-let useVersion = '^5.0.0';
+let useVersion = '^6.0.0';
 let hasWarning = false;
 let dynamicRoutes = false;
 let isLazy = false;
@@ -43,6 +43,7 @@ const files = [
     'postcss.jit.js',
     'postcss.prod.js',
     'protractor.config.js',
+    'tsconfig.json',
     'tsconfig.dev.json',
     'tsconfig.jit.json',
     'tsconfig.prod.json',

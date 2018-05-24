@@ -1,33 +1,15 @@
 {
+  "extends": "./tsconfig.json",
+  "compileOnSave": false,
+  "buildOnSave": false,
   "compilerOptions": {
+    "outDir": "./build/src/app",
     "target": "es5",
     "module": "commonjs",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "noImplicitAny": false,
-    "removeComments": false,
-    "allowUnreachableCode": false,
-    "moduleResolution": "node",
-    "outDir": "./build",
-    "typeRoots": [ "node_modules/@types" ],
-    "types": [
-       "node",
-       "jasmine",
-       "jasminewd2",
-       "karma"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ]
+    "removeComments": false
   },
-  "exclude": [
-    "build",
-    "dist",
-    "tmp",
-    "node_modules",
-    "main.prod.ts"
-  ],
-  "compileOnSave": false,
-  "buildOnSave": false
+  "include": [
+    "./src/**/*.ts"
+  ]
 }

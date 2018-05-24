@@ -1,25 +1,15 @@
 {
+    "extends": "./tsconfig.json",
     "compilerOptions": {
-        "target": "es2015",
-        "module": "es2015",
-        "declaration": true,
-        "stripInternal": true,
-        "sourceMap": true,
-        "inlineSources": true,
-        "skipLibCheck": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "noImplicitAny": false,
-        "removeComments": true,
-        "allowUnreachableCode": false,
-        "moduleResolution": "node",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "types": [
-            "node"
-        ]
+      "target": "es2015",
+      "module": "es2015",
+      "stripInternal": true,
+      "inlineSources": true,
+      "skipLibCheck": true,
+      "allowSyntheticDefaultImports": true,
+      "noImplicitAny": false,
+      "removeComments": true,
+      "allowUnreachableCode": false
     },
     "angularCompilerOptions": {
         "skipMetadataEmit": false,
@@ -27,7 +17,7 @@
         "allowEmptyCodegenFiles": true,
         "entryModule": "./ngfactory/src/app/app.server.module#ServerAppModule"
     },
-    "files": [
+    "include": [
         "./ngfactory/src/app/app.server.module.ts"
     ],
     "exclude": [

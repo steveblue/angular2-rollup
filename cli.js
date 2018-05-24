@@ -10,7 +10,7 @@ const package     = require(__dirname + '/package.json');
 const prompt      = require('prompt');
 
 let cliCommand = '';
-let useVersion = '^5.0.0';
+let useVersion = '^6.0.0';
 
 program
     .version(package.version)
