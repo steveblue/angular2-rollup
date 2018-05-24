@@ -1,8 +1,18 @@
+## 1.0.9
+
+- Fixed issue that prevented generate wizard from displaying correctly in terminal
+- Scaffolded apps default to Angular 6.0.0
+- Updated default tsconfig in scaffold
+- Updated closure.conf in scaffold to work with Package Format 6.0
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.8
 
 - Fixed issue that prevented post buildHook from firing in dev build
 - Fixed timing issues when logging the dev build
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.7
 
@@ -24,12 +34,16 @@ buildHooks: {
         }
 }
 ```
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.6
 
 - Fixed issue with lazy build when angular library package name contains special character
 - Fixed logs with production build when closure compiler fails
 - Fixed warnings during ngr scaffold
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.5
 
@@ -38,9 +52,13 @@ buildHooks: {
 - Fixed an issue when global scss filenames began with underscore
 - Fixed an issue when generating a library with a custom source name defined in ngr.config.js
 
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.4
 
 - Remove version message unless the user needs to update
+
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.3
 
@@ -51,7 +69,6 @@ buildHooks: {
 - Fixed issues when user changes the src directory to another folder, useful when coding Angular Universal project
 - Single line logging output
 - Tested builds with node 8.x
-
 
 ```
 ngr scaffold --universal
@@ -68,6 +85,7 @@ package.json
 server.universal.js
 ```
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.2
 
@@ -77,6 +95,7 @@ server.universal.js
 - Defaulted new projects to @angular ^5.0.0
 - Removed bogus script from `package.json`
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.1
 
@@ -84,11 +103,14 @@ server.universal.js
 
 To migrate an existing library, simply change the `baseUrl` property in the tsconfig files to "./src" and move all library files into `path/to/lib/src`, update paths in your `index.ts`.
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0
 
 - Version bump
 - Update README
+
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.6
 
@@ -99,6 +121,8 @@ To migrate an existing library, simply change the `baseUrl` property in the tsco
 - Fixed issue that could prevent lazy.config.json from being copied correctly in prod build
 - Added yarn to install messaging because why not?
 - Added Web Animations polyfill to default configuration
+
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.5
 
@@ -113,6 +137,7 @@ To migrate an existing library, simply change the `baseUrl` property in the tsco
 
 If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`mv build.config.js ngr.config.js`) and update references to `build.config.js` in `server.js` and `router.js`. The build scripts will continue to check for build.config.js until we choose to deprecate backwards compatibility in a later release.
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.4
 
@@ -124,6 +149,7 @@ If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`m
 - Deprecated `jsconfig.json`
 - Update README with instructions for `ngr.config.js` and using buildHooks in `build.config.js`
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.3
 
@@ -133,6 +159,7 @@ If you wish you migrate to `ngr.config.js` rename the `build.config.js` file (`m
 - Fixed an issue that could prevent global stylesheet from being generated in dist folder
 - Updated README
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.2
 
@@ -158,6 +185,7 @@ Optionally, generate a unit test for a directive with the --spec argument.
 
 `ngr generate unit --dir src/app/shared/components/my-component --name my-directive --spec directive`
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.1
 
@@ -229,15 +257,20 @@ You can now use the `--config` argument to build a library package like so:
 
 This of course brings the added benefit of developing multiple library packages in the same application. Before, developers were limited to one library package per application since the build was bound to the configuration found in `build.config.js`. The new format allows secondary entry points to be compiled, per the Package Format spec. This older config should still work, but it is recommended to update to this latest format to ensure future compatibility.
 
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-rc.0
 
 - Version bump
 - Update README
 
+-------------------------------------------------------------------------------------------------------------
+
 ## 1.0.0-beta.13
 
 - Use `ngr update --angularVersion 5.0.0` for help updating an existing scaffolded app to Angular 5.0.0
+
+-------------------------------------------------------------------------------------------------------------
 
 ## 1.0.0-beta.12
 
