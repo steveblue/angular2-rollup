@@ -5,6 +5,11 @@
 - Updated default tsconfig in scaffold
 - Updated closure.conf in scaffold to work with Package Format 6.0
 
+TODO:
+
+- Add update script for easy transition to 2.0.0
+
+
 -------------------------------------------------------------------------------------------------------------
 
 ## 1.0.8
