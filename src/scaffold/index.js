@@ -36,7 +36,7 @@ class Scaffold {
 
                 stdout.split('\n').forEach((msg) => { console.log(this.formatCreateMsg(msg.trim())); });
 
-                if (stdout.includes('successfully created.')) {
+                if (stdout.includes('Successfully initialized git.')) {
 
                     console.log("Project '"+this.cliName+"' is merging with angular-rollup.");
                     rm('-rf', path.join(this.path, 'src', 'app'));
@@ -67,10 +67,12 @@ class Scaffold {
             let cliPackage = JSON.parse(data);
             fs.readFile(path.join(this.path, 'package.json'),
                         'utf8', (err, data) => {
+
                 let projectPackage = JSON.parse(data);
                 projectPackage.dependencies = Object.assign(cliPackage.dependencies, projectPackage.dependencies);
                 projectPackage.devDependencies = Object.assign(cliPackage.devDependencies, projectPackage.devDependencies);
                 projectPackage.scripts = Object.assign(cliPackage.scripts, projectPackage.scripts);
+
                 fs.writeFileSync(path.join(this.path, 'package.json'), JSON.stringify(projectPackage, null, 4));
                 this.editCli();
             });
@@ -80,19 +82,18 @@ class Scaffold {
 
     editCli() {
 
-        fs.readFile(path.join(this.path, '.angular-cli.json'), 'utf8',
+        fs.readFile(path.join(this.path, 'angular.json'), 'utf8',
         (err, data) => {
-
             let cliConfig = JSON.parse(data);
-            cliConfig.apps[0].assets = ['public/assets', 'public/favicon.ico'];
-            cliConfig.apps[0].styles[0] = 'style/style.scss';
-            fs.writeFileSync(path.join(this.path, '.angular-cli.json'), JSON.stringify(cliConfig, null, 4));
+            cliConfig.projects[cli.program.scaffold].architect.build.assets = ['src/public/assets', 'src/public/favicon.ico'];
+            cliConfig.projects[cli.program.scaffold].architect.build.styles = ['src/style/style.scss'];
+            fs.writeFileSync(path.join(this.path, 'angular.json'), JSON.stringify(cliConfig, null, 4));
             rm(path.join(this.path, 'src', 'styles.scss'));
             rm(path.join(this.path, 'src', 'favicon.ico'));
             rm('-rf', path.join(this.path, 'src', 'assets'));
             this.done();
-
         });
+
     }
 
     done() {
