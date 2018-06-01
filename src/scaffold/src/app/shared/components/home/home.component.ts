@@ -3,7 +3,6 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 
 @Component({
-  moduleId: module.id,
   selector: 'cmp-prefix1-app-home',
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.css'],
