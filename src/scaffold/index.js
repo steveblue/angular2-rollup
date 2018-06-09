@@ -36,7 +36,7 @@ class Scaffold {
 
                 stdout.split('\n').forEach((msg) => { console.log(this.formatCreateMsg(msg.trim())); });
 
-                if (stdout.includes('Successfully initialized git.')) {
+                 if (stdout.includes('initialized git.')) {
 
                     console.log("Project '"+this.cliName+"' is merging with angular-rollup.");
                     rm('-rf', path.join(this.path, 'src', 'app'));
@@ -84,9 +84,26 @@ class Scaffold {
 
         fs.readFile(path.join(this.path, 'angular.json'), 'utf8',
         (err, data) => {
+
             let cliConfig = JSON.parse(data);
-            cliConfig.projects[cli.program.scaffold].architect.build.assets = ['src/public/assets', 'src/public/favicon.ico'];
-            cliConfig.projects[cli.program.scaffold].architect.build.styles = ['src/style/style.scss'];
+            cliConfig.projects[cli.program.scaffold].architect.build.options.assets = [
+                "src/public/favicon.ico",
+                {
+                    "glob": "**/*",
+                    "input": "src/public/assets",
+                    "output": "./assets/"
+                }
+            ];
+            cliConfig.projects[cli.program.scaffold].architect.build.options.styles = ['src/style/style.scss'];
+            cliConfig.projects[cli.program.scaffold].architect.test.options.assets = [
+                "src/public/favicon.ico",
+                {
+                    "glob": "**/*",
+                    "input": "src/public/assets",
+                    "output": "./assets/"
+                }
+            ];
+            cliConfig.projects[cli.program.scaffold].architect.test.options.styles = ['src/style/style.scss'];
             fs.writeFileSync(path.join(this.path, 'angular.json'), JSON.stringify(cliConfig, null, 4));
             rm(path.join(this.path, 'src', 'styles.scss'));
             rm(path.join(this.path, 'src', 'favicon.ico'));
