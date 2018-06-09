@@ -10,9 +10,9 @@
 
   <link rel="stylesheet" href="/style/style.css">
 
-  <!-- shims for ie9  -->
+  <!-- build:remove:prod -->
   <script src="/lib/core-js/client/shim.min.js"></script>
-  <script src="/lib/zone.js/dist/zone.js"></script>
+  <script src="/lib/zone.js/dist/zone.min.js"></script>
   <script src="/lib/web-animations-js/web-animations.min.js"></script>
   <script src="/lib/ie9-oninput-polyfill/ie9-oninput-polyfill.js"></script>
   <script src="/lib/angular-polyfills/dist/blob.js"></script>
@@ -21,14 +21,14 @@
   <script src="/lib/angular-polyfills/dist/intl.js"></script>
   <script src="/lib/angular-polyfills/dist/typedarray.js"></script>
   <script src="/lib/console-polyfill/index.js"></script>
-  <!-- shims for ie9  -->
-
-
-  <!-- build:remove:prod -->
   <script src="/lib/reflect-metadata/Reflect.js"></script>
+  <script src="/lib/systemjs/dist/system.js"></script>
   <!-- /build -->
 
-  <script src="/lib/systemjs/dist/system.js"></script>
+  <!-- build:remove:dev -->
+  <script src="/vendor.js"></script>
+  <!-- /build -->
+
 </head>
 
 <body>

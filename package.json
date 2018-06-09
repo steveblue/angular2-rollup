@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/steveblue/angular2-rollup#readme",
   "dependencies": {
+    "async": "^2.6.0",
     "chokidar": "^2.0.2",
     "colors": "^1.1.2",
     "commander": "^2.14.1",
@@ -36,15 +37,14 @@
     "node-sass": "^4.7.2",
     "shelljs": "^0.8.1",
     "single-line-log": "^1.1.2",
+    "uglify-js": "^3.4.0",
     "uuid": "^3.2.1"
+
   },
   "bin": {
     "ngr": "index.js"
   },
   "engines": {
     "node": ">8.0.0 <9.0.0"
-  },
-  "devDependencies": {
-    "async": "^2.6.0"
   }
 }

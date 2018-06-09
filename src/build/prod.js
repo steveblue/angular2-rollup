@@ -32,14 +32,12 @@ class ProdBuild extends Build {
       const libCheck = config.lib && config.lib[cli.env];
 
       (async () => {
-        const lib = await util.copyLib(libCheck ? config.lib[cli.env] : config.dep['prodLib'],
-                                       libCheck ? config.lib.src : config.dep.src,
-                                       libCheck ? config.lib.dist : config.dep.dist);
-      })();
-
-      (async () => {
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
+        const vendor = await util.formatVendorScripts(libCheck ? config.lib[cli.env] : config.dep['prodLib'],
+                                                      libCheck ? config.lib.src : config.dep.src,
+                                                      libCheck ? config.lib.dist : config.build);
+        const concatVendor = await util.concatVendorScripts(libCheck ? config.lib.dist : config.build);
       })();
 
       (async () => {

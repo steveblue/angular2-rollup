@@ -3,6 +3,7 @@ require('shelljs/global');
 const colors      = require('colors');
 const path        = require('path');
 const fs          = require('fs');
+const UglifyJS    = require("uglify-js");
 const MagicString = require('magic-string');
 const escape      = require('js-string-escape');
 const minifyHtml  = require('html-minifier').minify;
@@ -256,6 +257,28 @@ class Util {
 
         return result;
 
+    }
+
+    concatVendorScripts(dist) {
+        let result = UglifyJS.minify(this.vendorScripts, { toplevel: true })
+        return fs.writeFile(path.normalize('./'+ dist + '/vendor.js'), result.code);
+    }
+
+    formatVendorScripts(fileList, src, dist) {
+        this.vendorScripts = {};
+        fs.openSync(path.normalize('./'+ dist + '/vendor.js'), 'w');
+        return Promise.all(fileList.map((filePath) => {
+            return this.concatFile(path.join(src, filePath), src, dist);
+        }));
+    }
+
+    concatFile(file, src, dist, code) {
+        return new Promise((res, rej)=>{
+            fs.readFile(file, 'utf8', (err, fileContent)=>{
+                this.vendorScripts[this.getFileName(file)] = fileContent;
+                res();
+            });
+        });
     }
 
     serve(watch, isUniversal) {

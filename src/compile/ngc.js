@@ -113,7 +113,7 @@ class AOTBuilder {
 
             fs.readFile(path.join(config.projectRoot, 'main.ts'), 'utf8', (err, contents) => {
                 if (!err) {
-                    contents = contents.replace("./out-tsc/" + config.src + "/app/app.module.out-tsc", config.src + "/app/app.module.out-tsc");
+                    contents = contents.replace("./out-tsc/" + config.src + "/app/app.module.ngfactory", config.src + "/app/app.module.ngfactory");
                     contents = contents.replace("import { enableProdMode } from '@angular/core';", '');
                     contents = contents.replace("enableProdMode();", "");
                     fs.writeFile(outFile, contents, (err) => {
