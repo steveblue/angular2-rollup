@@ -113,11 +113,11 @@ class LibBuild extends Build {
     checkBuild() {
 
         return new Promise((res, rej) => {
-            if (fs.existsSync(this.libConfig.es2015.outFile) && 
+            if (fs.existsSync(this.libConfig.es2015.outFile) &&
                 fs.existsSync(this.libConfig.es5.outFile) &&
                 fs.existsSync(this.libConfig.umd.outFile) &&
-                fs.existsSync(path.join('ngfactory', 'esm5', 'index.js')) && 
-                fs.existsSync(path.join('ngfactory', 'esm2015', 'index.js'))) {
+                fs.existsSync(path.join('out-tsc', 'esm5', 'index.js')) &&
+                fs.existsSync(path.join('out-tsc', 'esm2015', 'index.js'))) {
                 this.post();
                 res();
             } else {
@@ -156,25 +156,25 @@ class LibBuild extends Build {
             try {
 
                 // copy typings
-                find(path.normalize('./ngfactory/esm5'))
+                find(path.normalize('./out-tsc/esm5'))
                     .filter(function (file) { return file.match(/\.d.ts$/); })
                     .forEach((filePath) => {
-                        copyFile(filePath, path.join('dist', filePath.replace(path.normalize('ngfactory/esm5'), '')));
+                        copyFile(filePath, path.join('dist', filePath.replace(path.normalize('out-tsc/esm5'), '')));
                     });
                 // copy esm5
-                find(path.normalize('./ngfactory/esm5'))
+                find(path.normalize('./out-tsc/esm5'))
                     .filter(function (file) { return file.match(/\.js$/); })
                     .forEach((filePath) => {
-                        copyFile(filePath, path.join('dist', filePath.replace('ngfactory', '')));
+                        copyFile(filePath, path.join('dist', filePath.replace('out-tsc', '')));
                     });
                 // copy esm2015
-                find(path.normalize('./ngfactory/esm2015'))
+                find(path.normalize('./out-tsc/esm2015'))
                     .filter(function (file) { return file.match(/\.js$/); })
                     .forEach((filePath) => {
-                        copyFile(filePath, path.join('dist', filePath.replace('ngfactory', '')));
+                        copyFile(filePath, path.join('dist', filePath.replace('out-tsc', '')));
                     });
-                // cophy meteadata 
-                cp(path.join('ngfactory', 'esm2015', this.libConfig.filename + '.metadata.json'), 
+                // cophy meteadata
+                cp(path.join('out-tsc', 'esm2015', this.libConfig.filename + '.metadata.json'),
                    path.join(this.libConfig.dist, this.libConfig.filename + '.metadata.json') );
 
                res();

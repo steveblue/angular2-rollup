@@ -116,8 +116,8 @@ class Util {
         return new Promise((res, rej) => {
             if (fs.existsSync(path.normalize(config.build))) rm('-rf', path.normalize(config.build));
             if (fs.existsSync(path.normalize('./closure'))) rm('-rf', path.normalize('./closure'));
-            if (fs.existsSync(path.normalize('./ngfactory'))) rm('-rf', path.normalize('./ngfactory'));
-            mkdir(path.normalize('./ngfactory'));
+            if (fs.existsSync(path.normalize('./out-tsc'))) rm('-rf', path.normalize('./out-tsc'));
+            mkdir(path.normalize('./out-tsc'));
             mkdir(path.normalize('./closure'));
             res();
         });

@@ -42,7 +42,7 @@ class TSBuilder {
             fs.readFile(path.join(config.projectRoot, 'main.ts'), 'utf8', (err, contents) => {
 
                 if (!err) {
-                    contents = contents.replace("./ngfactory/" + config.src + "/app/app.module.ngfactory", config.src + "/app/app.module");
+                    contents = contents.replace("./out-tsc/" + config.src + "/app/app.module.out-tsc", config.src + "/app/app.module");
                     contents = contents.replace("import { enableProdMode } from '@angular/core';", '');
                     contents = contents.replace("enableProdMode();", "");
                     contents = contents.replace(/platformBrowser/g, "platformBrowserDynamic");

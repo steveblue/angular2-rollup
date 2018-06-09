@@ -101,8 +101,8 @@ class PostCSS {
                         return file;
                     }
                 }).map((file) => {
-                    cp(file, file.replace(config.src, 'ngfactory/' + config.src));
-                    return file.replace(config.src, 'ngfactory/' + config.src);
+                    cp(file, file.replace(config.src, 'out-tsc/' + config.src));
+                    return file.replace(config.src, 'out-tsc/' + config.src);
                 });
                 res(copiedFiles);
             }

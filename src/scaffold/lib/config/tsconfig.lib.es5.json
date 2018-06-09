@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../../ngfactory/es5",
+    "outDir": "../../../out-tsc/es5",
     "module": "es2015",
     "target": "es5"
   },

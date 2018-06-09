@@ -19,7 +19,7 @@ class AOTBuilder {
 
             if (util.hasArg('watch')) {
 
-                log.message('@angular/compiler started AOT compilation');
+                log.message('@angular/compiler started AOT in watch mode');
 
                 const ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch', { silent: true });
 
@@ -37,9 +37,10 @@ class AOTBuilder {
                 });
 
             } else {
+                log.message('@angular/compiler started AOT');
 
                 let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
-
+                    console.log(error, stdout,  stderr);
                     if (stderr) {
                         this.handleError(stderr);
                     } else {
@@ -112,7 +113,7 @@ class AOTBuilder {
 
             fs.readFile(path.join(config.projectRoot, 'main.ts'), 'utf8', (err, contents) => {
                 if (!err) {
-                    contents = contents.replace("./ngfactory/" + config.src + "/app/app.module.ngfactory", config.src + "/app/app.module.ngfactory");
+                    contents = contents.replace("./out-tsc/" + config.src + "/app/app.module.out-tsc", config.src + "/app/app.module.out-tsc");
                     contents = contents.replace("import { enableProdMode } from '@angular/core';", '');
                     contents = contents.replace("enableProdMode();", "");
                     fs.writeFile(outFile, contents, (err) => {

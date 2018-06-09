@@ -1,6 +1,7 @@
 {
   "extends": "./../tsconfig.json",
   "compilerOptions": {
+    "outDir": "./../out-tsc",
     "target": "es2015",
     "module": "es2015",
     "stripInternal": true,
@@ -17,6 +18,6 @@
     "skipMetadataEmit": false
   },
   "include": [
-    "./../ngfactory/src/**/*.ts"
+    "./../src/**/*.ts"
   ]
 }

@@ -349,7 +349,7 @@ The following files can be migrated to the root folder of a library package.
 - `rollup.config.lib-umd.js`
 - `rollup.config.lib-es5.js`
 
-The paths in `tsconfig` files will have to be updated to be relative to the root directory. The library build still uses `tmp` and `ngfactory` folders in the root project directory during the build phase.
+The paths in `tsconfig` files will have to be updated to be relative to the root directory. The library build still uses `tmp` and `out-tsc` folders in the root project directory during the build phase.
 
 Here is an example:
 
@@ -357,7 +357,7 @@ Here is an example:
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": "../../../../tmp",
-    "outDir": "../../../../ngfactory",
+    "outDir": "../../../../out-tsc",
 
     ...
 
@@ -416,11 +416,11 @@ This of course brings the added benefit of developing multiple library packages 
 
 For a client to utilize the new `--remote` flag and build a lazyloaded module from a host module, the host must provide a package for the client that includes:
 
-- ngfactory files that were bundled in the host's `bundle.js`, listed in the host's `main.prod.MF`
+- out-tsc files that were bundled in the host's `bundle.js`, listed in the host's `main.prod.MF`
 - `bundle.js` and `bundle.js.map` files to be used in the client's index.html for testing against the production bundle
 - `main.prod.MF`
 
-The client must then copy the host's `ngfactory` files into `/ngfactory` during the `postCompile` build step.
+The client must then copy the host's `out-tsc` files into `/out-tsc` during the `postCompile` build step.
 The client must also copy the host's `main.prod.MF` into `/closure` during the `postCompile` build step.
 The client must copy `bundle.js` and `bundle.js.map` into the `/build` directory in the `post` build step.
 
@@ -460,7 +460,7 @@ Here is an example of doing this with the buildHooks:
                 return new Promise((res, rej) => {
                     if (isRemote) {
                         cp(path.normalize('./remote/main.prod.MF'), path.normalize('./closure/main.prod.MF'));
-                        cp('-R', path.normalize('./remote/ngfactory/*'), path.normalize('./ngfactory/'));
+                        cp('-R', path.normalize('./remote/out-tsc/*'), path.normalize('./out-tsc/'));
                         res();
                     } else {
                         res();
@@ -557,8 +557,8 @@ A new file is required to configure both the production build script and the Sys
 ```
 {
     "bundles": {
-        "shared/components/lazy/lazy.module.ngfactory.js": {
-            "src": "./ngfactory/src/app/shared/components/lazy/lazy.module.ngfactory.js",
+        "shared/components/lazy/lazy.module.out-tsc.js": {
+            "src": "./out-tsc/src/app/shared/components/lazy/lazy.module.out-tsc.js",
             "filename": "lazy.module.bundle.js",
             "className": "LazyModuleNgFactory",
             "path": "http://localhost:4200",

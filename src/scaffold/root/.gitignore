@@ -43,7 +43,7 @@ Thumbs.db
 # Src
 .tmp
 /tmp
-/ngfactory
+/out-tsc
 /closure
 compiler.jar
 main.js

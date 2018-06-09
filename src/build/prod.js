@@ -44,9 +44,9 @@ class ProdBuild extends Build {
 
       (async () => {
         const copyMain = await cp('main.ts', 'main.js');
-        const copy = await cp('-R', path.normalize(config.src + '/'), path.normalize('./ngfactory'));
+        const copy = await cp('-R', path.normalize(config.src + '/'), path.normalize('./out-tsc'));
         // remove moduleId prior to ngc build. TODO: look for another method.
-        const stripModuleId = await ls(path.normalize('ngfactory/**/*.ts')).forEach(function (file) {
+        const stripModuleId = await ls(path.normalize('out-tsc/**/*.ts')).forEach(function (file) {
           sed('-i', /^.*moduleId: module.id,.*$/, '', file);
         });
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
@@ -60,7 +60,7 @@ class ProdBuild extends Build {
         } else {
           const bundle = await closureBuilder.bundle();
         }
-
+        const cleanRoot = await rm(path.normalize('main.js'));
         if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
         util.getTime(this.startTime);
 
