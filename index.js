@@ -49,8 +49,8 @@ let cli = () => {
         }
     }
 
-    if (program.scaffold) {
-        let scaffold = new Scaffold(program.scaffold, path.join(processRoot, program.scaffold));
+    if (program.new) {
+        let scaffold = new Scaffold(program.new, path.join(processRoot, program.new));
         scaffold.basic();
     }
 
@@ -59,18 +59,18 @@ let cli = () => {
     }
 
 }
-if (process.argv.indexOf('scaffold') > -1) {
-    if (fs.existsSync(path.join(processRoot, program.scaffold))) {
-        console.log(colors.red(program.scaffold + ' already exists'));
+if (process.argv.indexOf('new') > -1) {
+    if (fs.existsSync(path.join(processRoot, program.new))) {
+        console.log(colors.red(program.new + ' already exists'));
         process.exit();
     }
-    if (!fs.existsSync(path.join(processRoot, program.scaffold))) mkdir(path.join(processRoot, program.scaffold));
-    cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'), path.join(processRoot, program.scaffold));
+    if (!fs.existsSync(path.join(processRoot, program.new))) mkdir(path.join(processRoot, program.new));
+    cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'), path.join(processRoot, program.new));
 }
 fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
     env: program.build,
     program: program,
-    projectRoot: program.scaffold ? path.join(processRoot, program.scaffold) : processRoot
+    projectRoot: program.new ? path.join(processRoot, program.new) : processRoot
 }, null, 4), 'utf-8', cli);
 
 

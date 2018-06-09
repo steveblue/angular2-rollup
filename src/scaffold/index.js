@@ -86,7 +86,7 @@ class Scaffold {
         (err, data) => {
 
             let cliConfig = JSON.parse(data);
-            cliConfig.projects[cli.program.scaffold].architect.build.options.assets = [
+            cliConfig.projects[cli.program.new].architect.build.options.assets = [
                 "src/public/favicon.ico",
                 {
                     "glob": "**/*",
@@ -94,8 +94,8 @@ class Scaffold {
                     "output": "./assets/"
                 }
             ];
-            cliConfig.projects[cli.program.scaffold].architect.build.options.styles = ['src/style/style.scss'];
-            cliConfig.projects[cli.program.scaffold].architect.test.options.assets = [
+            cliConfig.projects[cli.program.new].architect.build.options.styles = ['src/style/style.scss'];
+            cliConfig.projects[cli.program.new].architect.test.options.assets = [
                 "src/public/favicon.ico",
                 {
                     "glob": "**/*",
@@ -103,7 +103,7 @@ class Scaffold {
                     "output": "./assets/"
                 }
             ];
-            cliConfig.projects[cli.program.scaffold].architect.test.options.styles = ['src/style/style.scss'];
+            cliConfig.projects[cli.program.new].architect.test.options.styles = ['src/style/style.scss'];
             fs.writeFileSync(path.join(this.path, 'angular.json'), JSON.stringify(cliConfig, null, 4));
             rm(path.join(this.path, 'src', 'styles.scss'));
             rm(path.join(this.path, 'src', 'favicon.ico'));
