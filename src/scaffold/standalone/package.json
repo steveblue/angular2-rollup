@@ -11,7 +11,7 @@
         "ngr:jit": "ngr build jit --watch --serve",
         "ngr:dev": "ngr build dev --watch --serve",
         "ngr:prod": "ngr build prod",
-        "serve": "node server.js"
+        "serve": "node backend/server.js"
     },
     "dependencies": {
         "@angular/animations": "6.0.0-rc.5",

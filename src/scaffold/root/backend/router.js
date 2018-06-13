@@ -3,7 +3,7 @@
 const express = require('express');
 const router = require('express').Router();
 const compression = require('compression');
-const config = require('./angular.json');
+const config = require(process.cwd()+'/angular.json');
 
 
 module.exports = function(app) {
