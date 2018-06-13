@@ -3,7 +3,8 @@ require('shelljs/global');
 const colors      = require('colors');
 const path        = require('path');
 const fs          = require('fs');
-const UglifyJS    = require("uglify-js");
+const UglifyJS    = require('uglify-js');
+const gzipSize    = require('gzip-size');
 const MagicString = require('magic-string');
 const escape      = require('js-string-escape');
 const minifyHtml  = require('html-minifier').minify;
@@ -38,7 +39,27 @@ class Util {
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
       log.break();
-      log.alert('ngr built in ' + colors.green(duration.asSeconds() + 's'));
+      log.alert(colors.gray('Date: ')+ new Date());
+      log.alert(colors.gray('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
+      ls(config.build).forEach((file) => {
+        if (fs.lstatSync(path.join(config.build,file)).isFile()) {
+            log.alert(colors.gray('File: ')+colors.green(file)+' '+
+                      colors.gray((fs.statSync(path.join(config.build,file)).size / 1000).toFixed(2)+' kB') +' '+
+                      colors.white(colors.gray('(')+(gzipSize.sync(fs.readFileSync(path.join(config.build,file))) / 1000).toFixed(2) + ' kB'+ ' '+colors.gray('gzipped') +colors.gray(')')+' ' )
+            );
+        }
+      });
+
+      ls(path.join(config.build, 'style')).forEach((file) => {
+        if (fs.lstatSync(path.join(config.build,'style',file)).isFile()) {
+            log.alert(colors.gray('File: ')+colors.green(file)+' '+
+                      colors.gray((fs.statSync(path.join(config.build,'style',file)).size / 1000).toFixed(2)+' kB') +' '+
+                      colors.white(colors.gray('(')+(gzipSize.sync(fs.readFileSync(path.join(config.build,'style',file))) / 1000).toFixed(2) + ' kB'+ ' '+colors.gray('gzipped') +colors.gray(')')+' ' )
+            );
+        }
+      });
+
+      //log.alert('ngr built in ' + colors.green(duration.asSeconds() + 's'));
       if (this.hasArg('serve')) {
         this.serve(cli.program.watch);
       }

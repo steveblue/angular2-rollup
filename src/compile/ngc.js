@@ -40,7 +40,7 @@ class AOTBuilder {
                 log.message('@angular/compiler started AOT');
 
                 let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
-                    console.log(error, stdout,  stderr);
+
                     if (stderr) {
                         this.handleError(stderr);
                     } else {

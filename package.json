@@ -29,6 +29,7 @@
     "commander": "^2.14.1",
     "detect-installed": "^2.0.4",
     "findup": "^0.1.5",
+    "gzip-size": "^4.1.0",
     "html-minifier": "^3.5.11",
     "htmlprocessor": "^0.2.6",
     "js-string-escape": "^1.0.1",
@@ -39,7 +40,6 @@
     "single-line-log": "^1.1.2",
     "uglify-js": "^3.4.0",
     "uuid": "^3.2.1"
-
   },
   "bin": {
     "ngr": "index.js"
