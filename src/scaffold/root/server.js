@@ -6,13 +6,13 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const app = express();
-const config = require('./ngr.config.js');
+const config = require('./angular.json');
 const serverConfig = {
   dev: require('./config/server.config.dev.js'),
   prod: require('./config/server.config.prod.js')
 };
 
-
+let projectRoot = config.projects[config.defaultProject].architect.build.options.outputPath;
 let env = process.env.NODE_ENV || 'dev';
 const port = serverConfig[env].port || process.env.PORT;
 const host = serverConfig[env].origin;
@@ -35,12 +35,12 @@ let live = function() {
    let liveserver = livereload.createServer({
      port: 35729
    });
-   liveserver.watch([__dirname + '/'+config.build+'/assets',
-                     __dirname + '/'+config.build+'/src',
-                     __dirname + '/'+config.build+'/style',
-                     __dirname + '/'+config.build+'/*.html',
-                     __dirname + '/'+config.build+'/*.js',
-                     __dirname + '/'+config.build+'/*.css']);
+   liveserver.watch([__dirname + '/'+projectRoot+'/assets',
+                     __dirname + '/'+projectRoot+'/src',
+                     __dirname + '/'+projectRoot+'/style',
+                     __dirname + '/'+projectRoot+'/*.html',
+                     __dirname + '/'+projectRoot+'/*.js',
+                     __dirname + '/'+projectRoot+'/*.css']);
    console.log('Livereload available at '+host+':'+35729);
 };
 

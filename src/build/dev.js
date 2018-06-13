@@ -27,7 +27,6 @@ class DevBuild extends Build {
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
       const aotBuilder = new AOTBuilder();
       const libCheck = config.lib && config.lib[cli.env];
-
       (async () => {
         const lib = await util.copyLib(libCheck ? config.lib[cli.env] : config.dep['lib'],
                                        libCheck ? config.lib.src : config.dep.src,

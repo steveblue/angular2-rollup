@@ -3,12 +3,14 @@
 const express = require('express');
 const router = require('express').Router();
 const compression = require('compression');
-const config = require('./ngr.config.js');
+const config = require('./angular.json');
+
 
 module.exports = function(app) {
   'use strict';
+  let projectRoot = config.projects[config.defaultProject].architect.build.options.outputPath;
+  // ROUTER CONFIG
 
-// ROUTER CONFIG
 
   app.use(function(req, res, next) {
 
@@ -32,14 +34,14 @@ module.exports = function(app) {
 
   app.use(compression());
 
-  app.use('/', express.static( process.cwd() + '/' + config.build ));
+  app.use('/', express.static( process.cwd() + '/' + projectRoot ));
 
 
   app.get('*', function (req, res) {
-    res.sendFile('index.html', { root: process.cwd() + '/' + config.build });
+    res.sendFile('index.html', { root: process.cwd() + '/' + projectRoot });
   });
 
-  
+
 
   return router;
 

@@ -46,10 +46,17 @@ class Scaffold {
                         console.log(this.formatCreateMsg('create '+path.join(this.cliName, 'src', file)+' ('+fs.statSync(path.join(srcDir,file)).size+' bytes)'));
                     });
 
+                    // find and replace cli name in new tsconfig
+                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.dev.json'));
+                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.jit.json'));
+
                     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
                     ls(path.normalize(config.cliRoot + '/src/scaffold/root')).forEach((file) => {
                         console.log(this.formatCreateMsg('create '+path.join(this.cliName, file)+' ('+fs.statSync(path.join(config.cliRoot, 'src', 'scaffold', 'root', file)).size+' bytes)'));
                     });
+
+                    // find and replace cli name in ngr.config.js
+                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'ngr.config.js'));
 
                     this.editPackage();
 

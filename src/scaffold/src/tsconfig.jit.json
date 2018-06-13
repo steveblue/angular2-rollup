@@ -3,7 +3,7 @@
   "compileOnSave": false,
   "buildOnSave": false,
   "compilerOptions": {
-    "outDir": "./../build/src/app",
+    "outDir": "./../dist/{{projectName}}/src",
     "target": "es5",
     "module": "commonjs",
     "noImplicitAny": false,
