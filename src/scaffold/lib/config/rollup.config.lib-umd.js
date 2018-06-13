@@ -3,7 +3,7 @@
 export default {
   input: 'out-tsc/default-lib.js',
   output: {
-    file: 'dist/bundles/default-lib.umd.js',
+    file: 'dist/{{projectName}}/bundles/default-lib.umd.js',
     format: 'cjs',
     sourcemap: true
   },

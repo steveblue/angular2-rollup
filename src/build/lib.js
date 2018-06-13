@@ -159,19 +159,19 @@ class LibBuild extends Build {
                 find(path.normalize('./out-tsc/esm5'))
                     .filter(function (file) { return file.match(/\.d.ts$/); })
                     .forEach((filePath) => {
-                        copyFile(filePath, path.join('dist', filePath.replace(path.normalize('out-tsc/esm5'), '')));
+                        copyFile(filePath, path.join(this.libConfig.dist, filePath.replace(path.normalize('out-tsc/esm5'), '')));
                     });
                 // copy esm5
                 find(path.normalize('./out-tsc/esm5'))
                     .filter(function (file) { return file.match(/\.js$/); })
                     .forEach((filePath) => {
-                        copyFile(filePath, path.join('dist', filePath.replace('out-tsc', '')));
+                        copyFile(filePath, path.join(this.libConfig.dist, filePath.replace('out-tsc', '')));
                     });
                 // copy esm2015
                 find(path.normalize('./out-tsc/esm2015'))
                     .filter(function (file) { return file.match(/\.js$/); })
                     .forEach((filePath) => {
-                        copyFile(filePath, path.join('dist', filePath.replace('out-tsc', '')));
+                        copyFile(filePath, path.join(this.libConfig.dist, filePath.replace('out-tsc', '')));
                     });
                 // cophy meteadata
                 cp(path.join('out-tsc', 'esm2015', this.libConfig.filename + '.metadata.json'),

@@ -1,6 +1,6 @@
 {
     "src": "src/lib",
-    "dist": "dist",
+    "dist": "dist/{{projectName}}",
     "filename": "default-lib",
     "es2015": {
         "tsConfig": "tsconfig.lib.json",

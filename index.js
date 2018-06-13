@@ -17,7 +17,7 @@ if (process.argv.indexOf('scaffold') > -1) {
 program
     .version(package.version)
     .usage('<keywords>')
-    .option('new [string]', 'scaffold new application in directory')
+    .option('new [string]', 'scaffold new development environment in directory by name, i.e. ngr new my-app')
     .option('--src [string]', 'specify a path to the src folder')
     .option('--skip-install [bool]', 'prevents install during scaffold')
     .option('--yarn [bool]', 'use yarn instead of npm to install')

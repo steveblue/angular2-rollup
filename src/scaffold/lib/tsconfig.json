@@ -19,13 +19,14 @@
         "types": []
     },
     "angularCompilerOptions": {
-        "strictMetadataEmit": true,
-        "skipTemplateCodegen": true,
         "annotateForClosureCompiler": true,
-        "debug": false
+        "skipTemplateCodegen": true,
+        "strictMetadataEmit": true,
+        "fullTemplateTypeCheck": true,
+        "strictInjectionParameters": true
     },
     "files": [
-        "../../tmp/index.ts"
+        "../../out-tsc/index.ts"
     ],
     "compileOnSave": false,
     "buildOnSave": false
