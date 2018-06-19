@@ -24,8 +24,8 @@ class ProdBuild extends Build {
 
     build() {
 
-      const sassBuilder = new SassBuilder({ dist: config.build });
-      const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
+      const sassBuilder = new SassBuilder({ dist: config.build, sourceMap: false });
+      const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: false });
       const aotBuilder = new AOTBuilder();
       const closureBuilder = new ClosureBuilder();
       const rollupBuilder = new RollupBuilder();
