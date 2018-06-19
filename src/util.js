@@ -34,30 +34,77 @@ class Util {
         return process.argv.indexOf(arg) > -1 || process.argv.indexOf('--'+arg) > -1;
     }
 
-    getTime(startTime) {
+    logFileStats(file) {
+        if (fs.lstatSync(path.join(file)).isFile()) {
+            log.alert(colors.dim('File: ') + colors.green(file) + ' ' +
+                colors.dim((fs.statSync(path.join(file)).size / 1000).toFixed(2) + ' kB') + ' ' +
+                colors.white(colors.dim('(') + (gzipSize.sync(fs.readFileSync(path.join(file))) / 1000).toFixed(2) + ' kB' + ' ' + colors.dim('gzipped') + colors.dim(')') + ' ')
+            );
+        }
+    }
+
+    getTime(startTime, dist) {
+
+        if (dist) {
+            config.build = dist;
+        }
 
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
       log.break();
-      log.alert(colors.gray('Date: ')+ new Date());
-      log.alert(colors.gray('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
+      log.alert(colors.dim('Date: ')+ new Date());
+      log.alert(colors.dim('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
+
       ls(config.build).forEach((file) => {
         if (fs.lstatSync(path.join(config.build,file)).isFile()) {
-            log.alert(colors.gray('File: ')+colors.green(file)+' '+
-                      colors.gray((fs.statSync(path.join(config.build,file)).size / 1000).toFixed(2)+' kB') +' '+
-                      colors.white(colors.gray('(')+(gzipSize.sync(fs.readFileSync(path.join(config.build,file))) / 1000).toFixed(2) + ' kB'+ ' '+colors.gray('gzipped') +colors.gray(')')+' ' )
-            );
+            this.logFileStats(path.join(config.build, file));
         }
       });
 
       ls(path.join(config.build, 'style')).forEach((file) => {
-        if (fs.lstatSync(path.join(config.build,'style',file)).isFile()) {
-            log.alert(colors.gray('File: ')+colors.green(file)+' '+
-                      colors.gray((fs.statSync(path.join(config.build,'style',file)).size / 1000).toFixed(2)+' kB') +' '+
-                      colors.white(colors.gray('(')+(gzipSize.sync(fs.readFileSync(path.join(config.build,'style',file))) / 1000).toFixed(2) + ' kB'+ ' '+colors.gray('gzipped') +colors.gray(')')+' ' )
-            );
-        }
+          this.logFileStats(path.join(config.build, 'style', file));
       });
+
+    if (fs.existsSync(path.join(config.build, 'fesm2015'))) {
+        ls(path.join(config.build, 'fesm2015')).forEach((file) => {
+            if (fs.lstatSync(path.join(config.build, 'fesm2015', file)).isFile()) {
+                this.logFileStats(path.join(config.build, 'fesm2015', file));
+            }
+        });
+    }
+    
+    if (fs.existsSync(path.join(config.build, 'fesm5'))) {
+        ls(path.join(config.build, 'fesm5')).forEach((file) => {
+            if (fs.lstatSync(path.join(config.build, 'fesm5', file)).isFile()) {
+                this.logFileStats(path.join(config.build, 'fesm5', file));
+            }
+        });
+    }
+
+    if (fs.existsSync(path.join(config.build, 'esm2015'))) {
+        ls(path.join(config.build, 'esm2015')).forEach((file) => {
+            if (fs.lstatSync(path.join(config.build, 'esm2015', file)).isFile()) {
+                this.logFileStats(path.join(config.build, 'esm2015', file));
+            }
+        });
+    }
+
+    if (fs.existsSync(path.join(config.build, 'esm5'))) {
+        ls(path.join(config.build, 'esm5')).forEach((file) => {
+            if (fs.lstatSync(path.join(config.build, 'esm5', file)).isFile()) {
+                this.logFileStats(path.join(config.build, 'esm5', file));
+            }
+        });
+    }
+
+
+    if (fs.existsSync(path.join(config.build, 'bundles'))) {
+        ls(path.join(config.build, 'bundles')).forEach((file) => {
+            if (fs.lstatSync(path.join(config.build, 'bundles', file)).isFile()) {
+                this.logFileStats(path.join(config.build, 'bundles', file));
+            }
+        });
+    }
 
       //log.alert('ngr built in ' + colors.green(duration.asSeconds() + 's'));
       if (this.hasArg('serve')) {
