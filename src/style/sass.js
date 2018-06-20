@@ -77,7 +77,6 @@ class Sass {
  
         // this file is global w/ underscore and should not be compiled, compile global files instead
         if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
-            console.log('global styles');
             return Promise.all(styles.map((filePath) => {
                 return this.file(filePath);
             }));
