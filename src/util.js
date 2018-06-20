@@ -328,8 +328,8 @@ class Util {
     }
 
     concatVendorScripts(dist) {
-        let result = UglifyJS.minify(this.vendorScripts, { toplevel: true })
-        return fs.writeFile(path.normalize('./'+ dist + '/vendor.js'), result.code);
+        let result = UglifyJS.minify(this.vendorScripts, { toplevel: true });
+        return fs.writeFileSync(path.normalize('./' + dist + '/vendor.js'), result.code);
     }
 
     formatVendorScripts(fileList, src, dist) {

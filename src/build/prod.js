@@ -11,6 +11,8 @@ const util            = require('./../util.js');
 const log             = require('./../log.js');
 const config          = require('./../config');
 const cli             = require('./../../cli.config.json');
+const buildOptimizer  = require('@angular-devkit/build-optimizer').buildOptimizer;
+
 
 class ProdBuild extends Build {
 
@@ -47,14 +49,18 @@ class ProdBuild extends Build {
         const stripModuleId = await ls(path.normalize('out-tsc/**/*.ts')).forEach(function (file) {
           sed('-i', /^.*moduleId: module.id,.*$/, '', file);
         });
+
         const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
         const postcss = await postcssBuilder.batch(sass);
         const copycss = await postcssBuilder.copyToNgFactory(postcss);
 
         const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.env + '.json'));
-
+        const buildOptimize = await ls(path.normalize('out-tsc/**/*.component.js')).forEach(function (file) {
+          let content = fs.readFileSync(file, 'utf-8');
+          fs.writeFileSync(file, buildOptimizer({ content: content }).content);
+        });
         if (cli.program.rollup) {
-          const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.prod.js'));
+          const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.js'));
         } else {
           const bundle = await closureBuilder.bundle();
         }

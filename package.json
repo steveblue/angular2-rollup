@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/steveblue/angular2-rollup#readme",
   "dependencies": {
+    "@angular-devkit/build-optimizer": "^0.6.8",
     "async": "^2.6.0",
     "chokidar": "^2.0.2",
     "colors": "^1.1.2",
