@@ -7,6 +7,7 @@ const PostCSSBuilder  = require('./../style/postcss.js');
 const AOTBuilder      = require('./../compile/ngc.js');
 const ClosureBuilder  = require('./../bundle/closure.js');
 const RollupBuilder   = require('./../bundle/rollup.js');
+const UglifyBuilder   = require('./../bundle/uglify.js');
 const util            = require('./../util.js');
 const log             = require('./../log.js');
 const config          = require('./../config');
@@ -31,6 +32,7 @@ class ProdBuild extends Build {
       const aotBuilder = new AOTBuilder();
       const closureBuilder = new ClosureBuilder();
       const rollupBuilder = new RollupBuilder();
+      const uglifyBuilder = new UglifyBuilder();
       const libCheck = config.lib && config.lib[cli.env];
 
       (async () => {
@@ -61,6 +63,7 @@ class ProdBuild extends Build {
         });
         if (cli.program.rollup) {
           const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.js'));
+          const optimize = await uglifyBuilder.optimize();
         } else {
           const bundle = await closureBuilder.bundle();
         }

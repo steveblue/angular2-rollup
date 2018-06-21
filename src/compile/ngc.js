@@ -7,6 +7,8 @@ const log = require('./../log.js');
 const config = require('./../config');
 const cli = require('./../../cli.config.json');
 
+let interval;
+
 class AOTBuilder {
 
     constructor() {}
@@ -38,9 +40,11 @@ class AOTBuilder {
 
             } else {
                 log.message('@angular/compiler started AOT');
-
+                interval = setInterval(() => {
+                    log.message('@angular/compiler compiling...');
+                },100)
                 let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
-
+                    clearInterval(interval);
                     if (stderr) {
                         this.handleError(stderr);
                     } else {

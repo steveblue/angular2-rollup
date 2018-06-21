@@ -22,7 +22,7 @@ class Scaffold {
     }
 
     formatCreateMsg(msg) {
-        msg = msg.replace('create ', colors.green('create '));
+        msg = msg.replace('create ', colors.dim('CREATE '));
         if ((msg.match(/\([0-9]* bytes\)/))) {
             msg = msg.replace((msg.match(/\([0-9]* bytes\)/)[0]), colors.cyan((msg.match(/\([0-9]* bytes\)/)[0])));
         }
@@ -51,9 +51,13 @@ class Scaffold {
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.jit.json'));
 
                     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
+
                     ls(path.normalize(config.cliRoot + '/src/scaffold/root')).forEach((file) => {
                         console.log(this.formatCreateMsg('create '+path.join(this.cliName, file)+' ('+fs.statSync(path.join(config.cliRoot, 'src', 'scaffold', 'root', file)).size+' bytes)'));
                     });
+                    
+                    // replace project name in rollup.config
+                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'rollup.config.js'));
 
                     // find and replace cli name in ngr.config.js
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'ngr.config.js'));

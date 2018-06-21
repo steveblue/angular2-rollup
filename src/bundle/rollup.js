@@ -16,7 +16,7 @@ class RollupBuilder {
             log.message('rollup started');
 
             let rollup = exec(path.normalize(config.projectRoot + '/node_modules/.bin/rollup') +
-                ' -c ' + rollupConfigPath, {silent: true}, (error, stdout, stderr) => {
+                ' -c ' + rollupConfigPath, {silent: false}, (error, stdout, stderr) => {
 
                     if (stderr.includes('Error')) {
                         if (rej) rej(error);
