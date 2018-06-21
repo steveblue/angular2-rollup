@@ -40,11 +40,13 @@ class AOTBuilder {
 
             } else {
                 log.message('@angular/compiler is compiling');
-                interval = setInterval(() => {
-                    log.message('@angular/compiler is compiling...');
-                },100)
+                // if (config.build !== 'lib') {
+                //     interval = setInterval(() => {
+                //         log.message('@angular/compiler is compiling...');
+                //     },100)
+                // }
                 let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
-                    clearInterval(interval);
+                    //if (config.build !== 'lib') clearInterval(interval);
                     if (stderr) {
                         this.handleError(stderr);
                     } else {
