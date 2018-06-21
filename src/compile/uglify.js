@@ -1,4 +1,6 @@
 const path = require('path');
+const fs = require('fs');
+const UglifyJS    = require('uglify-js');
 const config = require('./../config');
 const log = require('./../log.js');
 
@@ -10,7 +12,7 @@ class UglifyBuilder {
 
         return new Promise((res, rej) => {
 
-            log.message('uglify started');
+            log.message('uglify is optimizing');
 
             let outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
 
@@ -28,6 +30,13 @@ class UglifyBuilder {
 
             });
         })
+    }
+
+    minify(filePath) {
+        fs.readFile(filePath, 'utf-8', (err, contents) => {
+            let result = UglifyJS.minify(contents, { toplevel: true, mangle: true, compress: true });
+            return fs.writeFileSync(filePath, result.code);
+        });
     }
 
 }

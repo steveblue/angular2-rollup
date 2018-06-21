@@ -46,7 +46,7 @@ class DevBuild extends Build {
           (async () => {
             const main = await aotBuilder.compileMain().then((res) => {
                 log.message('compiled main.js');
-                log.message('compiling...');
+                log.message('@angular/compiler is compiling...');
             });
           })();
         }

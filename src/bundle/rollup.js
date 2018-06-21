@@ -13,11 +13,10 @@ class RollupBuilder {
 
         return new Promise((res, rej) => {
 
-            log.message('rollup started');
+            log.message('rollup is bundling');
 
             let rollup = exec(path.normalize(config.projectRoot + '/node_modules/.bin/rollup') +
-                ' -c ' + rollupConfigPath, {silent: false}, (error, stdout, stderr) => {
-
+                ' -c ' + rollupConfigPath, {silent: true}, (error, stdout, stderr) => {
                     if (stderr.includes('Error')) {
                         if (rej) rej(error);
                         log.error(stderr);

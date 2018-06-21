@@ -20,7 +20,7 @@ class ClosureBuilder {
     bundle() {
         return new Promise((res) => {
 
-            log.message('closure compiler started');
+            log.message('closure compiler is optimizing');
             // console.log(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`);
             let closure = exec(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`,
                 { silent: true },

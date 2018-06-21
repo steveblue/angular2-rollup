@@ -15,14 +15,14 @@ class TSBuilder {
         return new Promise((res) => {
 
             let hasCompiled = false;
-            log.message('typescript started');
+            log.message('typescript is compiling');
 
             let tsc = exec(path.normalize(path.resolve('node_modules', '.bin', 'tsc') +
                 ' -p ' + tsConfigPath), {}, function (error, stdout, stderr) {
                 if (error) {
                     log.warn(stdout);
                 } else {
-                    log.success('Compilation complete.', ['TypeScript']);
+                    log.message('Compilation complete.', ['TypeScript']);
                     res('done');
                 }
             });

@@ -18,8 +18,8 @@ module.exports = {
             }
         }
     },
-    dep: {
-        lib: [
+    lib: {
+        dev: [
             "core-js/client/shim.min.js",
             "core-js/client/shim.min.js.map",
             "zone.js/dist/zone.min.js",
@@ -40,7 +40,7 @@ module.exports = {
             "@angular",
             "rxjs"
         ],
-        prodLib: [
+        prod: [
             "core-js/client/shim.min.js",
             "zone.js/dist/zone.min.js",
             "web-animations-js/web-animations.min.js",

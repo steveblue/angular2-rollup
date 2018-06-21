@@ -51,8 +51,8 @@ class Util {
 
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
-      log.break();
-      log.alert(colors.white(config.angular.defaultProject + ' built'));
+      log.destroy();
+      log.alert(colors.green(config.angular.defaultProject + ' built'));
       log.alert(colors.dim('Date: ')+ new Date());
       log.alert(colors.dim('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
 

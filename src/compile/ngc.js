@@ -21,7 +21,7 @@ class AOTBuilder {
 
             if (util.hasArg('watch')) {
 
-                log.message('@angular/compiler started AOT in watch mode');
+                log.message('@angular/compiler is compiling');
 
                 const ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch', { silent: true });
 
@@ -31,7 +31,7 @@ class AOTBuilder {
 
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
                         hasCompiled = true;
-                        log.success('Compilation complete.', ['TypeScript']);
+                        log.message('Compilation complete.', ['TypeScript']);
                         res();
                     } else {
                       this.handleError(stderr);
@@ -39,16 +39,16 @@ class AOTBuilder {
                 });
 
             } else {
-                log.message('@angular/compiler started AOT');
+                log.message('@angular/compiler is compiling');
                 interval = setInterval(() => {
-                    log.message('@angular/compiler compiling...');
+                    log.message('@angular/compiler is compiling...');
                 },100)
                 let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
                     clearInterval(interval);
                     if (stderr) {
                         this.handleError(stderr);
                     } else {
-                        log.success('Compilation complete.', ['TypeScript']);
+                        log.message('Compilation complete.', ['TypeScript']);
 
                         if (cli.env === 'dev') {
                             log.break();

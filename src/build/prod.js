@@ -7,9 +7,9 @@ const SassBuilder     = require('./../style/sass.js');
 const PostCSSBuilder  = require('./../style/postcss.js');
 const JITBuilder      = require('./../compile/tsc.js');
 const AOTBuilder      = require('./../compile/ngc.js');
+const UglifyBuilder   = require('./../compile/uglify.js');
 const ClosureBuilder  = require('./../bundle/closure.js');
 const RollupBuilder   = require('./../bundle/rollup.js');
-const UglifyBuilder   = require('./../bundle/uglify.js');
 const util            = require('./../util.js');
 const log             = require('./../log.js');
 const config          = require('./../config');
@@ -37,14 +37,15 @@ class ProdBuild extends Build {
       const rollupBuilder = new RollupBuilder();
       const uglifyBuilder = new UglifyBuilder();
       const libCheck = config.lib && config.lib[cli.env];
+      const outFile = path.join(config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath, 'bundle.js');
 
       (async () => {
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
         const vendor = await util.formatVendorScripts(libCheck ? config.lib[cli.env] : config.dep['prodLib'],
                                                       libCheck ? config.lib.src : config.dep.src,
-                                                      libCheck ? config.lib.dist : config.build);
-        const concatVendor = await util.concatVendorScripts(libCheck ? config.lib.dist : config.build);
+                                                      libCheck ? config.build : config.build);
+        const concatVendor = await util.concatVendorScripts(libCheck ? config.build : config.build);
       })();
 
       (async () => {
@@ -67,7 +68,7 @@ class ProdBuild extends Build {
         if (cli.program.rollup) {
           const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.js'));
           const transpile = await jitBuilder.compile(path.join(config.projectRoot, 'src', 'tsconfig.rollup.json'));
-          const optimize = await uglifyBuilder.optimize();
+          const optimize = await uglifyBuilder.minify(outFile);
         } else {
           // use fesm instead for closure compiler, results in smaller bundles
           const prepRxjs = await this.buildRxjsFESM();
