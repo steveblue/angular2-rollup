@@ -36,7 +36,7 @@ export default {
     input: 'main.js',
     treeshake: true,
     output: {
-        file: 'dist/{{projectName}}/bundle.js',
+        file: 'dist/{{projectName}}/bundle.es2015.js',
         format: 'cjs'
     },
     plugins: [

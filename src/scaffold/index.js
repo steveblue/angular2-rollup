@@ -49,13 +49,14 @@ class Scaffold {
                     // find and replace cli name in new tsconfig
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.dev.json'));
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.jit.json'));
+                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.rollup.json'));
 
                     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
 
                     ls(path.normalize(config.cliRoot + '/src/scaffold/root')).forEach((file) => {
                         console.log(this.formatCreateMsg('create '+path.join(this.cliName, file)+' ('+fs.statSync(path.join(config.cliRoot, 'src', 'scaffold', 'root', file)).size+' bytes)'));
                     });
-                    
+
                     // replace project name in rollup.config
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'rollup.config.js'));
 
