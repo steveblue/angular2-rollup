@@ -52,6 +52,7 @@ class Util {
       let endTime = moment(new Date());
       let duration = moment.duration(endTime.diff(startTime));
       log.break();
+      log.alert(colors.white(config.angular.defaultProject + ' built'));
       log.alert(colors.dim('Date: ')+ new Date());
       log.alert(colors.dim('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
 
@@ -72,7 +73,7 @@ class Util {
             }
         });
     }
-    
+
     if (fs.existsSync(path.join(config.build, 'fesm5'))) {
         ls(path.join(config.build, 'fesm5')).forEach((file) => {
             if (fs.lstatSync(path.join(config.build, 'fesm5', file)).isFile()) {

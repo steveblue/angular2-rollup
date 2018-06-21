@@ -1,9 +1,11 @@
 require('shelljs/global');
 const path            = require('path');
 const fs              = require('fs');
+const spawn           = require('child_process').spawn;
 const Build           = require('./index.js');
 const SassBuilder     = require('./../style/sass.js');
 const PostCSSBuilder  = require('./../style/postcss.js');
+const JITBuilder      = require('./../compile/tsc.js');
 const AOTBuilder      = require('./../compile/ngc.js');
 const ClosureBuilder  = require('./../bundle/closure.js');
 const RollupBuilder   = require('./../bundle/rollup.js');
@@ -30,6 +32,7 @@ class ProdBuild extends Build {
       const sassBuilder = new SassBuilder({ dist: config.build, sourceMap: false });
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: false });
       const aotBuilder = new AOTBuilder();
+      const jitBuilder = new JITBuilder();
       const closureBuilder = new ClosureBuilder();
       const rollupBuilder = new RollupBuilder();
       const uglifyBuilder = new UglifyBuilder();
@@ -63,8 +66,11 @@ class ProdBuild extends Build {
         });
         if (cli.program.rollup) {
           const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.js'));
+          const transpile = await jitBuilder.compile(path.join(config.projectRoot, 'src', 'tsconfig.rollup.json'));
           const optimize = await uglifyBuilder.optimize();
         } else {
+          // use fesm instead for closure compiler, results in smaller bundles
+          const prepRxjs = await this.buildRxjsFESM();
           const bundle = await closureBuilder.bundle();
         }
         const cleanRoot = await rm(path.normalize('main.js'));
@@ -103,6 +109,43 @@ class ProdBuild extends Build {
         build();
       }
 
+    }
+
+    buildRxjsFESM() {
+        return new Promise((res) => {
+
+          let editFile = (filePath) => {
+              return new Promise((res) => {
+                  fs.readFile(filePath, 'utf-8', (error, stdout, stderr) => {
+                      let pack = JSON.parse(stdout);
+                      pack.es2015 = pack.es2015.replace('_esm2015', '_fesm2015');
+                      log.message('editing ' + filePath);
+                      fs.writeFile(filePath, JSON.stringify(pack), () => {
+                          res(filePath);
+                      })
+                  });
+              });
+          };
+
+          let rollup = spawn(path.join(config.projectRoot, 'node_modules', '.bin', 'rollup'), ['-c', 'config/rollup.rxjs.js']);
+
+          rollup.stdout.on('data', (msg) => {
+            log.message(msg);
+          });
+
+          rollup.on('exit', () => {
+            log.message('rollup completed');
+              Promise.all([editFile('node_modules/rxjs/package.json'),
+                          editFile('node_modules/rxjs/operators/package.json'),
+                          editFile('node_modules/rxjs/ajax/package.json'),
+                          editFile('node_modules/rxjs/testing/package.json'),
+                          editFile('node_modules/rxjs/websocket/package.json')])
+                          .then(data => {
+                              res();
+                            });
+
+          });
+      });
     }
 
     post() {

@@ -67,7 +67,7 @@
         "tslib": "^1.7.1",
         "tslint": "^5.4.3",
         "typescript": "2.7.2",
-        "uglifyjs": "2.4.11"
+        "uglify-js": "^3.4.0"
     },
     "engines": {
         "node": ">8.11.0"
