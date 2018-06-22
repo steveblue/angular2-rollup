@@ -59,6 +59,9 @@ class DevBuild extends Build {
     pre() {
 
       let build = () => {
+
+        cp(path.normalize('config/postcss.' + cli.env + '.js'), 'postcss.config.js');
+
         if (util.hasHook('pre')) {
 
           config.buildHooks[cli.env].pre(process.argv).then(() => {

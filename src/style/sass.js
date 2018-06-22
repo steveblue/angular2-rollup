@@ -55,6 +55,10 @@ class Sass {
             env = cli.env;
         }
 
+        if (!fs.existsSync('out-sass')) {
+            mkdir('-p', 'out-sass');
+        }
+
         const srcPath = util.getFilePath(filePath);
         const filename = util.getFileName(filePath);
         // determine if file is global or not, swap .scss to .css in filename
@@ -72,7 +76,8 @@ class Sass {
         if (cli.env === 'jit' && srcPath.indexOf(config.src + '/style') === -1) {
             outFilePath = util.getFilePath(path.join(this.sassConfig.dist, outFile));
         }
-
+        
+        
         outFile = path.join(outFilePath, filename.replace('scss', 'css'));
  
         // this file is global w/ underscore and should not be compiled, compile global files instead
@@ -80,14 +85,15 @@ class Sass {
             return Promise.all(styles.map((filePath) => {
                 return this.file(filePath);
             }));
-        }
+        } 
 
-        log.message('processing '+outFile);
+        outFilePath = path.join('out-sass', outFilePath);
+        outFile = path.join('out-sass', outFile);
 
         return new Promise((res) => {
-
+ 
             config.style.sass[env].file = filePath;
-            config.style.sass[env].outFile = outFile;
+            config.style.sass[env].outFile = outFile; 
 
             if ( fs.existsSync(outFilePath) == false ) {
                 mkdir('-p', outFilePath);

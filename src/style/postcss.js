@@ -72,10 +72,11 @@ class PostCSS {
             }
 
             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
-                ' ' + outFile +
-                (this.cssConfig.sourceMap === false ? ' --no-map true' : '') +
-                ' -c ' + path.normalize(path.join(config.projectRoot, 'postcss.' + env + '.js')) +
-                ' -r ' + postcssConfig, { silent: true }, (error, stdout, stderr) => {
+                ' ' + path.join('out-sass', outFile) +
+                (this.cssConfig.sourceMap === false ? ' --no-map' : '') +
+                ' --config ' + path.normalize(path.join(config.projectRoot, 'postcss.config.js')) + 
+                ' --output ' + outFile, 
+                { silent: true }, (error, stdout, stderr) => {
 
                     if (stderr) {
                         //stderr.service = 'postcss';
