@@ -59,6 +59,7 @@ class Scaffold {
 
                     // replace project name in rollup.config
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'rollup.config.js'));
+                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'closure.rollup.conf'));
 
                     // find and replace cli name in ngr.config.js
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'ngr.config.js'));

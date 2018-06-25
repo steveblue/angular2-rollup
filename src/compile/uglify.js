@@ -17,7 +17,7 @@ class UglifyBuilder {
             let outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
 
             exec(path.normalize(config.projectRoot + '/node_modules/.bin/uglifyjs') +
-                ' ' + path.join(outputPath, 'bundle.js') + ' -o ' + path.join(outputPath, 'bundle.js')+' -c -m', { silent: true }, (error, stdout, stderr) => {
+                ' ' + path.join(outputPath, 'bundle.js') + ' -o ' + path.join(outputPath, 'bundle.js')+' ---compress --mangle --toplevel --verbose', { silent: true }, (error, stdout, stderr) => {
 
                 if (stderr.includes('Error')) {
                     if (rej) rej(error);

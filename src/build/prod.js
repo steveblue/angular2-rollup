@@ -39,6 +39,8 @@ class ProdBuild extends Build {
       const libCheck = config.lib && config.lib[cli.env];
       const outFile = path.join(config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath, 'bundle.js');
 
+      this.outFile = outFile;
+
       (async () => {
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
@@ -66,17 +68,16 @@ class ProdBuild extends Build {
           fs.writeFileSync(file, buildOptimizer({ content: content }).content);
         });
         if (cli.program.rollup) {
+          const prepRxjs = await this.buildRxjsFESM();
           const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.js'));
-          const transpile = await jitBuilder.compile(path.join(config.projectRoot, 'src', 'tsconfig.rollup.json'));
-          const optimize = await uglifyBuilder.minify(outFile);
+          const optimize = await closureBuilder.bundle();
         } else {
           // use fesm instead for closure compiler, results in smaller bundles
           const prepRxjs = await this.buildRxjsFESM();
           const bundle = await closureBuilder.bundle();
         }
-        const cleanRoot = await rm(path.normalize('main.js'));
-        if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
-        util.getTime(this.startTime);
+
+        this.post();
 
       })();
 
@@ -152,7 +153,8 @@ class ProdBuild extends Build {
     post() {
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
-      rm('main.js');
+      rm(path.normalize('main.js'));
+      rm(path.join(config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath, 'bundle.es2015.js'))
       log.break();
       util.getTime(this.startTime);
 

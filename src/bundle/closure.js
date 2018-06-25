@@ -15,13 +15,17 @@ class ClosureBuilder {
         this.outFile = util.hasConfigProperty('outBundle', config.prodOptions) ? config.prodOptions.outBundle : './' + config.build + '/bundle.js';
         this.manifestPath = util.hasConfigProperty('manifestPath', config.prodOptions) ? config.prodOptions.manifestPath : path.normalize('closure/manifest.MF');
 
+
     }
 
     bundle() {
         return new Promise((res) => {
 
+            if (cli.program.rollup) {
+                this.confPath = path.normalize('closure.rollup.conf')
+            }
+
             log.message('closure compiler is optimizing');
-            // console.log(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`);
             let closure = exec(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`,
                 { silent: true },
                 (error, stdout, stderr) => {
