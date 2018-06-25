@@ -74,12 +74,14 @@ class Sass {
         }
 
         outFile = path.join(outFilePath, filename.replace('scss', 'css'));
- 
+
         // this file is global w/ underscore and should not be compiled, compile global files instead
         if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
+
             return Promise.all(styles.map((filePath) => {
                 return this.file(filePath);
             }));
+
         }
 
         log.message('processing '+outFile);
@@ -99,6 +101,7 @@ class Sass {
 
             sass.render(config.style.sass[env], (error, result) => {
                 if (error) {
+
                     log.line();
                     error.service = 'sass';
                     log.error(error);
