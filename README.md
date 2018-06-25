@@ -1,12 +1,10 @@
-# angular-rollup
+# ngr
 
-cli for building angular apps with Rollup and Closure Compiler.
+CLI for building Angular with Rollup, Closure Compiler and Webpack
 
 [![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Main Features
-
-* CLI for building Angular with Rollup, Closure Compiler and Webpack
 
 * Extends `@angular/cli`. Run `ng` and `ngr` commands in the same project
 
