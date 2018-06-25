@@ -12,7 +12,7 @@ class UglifyBuilder {
 
         return new Promise((res, rej) => {
 
-            log.message('uglify is optimizing');
+            log.message('uglify...');
 
             let outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
 

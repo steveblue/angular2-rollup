@@ -24,6 +24,7 @@ class ProdBuild extends Build {
     }
 
     init() {
+        this.outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
         this.pre();
     }
 
@@ -37,9 +38,7 @@ class ProdBuild extends Build {
       const rollupBuilder = new RollupBuilder();
       const uglifyBuilder = new UglifyBuilder();
       const libCheck = config.lib && config.lib[cli.env];
-      const outFile = path.join(config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath, 'bundle.js');
-
-      this.outFile = outFile;
+      const outFile = path.join(this.outputPath, 'bundle.js');
 
       (async () => {
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
@@ -90,12 +89,24 @@ class ProdBuild extends Build {
         if (util.hasHook('pre')) {
 
           config.buildHooks[cli.env].pre(process.argv).then(() => {
-            this.build();
+            if (cli.program.webpack === true) {
+              exec('ng build --prod', {shell: true, stdio: 'inherit'}, () => {
+                this.post();
+              });
+            } else {
+              this.build();
+            }
           });
 
         } else {
 
-          this.build();
+          if (cli.program.webpack === true) {
+            exec('ng build --prod', {shell: true, stdio: 'inherit'}, () => {
+              this.post();
+            });
+          } else {
+            this.build();
+          }
 
         }
 
@@ -152,11 +163,30 @@ class ProdBuild extends Build {
 
     post() {
 
+      const bundleArtifact = path.join(this.outputPath, 'bundle.es2015.js');
+
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
-      rm(path.normalize('main.js'));
-      rm(path.join(config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath, 'bundle.es2015.js'))
+      if (fs.existsSync(path.normalize('main.js'))) {
+        rm(path.normalize('main.js'));
+      }
+      if (fs.existsSync(bundleArtifact)) {
+        rm(bundleArtifact);
+      }
+
       log.break();
-      util.getTime(this.startTime);
+
+      if (cli.program.webpack === true) {
+        ls(this.outputPath).forEach((file) => {
+          log.logFileStats(path.join(this.outputPath, file));
+        });
+      } else {
+        log.buildStats(this.startTime);
+      }
+
+      if (util.hasArg('serve')) {
+        util.serve(cli.program.watch);
+      }
+
 
     }
 

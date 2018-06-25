@@ -4,6 +4,7 @@ require('shelljs/global');
 const findup = require('findup');
 const fs = require('fs');
 const path = require('path');
+const spawn = require('child_process').spawn;
 const colors = require('colors');
 const program = require('commander');
 const cliRoot = findup.sync(__dirname, 'package.json');
@@ -22,12 +23,14 @@ program
     .option('--skip-install [bool]', 'prevents install during scaffold')
     .option('--yarn [bool]', 'use yarn instead of npm to install')
     .option('build [env]', 'build the application')
-    .option('--clean [bool]', 'destroy the build folder prior to compilation, automatic for prod')
+    .option('--clean [bool]', 'destroy the build folder prior to compilation, default for prod')
     .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
     .option('--config [string]', 'path to configuration file for library build')
     .option('--deploy [bool]', 'call deploy buildHook')
     .option('--verbose [bool]', 'log all messages in list format')
-    .option('--rollup [bool]', 'use rollup to bundle instead of closure compiler')
+    .option('--closure [bool]', 'bundle and optimize with closure compiler (default)')
+    .option('--rollup [bool]', 'bundle with rollup and optimize with closure compiler')
+    .option('--webpack [bool]', 'use @angular/cli to build')
     .option('serve, --serve [bool]', 'spawn the local express server')
     .parse(process.argv);
 
@@ -38,23 +41,20 @@ let cli = () => {
     let Scaffold = require('./src/scaffold/index');
 
     if (program.build) {
+        log.destroy();
 
-        if (!fs.existsSync(path.normalize(config.cliRoot + '/src/build/' + program.build + '.js'))) {
-            util.error(program.build + ' build does not exist.');
-        }
-        else {
-            log.break();
-            const BuildScript = require('./src/build/' + program.build + '.js');
-            let build = new BuildScript().init();
-        }
+        const BuildScript = require('./src/build/' + program.build + '.js');
+        let build = new BuildScript().init();
     }
 
     if (program.new) {
+        log.destroy();
         let scaffold = new Scaffold(program.new, path.join(processRoot, program.new));
         scaffold.basic();
     }
 
     if (program.serve && !program.build) {
+        log.destroy();
         util.serve();
     }
 

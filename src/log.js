@@ -1,11 +1,14 @@
 'use strict';
-
+const path        = require('path');
+const fs          = require('fs');
 const colors      = require('colors');
 const logger      = require('single-line-log').stdout;
+const spawn       = require('child_process').spawn;
 const config      = require('./config');
 const uuid        = require('uuid/v4');
+const gzipSize    = require('gzip-size');
+const moment      = require('moment');
 const cli         = require('./../cli.config.json');
-
 const NGR_LOG_CACHE = Symbol('ngrProcess_'+uuid());
 
 
@@ -26,6 +29,10 @@ class Log {
         if (!cli.program.verbose) {
             logger.clear();
         }
+    }
+
+    hasArg(arg) {
+        return process.argv.indexOf(arg) > -1 || process.argv.indexOf('--'+arg) > -1;
     }
 
     destroy() {
@@ -63,7 +70,7 @@ class Log {
     }
 
     message(msg) {
-        msg = msg ? ' ' + colors.white(msg).dim : '';
+        msg = msg ? '' + colors.white(msg).dim : '';
         logger(msg);
         if (cli.program.verbose) this.break();
     }
@@ -73,7 +80,7 @@ class Log {
         if (!this.hasError()) {
           this.destroy();
         }
-        msg = '\n'+ (msg ? ' ' + colors.white(msg) : '');
+        msg = '\n'+ (msg ? '' + colors.white(msg) : '');
         logger(msg);
         //if (!cli.program.verbose) this.line();
         if (cli.program.verbose) this.break();
@@ -83,7 +90,7 @@ class Log {
         // if (!this.hasError()) {
         //   this.destroy();
         // }
-        msg = msg ? ' ' + colors.red(msg) : '';
+        msg = msg ? '' + colors.red(msg) : '';
         logger(msg);
         if (cli.program.verbose) this.break();
     }
@@ -92,13 +99,13 @@ class Log {
         // if (!this.hasError()) {
         //   this.destroy();
         // }
-        msg = msg ? ' ' + colors.white(msg) : '';
+        msg = msg ? '' + colors.white(msg) : '';
         process.stdout.write(msg);
         process.stdout.write('\n');
     }
 
     warn(msg) {
-        msg = msg ? ' ' + colors.yellow(msg) : '';
+        msg = msg ? '' + colors.yellow(msg) : '';
         process.stdout.write(msg);
         process.stdout.write('\n');
     }
@@ -119,7 +126,7 @@ class Log {
             if (!err.line) {
                 err.line = '';
             }
-            
+
             if (!err.column) {
                 err.column = '';
             }
@@ -350,7 +357,84 @@ class Log {
         this.catchError(str, 'Closure');
       }
 
-  }
+    }
+
+    logFileStats(file) {
+        if (fs.lstatSync(path.join(file)).isFile()) {
+            this.alert(colors.dim('') + colors.white(file) + ' ' +
+                colors.dim((fs.statSync(path.join(file)).size / 1000).toFixed(2) + ' kB') + ' ' +
+                colors.green(colors.dim('(') + (gzipSize.sync(fs.readFileSync(path.join(file))) / 1000).toFixed(2) + ' kB' + ' ' + colors.dim('gzipped') + colors.dim(')') + ' ')
+            );
+        }
+    }
+
+    buildStats(startTime, dist) {
+
+        if (dist) {
+            config.build = dist;
+        }
+
+        let endTime = moment(new Date());
+        let duration = moment.duration(endTime.diff(startTime));
+        this.destroy();
+        this.alert(colors.green(config.angular.defaultProject + ' built'));
+        this.alert(colors.dim('Date: ')+ new Date().toISOString());
+        this.alert(colors.dim('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
+
+        ls(config.build).forEach((file) => {
+            if (fs.lstatSync(path.join(config.build,file)).isFile()) {
+                this.logFileStats(path.join(config.build, file));
+            }
+        });
+
+        ls(path.join(config.build, 'style')).forEach((file) => {
+            this.logFileStats(path.join(config.build, 'style', file));
+        });
+
+        if (fs.existsSync(path.join(config.build, 'fesm2015'))) {
+            ls(path.join(config.build, 'fesm2015')).forEach((file) => {
+                if (fs.lstatSync(path.join(config.build, 'fesm2015', file)).isFile()) {
+                    this.logFileStats(path.join(config.build, 'fesm2015', file));
+                }
+            });
+        }
+
+        if (fs.existsSync(path.join(config.build, 'fesm5'))) {
+            ls(path.join(config.build, 'fesm5')).forEach((file) => {
+                if (fs.lstatSync(path.join(config.build, 'fesm5', file)).isFile()) {
+                    this.logFileStats(path.join(config.build, 'fesm5', file));
+                }
+            });
+        }
+
+        if (fs.existsSync(path.join(config.build, 'esm2015'))) {
+            ls(path.join(config.build, 'esm2015')).forEach((file) => {
+                if (fs.lstatSync(path.join(config.build, 'esm2015', file)).isFile()) {
+                    this.logFileStats(path.join(config.build, 'esm2015', file));
+                }
+            });
+        }
+
+        if (fs.existsSync(path.join(config.build, 'esm5'))) {
+            ls(path.join(config.build, 'esm5')).forEach((file) => {
+                if (fs.lstatSync(path.join(config.build, 'esm5', file)).isFile()) {
+                    this.logFileStats(path.join(config.build, 'esm5', file));
+                }
+            });
+        }
+
+
+        if (fs.existsSync(path.join(config.build, 'bundles'))) {
+            ls(path.join(config.build, 'bundles')).forEach((file) => {
+                if (fs.lstatSync(path.join(config.build, 'bundles', file)).isFile()) {
+                    this.logFileStats(path.join(config.build, 'bundles', file));
+                }
+            });
+        }
+
+
+
+    }
 
 
 }

@@ -25,7 +25,7 @@ class ClosureBuilder {
                 this.confPath = path.normalize('closure.rollup.conf')
             }
 
-            log.message('closure compiler is optimizing');
+            log.message('closure compiler...');
             let closure = exec(`java -jar ${this.jarPath} --warning_level=${this.warningLevel} --flagfile ${this.confPath} --js_output_file ${this.outFile} --output_manifest=${this.manifestPath}`,
                 { silent: true },
                 (error, stdout, stderr) => {

@@ -4,12 +4,10 @@ const colors      = require('colors');
 const path        = require('path');
 const fs          = require('fs');
 const UglifyJS    = require('uglify-js');
-const gzipSize    = require('gzip-size');
 const MagicString = require('magic-string');
 const escape      = require('js-string-escape');
 const minifyHtml  = require('html-minifier').minify;
 const spawn       = require('child_process').spawn;
-const moment      = require('moment');
 const config      = require('./config.js');
 const cli         = require('./../cli.config.json');
 const log         = require('./log');
@@ -32,86 +30,6 @@ class Util {
 
     hasArg(arg) {
         return process.argv.indexOf(arg) > -1 || process.argv.indexOf('--'+arg) > -1;
-    }
-
-    logFileStats(file) {
-        if (fs.lstatSync(path.join(file)).isFile()) {
-            log.alert(colors.dim('File: ') + colors.green(file) + ' ' +
-                colors.dim((fs.statSync(path.join(file)).size / 1000).toFixed(2) + ' kB') + ' ' +
-                colors.white(colors.dim('(') + (gzipSize.sync(fs.readFileSync(path.join(file))) / 1000).toFixed(2) + ' kB' + ' ' + colors.dim('gzipped') + colors.dim(')') + ' ')
-            );
-        }
-    }
-
-    getTime(startTime, dist) {
-
-        if (dist) {
-            config.build = dist;
-        }
-
-      let endTime = moment(new Date());
-      let duration = moment.duration(endTime.diff(startTime));
-      log.destroy();
-      log.alert(colors.green(config.angular.defaultProject + ' built'));
-      log.alert(colors.dim('Date: ')+ new Date());
-      log.alert(colors.dim('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
-
-      ls(config.build).forEach((file) => {
-        if (fs.lstatSync(path.join(config.build,file)).isFile()) {
-            this.logFileStats(path.join(config.build, file));
-        }
-      });
-
-      ls(path.join(config.build, 'style')).forEach((file) => {
-          this.logFileStats(path.join(config.build, 'style', file));
-      });
-
-    if (fs.existsSync(path.join(config.build, 'fesm2015'))) {
-        ls(path.join(config.build, 'fesm2015')).forEach((file) => {
-            if (fs.lstatSync(path.join(config.build, 'fesm2015', file)).isFile()) {
-                this.logFileStats(path.join(config.build, 'fesm2015', file));
-            }
-        });
-    }
-
-    if (fs.existsSync(path.join(config.build, 'fesm5'))) {
-        ls(path.join(config.build, 'fesm5')).forEach((file) => {
-            if (fs.lstatSync(path.join(config.build, 'fesm5', file)).isFile()) {
-                this.logFileStats(path.join(config.build, 'fesm5', file));
-            }
-        });
-    }
-
-    if (fs.existsSync(path.join(config.build, 'esm2015'))) {
-        ls(path.join(config.build, 'esm2015')).forEach((file) => {
-            if (fs.lstatSync(path.join(config.build, 'esm2015', file)).isFile()) {
-                this.logFileStats(path.join(config.build, 'esm2015', file));
-            }
-        });
-    }
-
-    if (fs.existsSync(path.join(config.build, 'esm5'))) {
-        ls(path.join(config.build, 'esm5')).forEach((file) => {
-            if (fs.lstatSync(path.join(config.build, 'esm5', file)).isFile()) {
-                this.logFileStats(path.join(config.build, 'esm5', file));
-            }
-        });
-    }
-
-
-    if (fs.existsSync(path.join(config.build, 'bundles'))) {
-        ls(path.join(config.build, 'bundles')).forEach((file) => {
-            if (fs.lstatSync(path.join(config.build, 'bundles', file)).isFile()) {
-                this.logFileStats(path.join(config.build, 'bundles', file));
-            }
-        });
-    }
-
-      //log.alert('ngr built in ' + colors.green(duration.asSeconds() + 's'));
-      if (this.hasArg('serve')) {
-        this.serve(cli.program.watch);
-      }
-
     }
 
     getFilePath(filePath) {
@@ -210,7 +128,7 @@ class Util {
                 ' ' + path.normalize(template) +
                 ' -o ' + path.normalize(path.join(config.build, '/') + 'index.html') +
                 ' -e ' + env, { silent: true }, (error, stdout, stderr) => {
-                    log.message('htmlprocessor' + ' formatted ' + this.getFileName(template));
+                    //log.message('htmlprocessor' + ' formatted ' + this.getFileName(template));
                     if (error) {
                         log.warn(error);
                         if (rej) rej(error);

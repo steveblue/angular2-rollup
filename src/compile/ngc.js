@@ -21,7 +21,7 @@ class AOTBuilder {
 
             if (util.hasArg('watch')) {
 
-                log.message('@angular/compiler is compiling');
+                log.message('@angular/compiler...');
 
                 const ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch', { silent: true });
 
@@ -31,7 +31,7 @@ class AOTBuilder {
 
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
                         hasCompiled = true;
-                        log.message('Compilation complete.', ['TypeScript']);
+                        log.message('Compilation complete. Watching for file changes.', ['TypeScript']);
                         res();
                     } else {
                       this.handleError(stderr);
@@ -39,10 +39,10 @@ class AOTBuilder {
                 });
 
             } else {
-                log.message('@angular/compiler is compiling');
+                log.message('@angular/compiler...');
                 // if (config.build !== 'lib') {
                 //     interval = setInterval(() => {
-                //         log.message('@angular/compiler is compiling...');
+                //         log.message('@angular/compiler...');
                 //     },100)
                 // }
                 let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {

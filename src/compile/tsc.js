@@ -15,7 +15,7 @@ class TSBuilder {
         return new Promise((res) => {
 
             let hasCompiled = false;
-            log.message('typescript is compiling');
+            log.message('typescript...');
 
             let tsc = exec(path.normalize(path.resolve('node_modules', '.bin', 'tsc') +
                 ' -p ' + tsConfigPath), {}, function (error, stdout, stderr) {
