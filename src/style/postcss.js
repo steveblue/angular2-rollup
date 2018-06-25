@@ -42,6 +42,10 @@ class PostCSS {
 
     file(filePath) {
 
+        if (filePath.includes('out-css')) { // fixes issue with filePath in --watch
+            filePath = filePath.replace('out-css/', '').replace('out-css\\', '');
+        }
+
         return new Promise((res) => {
 
             let env;
@@ -72,9 +76,9 @@ class PostCSS {
             }
 
             let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
-                ' ' + path.join('out-sass', outFile) +
+                ' ' + path.join('out-css', outFile) +
                 (this.cssConfig.sourceMap === false ? ' --no-map' : '') +
-                ' --config ' + path.normalize(path.join(config.projectRoot, 'postcss.config.js')) + 
+                ' --config ' + path.normalize(path.join(config.projectRoot, 'config', 'postcss.'+cli.env+'.js')) + 
                 ' --output ' + outFile, 
                 { silent: true }, (error, stdout, stderr) => {
 

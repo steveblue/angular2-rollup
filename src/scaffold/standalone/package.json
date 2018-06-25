@@ -56,7 +56,7 @@
         "livereload": "^0.6.2",
         "node-sass": "^4.5.3",
         "postcss": "^6.0.3",
-        "postcss-cli": "^4.1.0",
+        "postcss-cli": "^5.0.1",
         "postcss-csso": "^3.0.0",
         "protractor": "^5.1.2",
         "rollup": "^0.57.0",

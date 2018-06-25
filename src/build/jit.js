@@ -31,9 +31,9 @@ class JitBuild extends Build {
       const libCheck = config.lib && config.lib[env];
 
       (async () => {
-      const lib = await util.copyLib(libCheck ? config.lib['dev'] : config.dep['lib'],
-                                     libCheck ? config.lib.src : config.dep.src,
-                                     libCheck ? config.lib.dist : config.dep.dist);
+        const lib = await util.copyLib(libCheck ? config.lib[env] : config.dep['lib'],
+                                       libCheck ? config.lib.src : config.dep.src,
+                                       libCheck ? config.lib.dist : config.dep.dist);
       })();
 
       (async () => {

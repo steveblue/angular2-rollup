@@ -55,8 +55,8 @@ class Sass {
             env = cli.env;
         }
 
-        if (!fs.existsSync('out-sass')) {
-            mkdir('-p', 'out-sass');
+        if (!fs.existsSync('out-css')) {
+            mkdir('-p', 'out-css');
         }
 
         const srcPath = util.getFilePath(filePath);
@@ -89,8 +89,8 @@ class Sass {
 
         } 
 
-        outFilePath = path.join('out-sass', outFilePath);
-        outFile = path.join('out-sass', outFile);
+        outFilePath = path.join('out-css', outFilePath);
+        outFile = path.join('out-css', outFile);
 
         return new Promise((res) => {
  

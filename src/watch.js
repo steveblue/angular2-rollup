@@ -11,6 +11,8 @@ const util = require('./util');
 const log = require('./log');
 const cli = require('./../cli.config.json');
 
+let = lastPath = '';
+
 class Watcher {
     constructor() {
 
@@ -21,6 +23,10 @@ class Watcher {
             ignored: /[\/\\]\./,
             persistent: true
         }).on('change', filePath => {
+            if (filePath.includes('out-css')) {
+                return;
+            }
+
             if (cli.program.verbose) log.message(filePath + ' changed');
             if (filePath.includes(path.join(config.src, 'public'))) {
                 this.updatePublic(filePath);
@@ -28,17 +34,19 @@ class Watcher {
             else if (filePath.indexOf('.scss') > -1) {
 
                 (async () => {
-
+   
                     const sass = await sassBuilder.file(filePath);
-
+               
                     if (Array.isArray(sass)) {
                         const postcss = await postcssBuilder.batch(sass);
                         log.cancelError('sass');
                         log.cancelError('postcss');
-                        log.success('libass and postcss compiled', ['sass', 'postcss']);
+                        // log.success('libsass and postcss compiled', ['sass', 'postcss']);
                     } else {
                         const postcss = await postcssBuilder.file(sass);
-                        log.success('libass and postcss compiled', ['sass', 'postcss']);
+                        log.cancelError('sass');
+                        log.cancelError('postcss');
+                        //log.success('libsass and postcss compiled', ['sass', 'postcss']);
                     }
 
 

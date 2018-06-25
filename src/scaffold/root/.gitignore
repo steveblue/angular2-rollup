@@ -44,6 +44,7 @@ Thumbs.db
 .tmp
 /tmp
 /out-tsc
+/out-css
 /closure
 compiler.jar
 main.js

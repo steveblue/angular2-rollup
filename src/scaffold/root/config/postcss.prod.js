@@ -1,11 +1,10 @@
 module.exports = {
-  plugins: {
-    'autoprefixer': {
-        browsers: 'last 2 versions'
-    },
-    'css-mqpacker': {
-      sort: true
-    },
-    'postcss-csso': {}
-  }
+  plugins: [
+    require('postcss-discard-comments')(),
+    require('postcss-filter-gradient')(),
+    require('autoprefixer')({ remove: false }),
+    require('css-mqpacker')({ sort: true }),
+    require('postcss-csso')({})
+  ]
 }
+

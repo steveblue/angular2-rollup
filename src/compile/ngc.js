@@ -26,7 +26,7 @@ class AOTBuilder {
                 const ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch', { silent: true });
 
                 ngc.stderr.on('data', (stderr) => {
-                    //console.log('STDERR:', stderr);
+              
                     let hasLine = false;
 
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
@@ -75,7 +75,7 @@ class AOTBuilder {
           log.fail(stderr);
         }
         else if (stderr.includes('File change')) {
-          log.message(stderr, ['TypeScript']);
+          log.success(stderr, ['TypeScript']);
         }
         else {
 

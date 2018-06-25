@@ -3,7 +3,6 @@ const path        = require('path');
 const fs          = require('fs');
 const colors      = require('colors');
 const logger      = require('single-line-log').stdout;
-const spawn       = require('child_process').spawn;
 const config      = require('./config');
 const uuid        = require('uuid/v4');
 const gzipSize    = require('gzip-size');
