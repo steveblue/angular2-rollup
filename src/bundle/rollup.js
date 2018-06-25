@@ -1,9 +1,8 @@
 const path = require('path');
-const fs = require('fs');
-const util = require('./../util.js');
+const exec = require('child_process').exec;
 const config = require('./../config');
 const log = require('./../log.js');
-const cli = require('./../../cli.config.json');
+
 
 class RollupBuilder {
 
@@ -13,9 +12,9 @@ class RollupBuilder {
 
         return new Promise((res, rej) => {
 
-            log.message('rollup is bundling');
+            log.message('rollup...');
 
-            let rollup = exec(path.normalize(config.projectRoot + '/node_modules/.bin/rollup') +
+            exec(path.normalize(config.projectRoot + '/node_modules/.bin/rollup') +
                 ' -c ' + rollupConfigPath, {silent: true}, (error, stdout, stderr) => {
                     if (stderr.includes('Error')) {
                         if (rej) rej(error);

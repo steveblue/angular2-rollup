@@ -87,7 +87,18 @@ class JitBuild extends Build {
       if (cli.program.watch === true) {
         const watcher = new Watcher();
       }
-      util.getTime(this.startTime);
+
+      if (!util.hasArg('watch')) {
+        log.break();
+        ls(this.outputPath).forEach((file) => {
+          log.logFileStats(path.join(this.outputPath, file));
+        });
+      }
+
+      if (util.hasArg('serve')) {
+        util.serve(cli.program.watch);
+      }
+
 
     }
 

@@ -8,9 +8,9 @@ class ResolveRxjs {
         if (importee.startsWith('rxjs')) {
             let pkg = importee.replace('rxjs', '');
             if (importee.includes('/')) {
-                return `node_modules/rxjs/_esm2015${pkg}/index.js`;
+                return `node_modules/rxjs/_fesm2015${pkg}/index.js`;
             } else {
-                return `node_modules/rxjs/_esm2015/${pkg}index.js`;
+                return `node_modules/rxjs/_fesm2015/${pkg}index.js`;
             }
         }
     }
@@ -37,7 +37,7 @@ export default {
     treeshake: true,
     output: {
         file: 'dist/{{projectName}}/bundle.es2015.js',
-        format: 'cjs'
+        format: 'iife'
     },
     plugins: [
         new ResolveRxjs(),

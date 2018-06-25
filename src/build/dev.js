@@ -1,5 +1,6 @@
 const path           = require('path');
 const fs             = require('fs');
+const spawn          = require('child_process').spawn;
 const Build          = require('./index.js');
 const SassBuilder    = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
@@ -17,6 +18,7 @@ class DevBuild extends Build {
     }
 
     init() {
+       this.outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
        this.pre();
     }
 
@@ -46,7 +48,7 @@ class DevBuild extends Build {
           (async () => {
             const main = await aotBuilder.compileMain().then((res) => {
                 log.message('compiled main.js');
-                log.message('@angular/compiler is compiling...');
+                log.message('@angular/compiler...');
             });
           })();
         }
@@ -65,12 +67,22 @@ class DevBuild extends Build {
         if (util.hasHook('pre')) {
 
           config.buildHooks[cli.env].pre(process.argv).then(() => {
-            this.build();
+
+            if (cli.program.webpack === true) {
+              spawn('ng',['serve'], {shell: true, stdio: 'inherit'});
+            } else {
+              this.build();
+            }
+
           });
 
         } else {
 
-          this.build();
+          if (cli.program.webpack === true) {
+            spawn('ng',['serve'], {shell: true, stdio: 'inherit'});
+          } else {
+            this.build();
+          }
 
         }
 
@@ -92,9 +104,16 @@ class DevBuild extends Build {
       if (cli.program.watch === true) {
         const watcher = new Watcher();
       }
+      if (!util.hasArg('watch')) {
+        log.break();
+        ls(this.outputPath).forEach((file) => {
+          log.logFileStats(path.join(this.outputPath, file));
+        });
+      }
 
-      util.getTime(this.startTime);
-
+      if (util.hasArg('serve')) {
+        util.serve(cli.program.watch);
+      }
 
     }
 

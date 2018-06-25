@@ -239,7 +239,7 @@ class LibBuild extends Build {
                     config.buildHooks[cli.env].post(process.argv);
                 }
                 log.message('Build complete.')
-                util.getTime(this.startTime, this.libConfig.dist);
+                log.buildStats(this.startTime, this.libConfig.dist);
 
             });
 
