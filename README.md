@@ -27,14 +27,14 @@ cli for building angular apps with Rollup and Closure Compiler.
 
 * [Getting Started](#getting-started)
     * [Install](#install)
-    * [Server](#server)
-    * [Config](#config)
     * [Scaffold](#scaffold)
-    * [Update](#update)
 
 * [Development](#development)
     * [Build](#build)
-    * [Build Hooks](#buildhooks)
+    * [Production](#production)
+    * [Hooks](#buildhooks)
+    * [Config](#buildconfig)
+    * [Server](#server)
     * [Library Build](#library-build)
     * [Code Generation, Testing, and i18n](#testing)
 
@@ -63,47 +63,12 @@ $ ngr new my-app
 
 ```
 
-### Configure Server
-
-Change the host and/or port in `/config/server.config.dev.js` if needed. This config is used for the Express Server. `/config/server.config.prod.js` is used for production.
-
-```
-{
-   origin: 'localhost',
-   port: 4200
-};
-
-```
-
-## Server
-
-Express in the scaffold is used mainly to provide a development server, but it could also be s atrting point for a MEAN stack.
-
-`ngr serve` will start up the Express server, so will `--serve` with any build.
-
-
-## Config
-
-Config is shared with `angular.json` but for non Webpack builds the following files allow you configure filepaths, SASS options, and includes callbacks for steps in each build.
-
-
-| Script        | Description   |
-| ------------- |:-------------:|
-| ngr.config.js      | Project filepaths, callbacks for build steps |
-| postcss.*.js |  PostCSS |
-| rollup.config.js |  Rollup |
-| closure.conf |  Closure Compiler  |
-| closure.rollup.conf |  Closure Compiler when using the --rollup argument  |
-| server.config.*.js |  Express Server  |
-| tsconfig.*.json | Configures TypeScript (dev) or @angular/compiler (lib,prod)
-
-
 ## Scaffold
 
 To scaffold a new app run `ngr new my-app`. This command will copy required files into the a new directory called my-app and run `npm install`. Use the `--yarn` flag to install with it instead.
 
 
-## Development
+# Development
 
 ## Build
 
@@ -118,6 +83,8 @@ Optionally, use `--jit` to bootstrap Angular with JIT Compiler.
 Once your work has been validated with the development build, you can also test the production build.
 
 We recommended bundling and optimizing with Closure Compiler in ADVANCED_OPTIMIZATIONS mode. This is the default production build because it produces the most optimal bundles.
+
+## Production
 
 * `$ ngr build prod`
 
@@ -134,7 +101,7 @@ To build an application and serve it locally:
 * `$ ngr build prod --serve`
 
 
-### Build Hooks
+## Build Hooks
 
 There are hooks in the current build scripts where you can inject custom functionality. Each build has a `pre` and `post` hook. All hooks except `post` require that you return a `Promise`.
 
@@ -157,14 +124,49 @@ There are hooks in the current build scripts where you can inject custom functio
 If you require a new hook, submit a feature request in Github issues.
 
 
-### Library Build
+## Build Config
+
+Config is shared with `angular.json` but for non Webpack builds the following files allow you configure filepaths, SASS options, and includes callbacks for steps in each build.
+
+
+| Script        | Description   |
+| ------------- |:-------------:|
+| ngr.config.js      | Project filepaths, callbacks for build steps |
+| postcss.*.js |  PostCSS |
+| rollup.config.js |  Rollup |
+| closure.conf |  Closure Compiler  |
+| closure.rollup.conf |  Closure Compiler when using the --rollup argument  |
+| server.config.*.js |  Express Server  |
+| tsconfig.*.json | Configures TypeScript (dev) or @angular/compiler (lib,prod)
+
+
+## Server
+
+Express is used mainly to provide a development server, but it could also be s atrting point for a MEAN stack.
+
+`ngr serve` will start up the Express server, so will `--serve` with any build.
+
+
+### Configure Server
+
+Change the host and/or port in `/config/server.config.dev.js` if needed. This config is used for the Express Server. `/config/server.config.prod.js` is used for production.
+
+```
+{
+   origin: 'localhost',
+   port: 4200
+};
+
+```
+
+## Library Build
 
 `ngr` provides a build for developing Angular libraries that conforms to the Angular Package Format.
 
 Jason Aden gave a presentation about Angular Package Format at ng-conf 2017. [Packaging Angular](https://youtu.be/unICbsPGFIA).
 
 
-#### Generate A Library Package
+### Generate A Library Package
 
 Generate library packages with `ngr generate lib` or use `ngr generate wizard`.
 
@@ -172,14 +174,14 @@ Generate library packages with `ngr generate lib` or use `ngr generate wizard`.
 
 This will generate a library package in the src/app/shared/lib folder with the necessary configuration.
 
-#### Developing A Library
+### Developing A Library
 
 - Keep your code strictly typed.
 - Do not create monolithic `@NgModule`, separate modules by discrete functionality. This allows the library to be treeshaken.
 - In each module export the necessary components, directives, services, etc.
 - Update the index.ts with exports for each module.
 
-#### Build Library
+### Build Library
 
 After you have generated some components for the library, use `ngr build lib` to build the library in the `dist` folder.
 
@@ -188,8 +190,7 @@ After you have generated some components for the library, use `ngr build lib` to
 
 ## Code Generation, Testing, and i18n
 
-All of this tooling uses the methods employed by `@angular/cli`.
-
+All of this tooling uses the methods employed by `@angular/cli`. Use `ng test` and `ng e2e`.
 
 
 # FAQ
@@ -326,7 +327,6 @@ You may also need to inject `typings` for `ngc` to properly inject dependencies 
 `ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build. For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor);
 
 The typical Angular dependencies are already included in the `<head>` tag in `index.html`.
-
 
 
 ### How do I update my project to the latest CLI?
