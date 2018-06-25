@@ -314,7 +314,7 @@ You may also need to inject `typings` for `ngc` to properly inject dependencies 
 
 ### Editing index.html
 
-`ngr` copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in `ngr.config.js`). You can then reference the library in `src/public/index.html` like so:
+In the development build, `ngr` copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in `ngr.config.js`). You can then reference the library in `src/public/index.html` like so:
 
 ```
     <script src="/lib/core-js/client/shim.min.js"></script>
@@ -323,6 +323,10 @@ You may also need to inject `typings` for `ngc` to properly inject dependencies 
       <script src="/lib/reflect-metadata/Reflect.js"></script>
     <!-- /build -->
 ```
+
+For production, `ngr` will concatenante library packages into `vendor.js`.
+
+#### htmlprocessor
 
 `ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build. For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor);
 
@@ -336,9 +340,7 @@ The typical Angular dependencies are already included in the `<head>` tag in `in
 
 ### How do I update my project to the latest versions of Angular?
 
-
 - `$ ng update`
-
 
 ### How do I deploy?
 
