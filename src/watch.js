@@ -23,11 +23,13 @@ class Watcher {
             ignored: /[\/\\]\./,
             persistent: true
         }).on('change', filePath => {
+
             if (filePath.includes('out-css')) {
                 return;
             }
 
             if (cli.program.verbose) log.message(filePath + ' changed');
+
             if (filePath.includes(path.join(config.src, 'public'))) {
                 this.updatePublic(filePath);
             }
@@ -57,6 +59,10 @@ class Watcher {
             }
             else if (filePath.indexOf('.html') > -1 && cli.env === 'jit') {
                 util.copyFile(filePath, path.join(config.build, filePath));
+            }
+            
+            if (util.hasHook('watch') && config.buildHooks[cli.env].watch.src) {
+                config.buildHooks[cli.env].watch.src(filePath);
             }
 
         }).on('unlink', filePath => log.warn(filePath, 'has been removed'))
