@@ -4,13 +4,14 @@ const spawn          = require('child_process').spawn;
 const Build          = require('./index.js');
 const SassBuilder    = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
+const RollupBuilder = require('./../bundle/rollup.js');
 const AOTBuilder     = require('./../compile/ngc.js');
 const Watcher        = require('./../watch.js');
 const util           = require('./../util.js');
 const log            = require('./../log.js');
 const config         = require('./../config');
 const cli            = require('./../../cli.config.json');
-
+const chokidar       = require('chokidar');
 class DevBuild extends Build {
 
     constructor() {
@@ -24,7 +25,7 @@ class DevBuild extends Build {
 
 
     build() {
-
+      const rollupBuilder = new RollupBuilder();
       const sassBuilder = new SassBuilder({ dist: config.build });
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
       const aotBuilder = new AOTBuilder();
@@ -101,9 +102,19 @@ class DevBuild extends Build {
     post() {
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
-      if (cli.program.watch === true) {
+
+      if (cli.program.watch === true && util.hasHook('watch') && config.buildHooks[cli.env].watch.dist) {
         const watcher = new Watcher();
+        const distWatcher = chokidar.watch([this.outputPath], {
+          ignored: /[\/\\]\./,
+          persistent: true
+        }).on('change', filePath => {
+
+          config.buildHooks[cli.env].watch.dist(filePath);
+
+        });
       }
+
       if (!util.hasArg('watch')) {
         log.break();
         ls(this.outputPath).forEach((file) => {
