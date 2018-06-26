@@ -192,8 +192,6 @@ class LibBuild extends Build {
 
         util.cleanBuild();
 
-        cp(path.normalize('config/postcss.prod.js'), 'postcss.config.js');
-
         this.fetchLibConfig().then((res) => {
 
             rm('-rf', this.libConfig.dist);

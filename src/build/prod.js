@@ -24,7 +24,6 @@ class ProdBuild extends Build {
     }
 
     init() {
-        this.outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
         this.pre();
     }
 
@@ -33,12 +32,9 @@ class ProdBuild extends Build {
       const sassBuilder = new SassBuilder({ dist: config.build, sourceMap: false });
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: false });
       const aotBuilder = new AOTBuilder();
-      const jitBuilder = new JITBuilder();
       const closureBuilder = new ClosureBuilder();
       const rollupBuilder = new RollupBuilder();
-      const uglifyBuilder = new UglifyBuilder();
       const libCheck = config.lib && config.lib[cli.env];
-      const outFile = path.join(this.outputPath, 'bundle.js');
 
       (async () => {
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
@@ -86,7 +82,12 @@ class ProdBuild extends Build {
 
       let build = () => {
 
-        cp(path.normalize('config/postcss.' + cli.env + '.js'), 'postcss.config.js');
+        cp('-R', path.join('src', 'environments'), 'config');
+
+        if (cli.program.env) {
+          rm('-f', path.join('src', 'environments', 'environment.ts'));
+          cp(path.join('config', 'environments', 'environment.' + cli.program.env + '.ts'), path.join('src', 'environments', 'environment.ts'));
+        } 
 
         if (util.hasHook('pre')) {
 

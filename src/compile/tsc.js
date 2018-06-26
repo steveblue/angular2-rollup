@@ -30,13 +30,34 @@ class TSBuilder {
         });
     }
 
+
+    compileToCommonJS(filePath, outFile) {
+
+        const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
+        return new Promise((res) => {
+
+            if(!outFile) outFile = filePath.replace('.ts', '.js');
+
+            log.message('typescript...');
+
+            exec(`${tscPath} ${filePath} --outFile ${outFile} --target es5 --module commonjs --emitDecoratorMetadata true --experimentalDecorators true --sourceMap true --moduleResolution node --typeRoots node --lib dom,es2017`,
+                { silent: true },
+                (error) => {
+                    if (error.killed) {
+                        log.error(error);
+                    } else {
+                        res();
+                    }
+                });
+
+        });
+    }
+
     compileMain() {
 
         return new Promise((res) => {
 
             const outFile = path.join(config.projectRoot, config.build, 'main.ts');
-            const compiledFile = path.join(config.projectRoot, 'main.jit.js');
-            const compiledFileMap = path.join(config.projectRoot, 'main.jit.js.map');
             const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
 
             fs.readFile(path.join(config.projectRoot, 'main.ts'), 'utf8', (err, contents) => {

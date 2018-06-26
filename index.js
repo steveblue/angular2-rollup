@@ -23,6 +23,7 @@ program
     .option('--skip-install [bool]', 'prevents install during scaffold')
     .option('--yarn [bool]', 'use yarn instead of npm to install')
     .option('build [env]', 'build the application')
+    .option('--env [string]', 'use that particular environment.ts during the build, just like @angular/cli')
     .option('--clean [bool]', 'destroy the build folder prior to compilation, default for prod')
     .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
     .option('--config [string]', 'path to configuration file for library build')
@@ -75,6 +76,11 @@ fs.writeFile(__dirname + '/cli.config.json', JSON.stringify({
 
 let exitHandler = (options, err) => {
     //util.cleanOnExit();
+    if (fs.existsSync(path.join('config', 'environments'))) {
+        rm('-rf', path.join('src', 'environments'));
+        cp('-R', path.join('config', 'environments'), 'src');
+        rm('-rf', path.join('config', 'environments'));
+    }
     if (err) console.log(colors.red('NGR ERROR', err));
     if (options.exit) process.exit();
 }

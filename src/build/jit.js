@@ -65,8 +65,6 @@ class JitBuild extends Build {
         util.cleanBuild();
       }
 
-      cp(path.normalize('config/postcss.' + cli.env + '.js'), 'postcss.config.js');
-
       if (util.hasHook('pre')) {
 
         config.buildHooks[cli.env].pre(process.argv).then(() => {
@@ -83,7 +81,14 @@ class JitBuild extends Build {
 
     post() {
 
+      if (cli.program.env) {
+        cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js'), path.join(this.outputPath, 'src', 'environments', 'environment.js'));
+        cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js.map'), path.join(this.outputPath, 'src', 'environments', 'environment.js.map'));
+        cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.ngsummary.json'), path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'));
+      } 
+
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+
       if (cli.program.watch === true) {
         const watcher = new Watcher();
       }

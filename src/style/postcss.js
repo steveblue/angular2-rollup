@@ -48,37 +48,16 @@ class PostCSS {
 
         return new Promise((res) => {
 
-            let env;
-
-            if (cli.env === 'lib') {
-                env = 'prod'
-            }
-            else if (cli.env === 'jit') {
-                env = 'dev'
-            } else {
-                env = cli.env;
-            }
-
-            const postcssConfigFile = require(path.join(config.projectRoot, 'config', 'postcss.' + env + '.js'));
-
-            let postcssConfig = ' -u';
-
-            let srcPath = util.getFilePath(filePath);
-            let filename = util.getFileName(filePath);
             let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(filePath.replace(config.src, this.cssConfig.dist).replace('.scss', '.css')) : filePath.replace('.scss', '.css');
-
-            for (let cssProp in postcssConfigFile.plugins) {
-                postcssConfig += ' ' + cssProp;
-            }
 
             if (!fs.existsSync(path.normalize(outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))))) {
                 mkdir('-p', path.normalize(outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))));
             }
 
-            let postcss = exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
+            exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
                 ' ' + path.join('out-css', outFile) +
                 (this.cssConfig.sourceMap === false ? ' --no-map' : '') +
-                //' --config ' + path.normalize(path.join(config.projectRoot, 'config', 'postcss.'+cli.env+'.js')) + 
+                ' --env ' + (cli.program.env ? cli.program.env : 'environment') + 
                 ' --output ' + outFile, 
                 { silent: true }, (error, stdout, stderr) => {
 

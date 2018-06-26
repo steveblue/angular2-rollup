@@ -4,7 +4,7 @@ const spawn          = require('child_process').spawn;
 const Build          = require('./index.js');
 const SassBuilder    = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
-const RollupBuilder = require('./../bundle/rollup.js');
+const TSBuilder      = require('./../compile/tsc.js');
 const AOTBuilder     = require('./../compile/ngc.js');
 const Watcher        = require('./../watch.js');
 const util           = require('./../util.js');
@@ -19,13 +19,12 @@ class DevBuild extends Build {
     }
 
     init() {
-       this.outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
        this.pre();
     }
 
 
     build() {
-      const rollupBuilder = new RollupBuilder();
+
       const sassBuilder = new SassBuilder({ dist: config.build });
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
       const aotBuilder = new AOTBuilder();
@@ -63,7 +62,8 @@ class DevBuild extends Build {
 
       let build = () => {
 
-        cp(path.normalize('config/postcss.' + cli.env + '.js'), 'postcss.config.js');
+        //cp(path.normalize('config/postcss.' + cli.env + '.js'), 'postcss.config.js');
+  
 
         if (util.hasHook('pre')) {
 
@@ -100,6 +100,12 @@ class DevBuild extends Build {
     }
 
     post() {
+
+      if (cli.program.env) {
+        cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js'), path.join(this.outputPath, 'src', 'environments', 'environment.js'));
+        cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js.map'), path.join(this.outputPath, 'src', 'environments', 'environment.js.map'));
+        cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.ngsummary.json'), path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'));
+      } 
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
 
