@@ -12,8 +12,8 @@ const log = require('./../log.js');
 const config = require('./../config');
 const cli = require('./../../cli.config.json');
 const npmExists = detectInstalled.sync('npm');
-const srcDir = cli.program.src || path.normalize(config.cliRoot + '/src/scaffold/src');
-
+const srcDir = path.normalize(config.cliRoot + '/src/scaffold/src');
+const remoteSrc = cli.program.src || false;
 class Scaffold {
 
     constructor(cliName, path) {
@@ -65,6 +65,22 @@ class Scaffold {
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'ngr.config.js'));
 
                     this.editPackage();
+
+                    if (remoteSrc) {
+                
+                        util.copyFile(path.join(remoteSrc, '../ngr.config.js'), path.join(this.path, 'ngr.config.js'), { silent: true, force: true });
+                        util.copyFile(path.join(remoteSrc, '../closure.conf'), path.join(this.path, 'closure.conf'), { silent: true, force: true });
+                        util.copyFile(path.join(remoteSrc, '../closure.externs.js'), path.join(this.path, 'closure.externs.js'), { silent: true, force: true });
+                        //util.copyDir(path.join(remoteSrc, '../config'), path.join(this.path), { silent: true, force: true });
+                        util.copyDir(path.join(remoteSrc, 'public'), path.join(this.path, 'src', 'public'), { silent: true, force: true });
+                        //util.copyDir(path.join(remoteSrc, 'environments'), path.join(this.path, 'src', 'environments'), { silent: true, force: true });
+                        util.copyDir(path.join(remoteSrc, 'app'), path.join(this.path, 'src', 'app'), { silent: true, force: true });                 
+                        util.copyDir(path.join(remoteSrc, 'style'), path.join(this.path, 'src', 'style'), { silent: true, force: true });
+    
+                        util.copyFile(path.join(srcDir, 'public', 'index.html'), path.join(this.path, 'src', 'public', 'index.html'), { silent: true, force: true });
+                    }
+
+
 
                 }
 

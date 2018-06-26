@@ -19,7 +19,7 @@ program
     .version(package.version)
     .usage('<keywords>')
     .option('new [string]', 'scaffold new development environment in directory by name, i.e. ngr new my-app')
-    .option('--src [string]', 'specify a path to the src folder')
+    .option('--src [string]', 'specify a path to an existing src folder')
     .option('--skip-install [bool]', 'prevents install during scaffold')
     .option('--yarn [bool]', 'use yarn instead of npm to install')
     .option('build [env]', 'build the application')
@@ -42,7 +42,6 @@ let cli = () => {
 
     if (program.build) {
         log.destroy();
-
         const BuildScript = require('./src/build/' + program.build + '.js');
         let build = new BuildScript().init();
     }

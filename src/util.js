@@ -44,17 +44,28 @@ class Util {
 
     }
 
-    copyFile(src, dist) {
+    copyFile(src, dist, options) {
 
-        cp(src, dist);
-        log.message(src+ ' copied to '+  dist);
+        if (options && options.force) {
+            rm('-f', dist);
+            cp(src, dist);
+        } else {
+            cp(src, dist);
+        }
+        if (options && options.silent !== true) log.message(src+ ' copied to '+  dist);
 
     }
 
     copyDir(src, dist, options) {
 
         if (!fs.existsSync(dist)) mkdir('-p', dist);
-        cp('-R', path.normalize(src + '/*'), path.normalize(path.join(dist, '/')));
+        if (options && options.force) {
+            rm('-rf', path.normalize(path.join(dist, '/')));
+            mkdir('-p', path.normalize(path.join(dist, '/')));
+            cp('-R', path.normalize(src + '/*'), path.normalize(path.join(dist, '/')));
+        } else {
+            cp('-R', path.normalize(src + '/*'), path.normalize(path.join(dist, '/')));
+        }
         if (options && options.silent !== true) log.message(this.getFileName(src)+  ' copied to '+ this.getFileName(dist));
 
     }
