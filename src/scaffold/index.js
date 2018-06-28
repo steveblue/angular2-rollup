@@ -49,7 +49,7 @@ class Scaffold {
                     // find and replace cli name in new tsconfig
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.dev.json'));
                     sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.jit.json'));
-                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.rollup.json'));
+                    //sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.rollup.json'));
 
                     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
 
@@ -68,6 +68,13 @@ class Scaffold {
 
                     if (remoteSrc) {
 
+                        // list of files to migrate if they exist from older angular-rollup or @angular/cli 6.0.0 project
+                        if (fs.existsSync(path.join(remoteSrc, '../package.json'))) {
+                            util.copyFile(path.join(remoteSrc, '../package.json'), path.join(this.path, 'package.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, '../angular.json'))) {
+                            util.copyFile(path.join(remoteSrc, '../angular.json'), path.join(this.path, 'angular.json.bak'), { silent: true, force: true });
+                        }
                         if (fs.existsSync(path.join(remoteSrc, '../ngr.config.js'))) {
                             util.copyFile(path.join(remoteSrc, '../ngr.config.js'), path.join(this.path, 'ngr.config.js.bak'), { silent: true, force: true });
                         }
@@ -93,22 +100,79 @@ class Scaffold {
                             util.copyFile(path.join(remoteSrc, '../tsconfig.json'), path.join(this.path, 'tsconfig.json.bak'), { silent: true, force: true });
                         }
                         if (fs.existsSync(path.join(remoteSrc, '../tsconfig.jit.json'))) {
-                            util.copyFile(path.join(remoteSrc, '../tsconfig.jit.json'), path.join(this.path, 'tsconfig.jit.json.bak'), { silent: true, force: true });
+                            util.copyFile(path.join(remoteSrc, '../tsconfig.jit.json'), path.join(this.path, 'src', 'tsconfig.jit.json.bak'), { silent: true, force: true });
                         }
                         if (fs.existsSync(path.join(remoteSrc, '../tsconfig.dev.json'))) {
-                            util.copyFile(path.join(remoteSrc, '../tsconfig.dev.json'), path.join(this.path, 'tsconfig.dev.json.bak'), { silent: true, force: true });
+                            util.copyFile(path.join(remoteSrc, '../tsconfig.dev.json'), path.join(this.path, 'src', 'tsconfig.dev.json.bak'), { silent: true, force: true });
                         }
                         if (fs.existsSync(path.join(remoteSrc, '../tsconfig.prod.json'))) {
-                            util.copyFile(path.join(remoteSrc, '../tsconfig.prod.json'), path.join(this.path, 'tsconfig.prod.json.bak'), { silent: true, force: true });
+                            util.copyFile(path.join(remoteSrc, '../tsconfig.prod.json'), path.join(this.path, 'src', 'tsconfig.prod.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, '../main.ts'))) {
+                            util.copyFile(path.join(remoteSrc, '../main.ts'), path.join(this.path, 'src', 'main.ts.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, '../README.md'))) {
+                            util.copyFile(path.join(remoteSrc, '../README.md'), path.join(this.path, 'src', 'README.md.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, '../CHANGELOG.md'))) {
+                            util.copyFile(path.join(remoteSrc, '../CHANGELOG.md'), path.join(this.path, 'src', 'CHANGELOG.md.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'tsconfig.jit.json'))) {
+                            util.copyFile(path.join(remoteSrc, 'tsconfig.jit.json'), path.join(this.path, 'src', 'tsconfig.jit.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'tsconfig.dev.json'))) {
+                            util.copyFile(path.join(remoteSrc, 'tsconfig.dev.json'), path.join(this.path, 'src', 'tsconfig.dev.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'tsconfig.prod.json'))) {
+                            util.copyFile(path.join(remoteSrc, 'tsconfig.prod.json'), path.join(this.path, 'src', 'tsconfig.prod.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'tsconfig.app.json'))) {
+                            util.copyFile(path.join(remoteSrc, 'tsconfig.app.json'), path.join(this.path, 'src', 'tsconfig.app.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'tsconfig.spec.json'))) {
+                            util.copyFile(path.join(remoteSrc, 'tsconfig.spec.json'), path.join(this.path, 'src', 'tsconfig.spec.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'tslint.json'))) {
+                            util.copyFile(path.join(remoteSrc, 'tslint.json'), path.join(this.path, 'src', 'tslint.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, '../tslint.json'))) {
+                            util.copyFile(path.join(remoteSrc, '../tslint.json'), path.join(this.path, 'tslint.json.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'browserslist'))) {
+                            util.copyFile(path.join(remoteSrc, 'browserslist'), path.join(this.path, 'src', 'browserslist.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'main.ts'))) {
+                            util.copyFile(path.join(remoteSrc, 'main.ts'), path.join(this.path, 'src', 'main.ts.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'index.html'))) {
+                            util.copyFile(path.join(remoteSrc, 'index.html'), path.join(this.path, 'src', 'index.html.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'main.ts'))) {
+                            util.copyFile(path.join(remoteSrc, 'main.ts'), path.join(this.path, 'src', 'main.ts.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'karma.conf.js'))) {
+                            util.copyFile(path.join(remoteSrc, 'karma.conf.js'), path.join(this.path, 'src', 'karma.conf.js.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'polyfill.ts'))) {
+                            util.copyFile(path.join(remoteSrc, 'polyfill.ts'), path.join(this.path, 'src', 'polyfill.ts.bak'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'test.ts'))) {
+                            util.copyFile(path.join(remoteSrc, 'test.ts'), path.join(this.path, 'src', 'test.ts.bak'), { silent: true, force: true });
                         }
                         if (fs.existsSync(path.join(remoteSrc, 'public'))) {
                             util.copyDir(path.join(remoteSrc, 'public'), path.join(this.path, 'src', 'public'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'environments'))) {
+                            util.copyDir(path.join(remoteSrc, 'environments'), path.join(this.path, 'src', 'environments'), { silent: true, force: true });
                         }
                         if (fs.existsSync(path.join(remoteSrc, 'app'))) {
                             util.copyDir(path.join(remoteSrc, 'app'), path.join(this.path, 'src', 'app'), { silent: true, force: true });   
                         }
                         if (fs.existsSync(path.join(remoteSrc, 'style'))) {
                             util.copyDir(path.join(remoteSrc, 'style'), path.join(this.path, 'src', 'style'), { silent: true, force: true });
+                        }
+                        if (fs.existsSync(path.join(remoteSrc, 'styles'))) {
+                            util.copyDir(path.join(remoteSrc, 'styles'), path.join(this.path, 'src', 'style'), { silent: true, force: true });
                         }
                         if (fs.existsSync(path.join(remoteSrc, 'public', 'index.html'))) {
                             util.copyFile(path.join(remoteSrc, 'public', 'index.html'), path.join(this.path, 'src', 'public', 'index.html.bak'), { silent: true, force: true });

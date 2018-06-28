@@ -1,4 +1,70 @@
 
+## 2.0.0-rc.1
+
+- FIXED issues with watcher when running `ngr build dev --watch`
+- FIXED issues when running `ngr new`
+- UPDATE CHANGELOG.md with rc changes
+
+
+## 2.0.0-rc.0
+
+- NEW `--rollup` and `--webpack` arguments for `ngr build prod`
+- NEW Rollup build optimizes with Closure Compiler in ADVANCED_OPTIMIZATIONS
+- NEW buildHooks in dev build for watching filesystem changes
+- NEW postcss.config.js configuration to match the latest postcss-cli@5.0.0
+- NEW environment variables, uses same `--env` argument as `@angular/cli`
+- NEW README.md details changes in the angular-rollup project
+- NEW `out-css` directory in root stores temporary sass output
+- NEW production build concatenates vendor files in `vendor.js`
+- NEW `--src` property will migrate `src` and config from existing angular-rollup projects to help in the upgrade process
+- NEW integrate Angular Build Optimizer in production builds
+- FIXED several issues with @angular/cli integration
+- FIXED several issues when configuring postcss plugins
+- FIXED issues with sass compile when the file contains underscore
+- FIXED several issues with logs
+- CHANGE removed duplicate config in `ngr.config.js`, now defaults to `angular.json`
+- DEPRECATED build folder, now builds are output in `dist/{{projectName}}`
+
+
+
+UPDATE
+
+The easiest way to update an existing angular-rollup project is to create a new application and migrate the existing config and src.
+
+
+BREAKING CHANGE
+- REMOVE config/postcss.*.js and convert to `postcss.config.js` with environment variables
+
+TIP
+
+Configure your `tsconfig.json` to `exclude` the new `out-tsc` and `out-css` directories.
+
+
+FILESYSTEM WATCHER
+
+In `ngr.config.js` you can listen for changes in the `src` or `dist` folders and do something on change.
+
+```
+module.exports = {
+    buildHooks: {
+        dev: {
+            post: () => {
+                spawn('node_modules/.bin/rollup', ['-c', 'rollup.config.dev.js'],
+                    { stdio: 'inherit', shell: true });
+            },
+            watch: {
+                dist: (filePath) => {
+                    if (!filePath.includes('bundle.js') &&
+                         filePath.includes('.js')) {
+                        spawn('node_modules/.bin/rollup', ['-c', 'rollup.config.dev.js'], 
+                            { stdio: 'inherit', shell: true});    
+                    }
+                }
+            }
+        },
+```
+-------------------------------------------------------------------------------------------------------------
+
 ## 2.0.0-beta.3
 
 This release marks a monumental shift in strategy for the angular-rollup project. Instead of being a standalone cli, `ngr` can now be used in tandem with `ng` commands from the `@angular/cli` project. This was possible before, but only if both projects were manually merged together. 2.0.0-beta.3 scaffolds new applications with `@angular/cli` by default then merges its config with `angular-rollup`. The new `ngr merge` command will copy files needed by `ngr` into an existing `@angular/cli` project.
