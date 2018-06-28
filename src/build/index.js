@@ -9,7 +9,7 @@ class Build {
         this.outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
         this.startTime = moment(new Date());
         if (!cli.program.webpack) {
-            log.message('ngr started');
+            log.message('build start');
         }
     }
 

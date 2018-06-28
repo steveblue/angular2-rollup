@@ -38,7 +38,7 @@ class Scaffold {
 
                  if (stdout.includes('initialized git.')) {
 
-                    console.log("Project '"+this.cliName+"' is merging with angular-rollup.");
+                    console.log("Project '"+this.cliName+"' is merging with @angular/cli.");
                     rm('-rf', path.join(this.path, 'src', 'app'));
 
                     util.copyDir(srcDir, path.join(this.path, 'src'), {silent: true});

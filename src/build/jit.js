@@ -1,6 +1,7 @@
 require('shelljs/global');
 const path           = require('path');
 const fs             = require('fs');
+const chokidar       = require('chokidar');
 const Build          = require('./index.js');
 const SassBuilder    = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
@@ -91,6 +92,19 @@ class JitBuild extends Build {
 
       if (cli.program.watch === true) {
         const watcher = new Watcher();
+      }
+
+      if (cli.program.watch === true && util.hasHook('watch') && config.buildHooks[cli.env].watch.dist) {
+
+        const distWatcher = chokidar.watch([this.outputPath], {
+          ignored: /[\/\\]\./,
+          persistent: true
+        }).on('change', filePath => {
+
+          config.buildHooks[cli.env].watch.dist(filePath);
+
+        });
+
       }
 
       if (!util.hasArg('watch')) {

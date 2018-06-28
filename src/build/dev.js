@@ -1,5 +1,6 @@
 const path           = require('path');
 const fs             = require('fs');
+const chokidar       = require('chokidar');
 const spawn          = require('child_process').spawn;
 const Build          = require('./index.js');
 const SassBuilder    = require('./../style/sass.js');
@@ -11,7 +12,7 @@ const util           = require('./../util.js');
 const log            = require('./../log.js');
 const config         = require('./../config');
 const cli            = require('./../../cli.config.json');
-const chokidar       = require('chokidar');
+
 class DevBuild extends Build {
 
     constructor() {
@@ -100,6 +101,7 @@ class DevBuild extends Build {
     }
 
     post() {
+      
 
       if (cli.program.env) {
         cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js'), path.join(this.outputPath, 'src', 'environments', 'environment.js'));
@@ -109,8 +111,12 @@ class DevBuild extends Build {
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
 
-      if (cli.program.watch === true && util.hasHook('watch') && config.buildHooks[cli.env].watch.dist) {
+      if (cli.program.watch === true) {
         const watcher = new Watcher();
+      }
+
+      if (cli.program.watch === true && util.hasHook('watch') && config.buildHooks[cli.env].watch.dist) {
+   
         const distWatcher = chokidar.watch([this.outputPath], {
           ignored: /[\/\\]\./,
           persistent: true
@@ -119,6 +125,7 @@ class DevBuild extends Build {
           config.buildHooks[cli.env].watch.dist(filePath);
 
         });
+
       }
 
       if (!util.hasArg('watch')) {
