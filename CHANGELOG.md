@@ -1,8 +1,9 @@
 
 ## 2.0.0-rc.1
 
+- NEW migrate `@angular/cli^6.0.0` project to `angular-rollup`
 - FIXED issues with watcher when running `ngr build dev --watch`
-- FIXED issues when running `ngr new`
+- FIXED issues when running `ngr new
 - UPDATE CHANGELOG.md with rc changes
 
 
@@ -24,7 +25,6 @@
 - FIXED several issues with logs
 - CHANGE removed duplicate config in `ngr.config.js`, now defaults to `angular.json`
 - DEPRECATED build folder, now builds are output in `dist/{{projectName}}`
-
 
 
 UPDATE

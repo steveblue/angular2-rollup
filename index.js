@@ -4,7 +4,6 @@ require('shelljs/global');
 const findup = require('findup');
 const fs = require('fs');
 const path = require('path');
-const spawn = require('child_process').spawn;
 const colors = require('colors');
 const program = require('commander');
 const cliRoot = findup.sync(__dirname, 'package.json');
@@ -32,7 +31,9 @@ program
     .option('--closure [bool]', 'bundle and optimize with closure compiler (default)')
     .option('--rollup [bool]', 'bundle with rollup and optimize with closure compiler')
     .option('--webpack [bool]', 'use @angular/cli to build')
+    .option('g, generate [string]', 'generate schematics packaged with angular-rollup')
     .option('serve, --serve [bool]', 'spawn the local express server')
+    
     .parse(process.argv);
 
 let cli = () => {
@@ -40,6 +41,11 @@ let cli = () => {
     let util = require('./src/util');
     let log = require('./src/log');
     let Scaffold = require('./src/scaffold/index');
+
+    if(program.generate) {
+        const Generator = require('./src/generate/' + program.generate + '.js');
+        let build = new Generator().init();
+    }
 
     if (program.build) {
         log.destroy();
@@ -81,7 +87,10 @@ let exitHandler = (options, err) => {
         cp('-R', path.join('config', 'environments'), 'src');
         rm('-rf', path.join('config', 'environments'));
     }
-    if (err) console.log(colors.red('NGR ERROR', err));
+    if (err) {
+        console.log(' '); 
+        console.log(colors.red('NGR ERROR', err));
+    }
     if (options.exit) process.exit();
 }
 

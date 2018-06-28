@@ -1,23 +1,23 @@
 {
-  "name": "default-lib",
+  "name": "{{projectName}}",
   "version": "1.0.0",
   "description": "",
   "license": "MIT",
-  "module": "./esm5/default-lib.es5.js",
-  "es2015": "./fesm2015/default-lib.js",
-  "esm5": "./esm5/default-lib.js",
-  "esm2015": "./esm2015/default-lib.js",
-  "fesm5": "./fesm5/default-lib.js",
-  "fesm2015": "./fesm2015/default-lib.js",
-  "main": "./bundles/default-lib.umd.js",
-  "typings": "default-lib.d.ts",
+  "module": "./esm5/{{projectName}}.es5.js",
+  "es2015": "./fesm2015/{{projectName}}.js",
+  "esm5": "./esm5/{{projectName}}.js",
+  "esm2015": "./esm2015/{{projectName}}.js",
+  "fesm5": "./fesm5/{{projectName}}.js",
+  "fesm2015": "./fesm2015/{{projectName}}.js",
+  "main": "./bundles/{{projectName}}.umd.js",
+  "typings": "{{projectName}}.d.ts",
   "devDependencies": {
     "@angular/core": "^6.0.0",
     "@angular/compiler": "^6.0.0",
     "@angular/compiler-cli": "^6.0.0",
-    "rollup": "^0.41.6",
-    "rxjs": "^5.3.0",
-    "typescript": "^2.2.2",
-    "zone.js": "^0.8.5"
+    "rollup": "^0.55.0",
+    "rxjs": "^6.0.0",
+    "typescript": "^2.7.2",
+    "zone.js": "^0.8.26"
   }
 }

@@ -65,6 +65,10 @@ $ ngr new my-app
 
 To scaffold a new app run `ngr new my-app`. This command will copy required files into the a new directory called my-app and run `npm install`. Use the `--yarn` flag to install with it instead.
 
+Migrate existing angular-rollup and @angular/cli projects with `--src`.
+
+`ngr new my-new-app --src /path/to/old/src`
+
 
 # Development
 
@@ -166,11 +170,12 @@ Jason Aden gave a presentation about Angular Package Format at ng-conf 2017. [Pa
 
 ### Generate A Library Package
 
-Generate library packages with `ngr generate lib` or use `ngr generate wizard`.
+Generate library packages with `ngr new lib`.
 
 `ngr new lib --name my-lib --dir src/app/shared/lib`
 
 This will generate a library package in the src/app/shared/lib folder with the necessary configuration.
+
 
 ### Developing A Library
 

@@ -47,9 +47,9 @@ class Scaffold {
                     });
 
                     // find and replace cli name in new tsconfig
-                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.dev.json'));
-                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.jit.json'));
-                    //sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'src', 'tsconfig.rollup.json'));
+                    sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'tsconfig.dev.json'));
+                    sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'tsconfig.jit.json'));
+                    //sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'tsconfig.rollup.json'));
 
                     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
 
@@ -58,11 +58,11 @@ class Scaffold {
                     });
 
                     // replace project name in rollup.config
-                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'rollup.config.js'));
-                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'closure.rollup.conf'));
+                    sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'rollup.config.js'));
+                    sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'closure.rollup.conf'));
 
                     // find and replace cli name in ngr.config.js
-                    sed('-i', '{{projectName}}', this.cliName, path.join(this.cliName, 'ngr.config.js'));
+                    sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'ngr.config.js'));
 
                     this.editPackage();
 

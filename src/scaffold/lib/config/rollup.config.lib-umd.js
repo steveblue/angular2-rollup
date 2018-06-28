@@ -1,9 +1,9 @@
 // rollup.config.lib-umd.js
 
 export default {
-  input: 'out-tsc/default-lib.js',
+  input: 'out-tsc/es5/{{projectName}}.js',
   output: {
-    file: 'dist/{{projectName}}/bundles/default-lib.umd.js',
+    file: 'dist/{{projectName}}/bundles/{{projectName}}.umd.js',
     format: 'cjs',
     sourcemap: true
   },

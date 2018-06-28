@@ -1,12 +1,12 @@
 {
-    "extends": "../tsconfig.lib.json",
+    "extends": "../tsconfig.json",
     "compilerOptions": {
         "outDir": "../../../out-tsc",
         "module": "es2015",
         "target": "es5"
     },
     "angularCompilerOptions": {
-        "flatModuleOutFile": "default-lib.umd.js",
-        "flatModuleId": "default-lib"
+        "flatModuleOutFile": "{{projectName}}.umd.js",
+        "flatModuleId": "{{projectName}}"
     }
 }

@@ -1,9 +1,9 @@
 // rollup.config.lib-es5.js
 
 export default {
-  input: 'out-tsc/default-lib.js',
+  input: 'out-tsc/es5/{{projectName}}.js',
   output: {
-    file: 'dist/{{projectName}}/fesm5/default-lib.js',
+    file: 'dist/{{projectName}}/fesm5/{{projectName}}.js',
     format: 'es',
     sourcemap: true
   },

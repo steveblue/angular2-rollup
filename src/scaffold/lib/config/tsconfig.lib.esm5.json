@@ -10,8 +10,8 @@
         "skipTemplateCodegen": true,
         "annotateForClosureCompiler": true,
         "debug": false,
-        "flatModuleOutFile": "default-lib.js",
-        "flatModuleId": "default-lib"
+        "flatModuleOutFile": "{{projectName}}.js",
+        "flatModuleId": "{{projectName}}"
     },
     "files": [
         "../../tmp/index.ts"

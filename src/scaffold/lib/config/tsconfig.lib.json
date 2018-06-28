@@ -6,7 +6,7 @@
     "module": "es2015"
   },
   "angularCompilerOptions": {
-    "flatModuleOutFile": "default-lib.js",
-    "flatModuleId": "default-lib"
+    "flatModuleOutFile": "{{projectName}}.js",
+    "flatModuleId": "{{projectName}}"
   }
 }
