@@ -43,6 +43,7 @@ let cli = () => {
     let Scaffold = require('./src/scaffold/index');
 
     if(program.generate) {
+        if (program.generate === 'library') program.generate = 'lib';
         const Generator = require('./src/generate/' + program.generate + '.js');
         let build = new Generator().init();
     }
