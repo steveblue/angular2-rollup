@@ -1,10 +1,11 @@
 
 ## 2.0.0-rc.1
 
-- NEW migrate `@angular/cli^6.0.0` project to `angular-rollup`
+- NEW migrate a `@angular/cli^6.0.0` project to `angular-rollup`
+- NEW generate a library with `ngr generate library lib-name` in any project directory
 - FIXED issues with watcher when running `ngr build dev --watch`
 - FIXED issues when running `ngr new
-- UPDATE CHANGELOG.md with rc changes
+- UPDATE CHANGELOG.md with RC changes
 
 
 ## 2.0.0-rc.0

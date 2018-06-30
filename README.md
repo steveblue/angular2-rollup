@@ -170,11 +170,9 @@ Jason Aden gave a presentation about Angular Package Format at ng-conf 2017. [Pa
 
 ### Generate A Library Package
 
-Generate library packages with `ngr new lib`.
+Generate library packages with `ngr generate library my-lib-name`.
 
-`ngr new lib --name my-lib --dir src/app/shared/lib`
-
-This will generate a library package in the src/app/shared/lib folder with the necessary configuration.
+This will generate a library package in the current folder with the necessary configuration.
 
 
 ### Developing A Library
@@ -188,7 +186,7 @@ This will generate a library package in the src/app/shared/lib folder with the n
 
 After you have generated some components for the library, use `ngr build lib` to build the library in the `dist` folder.
 
-`ngr build lib --config src/app/shared/lib/lib.config.json`
+`ngr build lib --config path/to/lib.config.json`
 
 
 ## Code Generation, Testing, and i18n
