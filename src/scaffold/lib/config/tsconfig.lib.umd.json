@@ -1,12 +1,15 @@
 {
-    "extends": "../tsconfig.json",
+    "extends": "../tsconfig.lib.json",
     "compilerOptions": {
-        "outDir": "../../../out-tsc",
+        "outDir": "{{relativePath}}out-tsc/es5",
         "module": "es2015",
         "target": "es5"
     },
     "angularCompilerOptions": {
-        "flatModuleOutFile": "{{projectName}}.umd.js",
+        "strictMetadataEmit": true,
+        "skipTemplateCodegen": true,
+        "annotateForClosureCompiler": true,
+        "flatModuleOutFile": "{{projectName}}.js",
         "flatModuleId": "{{projectName}}"
     }
 }

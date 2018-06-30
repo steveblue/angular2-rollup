@@ -1,0 +1,25 @@
+{
+    "extends": "{{relativePath}}tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "rootDir": "./{{relativePath}}tmp",
+        "sourceMap": false,
+        "declaration": true,
+        "stripInternal": true,
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "allowUnreachableCode": false,
+        "skipLibCheck": true
+    },
+    "angularCompilerOptions": {
+        "strictMetadataEmit": true,
+        "skipTemplateCodegen": true,
+        "annotateForClosureCompiler": true,
+        "flatModuleOutFile": "{{projectName}}.js",
+        "flatModuleId": "{{projectName}}"
+    },
+    "files": [
+        "./{{relativePath}}tmp/index.ts"
+    ]
+}

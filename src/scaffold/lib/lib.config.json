@@ -1,9 +1,9 @@
 {
-    "src": "src/{{projectName}}",
+    "src": "{{projectPath}}",
     "dist": "dist/{{projectName}}",
     "filename": "{{projectName}}",
     "es2015": {
-        "tsConfig": "tsconfig.lib.json",
+        "tsConfig": "tsconfig.lib.fesm2015.json",
         "rollupConfig": "rollup.config.lib.js",
         "outFile": "dist/{{projectName}}/fesm2015/{{projectName}}.js"
     },

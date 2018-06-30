@@ -1,9 +1,9 @@
 {
     "extends": "../tsconfig.lib.json",
     "compilerOptions": {
-        "outDir": "{{relativePath}}out-tsc/esm5",
-        "module": "es2015",
-        "target": "es5"
+        "outDir": "{{relativePath}}out-tsc/es2015",
+        "target": "es2015",
+        "module": "es2015"
     },
     "angularCompilerOptions": {
         "strictMetadataEmit": true,
@@ -11,8 +11,5 @@
         "annotateForClosureCompiler": true,
         "flatModuleOutFile": "{{projectName}}.js",
         "flatModuleId": "{{projectName}}"
-    },
-    "files": [
-        "{{relativePath}}tmp/index.ts"
-    ]
+    }
 }

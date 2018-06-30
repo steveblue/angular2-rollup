@@ -1,7 +1,7 @@
 {
-    "extends": "../tsconfig.json",
+    "extends": "../tsconfig.lib.json",
     "compilerOptions": {
-        "outDir": "../../../out-tsc/esm2015",
+        "outDir": "{{relativePath}}out-tsc/esm2015",
         "module": "es2015",
         "target": "es2015"
     },
@@ -9,11 +9,10 @@
         "strictMetadataEmit": true,
         "skipTemplateCodegen": true,
         "annotateForClosureCompiler": true,
-        "debug": false,
         "flatModuleOutFile": "{{projectName}}.js",
         "flatModuleId": "{{projectName}}"
     },
     "files": [
-        "../../tmp/index.ts"
+        "{{relativePath}}tmp/index.ts"
     ]
 }
