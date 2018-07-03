@@ -18,6 +18,7 @@ class LibBuild extends Build {
         super();
         this.libConfigPath = cli.program.config.trim();
         this.hasInit = false;
+        this.hasPost = false;
     }
 
     init() {
@@ -81,7 +82,7 @@ class LibBuild extends Build {
 
         return new Promise((res, rej) => {
 
-            log.message('compiling...');
+            log.process('compiling library');
 
             (async () => {
                 const compileFESM = await aotBuilder.compile(path.join(this.libConfig.src, 'config', this.libConfig.es2015.tsConfig));
@@ -118,9 +119,13 @@ class LibBuild extends Build {
                 fs.existsSync(this.libConfig.umd.outFile) &&
                 fs.existsSync(path.join('out-tsc', 'esm5', 'index.js')) &&
                 fs.existsSync(path.join('out-tsc', 'esm2015', 'index.js'))) {
-                this.post();
+                    if (!this.hasPost) {
+                        this.post();
+                    }
+                log.stop('compiling library');
                 res();
             } else {
+                log.stop('compiling library');
                 res(); // fail silently
             }
         });
@@ -225,18 +230,23 @@ class LibBuild extends Build {
 
     post() {
 
+        this.hasPost = true;
 
         this.processESM().then((res) => {
 
             // copy package.json to dist
             exec('cp ' + this.libConfig.src + '/package.json' + ' ' + this.libConfig.dist + '/package.json', () => {
 
-                log.message('package.json', 'copied to', './' + this.libConfig.dist);
+                log.message('package.json copied to ./' + this.libConfig.dist);
+               
+
                 if (util.hasHook('post')) {
                     log.message('processing post task');
                     config.buildHooks[cli.env].post(process.argv);
-                }
-                log.message('Build complete.')
+                  
+                } 
+                
+                log.destroy();
                 log.buildStats(this.startTime, this.libConfig.dist);
 
             });

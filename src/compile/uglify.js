@@ -12,13 +12,13 @@ class UglifyBuilder {
 
         return new Promise((res, rej) => {
 
-            log.message('uglify...');
+            log.process('uglify');
 
             let outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
 
             exec(path.normalize(config.projectRoot + '/node_modules/.bin/uglifyjs') +
                 ' ' + path.join(outputPath, 'bundle.js') + ' -o ' + path.join(outputPath, 'bundle.js')+' ---compress --mangle --toplevel --verbose', { silent: true }, (error, stdout, stderr) => {
-
+                log.stop('uglify');
                 if (stderr.includes('Error')) {
                     if (rej) rej(error);
                     log.error(stderr);

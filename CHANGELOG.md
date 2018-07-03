@@ -1,6 +1,7 @@
 ## 2.0.0-rc.2
 
-- FIXED logging in VS Code
+- NEW emojis in logs
+- FIXED several issues with logs including output in VS Code
 
 -------------------------------------------------------------------------------------------------------------
 

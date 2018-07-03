@@ -1,6 +1,7 @@
 'use strict';
 const path        = require('path');
 const fs          = require('fs');
+const ora         = require('ora');
 const colors      = require('colors');
 const logger      = require('single-line-log').stdout;
 const config      = require('./config');
@@ -8,17 +9,25 @@ const uuid        = require('uuid/v4');
 const gzipSize    = require('gzip-size');
 const moment      = require('moment');
 const cli         = require('./../cli.config.json');
+
 const NGR_LOG_CACHE = Symbol('ngrProcess_'+uuid());
-
-
 global[NGR_LOG_CACHE] = {
   process: {}
 };
 
+const spinner = ora({
+    text: '',
+    spinner: 'monkey',
+    color: 'white',
+    hideCursor: true
+}).start();
+
 
 class Log {
 
-    constructor() {}
+    constructor() {
+        this.spinner = spinner;
+    }
 
     break() {
         process.stdout.write('\n');
@@ -30,11 +39,16 @@ class Log {
         }
     }
 
+    stop(str) {
+        this.spinner.stop();
+    }
+
     hasArg(arg) {
         return process.argv.indexOf(arg) > -1 || process.argv.indexOf('--'+arg) > -1;
     }
 
     destroy() {
+        this.spinner.stop();
         if (!cli.program.verbose) {
             process.stdout.write('\x1B[2J\x1B[0f\u001b[0;0H');
         }
@@ -65,13 +79,29 @@ class Log {
 
     bare(msg) {
         logger(msg);
+        process.stderr.write('\x1B[?25l');
         if (cli.program.verbose) this.break();
     }
 
     message(msg) {
+        //this.spinner.stop();
         msg = msg ? '' + colors.white(msg).dim : '';
         logger(msg);
+        process.stderr.write('\x1B[?25l');
         if (cli.program.verbose) this.break();
+    }
+
+    process(msg) {
+
+        if (!cli.program.verbose) this.destroy();
+
+        msg = msg ? '' + colors.white(msg).dim : '';
+
+        this.spinner.text = msg;
+        this.spinner.start();
+        
+        if (cli.program.verbose) this.break();
+
     }
 
     success(msg, services) {
@@ -81,6 +111,7 @@ class Log {
         }
         msg = '\n'+ (msg ? '' + colors.white(msg) : '');
         logger(msg);
+        process.stderr.write('\x1B[?25l');
         //if (!cli.program.verbose) this.line();
         if (cli.program.verbose) this.break();
     }
@@ -91,6 +122,7 @@ class Log {
         // }
         msg = msg ? '' + colors.red(msg) : '';
         logger(msg);
+        process.stderr.write('\x1B[?25l');
         if (cli.program.verbose) this.break();
     }
 
@@ -375,8 +407,8 @@ class Log {
 
         let endTime = moment(new Date());
         let duration = moment.duration(endTime.diff(startTime));
-        this.destroy();
-        this.alert(colors.green(config.angular.defaultProject + ' built'));
+        // this.destroy();
+        this.alert(colors.green('✅ build complete'));
         this.alert(colors.dim('Date: ')+ new Date().toISOString());
         this.alert(colors.dim('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
 

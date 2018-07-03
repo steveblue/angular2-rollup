@@ -21,12 +21,13 @@ class AOTBuilder {
 
             if (util.hasArg('watch')) {
 
-                log.message('@angular/compiler...');
+                log.process('@angular/compiler');
 
                 const ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath + ' --watch', { silent: true });
 
                 ngc.stderr.on('data', (stderr) => {
-              
+
+                    log.stop('@angular/compiler');
                     let hasLine = false;
 
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
@@ -36,22 +37,20 @@ class AOTBuilder {
                     } else {
                       this.handleError(stderr);
                     }
+                    
                 });
 
             } else {
-                log.message('@angular/compiler...');
-                // if (config.build !== 'lib') {
-                //     interval = setInterval(() => {
-                //         log.message('@angular/compiler...');
-                //     },100)
-                // }
+
+                log.process('@angular/compiler');
+         
                 let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
                     //if (config.build !== 'lib') clearInterval(interval);
+                    log.stop('@angular/compiler');
                     if (stderr) {
                         this.handleError(stderr);
                     } else {
                         log.message('Compilation complete.', ['TypeScript']);
-
                         if (cli.env === 'dev') {
                             log.break();
                         }

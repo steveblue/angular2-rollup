@@ -15,10 +15,11 @@ class TSBuilder {
         return new Promise((res) => {
 
             let hasCompiled = false;
-            log.message('typescript...');
+            log.process('typescript');
 
             let tsc = exec(path.normalize(path.resolve('node_modules', '.bin', 'tsc') +
                 ' -p ' + tsConfigPath), {}, function (error, stdout, stderr) {
+                    log.stop('typescript');
                 if (error) {
                     log.warn(stdout);
                 } else {
@@ -38,11 +39,12 @@ class TSBuilder {
 
             if(!outFile) outFile = filePath.replace('.ts', '.js');
 
-            log.message('typescript...');
+            log.process('typescript');
 
             exec(`${tscPath} ${filePath} --outFile ${outFile} --target es5 --module commonjs --emitDecoratorMetadata true --experimentalDecorators true --sourceMap true --moduleResolution node --typeRoots node --lib dom,es2017`,
                 { silent: true },
                 (error) => {
+                    log.stop('typescript');
                     if (error.killed) {
                         log.error(error);
                     } else {

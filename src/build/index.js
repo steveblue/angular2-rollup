@@ -1,4 +1,5 @@
 const moment = require('moment');
+const colors = require('colors');
 const log = require('./../log.js');
 const cli = require('./../../cli.config.json');
 const config = require('./../config');
@@ -9,7 +10,7 @@ class Build {
         this.outputPath = config.angular.projects[config.angular.defaultProject].architect.build.options.outputPath;
         this.startTime = moment(new Date());
         if (!cli.program.webpack) {
-            log.message('build start');
+            log.alert(colors.green('build start'));
         }
     }
 

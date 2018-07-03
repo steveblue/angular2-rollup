@@ -14,11 +14,12 @@ class RollupBuilder {
 
         return new Promise((res, rej) => {
 
-            log.message('rollup...');
+            log.process('rollup');
             this.isBundling = true;
 
             exec(path.normalize(config.projectRoot + '/node_modules/.bin/rollup') +
                 ' -c ' + rollupConfigPath, {silent: true}, (error, stdout, stderr) => {
+                    log.stop('rollup');
                     if (stderr.includes('Error')) {
                         if (rej) rej(error);
                         this.isBundling = false;

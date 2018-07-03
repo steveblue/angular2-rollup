@@ -40,8 +40,8 @@ class ProdBuild extends Build {
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
         const vendor = await util.formatVendorScripts(libCheck ? config.lib[cli.env] : config.dep['prodLib'],
-                                                      libCheck ? config.lib.src : config.dep.src,
-                                                      libCheck ? config.build : config.build);
+          libCheck ? config.lib.src : config.dep.src,
+          libCheck ? config.build : config.build);
         const concatVendor = await util.concatVendorScripts(libCheck ? config.build : config.build);
       })();
 
@@ -62,6 +62,7 @@ class ProdBuild extends Build {
           let content = fs.readFileSync(file, 'utf-8');
           fs.writeFileSync(file, buildOptimizer({ content: content }).content);
         });
+
         if (cli.program.rollup) {
           const prepRxjs = await this.buildRxjsFESM();
           const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.js'));
@@ -75,6 +76,7 @@ class ProdBuild extends Build {
         this.post();
 
       })();
+
 
     }
 
