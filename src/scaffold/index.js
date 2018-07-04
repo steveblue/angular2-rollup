@@ -49,7 +49,7 @@ class Scaffold {
                     // find and replace cli name in new tsconfig
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'tsconfig.dev.json'));
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'tsconfig.jit.json'));
-                    //sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'tsconfig.rollup.json'));
+                    sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'index.html'));
 
                     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
 
@@ -166,7 +166,7 @@ class Scaffold {
                             util.copyDir(path.join(remoteSrc, 'environments'), path.join(this.path, 'src', 'environments'), { silent: true, force: true });
                         }
                         if (fs.existsSync(path.join(remoteSrc, 'app'))) {
-                            util.copyDir(path.join(remoteSrc, 'app'), path.join(this.path, 'src', 'app'), { silent: true, force: true });   
+                            util.copyDir(path.join(remoteSrc, 'app'), path.join(this.path, 'src', 'app'), { silent: true, force: true });
                         }
                         if (fs.existsSync(path.join(remoteSrc, 'style'))) {
                             util.copyDir(path.join(remoteSrc, 'style'), path.join(this.path, 'src', 'style'), { silent: true, force: true });
@@ -190,8 +190,8 @@ class Scaffold {
                             util.copyFile(path.join(remoteSrc, 'public', 'system.import.js'), path.join(this.path, 'src', 'public', 'system.import.js.bak'), { silent: true, force: true });
                             util.copyFile(path.join(srcDir, 'public', 'system.import.js'), path.join(this.path, 'src', 'public', 'system.import.js'), { silent: true, force: true });
                         }
-             
-                
+
+
                     }
 
                 }
