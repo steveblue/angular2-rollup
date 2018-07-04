@@ -17,7 +17,7 @@ global[NGR_LOG_CACHE] = {
 
 const spinner = ora({
     text: '',
-    spinner: 'monkey',
+    spinner: 'dots10',
     color: 'white',
     hideCursor: true
 }).start();
