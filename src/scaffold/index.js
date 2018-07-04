@@ -174,6 +174,9 @@ class Scaffold {
                         if (fs.existsSync(path.join(remoteSrc, 'styles'))) {
                             util.copyDir(path.join(remoteSrc, 'styles'), path.join(this.path, 'src', 'style'), { silent: true, force: true });
                         }
+                        if (fs.existsSync(path.join(remoteSrc, 'styles.css'))) {
+                            util.copyFile(path.join(remoteSrc, 'styles.css'), path.join(this.path, 'src', 'styles.css.bak'), { silent: true, force: true });
+                        }
                         if (fs.existsSync(path.join(remoteSrc, 'public', 'index.html'))) {
                             util.copyFile(path.join(remoteSrc, 'public', 'index.html'), path.join(this.path, 'src', 'public', 'index.html.bak'), { silent: true, force: true });
                             util.copyFile(path.join(srcDir, 'public', 'index.html'), path.join(this.path, 'src', 'public', 'index.html'), { silent: true, force: true });
