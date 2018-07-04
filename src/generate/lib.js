@@ -19,13 +19,13 @@ class LibraryGenerator extends Generator {
     }
 
     list(directoryPath) {
-      
+
         ls(directoryPath).forEach((file) => {
             let depth = this.directoryDepth;
             if (fs.statSync(path.join(directoryPath, file)).isFile()) {
                 if (!path.join(directoryPath, file).includes('tsconfig.lib.json')) {
                     depth = depth + 1;
-                } 
+                }
                 this.replacePathInFile(path.join(directoryPath, file), depth);
                 this.replaceNameInFile(path.join(directoryPath, file));
                 this.replaceProjectPathInFile(path.join(directoryPath, file));
@@ -68,13 +68,14 @@ class LibraryGenerator extends Generator {
         log.message(config.projectRoot + ' '+ this.outputPath);
         this.srcPath = path.join(this.outputPath.replace(config.projectRoot, '').slice(1),
                                  this.name);
- 
-        this.directoryDepth = this.getFileDirectoryDepth(this.outputPath) - 
+
+        this.directoryDepth = this.getFileDirectoryDepth(this.outputPath) -
                               this.getFileDirectoryDepth(config.projectRoot) + 1;
- 
+
         mkdir('-p', path.join(this.outputPath, this.name));
         this.copy();
         this.list(path.join(this.outputPath, this.name));
+        log.spinner.stop();
 
     }
 

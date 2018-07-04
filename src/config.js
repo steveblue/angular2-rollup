@@ -4,12 +4,20 @@ const path = require('path');
 const fs = require('fs');
 const processRoot = path.join(path.dirname(process.cwd()), path.basename(process.cwd()));
 const cliRoot = findup.sync(__dirname, 'package.json');
-const projectRoot = findup.sync(processRoot, 'ngr.config.js');
+
+let projectRoot = require(path.join(cliRoot, 'cli.config.json')).projectRoot;
 
 class Config {
     constructor() {
+
+        let config = new Object();
         console.log(projectRoot);
-        let config = require(projectRoot + '/ngr.config.js');
+        if (fs.existsSync(projectRoot + '/ngr.config.js')) {
+            config = require(projectRoot + '/ngr.config.js');
+        } else {
+            projectRoot = findup.sync(projectRoot, 'ngr.config.js');
+            config = require(projectRoot + '/ngr.config.js');
+        }
 
         if (fs.existsSync(projectRoot + '/angular.json')) {
 
