@@ -2,6 +2,8 @@
 
 - NEW spinners and emojis in logs
 - FIXED several issues with logs including output in VS Code
+- FIXED issue that prevented app from scaffolding
+- FIXED potential issues from files not being copied from existing @angular/cli project
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -64,8 +66,8 @@ module.exports = {
                 dist: (filePath) => {
                     if (!filePath.includes('bundle.js') &&
                          filePath.includes('.js')) {
-                        spawn('node_modules/.bin/rollup', ['-c', 'rollup.config.dev.js'], 
-                            { stdio: 'inherit', shell: true});    
+                        spawn('node_modules/.bin/rollup', ['-c', 'rollup.config.dev.js'],
+                            { stdio: 'inherit', shell: true});
                     }
                 }
             }
