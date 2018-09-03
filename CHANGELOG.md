@@ -1,3 +1,10 @@
+## 2.0.0-rc.3
+
+- NEW projects in ngr.config.js mirrors @angular/cli handling of multiple projects
+- NEW config options for library build allows user to forgo --config cli argument
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 2.0.0-rc.2
 
 - NEW spinners and emojis in logs

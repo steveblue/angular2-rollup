@@ -5,13 +5,14 @@ const log = require('./../log');
 const util = require('./../util');
 const cli = require('./../../cli.config.json');
 const config = require('./../config');
-
+const Scaffold = require('./../scaffold/index');
 const Generator = require('./index');
 
 class LibraryGenerator extends Generator {
 
     constructor() {
         super();
+        this.addProjectToConfig = new Scaffold().addProjectToConfig;
     }
 
     copy() {
@@ -75,6 +76,11 @@ class LibraryGenerator extends Generator {
         mkdir('-p', path.join(this.outputPath, this.name));
         this.copy();
         this.list(path.join(this.outputPath, this.name));
+        this.addProjectToConfig(this.name, {
+                                        root: this.srcPath,
+                                        projectType: 'library',
+                                        configFile: 'lib.config.json'
+                                    });
         log.spinner.stop();
 
     }

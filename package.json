@@ -38,6 +38,7 @@
     "moment": "^2.21.0",
     "node-sass": "^4.7.2",
     "ora": "^2.1.0",
+    "prettier": "^1.14.2",
     "shelljs": "^0.8.1",
     "single-line-log": "^1.1.2",
     "uglify-js": "^3.4.0",

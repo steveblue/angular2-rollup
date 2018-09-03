@@ -16,7 +16,13 @@ class LibBuild extends Build {
 
     constructor() {
         super();
-        this.libConfigPath = cli.program.config.trim();
+
+        if (!cli.program.config) {
+          this.libConfigPath = path.join(config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(cli.program.build) + 1]].root,
+                                         config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(cli.program.build) + 1]].configFile);
+        } else {
+          this.libConfigPath = cli.program.config.trim();
+        }
         this.hasInit = false;
         this.hasPost = false;
     }
@@ -138,6 +144,7 @@ class LibBuild extends Build {
             fs.readFile(this.libConfigPath, 'utf8', (err, contents) => {
                 if (!err) {
                     this.libConfig = JSON.parse(contents);
+                    console.log(this.libConfig, config);
                     res();
                 } else {
                     rej(err);
@@ -238,14 +245,14 @@ class LibBuild extends Build {
             exec('cp ' + this.libConfig.src + '/package.json' + ' ' + this.libConfig.dist + '/package.json', () => {
 
                 log.message('package.json copied to ./' + this.libConfig.dist);
-               
+
 
                 if (util.hasHook('post')) {
                     log.message('processing post task');
                     config.buildHooks[cli.env].post(process.argv);
-                  
-                } 
-                
+
+                }
+
                 log.destroy();
                 log.buildStats(this.startTime, this.libConfig.dist);
 
