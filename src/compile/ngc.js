@@ -32,24 +32,26 @@ class AOTBuilder {
 
                     if (hasCompiled == false && stderr.includes('Compilation complete.')) {
                         hasCompiled = true;
+                        if (!cli.program.verbose) log.destroy();
                         log.message('Compilation complete. Watching for file changes.', ['TypeScript']);
                         res();
                     } else {
                       this.handleError(stderr);
                     }
-                    
+
                 });
 
             } else {
 
                 log.process('@angular/compiler');
-         
+
                 let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
                     //if (config.build !== 'lib') clearInterval(interval);
                     log.stop('@angular/compiler');
                     if (stderr) {
                         this.handleError(stderr);
                     } else {
+                        if (!cli.program.verbose) log.destroy();
                         log.message('Compilation complete.', ['TypeScript']);
                         if (cli.env === 'dev') {
                             log.break();
