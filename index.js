@@ -33,7 +33,7 @@ program
     .option('--webpack [bool]', 'use @angular/cli to build')
     .option('g, generate [string]', 'generate schematics packaged with angular-rollup')
     .option('serve, --serve [bool]', 'spawn the local express server')
-    
+
     .parse(process.argv);
 
 let cli = () => {
@@ -89,7 +89,7 @@ let exitHandler = (options, err) => {
         rm('-rf', path.join('config', 'environments'));
     }
     if (err) {
-        console.log(' '); 
+        console.log(' ');
         console.log(colors.red('NGR ERROR', err));
     }
     if (options.exit) process.exit();

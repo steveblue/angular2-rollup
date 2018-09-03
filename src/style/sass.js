@@ -68,7 +68,7 @@ class Sass {
                       filePath; // TODO: make style dir configurable
         let outFilePath = util.getFilePath(outFile);
 
-        let styles = config.angular.projects[config.angular.defaultProject].architect.build.options.styles;
+        let styles = config.angular.projects[config.project].architect.build.options.styles;
 
         if (cli.env === 'dev' || cli.env === 'prod' || cli.env === 'lib') {
             outFilePath = util.getFilePath(outFile);
@@ -76,8 +76,8 @@ class Sass {
         if (cli.env === 'jit' && srcPath.indexOf(config.src + '/style') === -1) {
             outFilePath = util.getFilePath(path.join(this.sassConfig.dist, outFile));
         }
-        
-        
+
+
         outFile = path.join(outFilePath, filename.replace('scss', 'css'));
 
         // this file is global w/ underscore and should not be compiled, compile global files instead
@@ -87,15 +87,15 @@ class Sass {
                 return this.file(filePath);
             }));
 
-        } 
+        }
 
         outFilePath = path.join('out-css', outFilePath);
         outFile = path.join('out-css', outFile);
 
         return new Promise((res) => {
- 
+
             config.style.sass[env].file = filePath;
-            config.style.sass[env].outFile = outFile; 
+            config.style.sass[env].outFile = outFile;
 
             if ( fs.existsSync(outFilePath) == false ) {
                 mkdir('-p', outFilePath);
