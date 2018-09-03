@@ -99,7 +99,7 @@ class Log {
 
         this.spinner.text = msg;
         this.spinner.start();
-        
+
         if (cli.program.verbose) this.break();
 
     }
@@ -173,20 +173,25 @@ class Log {
 
             let lineNumbers = (err.line.length > 0) ? colors.white(err.line + ':' + err.column).dim : '';
 
-            if (err.file.length > 0) {
+            if (err.file && err.file.length > 0) {
                 msg += err.message.replace(/'(.*?)'/g, colors.red("'") + colors.red("$1") + colors.red("'"))
                     .replace(/(error)( )((?:TS[a-z0-9]*))(:)/g, colors.white("$1$2$3").dim);
                 link += err.file.includes(config.projectRoot) ?
                     colors.dim(' vscode://file/' + err.file + ':' + lineNumbers) + '\n' :
                     colors.dim(' vscode://file/' + config.projectRoot + '/' + err.file + ':' + lineNumbers) + '\n';
-            } else {
-                msg = err.message;
-            }
-
-            process.stdout.write(colors.red(' ' + err.service.toUpperCase() + ' ERROR') + ' ' +
+                process.stdout.write(colors.red(' ' + err.service.toUpperCase() + ' ERROR') + ' ' +
                 ((err.file.length > 0) ? colors.white(colors.dim(err.file) + ' ' + lineNumbers) : '') + '\n\n' +
                 colors.white(msg) + '\n\n'+
                 ((err.file.length > 0) ? link : '') + '\n');
+
+            } else {
+                msg = err.message;
+                process.stdout.write(colors.red(' ' + err.service.toUpperCase() + ' ERROR') + ' ' +
+                colors.white(msg) + '\n\n');
+
+            }
+
+
 
             this.line();
 

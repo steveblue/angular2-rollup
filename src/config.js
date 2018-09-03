@@ -21,24 +21,31 @@ class Config {
         if (fs.existsSync(projectRoot + '/angular.json')) {
 
             let angularConfig = require(projectRoot + '/angular.json');
+            let ngrConfig = require(projectRoot + '/ngr.config.js');
 
             config.angular = angularConfig;
               // if next argument after build is not an option, assume argument is the project name
-
             if (process.argv.indexOf('build') !== -1 &&
                 process.argv[process.argv.indexOf('build') + 2] &&
                 process.argv[process.argv.indexOf('build') + 2].includes('--') === false) {
+
                 config.project = process.argv[process.argv.indexOf('build') + 2];
-            } else { // use default project name
+                config.src = path.join(ngrConfig.projects[config.project].root, ngrConfig.projects[config.project].sourceRoot);
+                config.build = ngrConfig.projects[config.project].architect.build.options.outputPath;
+                config.style.files = ngrConfig.projects[config.project].architect.build.options.styles;
+
+
+            } else {
+
+                // use default project name
                 config.project = angularConfig.defaultProject;
+                // override config with @angular/cli config, this is so we dont have to change the api in every build for now
+                config.src = path.join(angularConfig.projects[config.project].root, angularConfig.projects[config.project].sourceRoot);
+                config.build = angularConfig.projects[config.project].architect.build.options.outputPath;
+                config.style.files = angularConfig.projects[config.project].architect.build.options.styles;
+
             }
-            // override config with @angular/cli config, this is so we dont have to change the api in every build for now
-            // config.dep = angularConfig.projects[config.project].architect.ngr.dep;
-            config.src = angularConfig.projects[config.project].sourceRoot;
-            config.build = angularConfig.projects[config.project].architect.build.options.outputPath;
-            // config.style = {};
-            config.style.files = angularConfig.projects[config.project].architect.build.styles;
-            // config.style.sass = angularConfig.projects[config.project].architect.ngr.style.sass;
+
 
         }
 

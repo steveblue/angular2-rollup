@@ -51,6 +51,7 @@ class Scaffold {
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'tsconfig.dev.json'));
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'tsconfig.jit.json'));
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'index.html'));
+                    sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'public', 'index.html'));
 
                     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
 
@@ -112,6 +113,7 @@ class Scaffold {
     }
 
     addProjectToConfig(projectName, projectConfig, projectDir) {
+
         let configPath = '';
         if (fs.existsSync(path.join(projectDir || config.projectRoot , 'ngr.config.js'))) {
             configPath = path.join(projectDir || config.projectRoot, 'ngr.config.js')
@@ -139,7 +141,10 @@ class Scaffold {
                         "build": {
                             "builder": "angular-rollup",
                             "options": {
-                                "outputPath": "dist/${projectName}"
+                                "outputPath": "dist/${projectName}",
+                                "styles": [
+                                    "src/style/style.scss"
+                                ]
                             }
                         }
                     }

@@ -2,6 +2,12 @@
 
 - NEW projects in ngr.config.js mirrors @angular/cli handling of multiple projects
 - NEW config options for library build allows user to forgo --config cli argument
+- FIXED issue that caused error messages to hang in console after TypeScript compiles without errors
+- FIXED issue that caused some errors not to produce a stacktrace
+- FIXED issue that caused library builds to not export css properly
+- FIXED issue that caused new projects to not replace the `<title>` tag properly
+
+NOTE: This version contains breaking changes due to the new addition of projects in ngr.config.js. If you wish to update from the develop branch just copy the projects from angular.json to ngr.config.json.
 
 -------------------------------------------------------------------------------------------------------------
 

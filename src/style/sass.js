@@ -68,7 +68,7 @@ class Sass {
                       filePath; // TODO: make style dir configurable
         let outFilePath = util.getFilePath(outFile);
 
-        let styles = config.angular.projects[config.project].architect.build.options.styles;
+        let styles = config.projects[config.project].architect.build.options.styles;
 
         if (cli.env === 'dev' || cli.env === 'prod' || cli.env === 'lib') {
             outFilePath = util.getFilePath(outFile);

@@ -66,17 +66,33 @@ class LibBuild extends Build {
 
         // process global styles
 
-        if (ls(path.normalize(config.src + '/style/*.scss')).length > 0) {
+        if (fs.existsSync(path.normalize(config.src + '/style'))) {
 
-            (async () => {
-                const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/style/*.scss')));
-                const postcss = await postcssBuilder.batch(sass);
-            })();
+            if (ls(path.normalize(config.src + '/style/*.scss')).length > 0) {
 
+                (async () => {
+                    const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/style/*.scss')));
+                    const postcss = await postcssBuilder.batch(sass);
+                })();
+
+            }
+            else if (ls(path.normalize(config.src + '/style/*.css')).length > 0) {
+                const globalCSSFileList = ls(path.normalize(config.src + '/**/*.css'));
+                postcssBuilder.batch(globalCSSFileList);
+            }
         }
-        else if (ls(path.normalize(config.src + '/style/*.css')).length > 0) {
-            const globalCSSFileList = ls(path.normalize(config.src + '/**/*.css'));
-            postcssBuilder.batch(globalCSSFileList);
+
+        if (config.projects[config.project].architect.build.options.styles.length > 0) {
+
+            let stylePaths = config.projects[config.project].architect.build.options.styles.map((scssPath) => {
+                return path.dirname(scssPath);
+            }).forEach((scssPath) => {
+                (async () => {
+                    const sass = await sassBuilder.batch(ls(path.normalize(scssPath + '/**/*.scss')));
+                    const postcss = await postcssBuilder.batch(sass);
+                })();
+            })
+
         }
 
     }
@@ -144,7 +160,6 @@ class LibBuild extends Build {
             fs.readFile(this.libConfigPath, 'utf8', (err, contents) => {
                 if (!err) {
                     this.libConfig = JSON.parse(contents);
-                    console.log(this.libConfig, config);
                     res();
                 } else {
                     rej(err);
