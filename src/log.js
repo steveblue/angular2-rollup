@@ -423,9 +423,11 @@ class Log {
             }
         });
 
-        ls(path.join(config.build, 'style')).forEach((file) => {
-            this.logFileStats(path.join(config.build, 'style', file));
-        });
+        if (fs.existsSync(path.join(config.build, 'style'))) {
+            ls(path.join(config.build, 'style')).forEach((file) => {
+                this.logFileStats(path.join(config.build, 'style', file));
+            });
+        }
 
         if (fs.existsSync(path.join(config.build, 'fesm2015'))) {
             ls(path.join(config.build, 'fesm2015')).forEach((file) => {

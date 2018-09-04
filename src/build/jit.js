@@ -29,12 +29,12 @@ class JitBuild extends Build {
       const sassBuilder = new SassBuilder({ dist: config.build });
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
       const jitBuilder = new TSBuilder();
-      const libCheck = config.lib && config.lib[env];
+      const libCheck = config.projects[config.project].architect.build.options.lib && config.projects[config.project].architect.build.options.lib[cli.env];
 
       (async () => {
-        const lib = await util.copyLib(libCheck ? config.lib[env] : config.dep['lib'],
-                                       libCheck ? config.lib.src : config.dep.src,
-                                       libCheck ? config.lib.dist : config.dep.dist);
+        const lib = await util.copyLib(libCheck ? config.projects[config.project].architect.build.options.lib[cli.env] : config.lib['dev'],
+                                       libCheck ? config.projects[config.project].architect.build.options.lib.src : config.lib.src,
+                                       libCheck ? config.projects[config.project].architect.build.options.lib.dist : config.lib.dist);
       })();
 
       (async () => {
@@ -86,7 +86,7 @@ class JitBuild extends Build {
         cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js'), path.join(this.outputPath, 'src', 'environments', 'environment.js'));
         cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js.map'), path.join(this.outputPath, 'src', 'environments', 'environment.js.map'));
         cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.ngsummary.json'), path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'));
-      } 
+      }
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
 

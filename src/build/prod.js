@@ -34,13 +34,13 @@ class ProdBuild extends Build {
       const aotBuilder = new AOTBuilder();
       const closureBuilder = new ClosureBuilder();
       const rollupBuilder = new RollupBuilder();
-      const libCheck = config.lib && config.lib[cli.env];
+      const libCheck = config.projects[config.project].architect.build.options.lib && config.projects[config.project].architect.build.options.lib[cli.env];
 
       (async () => {
         const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
         const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
-        const vendor = await util.formatVendorScripts(libCheck ? config.lib[cli.env] : config.dep['prodLib'],
-          libCheck ? config.lib.src : config.dep.src,
+        const vendor = await util.formatVendorScripts(libCheck ? config.projects[config.project].architect.build.options.lib[cli.env] : config.lib['prod'],
+          libCheck ? config.projects[config.project].architect.build.options.lib.src : config.lib.src,
           libCheck ? config.build : config.build);
         const concatVendor = await util.concatVendorScripts(libCheck ? config.build : config.build);
       })();
@@ -89,7 +89,7 @@ class ProdBuild extends Build {
         if (cli.program.env) {
           rm('-f', path.join('src', 'environments', 'environment.ts'));
           cp(path.join('config', 'environments', 'environment.' + cli.program.env + '.ts'), path.join('src', 'environments', 'environment.ts'));
-        } 
+        }
 
         if (util.hasHook('pre')) {
 

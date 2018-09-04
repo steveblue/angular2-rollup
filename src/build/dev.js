@@ -29,11 +29,12 @@ class DevBuild extends Build {
       const sassBuilder = new SassBuilder({ dist: config.build });
       const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: true });
       const aotBuilder = new AOTBuilder();
-      const libCheck = config.lib && config.lib[cli.env];
+      const libCheck = config.projects[config.project].architect.build.options.lib && config.projects[config.project].architect.build.options.lib[cli.env];
+
       (async () => {
-        const lib = await util.copyLib(libCheck ? config.lib[cli.env] : config.dep['lib'],
-                                       libCheck ? config.lib.src : config.dep.src,
-                                       libCheck ? config.lib.dist : config.dep.dist);
+        const lib = await util.copyLib(libCheck ? config.projects[config.project].architect.build.options.lib[cli.env] : config.lib['dev'],
+                                       libCheck ? config.projects[config.project].architect.build.options.lib.src : config.lib.src,
+                                       libCheck ? config.projects[config.project].architect.build.options.lib.dist : config.lib.dist);
       })();
 
       (async () => {
@@ -64,7 +65,7 @@ class DevBuild extends Build {
       let build = () => {
 
         //cp(path.normalize('config/postcss.' + cli.env + '.js'), 'postcss.config.js');
-  
+
 
         if (util.hasHook('pre')) {
 
@@ -101,13 +102,13 @@ class DevBuild extends Build {
     }
 
     post() {
-      
+
 
       if (cli.program.env) {
         cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js'), path.join(this.outputPath, 'src', 'environments', 'environment.js'));
         cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js.map'), path.join(this.outputPath, 'src', 'environments', 'environment.js.map'));
         cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.ngsummary.json'), path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'));
-      } 
+      }
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
 
@@ -116,7 +117,7 @@ class DevBuild extends Build {
       }
 
       if (cli.program.watch === true && util.hasHook('watch') && config.buildHooks[cli.env].watch.dist) {
-   
+
         const distWatcher = chokidar.watch([this.outputPath], {
           ignored: /[\/\\]\./,
           persistent: true

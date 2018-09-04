@@ -6,8 +6,9 @@
 - FIXED issue that caused some errors not to produce a stacktrace
 - FIXED issue that caused library builds to not export css properly
 - FIXED issue that caused new projects to not replace the `<title>` tag properly
+- FIXED issue when logging library builds without any global styles
 
-NOTE: This version contains breaking changes due to the new addition of projects in ngr.config.js. If you wish to update from the develop branch just copy the projects from angular.json to ngr.config.json.
+NOTE: This version contains breaking changes due to the new addition of projects in `ngr.config.js`. If you wish to update from the develop branch just copy the projects from angular.json to ngr.config.json.
 
 -------------------------------------------------------------------------------------------------------------
 
