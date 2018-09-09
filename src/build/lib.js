@@ -61,7 +61,9 @@ class LibBuild extends Build {
 
 
         } else { // dont barf on a lib without styling
-            this.bundleLib();
+            (async () => {
+                const bundle = await this.bundleLib();
+            })();
         }
 
         // process global styles

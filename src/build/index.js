@@ -5,15 +5,14 @@ const cli = require('./../../cli.config.json');
 const config = require('./../config');
 
 class Build {
-
-    constructor() {
-        this.outputPath = config.projects[config.project].architect.build.options.outputPath;
-        this.startTime = moment(new Date());
-        if (!cli.program.webpack) {
-            log.alert(colors.green('build start'));
-        }
+  constructor() {
+    this.outputPath = config.projects[config.project].architect.build.options.outputPath;
+    this.startTime = moment(new Date());
+    if (!cli.program.webpack) {
+      log.alert(colors.green('build start'));
+      log.alert(colors.dim('env ' + cli.env));
     }
-
+  }
 }
 
 module.exports = Build;
