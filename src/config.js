@@ -32,17 +32,20 @@ class Config {
                 config.project = process.argv[process.argv.indexOf('build') + 2];
                 config.src = path.join(ngrConfig.projects[config.project].root, ngrConfig.projects[config.project].sourceRoot);
                 config.build = ngrConfig.projects[config.project].architect.build.options.outputPath;
-                config.style.files = ngrConfig.projects[config.project].architect.build.options.styles;
+                config.style = {
+                    files : ngrConfig.projects[config.project].architect.build.options.styles
+                }
 
 
             } else {
 
                 // use default project name
-                config.project = angularConfig.defaultProject;
-                // override config with @angular/cli config, this is so we dont have to change the api in every build for now
-                config.src = path.join(angularConfig.projects[config.project].root, angularConfig.projects[config.project].sourceRoot);
-                config.build = angularConfig.projects[config.project].architect.build.options.outputPath;
-                config.style.files = angularConfig.projects[config.project].architect.build.options.styles;
+                config.project = ngrConfig.defaultProject;
+                config.src = path.join(ngrConfig.projects[config.project].root, ngrConfig.projects[config.project].sourceRoot);
+                config.build = ngrConfig.projects[config.project].architect.build.options.outputPath;
+                config.style = {
+                    files: ngrConfig.projects[config.project].architect.build.options.styles
+                }
 
             }
 

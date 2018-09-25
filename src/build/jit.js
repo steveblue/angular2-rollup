@@ -68,7 +68,7 @@ class JitBuild extends Build {
 
       if (util.hasHook('pre')) {
 
-        config.buildHooks[cli.env].pre(process.argv).then(() => {
+        config.projects[config.project].architect.build.hooks[cli.env].pre(process.argv).then(() => {
           this.build();
         });
 
@@ -88,20 +88,20 @@ class JitBuild extends Build {
         cp(path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.ngsummary.json'), path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'));
       }
 
-      if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+      if (util.hasHook('post')) config.projects[config.project].architect.build.hooks[cli.env].post(process.argv);
 
       if (cli.program.watch === true) {
         const watcher = new Watcher();
       }
 
-      if (cli.program.watch === true && util.hasHook('watch') && config.buildHooks[cli.env].watch.dist) {
+      if (cli.program.watch === true && util.hasHook('watch') && config.projects[config.project].architect.build.hooks[cli.env].watch.dist) {
 
         const distWatcher = chokidar.watch([this.outputPath], {
           ignored: /[\/\\]\./,
           persistent: true
         }).on('change', filePath => {
 
-          config.buildHooks[cli.env].watch.dist(filePath);
+          config.projects[config.project].architect.build.hooks[cli.env].watch.dist(filePath);
 
         });
 

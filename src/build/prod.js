@@ -96,7 +96,7 @@ class ProdBuild extends Build {
         }
         if (util.hasHook('pre')) {
 
-          config.buildHooks[cli.env].pre(process.argv).then(() => {
+          config.projects[config.project].architect.build.hooks[cli.env].pre(process.argv).then(() => {
             if (cli.program.webpack === true) {
               exec('ng build --prod', {shell: true, stdio: 'inherit'}, () => {
                 this.post();
@@ -179,7 +179,7 @@ class ProdBuild extends Build {
         rm('-rf', path.join('config', 'environments'));
       }
 
-      if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+      if (util.hasHook('post')) config.projects[config.project].architect.build.hooks[cli.env].post(process.argv);
       if (fs.existsSync(path.normalize('main.js'))) {
         rm(path.normalize('main.js'));
       }

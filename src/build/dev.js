@@ -65,7 +65,7 @@ class DevBuild extends Build {
       //cp(path.normalize('config/postcss.' + cli.env + '.js'), 'postcss.config.js');
 
       if (util.hasHook('pre')) {
-        config.buildHooks[cli.env].pre(process.argv).then(() => {
+        config.projects[config.project].architect.build.hooks[cli.env].pre(process.argv).then(() => {
           if (cli.program.webpack === true) {
             spawn('ng', ['serve'], { shell: true, stdio: 'inherit' });
           } else {
@@ -106,20 +106,20 @@ class DevBuild extends Build {
       );
     }
 
-    if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
+    if (util.hasHook('post')) config.projects[config.project].architect.build.hooks[cli.env].post(process.argv);
 
     if (cli.program.watch === true) {
       const watcher = new Watcher();
     }
 
-    if (cli.program.watch === true && util.hasHook('watch') && config.buildHooks[cli.env].watch.dist) {
+    if (cli.program.watch === true && util.hasHook('watch') && cconfig.projects[config.project].architect.build.hooks[cli.env].watch.dist) {
       const distWatcher = chokidar
         .watch([this.outputPath], {
           ignored: /[\/\\]\./,
           persistent: true,
         })
         .on('change', filePath => {
-          config.buildHooks[cli.env].watch.dist(filePath);
+          config.projects[config.project].architect.build.hooks[cli.env].watch.dist(filePath);
         });
     }
 

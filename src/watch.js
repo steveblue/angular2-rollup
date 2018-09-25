@@ -36,9 +36,9 @@ class Watcher {
             else if (filePath.indexOf('.scss') > -1) {
 
                 (async () => {
-   
+
                     const sass = await sassBuilder.file(filePath);
-               
+
                     if (Array.isArray(sass)) {
                         const postcss = await postcssBuilder.batch(sass);
                         log.cancelError('sass');
@@ -60,9 +60,9 @@ class Watcher {
             else if (filePath.indexOf('.html') > -1 && cli.env === 'jit') {
                 util.copyFile(filePath, path.join(config.build, filePath));
             }
-            
-            if (util.hasHook('watch') && config.buildHooks[cli.env].watch.src) {
-                config.buildHooks[cli.env].watch.src(filePath);
+
+            if (util.hasHook('watch') && config.projects[config.project].architect.build.hooks[cli.env].watch.src) {
+                config.projects[config.project].architect.build.hooks[cli.env].watch.src(filePath);
             }
 
         }).on('unlink', filePath => log.warn(filePath, 'has been removed'))

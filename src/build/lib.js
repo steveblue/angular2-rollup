@@ -236,7 +236,7 @@ class LibBuild extends Build {
 
             if (util.hasHook('pre')) {
                 log.message('processing pre task');
-                config.buildHooks[cli.env].pre(process.argv).then(() => {
+                config.projects[config.project].architect.build.hooks[cli.env].pre(process.argv).then(() => {
                     this.build();
                 });
 
@@ -266,7 +266,7 @@ class LibBuild extends Build {
 
                 if (util.hasHook('post')) {
                     log.message('processing post task');
-                    config.buildHooks[cli.env].post(process.argv);
+                    config.projects[config.project].architect.build.hooks[cli.env].post(process.argv);
 
                 }
 

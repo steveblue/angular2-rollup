@@ -103,7 +103,7 @@ class Util {
     }
 
     hasHook(step) {
-        return (config.buildHooks && config.buildHooks[cli.env] && config.buildHooks[cli.env][step]) ? true : false;
+        return (config.projects[config.project].architect.build.hooks && config.projects[config.project].architect.build.hooks[cli.env] && config.projects[config.project].architect.build.hooks[cli.env][step]) ? true : false;
     }
 
     hasConfigProperty(prop, obj) {

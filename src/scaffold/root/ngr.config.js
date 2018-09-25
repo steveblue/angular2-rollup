@@ -57,24 +57,25 @@ module.exports = {
                             src: "node_modules",
                             dist: "dist/{{projectName}}/lib"
                         }
+
+                    },
+                    hooks: {
+                        prod: {
+                            pre: () => {
+                                return new Promise((res) => {
+                                    // put togic in here for before the production build
+                                    res();
+                                });
+                            },
+                            post: () => {
+                                return new Promise((res) => {
+                                    // put togic in here for after the production build
+                                    res();
+                                });
+                            }
+                        }
                     }
                 }
-            }
-        }
-    },
-    buildHooks: {
-        prod: {
-            pre: () => {
-                return new Promise((res) => {
-                    // put togic in here for before the production build
-                    res();
-                });
-            },
-            post: () => {
-                return new Promise((res) => {
-                    // put togic in here for after the production build
-                    res();
-                });
             }
         }
     }
