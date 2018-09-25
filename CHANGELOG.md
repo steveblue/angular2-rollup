@@ -1,5 +1,6 @@
 ## 2.0.0-rc.3
 
+- BREAKING CHANGE ngr.config.js must be updated to latest schema to support multiple projects in the same build
 - NEW projects in ngr.config.js mirrors @angular/cli handling of multiple projects
 - NEW config options for library build allows user to forgo --config cli argument
 - FIXED issue that caused error messages to hang in console after TypeScript compiles without errors
@@ -7,6 +8,8 @@
 - FIXED issue that caused library builds to not export css properly
 - FIXED issue that caused new projects to not replace the `<title>` tag properly
 - FIXED issue when logging library builds without any global styles
+- FIXED issue that caused node > 9.0.0 to display SIGNIT error message
+- UPDATE package to support >8.0.0 <10.0.0
 
 NOTE: This version contains breaking changes due to the new addition of projects in `ngr.config.js`. If you wish to update from the develop branch just copy the projects from angular.json to ngr.config.json.
 
