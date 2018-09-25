@@ -14,6 +14,11 @@ module.exports = {
                     options: {
                         outputPath: 'dist/{{projectName}}',
                         styles: ['src/style/style.scss'],
+                        stylePreprocessorOptions: {
+                            includePaths: ['src/style'],
+                            outputStyle: 'expanded',
+                            sourceComments: true
+                        },
                         lib: {
                             dev: [
                                 "core-js/client/shim.min.js",
@@ -70,25 +75,6 @@ module.exports = {
                     // put togic in here for after the production build
                     res();
                 });
-            }
-        }
-    },
-    style: {
-        sass: {
-            dev: {
-                includePaths: ["src/style/"],
-                outputStyle: "expanded",
-                sourceComments: true
-            },
-            lib: {
-                includePaths: ["src/style/"],
-                outputStyle: "expanded",
-                sourceComments: false
-            },
-            prod: {
-                includePaths: ["src/style/"],
-                outputStyle: "expanded",
-                sourceComments: false
             }
         }
     }

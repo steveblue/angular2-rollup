@@ -22,8 +22,6 @@ program
   .option('--skip-install [bool]', 'prevents install during scaffold')
   .option('--yarn [bool]', 'use yarn instead of npm to install')
   .option('build [env]', 'build the application')
-  .option('dev', 'shorthand for ngr build dev --watch --serve')
-  .option('prod', 'shorthand for ngr build prod --env --prod')
   .option('--env [string]', 'use that particular environment.ts during the build, just like @angular/cli')
   .option('--clean [bool]', 'destroy the build folder prior to compilation, default for prod')
   .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
@@ -35,7 +33,6 @@ program
   .option('--webpack [bool]', 'use @angular/cli to build')
   .option('g, generate [string]', 'generate schematics packaged with angular-rollup')
   .option('serve, --serve [bool]', 'spawn the local express server')
-
   .parse(process.argv);
 
 let cli = () => {
@@ -56,24 +53,6 @@ let cli = () => {
     let build = new BuildScript().init();
   }
 
-  if (program.dev) {
-    log.destroy();
-    program.build = 'dev';
-    program.env = 'dev';
-    program.watch = true;
-    program.serve = true;
-    const BuildScript = require('./src/build/dev.js');
-    let build = new BuildScript().init();
-  }
-
-  if (program.prod) {
-    log.destroy();
-    program.build = 'prod';
-    program.env = 'prod';
-    const BuildScript = require('./src/build/prod.js');
-    let build = new BuildScript().init();
-  }
-
   if (program.new) {
     log.destroy();
     let scaffold = new Scaffold(program.new, path.join(processRoot, program.new));
@@ -85,6 +64,8 @@ let cli = () => {
     util.serve();
   }
 };
+
+
 if (process.argv.indexOf('new') > -1) {
   if (fs.existsSync(path.join(processRoot, program.new))) {
     console.log(colors.red(program.new + ' already exists'));
@@ -93,7 +74,9 @@ if (process.argv.indexOf('new') > -1) {
   if (!fs.existsSync(path.join(processRoot, program.new))) mkdir(path.join(processRoot, program.new));
   cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'), path.join(processRoot, program.new));
 }
-const env = program.build ? program.build : program.dev ? 'dev' : 'prod';
+
+
+const env = program.env ? program.env : (program.build === 'dev' ? 'dev' : 'prod');
 fs.writeFile(
   __dirname + '/cli.config.json',
   JSON.stringify(
@@ -116,7 +99,7 @@ let exitHandler = (options, err) => {
     cp('-R', path.join('config', 'environments'), 'src');
     rm('-rf', path.join('config', 'environments'));
   }
-  if (err) {
+  if (err && err !== 'SIGINT') {
     console.log(' ');
     console.log(colors.red('NGR ERROR', err));
   }

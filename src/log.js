@@ -413,9 +413,12 @@ class Log {
         let endTime = moment(new Date());
         let duration = moment.duration(endTime.diff(startTime));
         // this.destroy();
-        this.alert(colors.green('✅ build complete'));
+        this.alert(colors.green('✅  build complete'));
+
         this.alert(colors.dim('Date: ')+ new Date().toISOString());
         this.alert(colors.dim('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
+        this.alert(colors.dim('Environment: ')+ colors.white(cli.env));
+        this.alert(colors.dim('Location: ')+ colors.white(path.join(__dirname,config.build)));
 
         ls(config.build).forEach((file) => {
             if (fs.lstatSync(path.join(config.build,file)).isFile()) {

@@ -81,18 +81,24 @@ class Sass {
     outFile = path.join('out-css', outFile);
 
     return new Promise(res => {
-      config.style.sass[env].file = filePath;
-      config.style.sass[env].outFile = outFile;
+
+      const renderConfig = config.projects[config.project].architect.build.options.stylePreprocessorOptions;
+      renderConfig.file = filePath;
+      renderConfig.outFile = outFile;
 
       if (fs.existsSync(outFilePath) == false) {
         mkdir('-p', outFilePath);
       }
 
-      if (this.sassConfig.sourceMap) {
-        config.style.sass[env].sourceMap = this.sassConfig.sourceMap;
+      if (env === 'dev') {
+        renderConfig.sourceComments = true;
       }
 
-      sass.render(config.style.sass[env], (error, result) => {
+      if (this.sassConfig.sourceMap) {
+        renderConfig.sourceMap = this.sassConfig.sourceMap;
+      }
+
+      sass.render( renderConfig, (error, result) => {
         if (error) {
           log.line();
           error.service = 'sass';

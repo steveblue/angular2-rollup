@@ -88,9 +88,12 @@ class ProdBuild extends Build {
 
         if (cli.program.env) {
           rm('-f', path.join('src', 'environments', 'environment.ts'));
-          cp(path.join('config', 'environments', 'environment.' + cli.program.env + '.ts'), path.join('src', 'environments', 'environment.ts'));
+          if (cli.program.env === 'dev') {
+            cp(path.join('config', 'environments', 'environment.ts'), path.join('src', 'environments', 'environment.ts'));
+          } else {
+            cp(path.join('config', 'environments', 'environment.' + cli.program.env + '.ts'), path.join('src', 'environments', 'environment.ts'));
+          }
         }
-
         if (util.hasHook('pre')) {
 
           config.buildHooks[cli.env].pre(process.argv).then(() => {
@@ -169,6 +172,12 @@ class ProdBuild extends Build {
     post() {
 
       const bundleArtifact = path.join(this.outputPath, 'bundle.es2015.js');
+      // return environments to rightful place
+      if (fs.existsSync(path.join('config', 'environments'))) {
+        rm('-rf', path.join('src', 'environments'));
+        cp('-R', path.join('config', 'environments'), 'src');
+        rm('-rf', path.join('config', 'environments'));
+      }
 
       if (util.hasHook('post')) config.buildHooks[cli.env].post(process.argv);
       if (fs.existsSync(path.normalize('main.js'))) {
