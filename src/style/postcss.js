@@ -1,12 +1,12 @@
 require('shelljs/global');
 
-const sass      = require('node-sass');
-const path      = require('path');
-const fs        = require('fs');
-const util      = require('./../util.js');
-const log       = require('./../log.js');
-const config    = require('./../config');
-const cli       = require('./../../cli.config.json');
+const sass = require('node-sass');
+const path = require('path');
+const fs = require('fs');
+const util = require('./../util.js');
+const log = require('./../log.js');
+const config = require('./../config');
+const cli = require('./../../cli.config.json');
 
 class PostCSS {
 
@@ -27,7 +27,7 @@ class PostCSS {
 
                 });
 
-                res(files.map((fileName)=>{ return fileName.replace('.scss', '.css')}));
+                res(files.map((fileName) => { return fileName.replace('.scss', '.css') }));
 
             }
             catch (err) {
@@ -46,9 +46,30 @@ class PostCSS {
             filePath = filePath.replace('out-css/', '').replace('out-css\\', '');
         }
 
+
         return new Promise((res) => {
 
-            let outFile = filePath.indexOf(config.src + '/style') > -1 ? path.normalize(filePath.replace(config.src, this.cssConfig.dist).replace('.scss', '.css')) : filePath.replace('.scss', '.css');
+            const globalBaseNames = config.projects[config.project].architect.build.options.styles.map((stylePath) => {
+                return path.dirname(stylePath);
+            }).filter((value, index, self) => {
+                return self.indexOf(value) === index;
+            });
+
+            const isGlobal = new RegExp(globalBaseNames.join('|')).test(filePath);
+
+            let outFile = filePath;
+
+            if (isGlobal) {
+
+                globalBaseNames.forEach((baseName) => {
+                    if (outFile.includes(baseName)) {
+                        outFile = path.join(this.cssConfig.dist, outFile).replace('src/', '').replace('src\\', '');
+                    }
+                })
+
+            }
+
+            outFile = outFile.replace('scss', 'css');
 
             if (!fs.existsSync(path.normalize(outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))))) {
                 mkdir('-p', path.normalize(outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))));
@@ -78,7 +99,7 @@ class PostCSS {
 
     copyToNgFactory(files) {
 
-        return new Promise((res)=>{
+        return new Promise((res) => {
             try {
                 let copiedFiles = files.filter((file) => {
                     if (!file.includes('style/')) {
@@ -90,7 +111,7 @@ class PostCSS {
                 });
                 res(copiedFiles);
             }
-            catch(err) {
+            catch (err) {
                 log.error(err);
             }
         });

@@ -19,7 +19,7 @@ class Build {
       }).map((str) => {
         return path.basename(str);
       });
-      log.alert(colors.green('ngr ' + args.join(' ')));
+      log.process('ngr ' + args.join(' '));
 
     }
   }

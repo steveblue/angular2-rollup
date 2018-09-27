@@ -18,10 +18,10 @@ class LibBuild extends Build {
         super();
 
         if (!cli.program.config) {
-          this.libConfigPath = path.join(config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(cli.program.build) + 1]].root,
-                                         config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(cli.program.build) + 1]].configFile);
+            this.libConfigPath = path.join(config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(cli.program.build) + 1]].root,
+                config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(cli.program.build) + 1]].configFile);
         } else {
-          this.libConfigPath = cli.program.config.trim();
+            this.libConfigPath = cli.program.config.trim();
         }
         this.hasInit = false;
         this.hasPost = false;
@@ -35,7 +35,6 @@ class LibBuild extends Build {
     build() {
 
         // TODO: figure out best way to abstract styling tasks for the builds, should be able to support LESS, Stylus, etc.
-
         const sassBuilder = new SassBuilder({ dist: this.libConfig.dist, sourceMap: false });
         const postcssBuilder = new PostCSSBuilder({ dist: this.libConfig.dist, sourceMap: false });
 
@@ -143,9 +142,9 @@ class LibBuild extends Build {
                 fs.existsSync(this.libConfig.umd.outFile) &&
                 fs.existsSync(path.join('out-tsc', 'esm5', 'index.js')) &&
                 fs.existsSync(path.join('out-tsc', 'esm2015', 'index.js'))) {
-                    if (!this.hasPost) {
-                        this.post();
-                    }
+                if (!this.hasPost) {
+                    this.post();
+                }
                 log.stop('compiling library');
                 res();
             } else {
@@ -204,12 +203,12 @@ class LibBuild extends Build {
                     });
                 // cophy meteadata
                 cp(path.join('out-tsc', 'esm2015', this.libConfig.filename + '.metadata.json'),
-                   path.join(this.libConfig.dist, this.libConfig.filename + '.metadata.json') );
+                    path.join(this.libConfig.dist, this.libConfig.filename + '.metadata.json'));
 
-               res();
+                res();
 
             }
-            catch(err) {
+            catch (err) {
                 rej(err);
             }
 
@@ -226,7 +225,7 @@ class LibBuild extends Build {
             rm('-rf', this.libConfig.dist);
             mkdir('-p', this.libConfig.dist);
 
-            cp('-R', path.normalize(this.libConfig.src + '/')+'.', path.normalize('./tmp'));
+            cp('-R', path.normalize(this.libConfig.src + '/') + '.', path.normalize('./tmp'));
 
             // remove moduleId prior to ngc build, inline template and styles
             ls(path.normalize('tmp/**/*.ts')).forEach((file) => {

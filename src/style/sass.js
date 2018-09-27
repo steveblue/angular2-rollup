@@ -50,14 +50,29 @@ class Sass {
 
     const srcPath = util.getFilePath(filePath);
     const filename = util.getFileName(filePath);
+
+    const styles = config.projects[config.project].architect.build.options.styles;
+    const globalBaseNames = config.projects[config.project].architect.build.options.styles.map((stylePath) => {
+      return path.dirname(stylePath);
+    }).filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
     // determine if file is global or not, swap .scss to .css in filename
-    let outFile =
-      filePath.indexOf(config.src + '/style') > -1
-        ? path.normalize(filePath.replace(config.src, this.sassConfig.dist))
-        : filePath; // TODO: make style dir configurable
+    const isGlobal = new RegExp(globalBaseNames.join('|')).test(filePath);
+    let outFile = filePath;
+
+    if (isGlobal) {
+
+      globalBaseNames.forEach((baseName) => {
+        if (outFile.includes(baseName)) {
+          outFile = path.normalize(outFile.replace(baseName, this.sassConfig.dist));
+        }
+      })
+
+    }
+
     let outFilePath = util.getFilePath(outFile);
 
-    let styles = config.projects[config.project].architect.build.options.styles;
 
     if (cli.env === 'dev' || cli.env === 'prod' || cli.env === 'lib') {
       outFilePath = util.getFilePath(outFile);
@@ -69,7 +84,8 @@ class Sass {
     outFile = path.join(outFilePath, filename.replace('scss', 'css'));
 
     // this file is global w/ underscore and should not be compiled, compile global files instead
-    if (filePath.indexOf(path.normalize(config.src + '/style')) > -1 && filename[0] === '_') {
+
+    if (isGlobal && filename[0] === '_') {
       return Promise.all(
         styles.map(filePath => {
           return this.file(filePath);
@@ -98,7 +114,7 @@ class Sass {
         renderConfig.sourceMap = this.sassConfig.sourceMap;
       }
 
-      sass.render( renderConfig, (error, result) => {
+      sass.render(renderConfig, (error, result) => {
         if (error) {
           log.line();
           error.service = 'sass';
