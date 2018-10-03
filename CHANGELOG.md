@@ -1,8 +1,10 @@
 ## 2.0.0-rc.3
 
+This release is intended to be the final release candidate of 2.0.0. 
+
 - BREAKING CHANGE ngr.config.js must be updated to latest schema to support multiple projects in the same build
 - NEW projects in ngr.config.js mirrors @angular/cli handling of multiple projects
-- NEW config options for library build allows user to forgo --config cli argument
+- NEW cli command for library build allows user to leave out --config cli argument
 - FIXED issue that caused error messages to hang in console after TypeScript compiles without errors
 - FIXED issue that caused some errors not to produce a stacktrace
 - FIXED issue that caused library builds to not export css properly
