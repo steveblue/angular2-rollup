@@ -125,9 +125,7 @@ class DevBuild extends Build {
 
     if (!util.hasArg('watch')) {
       log.break();
-      ls(this.outputPath).forEach(file => {
-        log.logFileStats(path.join(this.outputPath, file));
-      });
+      log.buildStats(this.startTime);
     }
 
     if (util.hasArg('serve')) {
