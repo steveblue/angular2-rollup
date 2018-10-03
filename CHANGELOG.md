@@ -9,6 +9,7 @@
 - FIXED issue that caused new projects to not replace the `<title>` tag properly
 - FIXED issue when logging library builds without any global styles
 - FIXED issue that caused node > 9.0.0 to display SIGNIT error message
+- FIXED issue that prevented dev build from displaying stats at end
 - UPDATE package to support >8.0.0 <10.0.0
 
 NOTE: This version contains breaking changes due to the new addition of projects in `ngr.config.js`. If you wish to update from the develop branch just copy the projects from angular.json to ngr.config.json.
