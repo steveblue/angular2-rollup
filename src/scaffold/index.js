@@ -32,19 +32,19 @@ class Scaffold {
 
     basic() {
 
-        exec('ng new '+this.cliName+ ' --skip-install --style scss',
-             {}, (error, stdout, stderr) => {
+        exec('ng new ' + this.cliName + ' --skip-install --style scss',
+            {}, (error, stdout, stderr) => {
 
                 stdout.split('\n').forEach((msg) => { console.log(this.formatCreateMsg(msg.trim())); });
 
-                 if (stdout.includes('initialized git.')) {
+                if (stdout.includes('initialized git.')) {
 
-                    console.log("Project '"+this.cliName+"' is merging with @angular/cli.");
+                    console.log("Project '" + this.cliName + "' is merging with @angular/cli.");
                     rm('-rf', path.join(this.path, 'src', 'app'));
 
-                    util.copyDir(srcDir, path.join(this.path, 'src'), {silent: true});
+                    util.copyDir(srcDir, path.join(this.path, 'src'), { silent: true });
                     ls(srcDir).forEach((file) => {
-                        console.log(this.formatCreateMsg('create '+path.join(this.cliName, 'src', file)+' ('+fs.statSync(path.join(srcDir,file)).size+' bytes)'));
+                        console.log(this.formatCreateMsg('create ' + path.join(this.cliName, 'src', file) + ' (' + fs.statSync(path.join(srcDir, file)).size + ' bytes)'));
                     });
 
                     // find and replace cli name in new tsconfig
@@ -53,10 +53,10 @@ class Scaffold {
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'index.html'));
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'src', 'public', 'index.html'));
 
-                    util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, {silent: true});
+                    util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, { silent: true });
 
                     ls(path.normalize(config.cliRoot + '/src/scaffold/root')).forEach((file) => {
-                        console.log(this.formatCreateMsg('create '+path.join(this.cliName, file)+' ('+fs.statSync(path.join(config.cliRoot, 'src', 'scaffold', 'root', file)).size+' bytes)'));
+                        console.log(this.formatCreateMsg('create ' + path.join(this.cliName, file) + ' (' + fs.statSync(path.join(config.cliRoot, 'src', 'scaffold', 'root', file)).size + ' bytes)'));
                     });
 
                     // replace project name in rollup.config
@@ -67,7 +67,7 @@ class Scaffold {
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'ngr.config.js'));
 
                     this.editPackage();
-                    this.addProjectToConfig(this.cliName, '', this.path);
+                    // this.addProjectToConfig(this.cliName, '', this.path);
                     this.editCliConfig();
 
                     if (remoteSrc) {
@@ -79,15 +79,16 @@ class Scaffold {
                 }
 
 
-             });
+            });
 
     }
 
-    sortObject(obj){
+    sortObject(obj) {
         return Object.keys(obj)
-          .sort().reduce((a, v) => {
-          a[v] = obj[v];
-          return a; }, {});
+            .sort().reduce((a, v) => {
+                a[v] = obj[v];
+                return a;
+            }, {});
     }
 
 
@@ -95,27 +96,27 @@ class Scaffold {
     editPackage() {
 
         fs.readFile(path.normalize(config.cliRoot + '/src/scaffold/standalone/package.json'), 'utf8',
-        (err, data) => {
-            let cliPackage = JSON.parse(data);
-            fs.readFile(path.join(this.path, 'package.json'),
-                        'utf8', (err, data) => {
+            (err, data) => {
+                let cliPackage = JSON.parse(data);
+                fs.readFile(path.join(this.path, 'package.json'),
+                    'utf8', (err, data) => {
 
-                let projectPackage = JSON.parse(data);
-                projectPackage.dependencies = this.sortObject(Object.assign(cliPackage.dependencies, projectPackage.dependencies));
-                projectPackage.devDependencies = this.sortObject(Object.assign(cliPackage.devDependencies, projectPackage.devDependencies));
-                projectPackage.scripts = this.sortObject(Object.assign(cliPackage.scripts, projectPackage.scripts));
+                        let projectPackage = JSON.parse(data);
+                        projectPackage.dependencies = this.sortObject(Object.assign(cliPackage.dependencies, projectPackage.dependencies));
+                        projectPackage.devDependencies = this.sortObject(Object.assign(cliPackage.devDependencies, projectPackage.devDependencies));
+                        projectPackage.scripts = this.sortObject(Object.assign(cliPackage.scripts, projectPackage.scripts));
 
-                fs.writeFileSync(path.join(this.path, 'package.json'), JSON.stringify(projectPackage, null, 4));
+                        fs.writeFileSync(path.join(this.path, 'package.json'), JSON.stringify(projectPackage, null, 4));
 
+                    });
             });
-        });
 
     }
 
     addProjectToConfig(projectName, projectConfig, projectDir) {
 
         let configPath = '';
-        if (fs.existsSync(path.join(projectDir || config.projectRoot , 'ngr.config.js'))) {
+        if (fs.existsSync(path.join(projectDir || config.projectRoot, 'ngr.config.js'))) {
             configPath = path.join(projectDir || config.projectRoot, 'ngr.config.js')
         } else {
             log.warn('ngr.config.js does not exist in this project root directory');
@@ -123,15 +124,15 @@ class Scaffold {
         }
 
         fs.readFile(configPath, 'utf8',
-        (err, data) => {
-            let configFile = data.toString().split('\n').map((str) => { return str.trim(); });
-            let project = '';
+            (err, data) => {
+                let configFile = data.toString().split('\n').map((str) => { return str.trim(); });
+                let project = '';
 
-            if (configFile.indexOf('projects: {') === -1) {
-                project += 'projects : {';
-            }
+                if (configFile.indexOf('projects: {') === -1) {
+                    project += 'projects : {';
+                }
 
-            project += `
+                project += `
                 "${projectName}" : {
                     "root": "${projectConfig.root || ''}",
                     "sourceRoot": "${projectConfig.sourceRoot || 'src'}",
@@ -160,44 +161,46 @@ class Scaffold {
                 }
 
 
-            configFile = configFile.join('\n');
-            configFile = prettier.format(configFile, { tabWidth: 2,
-                                                       parser: 'babylon' })
+                configFile = configFile.join('\n');
+                configFile = prettier.format(configFile, {
+                    tabWidth: 2,
+                    parser: 'babylon'
+                })
 
-            fs.writeFileSync(configPath, configFile);
-        });
+                fs.writeFileSync(configPath, configFile);
+            });
     }
 
     editCliConfig() {
 
         fs.readFile(path.join(this.path, 'angular.json'), 'utf8',
-        (err, data) => {
+            (err, data) => {
 
-            let cliConfig = JSON.parse(data);
-            cliConfig.projects[cli.program.new].architect.build.options.assets = [
-                "src/public/favicon.ico",
-                {
-                    "glob": "**/*",
-                    "input": "src/public/assets",
-                    "output": "./assets/"
-                }
-            ];
-            cliConfig.projects[cli.program.new].architect.build.options.styles = ['src/style/style.scss'];
-            cliConfig.projects[cli.program.new].architect.test.options.assets = [
-                "src/public/favicon.ico",
-                {
-                    "glob": "**/*",
-                    "input": "src/public/assets",
-                    "output": "./assets/"
-                }
-            ];
-            cliConfig.projects[cli.program.new].architect.test.options.styles = ['src/style/style.scss'];
-            fs.writeFileSync(path.join(this.path, 'angular.json'), JSON.stringify(cliConfig, null, 4));
-            rm(path.join(this.path, 'src', 'styles.scss'));
-            rm(path.join(this.path, 'src', 'favicon.ico'));
-            rm('-rf', path.join(this.path, 'src', 'assets'));
-            this.done();
-        });
+                let cliConfig = JSON.parse(data);
+                cliConfig.projects[cli.program.new].architect.build.options.assets = [
+                    "src/public/favicon.ico",
+                    {
+                        "glob": "**/*",
+                        "input": "src/public/assets",
+                        "output": "./assets/"
+                    }
+                ];
+                cliConfig.projects[cli.program.new].architect.build.options.styles = ['src/style/style.scss'];
+                cliConfig.projects[cli.program.new].architect.test.options.assets = [
+                    "src/public/favicon.ico",
+                    {
+                        "glob": "**/*",
+                        "input": "src/public/assets",
+                        "output": "./assets/"
+                    }
+                ];
+                cliConfig.projects[cli.program.new].architect.test.options.styles = ['src/style/style.scss'];
+                fs.writeFileSync(path.join(this.path, 'angular.json'), JSON.stringify(cliConfig, null, 4));
+                rm(path.join(this.path, 'src', 'styles.scss'));
+                rm(path.join(this.path, 'src', 'favicon.ico'));
+                rm('-rf', path.join(this.path, 'src', 'assets'));
+                this.done();
+            });
 
     }
 
@@ -211,11 +214,11 @@ class Scaffold {
         } else {
 
             if (cli.program.yarn) {
-                spawn('yarn', ['install'], { cwd: this.path, shell: true, stdio: 'inherit'});
+                spawn('yarn', ['install'], { cwd: this.path, shell: true, stdio: 'inherit' });
             }
             else if (npmExists) {
                 log.message('npm install');
-                spawn('npm', ['install'], { cwd: this.path, shell: true, stdio: 'inherit'});
+                spawn('npm', ['install'], { cwd: this.path, shell: true, stdio: 'inherit' });
             }
 
         }

@@ -2,6 +2,7 @@ const spawn = require('child_process').spawn;
 const fs = require('fs');
 
 module.exports = {
+    defaultProject: '{{projectName}}',
     projects: {
         '{{projectName}}': {
             root: '',
