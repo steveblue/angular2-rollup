@@ -19,15 +19,12 @@ class PostCSS {
         return new Promise((res) => {
 
             try {
+
                 const files = fileList.filter((filePath, index) => {
-
-                    if (filePath && filePath.replace(/^.*[\\\/]/, '')[0] !== '_') {
-                        return this.file(filePath);
-                    }
-
+                    return this.file(filePath);
                 });
 
-                res(files.map((fileName) => { return fileName.replace('.scss', '.css') }));
+                res(files);
 
             }
             catch (err) {
@@ -42,9 +39,9 @@ class PostCSS {
 
     file(filePath) {
 
-        if (filePath.includes('out-css')) { // fixes issue with filePath in --watch
-            filePath = filePath.replace('out-css/', '').replace('out-css\\', '');
-        }
+        // if (filePath.includes('out-css')) { // fixes issue with filePath in --watch
+        //     filePath = filePath.replace('out-css/', '').replace('out-css\\', '');
+        // }
 
 
         return new Promise((res) => {
@@ -69,14 +66,14 @@ class PostCSS {
 
             }
 
-            outFile = outFile.replace('scss', 'css');
+            // outFile = outFile.replace('scss', 'css');
 
             if (!fs.existsSync(path.normalize(outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))))) {
                 mkdir('-p', path.normalize(outFile.substring(0, outFile.replace(/\\/g, "/").lastIndexOf("/"))));
             }
 
             exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
-                ' ' + path.join('out-css', outFile) +
+                ' ' + outFile +
                 (this.cssConfig.sourceMap === false ? ' --no-map' : '') +
                 ' --env ' + (cli.program.env ? cli.program.env : cli.env) +
                 ' --output ' + outFile,
@@ -106,8 +103,8 @@ class PostCSS {
                         return file;
                     }
                 }).map((file) => {
-                    cp(file, file.replace(config.src, 'out-tsc/' + config.src));
-                    return file.replace(config.src, 'out-tsc/' + config.src);
+                    cp(file, file.replace('out-css', 'out-tsc'));
+                    return file.replace('out-css', 'out-tsc');
                 });
                 res(copiedFiles);
             }

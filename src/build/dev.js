@@ -45,6 +45,7 @@ class DevBuild extends Build {
 
     (async () => {
       const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
+      console.log(await sass);
       const postcss = await postcssBuilder.batch(sass);
       log.message('styled components');
       if (!fs.existsSync(path.join(config.build, 'main.js'))) {

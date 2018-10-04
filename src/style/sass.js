@@ -14,6 +14,7 @@ class Sass {
   }
 
   batch(fileList) {
+
     if (!fs.existsSync(path.join(this.sassConfig.dist, 'style'))) {
       // TODO: figure out best way to handle use case without any global style
       mkdir('-p', path.join(this.sassConfig.dist, 'style'));
@@ -21,13 +22,23 @@ class Sass {
 
     return new Promise(res => {
       try {
-        const files = fileList.filter((filePath, index) => {
-          if (filePath && filePath.replace(/^.*[\\\/]/, '')[0] !== '_') {
-            return this.file(filePath);
-          }
+
+        const styles = config.projects[config.project].architect.build.options.styles;
+        const globalFiles = styles.map((stylePath) => {
+          return this.file(stylePath);
         });
 
-        res(files);
+        const files = fileList.filter((filePath, index) => {
+          return (filePath && filePath.replace(/^.*[\\\/]/, '')[0] !== '_' &&
+            styles.indexOf(filePath) === -1);
+        }).map((filePath) => {
+          return this.file(filePath)
+        });
+
+        Promise.all(files.concat(globalFiles)).then((css) => {
+          res(css);
+        });
+
       } catch (err) {
         err.service = 'sass';
         log.error(err);
@@ -44,15 +55,16 @@ class Sass {
       env = cli.env;
     }
 
-    if (!fs.existsSync('out-css')) {
-      mkdir('-p', 'out-css');
-    }
+    // if (!fs.existsSync('out-css')) {
+    //   mkdir('-p', 'out-css');
+    // }
 
     const srcPath = util.getFilePath(filePath);
     const filename = util.getFileName(filePath);
 
+
     const styles = config.projects[config.project].architect.build.options.styles;
-    const globalBaseNames = config.projects[config.project].architect.build.options.styles.map((stylePath) => {
+    const globalBaseNames = styles.map((stylePath) => {
       return path.dirname(stylePath);
     }).filter((value, index, self) => {
       return self.indexOf(value) === index;
@@ -64,8 +76,9 @@ class Sass {
     if (isGlobal) {
 
       globalBaseNames.forEach((baseName) => {
-        if (outFile.includes(baseName)) {
-          outFile = path.normalize(outFile.replace(baseName, this.sassConfig.dist));
+        if (outFile.includes(config.src)) {
+          // console.log(config.src, baseName, path.normalize(outFile.replace(config.src, this.sassConfig.dist)));
+          outFile = path.normalize(outFile.replace(config.src, this.sassConfig.dist));
         }
       })
 
@@ -93,8 +106,14 @@ class Sass {
       );
     }
 
-    outFilePath = path.join('out-css', outFilePath);
-    outFile = path.join('out-css', outFile);
+    // TODO: figure out best way to whitelist builds here probably from config
+
+    if (cli.program.build === 'lib' || cli.program.build === 'prod' &&
+      isGlobal === false) {
+      outFilePath = path.join('out-tsc', outFilePath);
+      outFile = path.join('out-tsc', outFile);
+    }
+
 
     return new Promise(res => {
 
@@ -113,6 +132,7 @@ class Sass {
       if (this.sassConfig.sourceMap) {
         renderConfig.sourceMap = this.sassConfig.sourceMap;
       }
+
 
       sass.render(renderConfig, (error, result) => {
         if (error) {
