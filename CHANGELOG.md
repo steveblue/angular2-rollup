@@ -1,3 +1,9 @@
+## 2.0.0-rc.4
+
+- DEPRECATED main.ts, use @angular/cli supplied main.ts instead
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 2.0.0-rc.3
 
 - BREAKING CHANGE ngr.config.js must be updated to latest schema to support multiple projects in the same build
@@ -161,7 +167,7 @@ Then compare package.json and ngr.config.json with the existing files, make nece
 ## 2.0.0-beta.0
 
 - All new build architecture allows for easier maintainance, human readibility
-- Async build scripts make the builds 4x faster in some cases
+- 4x faster builds in some cases
 - Fixed an issue that prevented styles from compiling in library builds
 
 
@@ -234,7 +240,7 @@ In this release, angular/rollup will pass an environment variable to process.arg
 ```
 buildHooks: {
         prod: {
-            pre: (argv) => {å
+            pre: (argv) => {
                 var env = argv.find(a => a.includes('env')).split('=')[1];
                 return new Promise((res, rej)=>{
                     cp('environments/environment.'+env+'.ts', 'src/app/environment.ts');
