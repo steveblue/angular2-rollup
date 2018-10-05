@@ -112,7 +112,7 @@ class DevBuild extends Build {
       const watcher = new Watcher();
     }
 
-    if (cli.program.watch === true && util.hasHook('watch') && cconfig.projects[config.project].architect.build.hooks[cli.env].watch.dist) {
+    if (cli.program.watch === true && util.hasHook('watch') && config.projects[config.project].architect.build.hooks[cli.env].watch.dist) {
       const distWatcher = chokidar
         .watch([this.outputPath], {
           ignored: /[\/\\]\./,

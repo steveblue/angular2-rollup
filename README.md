@@ -94,21 +94,21 @@ You can choose to bundle with Rollup instead and simplify Closure Compiler's con
 
 * `$ ngr build prod --rollup`
 
-Trigger `ng build --prod` with the `--webpack` argument. Use native `ng` commands for further customization of the webpack build.
+Use native `ng` commands for webpack.
 
-* `$ ngr build prod --webpack`
+* `$ ng build --prod`
 
-To build an application and serve it locally:
+To build an application for production and serve it locally:
 
 * `$ ngr build prod --serve`
 
 
 ## Build Hooks
 
-There are hooks in the current build scripts where you can inject custom functionality. Each build has a `pre` and `post` hook. All hooks except `post` require that you return a `Promise`.
+Hooks are points in the build where you can inject custom functionality. Each build has a `pre` and `post` hook. All hooks except `post` require that you return a `Promise`. There is also a `watch` hook for the development build that takes two parameters: `dist` and `src`.
 
 ```
-    buildHooks: {
+    hooks: {
         dev: {
             pre: () => {
                 return new Promise((res, rej) => {
@@ -123,28 +123,28 @@ There are hooks in the current build scripts where you can inject custom functio
     }
 ```
 
-If you require a new hook, submit a feature request in Github issues.
 
-
-## Build Config
+## ngr.config.js
 
 Config is shared with `angular.json` but for non Webpack builds the following files allow you configure filepaths, SASS options, and includes callbacks for steps in each build.
 
 
 | Script        | Description   |
 | ------------- |:-------------:|
-| ngr.config.js      | Project filepaths, callbacks for build steps |
-| postcss.*.js |  PostCSS |
-| rollup.config.js |  Rollup |
-| closure.conf |  Closure Compiler  |
-| closure.rollup.conf |  Closure Compiler when using the --rollup argument  |
-| server.config.*.js |  Express Server  |
+| ngr.config.js      | Configured project filepaths, build hooks |
+| postcss.config.js |  Configures postcss step in each build |
+| rollup.config.js |  Configures rollup when using `ngr build --rollup` |
+| closure.rollup.conf |  Configures Closure Compiler when using `ngr build --rollup`  |
+| closure.conf |  Configures Closure Compiler when using `ngr build prod` |
+| server.config.*.js |  Configures express server  |
 | tsconfig.*.json | Configures TypeScript (dev) or @angular/compiler (lib,prod)
 
 
 ## Server
 
-Express is used mainly to provide a development server, but it could also be s atrting point for a MEAN stack.
+Express is used mainly to provide a development server, but it could also boilerplate for a MEAN stack.
+
+`server.js` and `router.js` are stored in the `backend` folder.
 
 `ngr serve` will start up the Express server, so will `--serve` with any build.
 
@@ -170,15 +170,15 @@ Jason Aden gave a presentation about Angular Package Format at ng-conf 2017. [Pa
 
 ### Generate A Library Package
 
-Generate library packages with `ngr generate library my-lib-name`.
+Generate library packages with `ngr new lib my-lib-name`.
 
-This will generate a library package in the current folder with the necessary configuration.
+This will generate a library package in the current folder with the necessary configuration set in `ngr.config.js`.
 
 
-### Developing A Library
+### Developing The Library
 
 - Keep your code strictly typed.
-- Do not create monolithic `@NgModule`, separate modules by discrete functionality. This allows the library to be treeshaken.
+- Do not create monolithic `@NgModule`. Separate modules by discrete functionality. This allows the library to be treeshaken.
 - In each module export the necessary components, directives, services, etc.
 - Update the index.ts with exports for each module.
 
@@ -186,7 +186,7 @@ This will generate a library package in the current folder with the necessary co
 
 After you have generated some components for the library, use `ngr build lib` to build the library in the `dist` folder.
 
-`ngr build lib --config path/to/lib.config.json`
+`ngr build lib my-lib-name`
 
 
 ## Code Generation, Testing, and i18n
@@ -198,10 +198,10 @@ All of this tooling uses the methods employed by `@angular/cli`. Use `ng test` a
 
 ### How do I include third party libraries?
 
-The production build relies heavily on Closure Compiler, which provides excellent optimizations but unfortunately is not compatible with most third party libraries. Luckily, Closure Compiler can be configured to build referencing methods and variables found in external scripts. Follow this step by step to figure out which method to use.
+The production build relies heavily on Closure Compiler, which optimizes the bundle far better than other tools. Closure Compiler relies on annotations in JavaScript to optimize the bundle. Third party libraries are often not annotated. If a library package follows the Angular Package Format it will be closure annotated because when configured, the angular compiler will convert TypeScript annotations to closure annoations using a tool called [tsickle](https://github.com/angular/tsickle). Luckily for third party libraries that are not annotated, Closure Compiler can be configured to leave variables found in external scripts unmangled. Follow this step by step to figure out which method to use.
 
-- Does the library conform to Angular Package Spec 5.0?
-    YES: Will be bundled by `ngc`, inject the NgModule into your application, add to `closure.conf` and/or closure.lazy.conf
+- Does the library conform to Angular Package Format?
+    YES: Will be bundled by `ngc`, inject the NgModule into your application, add to `closure.conf`
     NO: See next question
 
 - Is the library written in ES2015?
@@ -210,15 +210,16 @@ The production build relies heavily on Closure Compiler, which provides excellen
 
 - Is the library formatted with UMD modules?
     YES: Include the necessary library files in `closure.conf`
-    NO: You must include the library globally via `<head>` or `SystemJS`. Add the necessary externs to `closure.externs.js`
+    NO: You must include the library globally via `<head>` or `SystemJS`.
+        Add the necessary externs to `closure.externs.js`
 
 
 
 ### How do I load a library in index.html?
 
-If a library must be loaded prior to bootstrap, add the folder name in `ngr.config.js` to have it copied into `build/lib` during the build. It is optimal to only include the library files you need for production, not entire folders.
+If a library must be loaded prior to bootstrap, add the folder name in `ngr.config.js` to have it copied into `dist` directory during the build.
 
-Add the script in the `<head>` or you can include third party dependencies with `SystemJS` instead of the `<head>`.
+Add the script in the `<head>` or you can include third party dependencies with `SystemJS`.
 
 ```
 <script>
@@ -231,11 +232,13 @@ Add the script in the `<head>` or you can include third party dependencies with 
 </script>
 ```
 
+For production, `ngr` will concatenante library packages into `vendor.js`.
+
 
 ### How do I configure SystemJS for dev for jit builds?
 
 
-You must configure `system.config.js` in order to inject third party libaries for development. Just map each request for a library to the umd bundle for the library. The build places wach library in the `build/lib` folder. SystemJS needs to know where the library is located in the `build/lib` folder.
+You must configure `system.config.js` in order to inject third party libaries for development. Map each request for a library script to the umd bundle for the library. The build places each library in the `dist/path/to/lib` folder. SystemJS needs to know where the library is located in the `dist/path/to/lib` folder.
 
 ```
    map: {
@@ -255,53 +258,68 @@ You must configure `system.config.js` in order to inject third party libaries fo
 ```
 
 ```
-module.exports = {
-    lib: {
-        dev: [
-          'core-js/client/shim.min.js',
-          'core-js/client/shim.min.js.map',
-          'systemjs/dist/system.js',
-          'zone.js/dist/zone.js',
-          'reflect-metadata/Reflect.js',
-          'reflect-metadata/Reflect.js.map',
-          'tslib/tslib.js',
-          '@angular',
-          'rxjs'
-        ],
-        prod: [
-          'core-js/client/shim.min.js',
-          'core-js/client/shim.min.js.map',
-          'systemjs/dist/system.js',
-          'zone.js/dist/zone.js'
-        ],
-        src: './node_modules',
-        dist: './build/lib'
-    },
+lib: {
+    dev: [
+        'core-js/client/shim.min.js',
+        'core-js/client/shim.min.js.map',
+        'zone.js/dist/zone.min.js',
+        'web-animations-js/web-animations.min.js',
+        'web-animations-js/web-animations.min.js.map',
+        'ie9-oninput-polyfill/ie9-oninput-polyfill.js',
+        'angular-polyfills/dist/blob.js',
+        'angular-polyfills/dist/classList.js',
+        'angular-polyfills/dist/formdata.js',
+        'angular-polyfills/dist/intl.js',
+        'angular-polyfills/dist/typedarray.js',
+        'console-polyfill/index.js',
+        'systemjs/dist/system.js',
+        'systemjs/dist/system.js.map',
+        'reflect-metadata/Reflect.js',
+        'reflect-metadata/Reflect.js.map',
+        'tslib/tslib.js',
+        '@angular',
+        'rxjs'
+    ],
+    prod: [
+        'core-js/client/shim.min.js',
+        'zone.js/dist/zone.min.js',
+        'web-animations-js/web-animations.min.js',
+        'ie9-oninput-polyfill/ie9-oninput-polyfill.js',
+        'angular-polyfills/dist/blob.js',
+        'angular-polyfills/dist/classList.js',
+        'angular-polyfills/dist/formdata.js',
+        'angular-polyfills/dist/intl.js',
+        'angular-polyfills/dist/typedarray.js',
+        'console-polyfill/index.js',
+        'systemjs/dist/system.js'
+    ],
+    src: 'node_modules',
+    dist: 'dist/path/to/lib'
+}
 ```
 
 
 #### How do I import libraries the most optimal way for treeshaking?
 
-It is a best practice to tree shake and bundle third party libraries for production, however this process only works if the third party library is packaged with a module pattern such as ES2015 modules.
+It is a best practice to treeshake and bundle third party libraries for production, however this process only works if the third party library is packaged with a module pattern such as ES2015 modules.
 
 It is NOT recommended to import an entire library that is treeshakable like so:
 
 `import * from 'rxjs';`
 
-While you could do this, it is a best practice to only import the methods of the library your app requires. This will signifcantly shrink the size of the bundle Closure Compiler creates.
+While you could do this, it is a best practice to only import the methods of the library your app requires. This will significantly shrink the size of the production bundle.
 
 ```
 import { map } from 'rxjs/operators/map';
 
 ```
 
-Closure Compiler cannot handle libraries that import ES2015 modules with `*`.
-
+It should be noted Closure Compiler relies on named ES2015 modules and cannot handle libraries that import with `*`. If you want a third party library to be compatible with closure compiler, it is recommended to contribute named imports and exports to the open source project.
 
 
 ### How do I provide typings for external libraries?
 
-You may also need to inject `typings` for `ngc` to properly inject dependencies during AOT compilation.
+Type definitions are typically packaged with the `@types` scope. Install type definitions for third party libraries with npm and list them in the tsconfig.json file in the types Array.
 
 ```
 "compilerOptions": {
@@ -313,25 +331,13 @@ You may also need to inject `typings` for `ngc` to properly inject dependencies 
 ```
 
 
-### Editing index.html
-
-In the development build, `ngr` copies each dependency from `node_modules` into `/build/lib` (or wherever you specify in `ngr.config.js`). You can then reference the library in `src/public/index.html` like so:
-
-```
-    <script src="/lib/core-js/client/shim.min.js"></script>
-    <script src="/lib/zone.js/dist/zone.js"></script>
-    <!-- build:remove:prod -->
-      <script src="/lib/reflect-metadata/Reflect.js"></script>
-    <!-- /build -->
-```
-
-For production, `ngr` will concatenante library packages into `vendor.js`.
 
 #### htmlprocessor
 
 `ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build. For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor);
 
 The typical Angular dependencies are already included in the `<head>` tag in `index.html`.
+
 
 
 ### How do I update my project to the latest CLI?
@@ -345,7 +351,7 @@ The typical Angular dependencies are already included in the `<head>` tag in `in
 
 ### How do I deploy?
 
-The build command has an optional `--deploy` flag. All cli arguments pass through to build hooks.
+The build command has an optional `--deploy` flag.
 
 Use the post build hook in ngr.config.json to deploy a build. The following example is for a library, but you could use a similar hook for a production build.
 
@@ -353,7 +359,7 @@ Below is an example of copying the dist folder to a sibling directory that also 
 
 ```
 
-    buildHooks: {
+    hooks: {
         lib: {
             post: (args) => {
                 cp('-R', './dist/.', '../'+folderName);

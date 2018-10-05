@@ -1,6 +1,6 @@
 {
   "name": "angular-rollup",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0-rc.3",
   "description": "cli for building angular",
   "main": "index.js",
   "scripts": {
