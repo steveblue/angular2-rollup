@@ -54,9 +54,7 @@ class ProdBuild extends Build {
       });
 
       const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
-      // console.log(await sass);
       const postcss = await postcssBuilder.batch(sass);
-      //const copycss = await postcssBuilder.copyToNgFactory(postcss);
 
       const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.env + '.json'));
       const buildOptimize = await ls(path.normalize('out-tsc/**/*.component.js')).forEach(function (file) {

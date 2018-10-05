@@ -37,11 +37,11 @@ class LibBuild extends Build {
         // TODO: figure out best way to abstract styling tasks for the builds, should be able to support LESS, Stylus, etc.
         const sassBuilder = new SassBuilder({ dist: this.libConfig.dist, sourceMap: false });
         const postcssBuilder = new PostCSSBuilder({ dist: this.libConfig.dist, sourceMap: false });
+        const styles = config.projects[config.project].architect.build.options.styles;
 
-        if (ls(path.normalize(this.libConfig.src + '/**/*.scss')).length > 0) {
+        if (ls(path.normalize('tmp/**/*.scss')).length > 0) {
 
-            const sassFileList = ls(path.normalize(this.libConfig.src + '/**/*.scss'));
-
+            const sassFileList = ls(path.normalize('tmp/**/*.scss'));
             (async () => {
                 const sass = await sassBuilder.batch(sassFileList);
                 const postcss = await postcssBuilder.batch(sass);
@@ -49,9 +49,9 @@ class LibBuild extends Build {
             })();
 
         }
-        else if (ls(path.normalize(this.libConfig.src + '/**/*.css')).length > 0) {
+        else if (ls(path.normalize('tmp/**/*.css')).length > 0) {
 
-            const cssFileList = ls(path.normalize(this.libConfig.src + '/**/*.css'));
+            const cssFileList = ls(path.normalize('tmp/**/*.css'));
 
             (async () => {
                 const postcss = await postcssBuilder.batch(cssFileList);
@@ -67,34 +67,15 @@ class LibBuild extends Build {
 
         // process global styles
 
-        if (fs.existsSync(path.normalize(config.src + '/style'))) {
+        // if (styles.length > 0) {
+        //     const globalFiles = styles.map((stylePath) => {
+        //       return sassBuilder.file(stylePath);
+        //     });
 
-            if (ls(path.normalize(config.src + '/style/*.scss')).length > 0) {
-
-                (async () => {
-                    const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/style/*.scss')));
-                    const postcss = await postcssBuilder.batch(sass);
-                })();
-
-            }
-            else if (ls(path.normalize(config.src + '/style/*.css')).length > 0) {
-                const globalCSSFileList = ls(path.normalize(config.src + '/**/*.css'));
-                postcssBuilder.batch(globalCSSFileList);
-            }
-        }
-
-        if (config.projects[config.project].architect.build.options.styles.length > 0) {
-
-            let stylePaths = config.projects[config.project].architect.build.options.styles.map((scssPath) => {
-                return path.dirname(scssPath);
-            }).forEach((scssPath) => {
-                (async () => {
-                    const sass = await sassBuilder.batch(ls(path.normalize(scssPath + '/**/*.scss')));
-                    const postcss = await postcssBuilder.batch(sass);
-                })();
-            })
-
-        }
+        //     Promise.all(globalFiles).then((css) => {
+        //         postcssBuilder.batch(css);
+        //     });
+        // }
 
     }
 

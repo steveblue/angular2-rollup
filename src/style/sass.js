@@ -47,6 +47,7 @@ class Sass {
   }
 
   file(filePath) {
+
     let env;
 
     if (cli.env === 'jit') {
@@ -55,14 +56,8 @@ class Sass {
       env = cli.env;
     }
 
-    // if (!fs.existsSync('out-css')) {
-    //   mkdir('-p', 'out-css');
-    // }
-
     const srcPath = util.getFilePath(filePath);
     const filename = util.getFileName(filePath);
-
-
     const styles = config.projects[config.project].architect.build.options.styles;
     const globalBaseNames = styles.map((stylePath) => {
       return path.dirname(stylePath);
@@ -77,7 +72,6 @@ class Sass {
 
       globalBaseNames.forEach((baseName) => {
         if (outFile.includes(config.src)) {
-          // console.log(config.src, baseName, path.normalize(outFile.replace(config.src, this.sassConfig.dist)));
           outFile = path.normalize(outFile.replace(config.src, this.sassConfig.dist));
         }
       })
@@ -106,12 +100,18 @@ class Sass {
       );
     }
 
-    // TODO: figure out best way to whitelist builds here probably from config
+    // TODO: figure out better way to transform paths based on needs
 
-    if (cli.program.build === 'lib' || cli.program.build === 'prod' &&
-      isGlobal === false) {
+    if (cli.program.build === 'prod' &&
+        isGlobal === false) {
       outFilePath = path.join('out-tsc', outFilePath);
       outFile = path.join('out-tsc', outFile);
+    }
+
+    if (cli.program.build === 'lib' &&
+        isGlobal === true) {
+      outFilePath = path.join(this.sassConfig.dist, outFilePath.replace('src/', '').replace('src\\', ''));
+      outFile = path.join(outFilePath, path.basename(outFile));
     }
 
 

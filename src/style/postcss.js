@@ -94,27 +94,6 @@ class PostCSS {
 
     }
 
-    copyToNgFactory(files) {
-
-        return new Promise((res) => {
-            try {
-                let copiedFiles = files.filter((file) => {
-                    if (!file.includes('style/')) {
-                        return file;
-                    }
-                }).map((file) => {
-                    cp(file, file.replace('out-css', 'out-tsc'));
-                    return file.replace('out-css', 'out-tsc');
-                });
-                res(copiedFiles);
-            }
-            catch (err) {
-                log.error(err);
-            }
-        });
-
-    }
-
 }
 
 
