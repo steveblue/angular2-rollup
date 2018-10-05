@@ -1,7 +1,5 @@
 ## 2.0.0-rc.3
 
-This release is intended to be the final release candidate of 2.0.0. 
-
 - BREAKING CHANGE ngr.config.js must be updated to latest schema to support multiple projects in the same build
 - NEW projects in ngr.config.js mirrors @angular/cli handling of multiple projects
 - NEW cli command for library build allows user to leave out --config cli argument
@@ -14,7 +12,11 @@ This release is intended to be the final release candidate of 2.0.0.
 - FIXED issue that prevented dev build from displaying stats at end
 - UPDATE package to support >8.0.0 <10.0.0
 
-NOTE: This version contains breaking changes due to the new addition of projects in `ngr.config.js`. If you wish to update from the develop branch just copy the projects from angular.json to ngr.config.json.
+NOTE: This version contains breaking changes due to the new addition of projects in `ngr.config.js`.
+
+To migrate an existing src directory:
+
+`ngr new my-new-app --src /path/to/old/src`
 
 -------------------------------------------------------------------------------------------------------------
 
