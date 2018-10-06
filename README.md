@@ -33,7 +33,7 @@ CLI for building Angular with Rollup, Closure Compiler and Webpack
     * [Hooks](#buildhooks)
     * [Config](#buildconfig)
     * [Server](#server)
-    * [Library Build](#library-build)
+    * [Libraries](#library)
     * [Code Generation, Testing, and i18n](#testing)
 
 * [FAQ](#faq)
@@ -161,7 +161,7 @@ Change the host and/or port in `/config/server.config.dev.js` if needed. This co
 
 ```
 
-## Library Build
+## Libraries
 
 `ngr` provides a build for developing Angular libraries that conforms to the Angular Package Format.
 
@@ -170,17 +170,17 @@ Jason Aden gave a presentation about Angular Package Format at ng-conf 2017. [Pa
 
 ### Generate A Library Package
 
-Generate library packages with `ngr new lib my-lib-name`.
+Generate library packages with `ngr generate lib my-lib-name`.
 
 This will generate a library package in the current folder with the necessary configuration set in `ngr.config.js`.
 
 
-### Developing The Library
+### Tips For Developing A Library
 
 - Keep your code strictly typed.
 - Do not create monolithic `@NgModule`. Separate modules by discrete functionality. This allows the library to be treeshaken.
-- In each module export the necessary components, directives, services, etc.
-- Update the index.ts with exports for each module.
+- In each `module.ts` `export` public components, directives, services, etc.
+- Update the library index.ts with `export` for each module.
 
 ### Build Library
 
@@ -189,9 +189,11 @@ After you have generated some components for the library, use `ngr build lib` to
 `ngr build lib my-lib-name`
 
 
-## Code Generation, Testing, and i18n
+## Use `@angular/cli` Code Generation, Testing, and i18n
 
-All of this tooling uses the methods employed by `@angular/cli`. Use `ng test` and `ng e2e`.
+`ng generate` works in `angular-rollup`!
+
+Use `ng test` and `ng e2e` for unit and end to end tests, respectively.
 
 
 # FAQ
@@ -232,13 +234,50 @@ Add the script in the `<head>` or you can include third party dependencies with 
 </script>
 ```
 
-For production, `ngr` will concatenante library packages into `vendor.js`.
 
+For production, `ngr` will concatenante library packages into `vendor.js`.
+For development, all libarary files are copied to the `dist` folder.
+
+Vendor files are configured in `ngr.config.js` like in this example:
+
+```
+lib: {
+    dev: [
+        'core-js/client/shim.min.js',
+        'core-js/client/shim.min.js.map',
+        'zone.js/dist/zone.min.js',
+        'systemjs/dist/system.js',
+        'systemjs/dist/system.js.map',
+        'reflect-metadata/Reflect.js',
+        'reflect-metadata/Reflect.js.map',
+        'tslib/tslib.js',
+        '@angular',
+        'rxjs'
+    ],
+    prod: [
+        'core-js/client/shim.min.js',
+        'zone.js/dist/zone.min.js',
+        'systemjs/dist/system.js'
+    ],
+    src: 'node_modules',
+    dist: 'dist/path/to/lib'
+}
+```
+
+
+### Why Are There 2 index.html?
+
+`angular-rollup` uses `htmlprocessor` to manipulate `index.html` while webpack works it's magic with the `index.html` provided by `@angular/cli`.
+
+`src/index.html` is used by `@angular/cli` and `webpack`.
+`src/public/index.html` is used by `angular-rollup`.
 
 ### How do I configure SystemJS for dev for jit builds?
 
+You must configure `system.config.js` in order to inject third party libaries for development. All JavaScript in the development build is compiled into commonjs modules, however the source code is pointing to files packaged with ES2105 modules. In `system.config.js` map each request for a library script to the umd bundle for the library. The build places each library in the `dist/path/to/project/lib` folder. SystemJS needs to know where the library is located in the `dist/path/to/project/lib` folder.
 
-You must configure `system.config.js` in order to inject third party libaries for development. Map each request for a library script to the umd bundle for the library. The build places each library in the `dist/path/to/lib` folder. SystemJS needs to know where the library is located in the `dist/path/to/lib` folder.
+
+Here is an example of mapping requests for library bundles to umd bundles in `system.config.js`.
 
 ```
    map: {
@@ -257,62 +296,15 @@ You must configure `system.config.js` in order to inject third party libaries fo
     }
 ```
 
-```
-lib: {
-    dev: [
-        'core-js/client/shim.min.js',
-        'core-js/client/shim.min.js.map',
-        'zone.js/dist/zone.min.js',
-        'web-animations-js/web-animations.min.js',
-        'web-animations-js/web-animations.min.js.map',
-        'ie9-oninput-polyfill/ie9-oninput-polyfill.js',
-        'angular-polyfills/dist/blob.js',
-        'angular-polyfills/dist/classList.js',
-        'angular-polyfills/dist/formdata.js',
-        'angular-polyfills/dist/intl.js',
-        'angular-polyfills/dist/typedarray.js',
-        'console-polyfill/index.js',
-        'systemjs/dist/system.js',
-        'systemjs/dist/system.js.map',
-        'reflect-metadata/Reflect.js',
-        'reflect-metadata/Reflect.js.map',
-        'tslib/tslib.js',
-        '@angular',
-        'rxjs'
-    ],
-    prod: [
-        'core-js/client/shim.min.js',
-        'zone.js/dist/zone.min.js',
-        'web-animations-js/web-animations.min.js',
-        'ie9-oninput-polyfill/ie9-oninput-polyfill.js',
-        'angular-polyfills/dist/blob.js',
-        'angular-polyfills/dist/classList.js',
-        'angular-polyfills/dist/formdata.js',
-        'angular-polyfills/dist/intl.js',
-        'angular-polyfills/dist/typedarray.js',
-        'console-polyfill/index.js',
-        'systemjs/dist/system.js'
-    ],
-    src: 'node_modules',
-    dist: 'dist/path/to/lib'
-}
-```
-
 
 #### How do I import libraries the most optimal way for treeshaking?
 
 It is a best practice to treeshake and bundle third party libraries for production, however this process only works if the third party library is packaged with a module pattern such as ES2015 modules.
 
-It is NOT recommended to import an entire library that is treeshakable like so:
+It is NOT recommended to import an entire library that is treeshakable.
 
-`import * from 'rxjs';`
-
-While you could do this, it is a best practice to only import the methods of the library your app requires. This will significantly shrink the size of the production bundle.
-
-```
-import { map } from 'rxjs/operators/map';
-
-```
+DON'T DO THIS : `import * from 'rxjs';`
+DO THIS : `import { Observable, Observer } from 'rxjs';`
 
 It should be noted Closure Compiler relies on named ES2015 modules and cannot handle libraries that import with `*`. If you want a third party library to be compatible with closure compiler, it is recommended to contribute named imports and exports to the open source project.
 
@@ -332,12 +324,11 @@ Type definitions are typically packaged with the `@types` scope. Install type de
 
 
 
-#### htmlprocessor
+#### How is the index.html being formatted by the different builds?
 
 `ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build. For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor);
 
 The typical Angular dependencies are already included in the `<head>` tag in `index.html`.
-
 
 
 ### How do I update my project to the latest CLI?
