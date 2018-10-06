@@ -33,7 +33,7 @@ class ResolveAngular {
 
 
 export default {
-    input: 'main.js',
+    input: 'out-tsc/src/main.js',
     treeshake: true,
     output: {
         file: 'dist/{{projectName}}/bundle.es2015.js',
