@@ -55,6 +55,7 @@ class Scaffold {
 
                     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/root'), this.path, { silent: true });
 
+
                     ls(path.normalize(config.cliRoot + '/src/scaffold/root')).forEach((file) => {
                         console.log(this.formatCreateMsg('create ' + path.join(this.cliName, file) + ' (' + fs.statSync(path.join(config.cliRoot, 'src', 'scaffold', 'root', file)).size + ' bytes)'));
                     });
@@ -63,8 +64,20 @@ class Scaffold {
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'rollup.config.js'));
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'closure.rollup.conf'));
 
+                    // replace project name in README
+                    sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'README.md'));
+
                     // find and replace cli name in ngr.config.js
                     sed('-i', /{{projectName}}/g, this.cliName, path.join(this.cliName, 'ngr.config.js'));
+
+
+                    if (cli.program.prettier) {
+                        cp(path.normalize(config.cliRoot + '/src/scaffold/pretty/.prettierrc'), this.path);
+                    }
+
+                    if (cli.program.ssl) {
+                        cp(path.normalize(config.cliRoot + '/src/scaffold/ssl/server.js'), path.join(this.path, 'backend'));
+                    }
 
                     this.editPackage();
                     // this.addProjectToConfig(this.cliName, '', this.path);
@@ -105,6 +118,25 @@ class Scaffold {
                         projectPackage.dependencies = this.sortObject(Object.assign(cliPackage.dependencies, projectPackage.dependencies));
                         projectPackage.devDependencies = this.sortObject(Object.assign(cliPackage.devDependencies, projectPackage.devDependencies));
                         projectPackage.scripts = this.sortObject(Object.assign(cliPackage.scripts, projectPackage.scripts));
+
+                        if (cli.program.prettier) {
+
+                            let prettierDependencies = {
+                                "prettier": "^1.14.2",
+                                "pretty-quick": "^1.6.0",
+                                "npm-run-all": "^4.1.3",
+                                "husky": "^0.14.3"
+                            };
+
+                            let prettierScripts = {
+                                "format:fix": "pretty-quick --staged",
+                                "precommit": "run-s format:fix lint"
+                            };
+
+                            projectPackage.dependencies = this.sortObject(Object.assign(prettierDependencies, projectPackage.dependencies));
+                            projectPackage.scripts = this.sortObject(Object.assign(prettierScripts, projectPackage.scripts));
+
+                        }
 
                         fs.writeFileSync(path.join(this.path, 'package.json'), JSON.stringify(projectPackage, null, 4));
 

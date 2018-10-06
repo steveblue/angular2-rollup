@@ -1,6 +1,10 @@
 ## 2.0.0-rc.4
 
-- DEPRECATED main.ts, use @angular/cli supplied main.ts instead
+- NEW `--prettier` argument to scaffold a new app with prettier and installs a precommit hook
+- NEW `--ssl` argument to scaffold a new app with https express server
+- DEPRECATED main.ts, use @angular/cli supplied src/main.ts instead
+
+NOTE: Running the https express server requires a public key and certificate. Generate `key.pem` and `cert.pem` and save in the `backend` directory.
 
 -------------------------------------------------------------------------------------------------------------
 

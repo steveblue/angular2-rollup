@@ -21,6 +21,8 @@ program
   .option('--src [string]', 'specify a path to an existing src folder')
   .option('--skip-install [bool]', 'prevents install during scaffold')
   .option('--yarn [bool]', 'use yarn instead of npm to install')
+  .option('--prettier [bool]', 'scaffold a new workspace with prettier installed')
+  .option('--ssl [bool]', 'scaffold a new workspace with https express server')
   .option('build [env]', 'build the application')
   .option('--env [string]', 'use that particular environment.ts during the build, just like @angular/cli')
   .option('--clean [bool]', 'destroy the build folder prior to compilation, default for prod')

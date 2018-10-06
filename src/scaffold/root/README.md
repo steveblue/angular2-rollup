@@ -1,19 +1,3 @@
-# angular-rollup
+# {{projectName}}
 
-Another cli for building Angular. `angular-rollup` works seamlessly with `@angular/cli` to provide additional builds with Rollup and/or Closure Compiler.
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+This project was built with [angular-rollup](https://www.npmjs.com/package/angular-rollup).

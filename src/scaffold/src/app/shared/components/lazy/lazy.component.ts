@@ -1,9 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
-
 @Component({
-  selector: 'cmp-prefix1-app-lazy',
+  selector: 'app-lazy',
   templateUrl: 'lazy.component.html',
   styleUrls: ['lazy.component.css'],
   animations: [
