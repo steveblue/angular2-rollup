@@ -14,17 +14,27 @@ const cli = require('./../../cli.config.json');
 
 class LibBuild extends Build {
 
-    constructor() {
+    constructor(libName) {
         super();
 
+        this.hasInit = false;
+        this.hasPost = false;
+
+
         if (!cli.program.config) {
-            this.libConfigPath = path.join(config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(cli.program.build) + 1]].root,
-                config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(cli.program.build) + 1]].configFile);
+            if (!libName) {
+                libName = cli.program.build;
+                const libConfig = config.projects[cli.program.rawArgs[cli.program.rawArgs.indexOf(libName) + 1]];
+                this.libConfigPath = path.join(libConfig.root, libConfig.configFile);
+            } else {
+                const libConfig = config.projects[libName];
+                this.libConfigPath = path.join(libConfig.root, libConfig.configFile);
+            }
+
         } else {
             this.libConfigPath = cli.program.config.trim();
         }
-        this.hasInit = false;
-        this.hasPost = false;
+
     }
 
     init() {
@@ -203,6 +213,7 @@ class LibBuild extends Build {
 
         this.fetchLibConfig().then((res) => {
 
+            rm('-rf', 'out-tsc');
             rm('-rf', this.libConfig.dist);
             mkdir('-p', this.libConfig.dist);
 
@@ -225,6 +236,12 @@ class LibBuild extends Build {
                 this.build();
 
             }
+
+            this.emitter.emit('hook', {
+                payload: {
+                  step: 'pre'
+                }
+             });
 
         }).catch((err) => {
             log.warn(err); // TODO: exit process
@@ -252,6 +269,12 @@ class LibBuild extends Build {
 
                 log.destroy();
                 log.buildStats(this.startTime, this.libConfig.dist);
+
+                this.emitter.emit('hook',{
+                    payload: {
+                      step: 'post'
+                    }
+                 });
 
             });
 

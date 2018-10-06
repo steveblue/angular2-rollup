@@ -78,6 +78,12 @@ class JitBuild extends Build {
 
       }
 
+      this.emitter.emit('hook',{
+        payload: {
+          step: 'pre'
+        }
+      });
+
     }
 
     post() {
@@ -117,6 +123,12 @@ class JitBuild extends Build {
       if (util.hasArg('serve')) {
         util.serve(cli.program.watch);
       }
+
+      this.emitter.emit('hook',{
+        payload: {
+          step: 'post'
+        }
+      });
 
 
     }

@@ -136,6 +136,12 @@ class ProdBuild extends Build {
       build();
     }
 
+    this.emitter.emit('hook',{
+      payload: {
+        step: 'pre'
+      }
+    });
+
   }
 
   buildRxjsFESM() {
@@ -207,7 +213,11 @@ class ProdBuild extends Build {
       util.serve(cli.program.watch);
     }
 
-
+    this.emitter.emit('hook',{
+      payload: {
+        step: 'post'
+      }
+    });
   }
 
 }

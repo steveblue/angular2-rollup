@@ -418,7 +418,7 @@ class Log {
         this.alert(colors.dim('Date: ')+ new Date().toISOString());
         this.alert(colors.dim('Time: ')+colors.white(duration.asMilliseconds() + 'ms'));
         this.alert(colors.dim('Environment: ')+ colors.white(cli.env));
-        this.alert(colors.dim('Location: ')+ colors.white(path.join(__dirname,config.build)));
+        this.alert(colors.dim('Location: ')+ colors.white(path.join(config.build)));
 
         ls(config.build).forEach((file) => {
             if (fs.lstatSync(path.join(config.build,file)).isFile()) {

@@ -1,9 +1,12 @@
+const EventEmitter = require('events');
 const moment = require('moment');
 const colors = require('colors');
 const log = require('./../log.js');
 const cli = require('./../../cli.config.json');
 const config = require('./../config');
 const path = require('path');
+
+class BuildEmitter extends EventEmitter {}
 
 class Build {
   constructor() {
@@ -13,6 +16,8 @@ class Build {
     }
     this.outputPath = config.projects[config.project].architect.build.options.outputPath;
     this.startTime = moment(new Date());
+    this.emitter = new BuildEmitter();
+
     if (!cli.program.webpack) {
       const args = cli.program.rawArgs.filter((str) => {
         return !str.includes('node');

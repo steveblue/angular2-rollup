@@ -87,6 +87,12 @@ class DevBuild extends Build {
     } else {
       build();
     }
+
+    this.emitter.emit('hook',{
+      payload: {
+        step: 'pre'
+      }
+    });
   }
 
   post() {
@@ -146,6 +152,11 @@ class DevBuild extends Build {
     if (util.hasArg('serve')) {
       util.serve(cli.program.watch);
     }
+    this.emitter.emit('hook',{
+      payload: {
+        step: 'post'
+      }
+    });
   }
 }
 

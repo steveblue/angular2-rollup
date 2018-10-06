@@ -1,3 +1,10 @@
+## 2.0.0-rc.5
+
+- NEW `--all` argument for `ngr build lib` builds all libraries
+
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 2.0.0-rc.4
 
 - NEW `--prettier` argument to scaffold a new app with prettier and installs a precommit hook
