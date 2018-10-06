@@ -51,7 +51,6 @@ class DevBuild extends Build {
         (async () => {
           const main = await aotBuilder.compileMain().then(res => {
             log.message('compiled main.js');
-            // log.process('@angular/compiler');
           });
         })();
       }
@@ -91,18 +90,34 @@ class DevBuild extends Build {
   }
 
   post() {
+    if (!fs.existsSync(path.join(this.outputPath, 'environments'))) {
+      mkdir('-p', path.join(this.outputPath, 'environments'));
+    }
     if (cli.program.env) {
       cp(
         path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js'),
-        path.join(this.outputPath, 'src', 'environments', 'environment.js')
+        path.join(this.outputPath, 'environments', 'environment.js')
       );
       cp(
         path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js.map'),
-        path.join(this.outputPath, 'src', 'environments', 'environment.js.map')
+        path.join(this.outputPath, 'environments', 'environment.js.map')
       );
       cp(
         path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.ngsummary.json'),
-        path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json')
+        path.join(this.outputPath, 'environments', 'environment.ngsummary.json')
+      );
+    } else {
+      cp(
+        path.join(this.outputPath, 'src', 'environments', 'environment.js'),
+        path.join(this.outputPath, 'environments', 'environment.js')
+      );
+      cp(
+        path.join(this.outputPath, 'src', 'environments', 'environment.js.map'),
+        path.join(this.outputPath, 'environments', 'environment.js.map')
+      );
+      cp(
+        path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'),
+        path.join(this.outputPath, 'environments', 'environment.ngsummary.json')
       );
     }
 

@@ -46,17 +46,21 @@ class ProdBuild extends Build {
     })();
 
     (async () => {
-      const copyMain = await cp('main.ts', 'main.js');
+      // const copyMain = await cp('main.ts', 'main.js');
       const copy = await cp('-R', path.normalize(config.src + '/'), path.normalize('./out-tsc'));
-      // remove moduleId prior to ngc build. TODO: look for another method.
-      const stripModuleId = await ls(path.normalize('out-tsc/**/*.ts')).forEach(function (file) {
-        sed('-i', /^.*moduleId: module.id,.*$/, '', file);
-      });
+      // // remove moduleId prior to ngc build. TODO: look for another method.
+      // const stripModuleId = await ls(path.normalize('out-tsc/**/*.ts')).forEach(function (file) {
+      //   sed('-i', /^.*moduleId: module.id,.*$/, '', file);
+      // });
 
       const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
       const postcss = await postcssBuilder.batch(sass);
 
+
+
       const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.env + '.json'));
+      const main = await aotBuilder.compileMain();
+      await log.message('copied main.ts');
       const buildOptimize = await ls(path.normalize('out-tsc/**/*.component.js')).forEach(function (file) {
         let content = fs.readFileSync(file, 'utf-8');
         fs.writeFileSync(file, buildOptimizer({ content: content }).content);
@@ -71,6 +75,9 @@ class ProdBuild extends Build {
         const prepRxjs = await this.buildRxjsFESM();
         const bundle = await closureBuilder.bundle();
       }
+
+
+
 
       this.post();
 

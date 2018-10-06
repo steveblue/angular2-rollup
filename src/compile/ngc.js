@@ -114,29 +114,45 @@ class AOTBuilder {
     compileMain() {
 
         return new Promise((res) => {
-
-            const outFile = path.join(config.projectRoot, config.build, 'main.ts');
+            let inFile = path.join(config.src, 'main.ts');
+            let outFile = path.join(config.projectRoot, config.build, 'main.ts');
+            let modulePattern = 'commonjs';
             const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
 
-            fs.readFile(path.join(config.projectRoot, 'main.ts'), 'utf8', (err, contents) => {
+
+            if (cli.env === 'prod') {
+                outFile = path.join('out-tsc/src/main.ts');
+                modulePattern = 'ES2015';
+            }
+
+            fs.readFile(inFile,  'utf8', (err, contents) => {
                 if (!err) {
-                    contents = contents.replace("./out-tsc/" + config.src + "/app/app.module.ngfactory", config.src + "/app/app.module.ngfactory");
-                    contents = contents.replace("import { enableProdMode } from '@angular/core';", '');
-                    contents = contents.replace("enableProdMode();", "");
+
+                    contents = contents.replace(/platformBrowserDynamic/g, 'platformBrowser');
+                    contents = contents.replace(/platform-browser-dynamic/g, 'platform-browser');
+                    contents = contents.replace(/bootstrapModule/g, 'bootstrapModuleFactory');
+                    contents = contents.replace(/AppModule/g, 'AppModuleNgFactory');
+                    if (cli.env === 'dev') {
+                        contents = contents.replace('./app/app.module', './src/app/app.module.ngfactory');
+                    } if (cli.env === 'prod') {
+                        contents = contents.replace('./app/app.module', './app/app.module.ngfactory');
+                    }
+
                     fs.writeFile(outFile, contents, (err) => {
                         if (!err) {
 
-                        let transpile = exec(`${tscPath} ${outFile} --target es5 --module commonjs --emitDecoratorMetadata true --experimentalDecorators true --sourceMap true --moduleResolution node --typeRoots node --lib dom,es2017`,
+                        let transpile = exec(`${tscPath} ${outFile} --target es5 --module ${modulePattern} --emitDecoratorMetadata true --experimentalDecorators true --sourceMap true --moduleResolution node --typeRoots node --lib dom,es2017`,
                                             { silent: true },
                                             (error, stdout, stderr) => {
                                                 rm(outFile);
-                                                if(error.killed) {
+                                                if(error && error.killed) {
                                                   log.formatTSError(error);
                                                 } else {
                                                     res();
                                                 }
                                             });
-                        } else {
+                        }
+                        else {
                             rej(err);
                         }
                     });
