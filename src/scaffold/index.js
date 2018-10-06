@@ -177,7 +177,12 @@ class Scaffold {
                                 "outputPath": "dist/${projectName}",
                                 "styles": [
                                     "src/style/style.scss"
-                                ]
+                                ],
+                                "stylePreprocessorOptions": {
+                                    "includePaths": ["src/style"],
+                                    "outputStyle": "expanded",
+                                    "sourceComments": true
+                                }
                             }
                         }
                     }
