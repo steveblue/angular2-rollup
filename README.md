@@ -105,11 +105,11 @@ To build an application for production and serve it locally:
 
 ## Build Hooks
 
-Hooks are points in the build where you can inject custom functionality. Each build has a `pre` and `post` hook. All hooks except `post` require that you return a `Promise`. There is also a `watch` hook for the development build that takes two parameters: `dist` and `src`.
+Hooks are points in the build where you can inject custom functionality. Each build has a `pre` and `post` hook. All hooks except `post` require that you return a `Promise`. There is a `watch` hook for the development build that takes two parameters: `dist` and `src`. There is a `deploy` hook for the library build to run additional scripts for deployment.
 
 ```
     hooks: {
-        dev: {
+        prod: {
             pre: () => {
                 return new Promise((res, rej) => {
                     // do something
@@ -131,7 +131,7 @@ Config is shared with `angular.json` but for non Webpack builds the following fi
 
 | Script        | Description   |
 | ------------- |:-------------:|
-| ngr.config.js      | Configured project filepaths, build hooks |
+| ngr.config.js      | Configures project filepaths, build hooks |
 | postcss.config.js |  Configures postcss step in each build |
 | rollup.config.js |  Configures rollup when using `ngr build --rollup` |
 | closure.rollup.conf |  Configures Closure Compiler when using `ngr build --rollup`  |
@@ -265,12 +265,15 @@ lib: {
 ```
 
 
-### Why Are There 2 index.html?
+### Why are there 2 different index.html?
 
 `angular-rollup` uses `htmlprocessor` to manipulate `index.html` while webpack works it's magic with the `index.html` provided by `@angular/cli`.
 
 `src/index.html` is used by `@angular/cli` and `webpack`.
 `src/public/index.html` is used by `angular-rollup`.
+
+For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor); `src/public/index.html` is manipulated by htmlprocessor. `dev` and `prod` environment variables declared via inline comments include chunks of the `index.html` per environment.
+
 
 ### How do I configure SystemJS for dev for jit builds?
 
@@ -309,6 +312,7 @@ DO THIS : `import { Observable, Observer } from 'rxjs';`
 It should be noted Closure Compiler relies on named ES2015 modules and cannot handle libraries that import with `*`. If you want a third party library to be compatible with closure compiler, it is recommended to contribute named imports and exports to the open source project.
 
 
+
 ### How do I provide typings for external libraries?
 
 Type definitions are typically packaged with the `@types` scope. Install type definitions for third party libraries with npm and list them in the tsconfig.json file in the types Array.
@@ -321,14 +325,6 @@ Type definitions are typically packaged with the `@types` scope. Install type de
   ]
 }
 ```
-
-
-
-#### How is the index.html being formatted by the different builds?
-
-`ngr` uses `htmlprocessor` to only include the porttions of `index.html` the app requires for development and production. You can remove chucks of the file for each build. For more information about [htmlprocessor](https://www.npmjs.com/package/htmlprocessor);
-
-The typical Angular dependencies are already included in the `<head>` tag in `index.html`.
 
 
 ### How do I update my project to the latest CLI?
