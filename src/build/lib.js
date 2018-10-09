@@ -214,7 +214,7 @@ class LibBuild extends Build {
         this.fetchLibConfig().then((res) => {
 
             rm('-rf', 'out-tsc');
-            rm('-rf', this.libConfig.dist);
+            // rm('-rf', this.libConfig.dist);
             mkdir('-p', this.libConfig.dist);
 
             cp('-R', path.normalize(this.libConfig.src + '/') + '.', path.normalize('./tmp'));

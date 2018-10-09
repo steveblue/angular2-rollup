@@ -29,7 +29,6 @@ program
   .option('--watch [bool]', 'listen for changes in filesystem and rebuild')
   .option('--config [string]', 'path to configuration file for library build')
   .option('--deploy [bool]', 'call deploy build hook for library build')
-  .option('--all [bool]', 'generate all libraries in the same repo')
   .option('--verbose [bool]', 'log all messages in list format')
   .option('--closure [bool]', 'bundle and optimize with closure compiler (default)')
   .option('--rollup [bool]', 'bundle with rollup and optimize with closure compiler')
@@ -52,32 +51,8 @@ let cli = () => {
 
   if (program.build) {
     log.destroy();
-    if (program.all) {
-      let libs = [];
-      let libBuild = (libName) => {
-        const BuildScript = require('./src/build/lib.js');
-        const build = new BuildScript(libName);
-        build.emitter.on('hook', function (ev) {
-          if (ev.payload.step === 'post') {
-            if (libs[libs.indexOf(libName) + 1]) {
-              libBuild(libs[libs.indexOf(libName) + 1]);
-            }
-          }
-        });
-        build.init();
-      }
-      for (prop in config.projects) {
-        if (config.projects[prop].projectType === 'library') {
-          libs.push(prop);
-        }
-      }
-
-      libBuild(libs[0]);
-
-    } else {
-      const BuildScript = require('./src/build/' + program.build + '.js');
-      let build = new BuildScript().init();
-    }
+    const BuildScript = require('./src/build/' + program.build + '.js');
+    let build = new BuildScript().init();
   }
 
   if (program.new) {

@@ -103,7 +103,11 @@ class Util {
     }
 
     hasHook(step) {
-        return (config.projects[config.project].architect.build.hooks && config.projects[config.project].architect.build.hooks[cli.env] && config.projects[config.project].architect.build.hooks[cli.env][step]) ? true : false;
+        if (cli.build === 'lib') {
+            return (config.projects[config.project].architect.build.hooks && config.projects[config.project].architect.build.hooks[cli.env] && config.projects[config.project].architect.build.hooks[cli.env][step]) ? true : false;
+        } else {
+            return (config.projects[config.project].architect.build.hooks && config.projects[config.project].architect.build.hooks[cli.build] && config.projects[config.project].architect.build.hooks[cli.build][step]) ? true : false;
+        }
     }
 
     hasConfigProperty(prop, obj) {
