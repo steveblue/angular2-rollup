@@ -24,6 +24,7 @@ program
   .option('--ivy [bool]', 'start a new project with angular ivy')
   .option('--prettier [bool]', 'scaffold a new workspace with prettier installed')
   .option('--ssl [bool]', 'scaffold a new workspace with https express server')
+  .option('--angularVersion [string]', 'scaffold a new workspace with a specific version of angular')
   .option('build [env]', 'build the application')
   .option('--env [string]', 'use that particular environment.ts during the build, just like @angular/cli')
   .option('--clean [bool]', 'destroy the build folder prior to compilation, default for prod')

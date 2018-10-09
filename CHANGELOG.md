@@ -1,6 +1,7 @@
 ## 2.0.0-rc.6
 
-- NEW `--ivy` argument will scaffold with a minimal setup for angular ivy
+- NEW `--ivy` argument scaffolds a new app setup for angular ivy
+- UPDATE `--angularVersion` argument scaffolds app with a specific angular version
 - FIXED issue with sourcemaps when using `--env` in dev build
 
 -------------------------------------------------------------------------------------------------------------
