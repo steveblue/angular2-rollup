@@ -5,9 +5,7 @@ const spawn = require('child_process').spawn;
 const Build = require('./index.js');
 const SassBuilder = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
-const JITBuilder = require('./../compile/tsc.js');
 const AOTBuilder = require('./../compile/ngc.js');
-const UglifyBuilder = require('./../compile/uglify.js');
 const ClosureBuilder = require('./../bundle/closure.js');
 const RollupBuilder = require('./../bundle/rollup.js');
 const util = require('./../util.js');
@@ -34,12 +32,12 @@ class ProdBuild extends Build {
     const aotBuilder = new AOTBuilder();
     const closureBuilder = new ClosureBuilder();
     const rollupBuilder = new RollupBuilder();
-    const libCheck = config.projects[config.project].architect.build.options.lib && config.projects[config.project].architect.build.options.lib[cli.env];
+    const libCheck = config.projects[config.project].architect.build.options.lib && config.projects[config.project].architect.build.options.lib[cli.build];
 
     (async () => {
       const publicDir = await util.copyDir(path.normalize(config.src + '/public'), config.build);
       const template = await util.formatIndex(path.normalize(config.src + '/public/index.html'));
-      const vendor = await util.formatVendorScripts(libCheck ? config.projects[config.project].architect.build.options.lib[cli.env] : config.lib['prod'],
+      const vendor = await util.formatVendorScripts(libCheck ? config.projects[config.project].architect.build.options.lib[cli.build] : config.lib['prod'],
         libCheck ? config.projects[config.project].architect.build.options.lib.src : config.lib.src,
         libCheck ? config.build : config.build);
       const concatVendor = await util.concatVendorScripts(libCheck ? config.build : config.build);
@@ -58,7 +56,7 @@ class ProdBuild extends Build {
 
 
 
-      const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.env + '.json'));
+      const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.build + '.json'));
       const main = await aotBuilder.compileMain();
       await log.message('copied main.ts');
       const buildOptimize = await ls(path.normalize('out-tsc/**/*.component.js')).forEach(function (file) {
@@ -92,13 +90,11 @@ class ProdBuild extends Build {
 
       cp('-R', path.join('src', 'environments'), 'config');
 
-      if (cli.program.env) {
-        rm('-f', path.join('src', 'environments', 'environment.ts'));
-        if (cli.program.env === 'dev') {
-          cp(path.join('config', 'environments', 'environment.ts'), path.join('src', 'environments', 'environment.ts'));
-        } else {
-          cp(path.join('config', 'environments', 'environment.' + cli.program.env + '.ts'), path.join('src', 'environments', 'environment.ts'));
-        }
+      rm('-f', path.join('src', 'environments', 'environment.ts'));
+      if (cli.env === 'dev') {
+        cp(path.join('config', 'environments', 'environment.ts'), path.join('src', 'environments', 'environment.ts'));
+      } else {
+        cp(path.join('config', 'environments', 'environment.' + cli.env + '.ts'), path.join('src', 'environments', 'environment.ts'));
       }
       if (util.hasHook('pre')) {
 
@@ -136,7 +132,7 @@ class ProdBuild extends Build {
       build();
     }
 
-    this.emitter.emit('hook',{
+    this.emitter.emit('hook', {
       payload: {
         step: 'pre'
       }
@@ -213,7 +209,7 @@ class ProdBuild extends Build {
       util.serve(cli.program.watch);
     }
 
-    this.emitter.emit('hook',{
+    this.emitter.emit('hook', {
       payload: {
         step: 'post'
       }

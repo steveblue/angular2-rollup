@@ -103,13 +103,13 @@ class Sass {
     // TODO: figure out better way to transform paths based on needs
 
     if (cli.program.build === 'prod' &&
-        isGlobal === false) {
+      isGlobal === false) {
       outFilePath = path.join('out-tsc', outFilePath);
       outFile = path.join('out-tsc', outFile);
     }
 
     if (cli.program.build === 'lib' &&
-        isGlobal === true) {
+      isGlobal === true) {
       outFilePath = path.join(this.sassConfig.dist, outFilePath.replace('src/', '').replace('src\\', ''));
       outFile = path.join(outFilePath, path.basename(outFile));
     }

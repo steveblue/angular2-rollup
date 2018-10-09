@@ -53,26 +53,26 @@ let cli = () => {
   if (program.build) {
     log.destroy();
     if (program.all) {
-         let libs = [];
-         let libBuild = (libName) => {
-            const BuildScript = require('./src/build/lib.js');
-            const build = new BuildScript(libName);
-            build.emitter.on('hook', function(ev) {
-              if (ev.payload.step === 'post') {
-                if (libs[libs.indexOf(libName) + 1]) {
-                  libBuild(libs[libs.indexOf(libName) + 1]);
-                }
-              }
-            });
-            build.init();
-         }
-         for (prop in config.projects) {
-            if (config.projects[prop].projectType === 'library') {
-              libs.push(prop);
+      let libs = [];
+      let libBuild = (libName) => {
+        const BuildScript = require('./src/build/lib.js');
+        const build = new BuildScript(libName);
+        build.emitter.on('hook', function (ev) {
+          if (ev.payload.step === 'post') {
+            if (libs[libs.indexOf(libName) + 1]) {
+              libBuild(libs[libs.indexOf(libName) + 1]);
             }
-         }
+          }
+        });
+        build.init();
+      }
+      for (prop in config.projects) {
+        if (config.projects[prop].projectType === 'library') {
+          libs.push(prop);
+        }
+      }
 
-         libBuild(libs[0]);
+      libBuild(libs[0]);
 
     } else {
       const BuildScript = require('./src/build/' + program.build + '.js');
@@ -104,12 +104,14 @@ if (process.argv.indexOf('new') > -1) {
 
 
 const env = program.env ? program.env : (program.build === 'dev' ? 'dev' : 'prod');
+
 fs.writeFile(
   __dirname + '/cli.config.json',
   JSON.stringify(
     {
       env: env,
       program: program,
+      build: program.build,
       projectRoot: program.new ? path.join(processRoot, program.new) : processRoot,
     },
     null,

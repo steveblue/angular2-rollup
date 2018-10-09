@@ -5,7 +5,6 @@ const spawn = require('child_process').spawn;
 const Build = require('./index.js');
 const SassBuilder = require('./../style/sass.js');
 const PostCSSBuilder = require('./../style/postcss.js');
-const TSBuilder = require('./../compile/tsc.js');
 const AOTBuilder = require('./../compile/ngc.js');
 const Watcher = require('./../watch.js');
 const util = require('./../util.js');
@@ -28,11 +27,11 @@ class DevBuild extends Build {
     const aotBuilder = new AOTBuilder();
     const libCheck =
       config.projects[config.project].architect.build.options.lib &&
-      config.projects[config.project].architect.build.options.lib[cli.env];
+      config.projects[config.project].architect.build.options.lib[cli.build];
 
     (async () => {
       const lib = await util.copyLib(
-        libCheck ? config.projects[config.project].architect.build.options.lib[cli.env] : config.lib['dev'],
+        libCheck ? config.projects[config.project].architect.build.options.lib[cli.build] : config.lib['dev'],
         libCheck ? config.projects[config.project].architect.build.options.lib.src : config.lib.src,
         libCheck ? config.projects[config.project].architect.build.options.lib.dist : config.lib.dist
       );
@@ -49,17 +48,17 @@ class DevBuild extends Build {
       await log.message('styled components');
       const main = await aotBuilder.compileMain();
       await log.message('compiled main.js');
-      const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.env + '.json'));
+      const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.build + '.json'));
       this.post();
     })();
   }
 
   pre() {
     let build = () => {
-      //cp(path.normalize('config/postcss.' + cli.env + '.js'), 'postcss.config.js');
+      //cp(path.normalize('config/postcss.' + cli.build + '.js'), 'postcss.config.js');
 
       if (util.hasHook('pre')) {
-        config.projects[config.project].architect.build.hooks[cli.env].pre(process.argv).then(() => {
+        config.projects[config.project].architect.build.hooks[cli.build].pre(process.argv).then(() => {
           if (cli.program.webpack === true) {
             spawn('ng', ['serve'], { shell: true, stdio: 'inherit' });
           } else {
@@ -91,23 +90,13 @@ class DevBuild extends Build {
   }
 
   post() {
+
+
     if (!fs.existsSync(path.join(this.outputPath, 'environments'))) {
       mkdir('-p', path.join(this.outputPath, 'environments'));
     }
-    if (cli.program.env) {
-      cp(
-        path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js'),
-        path.join(this.outputPath, 'environments', 'environment.js')
-      );
-      cp(
-        path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.js.map'),
-        path.join(this.outputPath, 'environments', 'environment.js.map')
-      );
-      cp(
-        path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.program.env + '.ngsummary.json'),
-        path.join(this.outputPath, 'environments', 'environment.ngsummary.json')
-      );
-    } else {
+
+    if (cli.env === 'dev') {
       cp(
         path.join(this.outputPath, 'src', 'environments', 'environment.js'),
         path.join(this.outputPath, 'environments', 'environment.js')
@@ -120,22 +109,35 @@ class DevBuild extends Build {
         path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'),
         path.join(this.outputPath, 'environments', 'environment.ngsummary.json')
       );
+    } else {
+      cp(
+        path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.env + '.js'),
+        path.join(this.outputPath, 'environments', 'environment.js')
+      );
+      cp(
+        path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.env + '.js.map'),
+        path.join(this.outputPath, 'environments', 'environment.js.map')
+      );
+      cp(
+        path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.env + '.ngsummary.json'),
+        path.join(this.outputPath, 'environments', 'environment.ngsummary.json')
+      );
     }
 
-    if (util.hasHook('post')) config.projects[config.project].architect.build.hooks[cli.env].post(process.argv);
+    if (util.hasHook('post')) config.projects[config.project].architect.build.hooks[cli.build].post(process.argv);
 
     if (cli.program.watch === true) {
       const watcher = new Watcher();
     }
 
-    if (cli.program.watch === true && util.hasHook('watch') && config.projects[config.project].architect.build.hooks[cli.env].watch.dist) {
+    if (cli.program.watch === true && util.hasHook('watch') && config.projects[config.project].architect.build.hooks[cli.build].watch.dist) {
       const distWatcher = chokidar
         .watch([this.outputPath], {
           ignored: /[\/\\]\./,
           persistent: true,
         })
         .on('change', filePath => {
-          config.projects[config.project].architect.build.hooks[cli.env].watch.dist(filePath);
+          config.projects[config.project].architect.build.hooks[cli.build].watch.dist(filePath);
         });
     }
 

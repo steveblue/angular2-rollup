@@ -1,16 +1,16 @@
 require('shelljs/global');
 
-const colors      = require('colors');
-const path        = require('path');
-const fs          = require('fs');
-const UglifyJS    = require('uglify-js');
+const colors = require('colors');
+const path = require('path');
+const fs = require('fs');
+const UglifyJS = require('uglify-js');
 const MagicString = require('magic-string');
-const escape      = require('js-string-escape');
-const minifyHtml  = require('html-minifier').minify;
-const spawn       = require('child_process').spawn;
-const config      = require('./config.js');
-const cli         = require('./../cli.config.json');
-const log         = require('./log');
+const escape = require('js-string-escape');
+const minifyHtml = require('html-minifier').minify;
+const spawn = require('child_process').spawn;
+const config = require('./config.js');
+const cli = require('./../cli.config.json');
+const log = require('./log');
 
 class Util {
 
@@ -24,12 +24,12 @@ class Util {
         this.multilineComment = /^[\t\s]*\/\*\*?[^!][\s\S]*?\*\/[\r\n]/gm;
         this.singleLineComment = /^[\t\s]*(\/\/)[^\n\r]*[\n\r]/gm;
         this.lastError = {
-            message : ''
+            message: ''
         };
     }
 
     hasArg(arg) {
-        return process.argv.indexOf(arg) > -1 || process.argv.indexOf('--'+arg) > -1;
+        return process.argv.indexOf(arg) > -1 || process.argv.indexOf('--' + arg) > -1;
     }
 
     getFilePath(filePath) {
@@ -52,7 +52,7 @@ class Util {
         } else {
             cp(src, dist);
         }
-        if (options && options.silent !== true) log.message(src+ ' copied to '+  dist);
+        if (options && options.silent !== true) log.message(src + ' copied to ' + dist);
 
     }
 
@@ -66,7 +66,7 @@ class Util {
         } else {
             cp('-R', path.normalize(src + '/*'), path.normalize(path.join(dist, '/')));
         }
-        if (options && options.silent !== true) log.message(this.getFileName(src)+  ' copied to '+ this.getFileName(dist));
+        if (options && options.silent !== true) log.message(this.getFileName(src) + ' copied to ' + this.getFileName(dist));
 
     }
 
@@ -79,7 +79,7 @@ class Util {
                     mkdir('-p', path.dirname(outFile));
                 }
                 cp('-R', path.join(filePath), outFile);
-                log.message(this.getFileName(filePath)+ ' copied to ' + dist);
+                log.message(this.getFileName(filePath) + ' copied to ' + dist);
                 res();
             }
         });
@@ -129,10 +129,10 @@ class Util {
 
             let env;
 
-            if (cli.env === 'jit') {
+            if (cli.build === 'jit') {
                 env = 'dev';
             } else {
-                env = cli.env;
+                env = cli.build;
             }
 
             exec(path.join(config.cliRoot, path.normalize('node_modules/.bin/htmlprocessor')) +
@@ -182,8 +182,8 @@ class Util {
 
                 fs.writeFile(outFile, contents, (err) => {
                     if (!err && this.getFileName(outFile).includes('component')) {
-                        log.message('inline template and styles for '+ this.getFileName(outFile));
-                    } else if (err){
+                        log.message('inline template and styles for ' + this.getFileName(outFile));
+                    } else if (err) {
                         log.warn(err);
                     }
                 });
@@ -264,15 +264,15 @@ class Util {
 
     formatVendorScripts(fileList, src, dist) {
         this.vendorScripts = {};
-        fs.openSync(path.normalize('./'+ dist + '/vendor.js'), 'w');
+        fs.openSync(path.normalize('./' + dist + '/vendor.js'), 'w');
         return Promise.all(fileList.map((filePath) => {
             return this.concatFile(path.join(src, filePath), src, dist);
         }));
     }
 
     concatFile(file, src, dist, code) {
-        return new Promise((res, rej)=>{
-            fs.readFile(file, 'utf8', (err, fileContent)=>{
+        return new Promise((res, rej) => {
+            fs.readFile(file, 'utf8', (err, fileContent) => {
                 this.vendorScripts[this.getFileName(file)] = fileContent;
                 res();
             });

@@ -53,7 +53,7 @@ class AOTBuilder {
                     } else {
                         if (!cli.program.verbose) log.destroy();
                         log.message('Compilation complete.', ['TypeScript']);
-                        if (cli.env === 'dev') {
+                        if (cli.build === 'dev') {
                             log.break();
                         }
 
@@ -118,11 +118,11 @@ class AOTBuilder {
             let outFile = path.join(config.projectRoot, config.build, 'main.ts');
 
             const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
-            const tsConfig = JSON.parse(fs.readFileSync(path.join(config.projectRoot, 'src', 'tsconfig.' + cli.env + '.json'), 'utf8'));
+            const tsConfig = JSON.parse(fs.readFileSync(path.join(config.projectRoot, 'src', 'tsconfig.' + cli.build + '.json'), 'utf8'));
             const modulePattern = tsConfig.compilerOptions.module;
             const jsTarget = tsConfig.compilerOptions.target;
 
-            if (cli.env === 'prod') {
+            if (cli.build === 'prod') {
                 outFile = path.join('out-tsc/src/main.ts');
             }
 
@@ -133,9 +133,9 @@ class AOTBuilder {
                     contents = contents.replace(/platform-browser-dynamic/g, 'platform-browser');
                     contents = contents.replace(/bootstrapModule/g, 'bootstrapModuleFactory');
                     contents = contents.replace(/AppModule/g, 'AppModuleNgFactory');
-                    if (cli.env === 'dev') {
+                    if (cli.build === 'dev') {
                         contents = contents.replace('./app/app.module', './src/app/app.module.ngfactory');
-                    } if (cli.env === 'prod') {
+                    } if (cli.build === 'prod') {
                         contents = contents.replace('./app/app.module', './app/app.module.ngfactory');
                     }
 

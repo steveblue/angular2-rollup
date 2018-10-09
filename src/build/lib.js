@@ -239,9 +239,9 @@ class LibBuild extends Build {
 
             this.emitter.emit('hook', {
                 payload: {
-                  step: 'pre'
+                    step: 'pre'
                 }
-             });
+            });
 
         }).catch((err) => {
             log.warn(err); // TODO: exit process
@@ -270,11 +270,11 @@ class LibBuild extends Build {
                 log.destroy();
                 log.buildStats(this.startTime, this.libConfig.dist);
 
-                this.emitter.emit('hook',{
+                this.emitter.emit('hook', {
                     payload: {
-                      step: 'post'
+                        step: 'post'
                     }
-                 });
+                });
 
             });
 

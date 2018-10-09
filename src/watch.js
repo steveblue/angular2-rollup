@@ -5,7 +5,7 @@ const utils = require('./util');
 const chokidar = require('chokidar');
 const SassBuilder = require('./style/sass.js');
 const PostCSSBuilder = require('./style/postcss.js');
-const TSBuilder      = require('./compile/tsc.js');
+const TSBuilder = require('./compile/tsc.js');
 const config = require('./config');
 const util = require('./util');
 const log = require('./log');
@@ -17,7 +17,7 @@ class Watcher {
     constructor() {
 
         const sassBuilder = new SassBuilder({ dist: config.build });
-        const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: (cli.env === 'dev') ? false : true });
+        const postcssBuilder = new PostCSSBuilder({ dist: config.build, sourceMap: (cli.build === 'dev') ? false : true });
         const jitBuilder = new TSBuilder();
         const watcher = chokidar.watch([config.src], {
             ignored: /[\/\\]\./,
@@ -54,20 +54,20 @@ class Watcher {
 
                 })();
             }
-            else if (filePath.indexOf('.ts') > -1 && cli.env === 'jit') {
-                jitBuilder.compile(path.join('src','tsconfig.' + cli.env + '.json'));
+            else if (filePath.indexOf('.ts') > -1 && cli.build === 'jit') {
+                jitBuilder.compile(path.join('src', 'tsconfig.' + cli.build + '.json'));
             }
-            else if (filePath.indexOf('.html') > -1 && cli.env === 'jit') {
+            else if (filePath.indexOf('.html') > -1 && cli.build === 'jit') {
                 util.copyFile(filePath, path.join(config.build, filePath));
             }
 
-            if (util.hasHook('watch') && config.projects[config.project].architect.build.hooks[cli.env].watch.src) {
-                config.projects[config.project].architect.build.hooks[cli.env].watch.src(filePath);
+            if (util.hasHook('watch') && config.projects[config.project].architect.build.hooks[cli.build].watch.src) {
+                config.projects[config.project].architect.build.hooks[cli.build].watch.src(filePath);
             }
 
         }).on('unlink', filePath => log.warn(filePath, 'has been removed'))
-          .on('error', error => log.warn('ERROR:', error));
-          //.on('ready', error => log.message('listening for changes'));
+            .on('error', error => log.warn('ERROR:', error));
+        //.on('ready', error => log.message('listening for changes'));
 
         return watcher;
 

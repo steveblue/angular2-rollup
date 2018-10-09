@@ -75,7 +75,7 @@ class PostCSS {
             exec(path.normalize(path.join(config.projectRoot, 'node_modules/.bin/postcss')) +
                 ' ' + outFile +
                 (this.cssConfig.sourceMap === false ? ' --no-map' : '') +
-                ' --env ' + (cli.program.env ? cli.program.env : cli.env) +
+                ' --env ' + (cli.env) +
                 ' --output ' + outFile,
                 { silent: true }, (error, stdout, stderr) => {
 
