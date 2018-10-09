@@ -26,7 +26,7 @@ CLI for building Angular with Rollup, Closure Compiler and Webpack
 * [Getting Started](#getting-started)
     * [Install](#install)
     * [Scaffold](#scaffold)
-
+    * [Help](#help)
 * [Development](#development)
     * [Build](#build)
     * [Production](#production)
@@ -68,6 +68,39 @@ To scaffold a new app run `ngr new my-app`. This command will copy required file
 Migrate existing angular-rollup and @angular/cli projects with `--src`.
 
 `ngr new my-new-app --src /path/to/old/src`
+
+
+## Help
+
+`ngr --help` will list all commands and arguments provided in the cli.
+
+```
+
+Options:
+
+  -V, --version              output the version number
+  new [string]               scaffold new development environment in directory by name, i.e. ngr new my-app
+  --src [string]             specify a path to an existing src folder
+  --skip-install [bool]      prevents install during scaffold
+  --yarn [bool]              use yarn instead of npm to install
+  --ivy [bool]               start a new project with angular ivy
+  --prettier [bool]          scaffold a new workspace with prettier installed
+  --ssl [bool]               scaffold a new workspace with https express server
+  --angularVersion [string]  scaffold a new workspace with a specific version of angular
+  build [env]                build the application
+  --env [string]             use that particular environment.ts during the build, just like @angular/cli
+  --clean [bool]             destroy the build folder prior to compilation, default for prod
+  --watch [bool]             listen for changes in filesystem and rebuild
+  --config [string]          path to configuration file for library build
+  --deploy [bool]            call deploy build hook for library build
+  --verbose [bool]           log all messages in list format
+  --closure [bool]           bundle and optimize with closure compiler (default)
+  --rollup [bool]            bundle with rollup and optimize with closure compiler
+  --webpack [bool]           use @angular/cli to build
+  g, generate [string]       generate schematics packaged with angular-rollup
+  serve, --serve [bool]      spawn the local express server
+  -h, --help                 output usage information
+  ```
 
 
 # Development
