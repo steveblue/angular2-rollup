@@ -1,0 +1,15 @@
+{
+  "extends": "./../tsconfig.json",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./../dist/{{projectName}}",
+    "target": "es5",
+    "module": "commonjs"
+  },
+  "angularCompilerOptions": {
+    "enableIvy": true
+  },
+  "include": [
+    "./../src/**/*.ts"
+  ]
+}

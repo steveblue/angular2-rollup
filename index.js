@@ -21,6 +21,7 @@ program
   .option('--src [string]', 'specify a path to an existing src folder')
   .option('--skip-install [bool]', 'prevents install during scaffold')
   .option('--yarn [bool]', 'use yarn instead of npm to install')
+  .option('--ivy [bool]', 'start a new project with angular ivy')
   .option('--prettier [bool]', 'scaffold a new workspace with prettier installed')
   .option('--ssl [bool]', 'scaffold a new workspace with https express server')
   .option('build [env]', 'build the application')

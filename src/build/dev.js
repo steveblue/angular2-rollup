@@ -105,10 +105,12 @@ class DevBuild extends Build {
         path.join(this.outputPath, 'src', 'environments', 'environment.js.map'),
         path.join(this.outputPath, 'environments', 'environment.js.map')
       );
-      cp(
-        path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'),
-        path.join(this.outputPath, 'environments', 'environment.ngsummary.json')
-      );
+      if (fs.existsSync(path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'))) {
+        cp(
+          path.join(this.outputPath, 'src', 'environments', 'environment.ngsummary.json'),
+          path.join(this.outputPath, 'environments', 'environment.ngsummary.json')
+        );
+      }
     } else {
       cp(
         path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.env + '.js'),

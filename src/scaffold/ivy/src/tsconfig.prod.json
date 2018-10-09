@@ -1,0 +1,13 @@
+{
+  "extends": "./../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./../out-tsc",
+    "module": "es2015"
+  },
+  "angularCompilerOptions": {
+    "enableIvy": true
+  },
+  "include": [
+    "./../src/**/*.ts"
+  ]
+}
