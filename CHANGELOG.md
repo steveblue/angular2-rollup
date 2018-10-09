@@ -1,7 +1,8 @@
 ## 2.0.0-rc.5
 
-- NEW `--all` argument for `ngr build lib` builds all libraries
-
+- FIXED issues with `--env` in development build
+- FIXED issue that didnt sent the environment by default to `prod` in prod build
+- UPDATE main.ts to compile using module and target from tsconfig
 
 -------------------------------------------------------------------------------------------------------------
 
