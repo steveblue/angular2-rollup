@@ -46,14 +46,9 @@ class DevBuild extends Build {
     (async () => {
       const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
       const postcss = await postcssBuilder.batch(sass);
-      log.message('styled components');
-      if (!fs.existsSync(path.join(config.build, 'main.js'))) {
-        (async () => {
-          const main = await aotBuilder.compileMain().then(res => {
-            log.message('compiled main.js');
-          });
-        })();
-      }
+      await log.message('styled components');
+      const main = await aotBuilder.compileMain();
+      await log.message('compiled main.js');
       const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.env + '.json'));
       this.post();
     })();
@@ -88,7 +83,7 @@ class DevBuild extends Build {
       build();
     }
 
-    this.emitter.emit('hook',{
+    this.emitter.emit('hook', {
       payload: {
         step: 'pre'
       }
@@ -152,7 +147,7 @@ class DevBuild extends Build {
     if (util.hasArg('serve')) {
       util.serve(cli.program.watch);
     }
-    this.emitter.emit('hook',{
+    this.emitter.emit('hook', {
       payload: {
         step: 'post'
       }

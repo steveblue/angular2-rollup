@@ -11,7 +11,7 @@ let interval;
 
 class AOTBuilder {
 
-    constructor() {}
+    constructor() { }
 
     compile(tsConfigPath) {
 
@@ -36,7 +36,7 @@ class AOTBuilder {
                         log.message('Compilation complete. Watching for file changes.', ['TypeScript']);
                         res();
                     } else {
-                      this.handleError(stderr);
+                        this.handleError(stderr);
                     }
 
                 });
@@ -45,7 +45,7 @@ class AOTBuilder {
 
                 log.process('@angular/compiler');
 
-                let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, {silent: true}, (error, stdout, stderr) => {
+                let ngc = exec(path.join(config.projectRoot, 'node_modules', '.bin', 'ngc') + ' -p ' + tsConfigPath, { silent: true }, (error, stdout, stderr) => {
                     //if (config.build !== 'lib') clearInterval(interval);
                     log.stop('@angular/compiler');
                     if (stderr) {
@@ -70,13 +70,13 @@ class AOTBuilder {
     handleError(stderr) {
 
         if (stderr.includes('Compilation complete.')) {
-          log.success(stderr, ['TypeScript']);
+            log.success(stderr, ['TypeScript']);
         }
         else if (stderr === ': Compilation failed. Watching for file changes.') {
-          log.fail(stderr);
+            log.fail(stderr);
         }
         else if (stderr.includes('File change')) {
-          log.success(stderr, ['TypeScript']);
+            log.success(stderr, ['TypeScript']);
         }
         else {
 
@@ -116,16 +116,17 @@ class AOTBuilder {
         return new Promise((res) => {
             let inFile = path.join(config.src, 'main.ts');
             let outFile = path.join(config.projectRoot, config.build, 'main.ts');
-            let modulePattern = 'commonjs';
-            const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
 
+            const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
+            const tsConfig = JSON.parse(fs.readFileSync(path.join(config.projectRoot, 'src', 'tsconfig.' + cli.env + '.json'), 'utf8'));
+            const modulePattern = tsConfig.compilerOptions.module;
+            const jsTarget = tsConfig.compilerOptions.target;
 
             if (cli.env === 'prod') {
                 outFile = path.join('out-tsc/src/main.ts');
-                modulePattern = 'ES2015';
             }
 
-            fs.readFile(inFile,  'utf8', (err, contents) => {
+            fs.readFile(inFile, 'utf8', (err, contents) => {
                 if (!err) {
 
                     contents = contents.replace(/platformBrowserDynamic/g, 'platformBrowser');
@@ -141,16 +142,16 @@ class AOTBuilder {
                     fs.writeFile(outFile, contents, (err) => {
                         if (!err) {
 
-                        let transpile = exec(`${tscPath} ${outFile} --target es5 --module ${modulePattern} --emitDecoratorMetadata true --experimentalDecorators true --sourceMap true --moduleResolution node --typeRoots node --lib dom,es2017`,
-                                            { silent: true },
-                                            (error, stdout, stderr) => {
-                                                rm(outFile);
-                                                if(error && error.killed) {
-                                                  log.formatTSError(error);
-                                                } else {
-                                                    res();
-                                                }
-                                            });
+                            let transpile = exec(`${tscPath} ${outFile} --target ${jsTarget} --module ${modulePattern} --emitDecoratorMetadata true --experimentalDecorators true --sourceMap true --moduleResolution node --typeRoots node --lib dom,es2017`,
+                                { silent: true },
+                                (error, stdout, stderr) => {
+                                    rm(outFile);
+                                    if (error && error.killed) {
+                                        log.formatTSError(error);
+                                    } else {
+                                        res();
+                                    }
+                                });
                         }
                         else {
                             rej(err);
