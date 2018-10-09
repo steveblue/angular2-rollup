@@ -1,6 +1,6 @@
 {
   "name": "angular-rollup",
-  "version": "2.0.0-rc.5",
+  "version": "2.0.0-rc.6",
   "description": "cli for building angular with closure compiler and rollup",
   "main": "index.js",
   "scripts": {
