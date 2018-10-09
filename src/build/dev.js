@@ -114,14 +114,33 @@ class DevBuild extends Build {
         path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.env + '.js'),
         path.join(this.outputPath, 'environments', 'environment.js')
       );
+
+      fs.readFile(path.join(this.outputPath, 'environments', 'environment.js'), 'utf-8', (err, stdout) => {
+        stdout = stdout.replace(`environment.${cli.env}.js`, 'environment.js');
+        fs.writeFile(path.join(this.outputPath, 'environments', 'environment.js'), stdout, 'utf-8', () => {});
+      });
+
       cp(
         path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.env + '.js.map'),
         path.join(this.outputPath, 'environments', 'environment.js.map')
       );
+
+      fs.readFile(path.join(this.outputPath, 'environments', 'environment.js.map'), 'utf-8', (err, stdout) => {
+        stdout = stdout.replace(`environment.${cli.env}.ts`, 'environment.ts');
+        stdout = stdout.replace(`environment.${cli.env}.js`, 'environment.js');
+        fs.writeFile(path.join(this.outputPath, 'environments', 'environment.js.map'), stdout, 'utf-8', () => {});
+      });
+
       cp(
         path.join(this.outputPath, 'src', 'environments', 'environment.' + cli.env + '.ngsummary.json'),
         path.join(this.outputPath, 'environments', 'environment.ngsummary.json')
       );
+
+      fs.readFile(path.join(this.outputPath, 'environments', 'environment.ngsummary.json'), 'utf-8', (err, stdout) => {
+        stdout = stdout.replace(`environment.${cli.env}`, 'environment');
+        fs.writeFile(path.join(this.outputPath, 'environments', 'environment.ngsummary.json'), stdout, 'utf-8', () => {});
+      });
+
     }
 
     if (util.hasHook('post')) config.projects[config.project].architect.build.hooks[cli.build].post(process.argv);

@@ -1,3 +1,9 @@
+## 2.0.0-rc.6
+
+- FIXED issue with sourcemaps when using `--env` in dev build
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 2.0.0-rc.5
 
 - FIXED issues with `--env` in development build
