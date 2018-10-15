@@ -94,6 +94,10 @@ class LibBuild extends Build {
         const aotBuilder = new AOTBuilder();
         const rollupBuilder = new RollupBuilder();
 
+        ls(path.normalize('tmp/**/*.component.ts')).forEach((file) => {
+            util.inline(file);
+        });
+
         return new Promise((res, rej) => {
 
             log.process('compiling library');
@@ -222,7 +226,6 @@ class LibBuild extends Build {
             // remove moduleId prior to ngc build, inline template and styles
             ls(path.normalize('tmp/**/*.ts')).forEach((file) => {
                 sed('-i', /^.*moduleId: module.id,.*$/, '', file);
-                util.inline(file);
             });
 
             if (util.hasHook('pre')) {

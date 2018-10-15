@@ -20,11 +20,13 @@ class PostCSS {
 
             try {
 
-                const files = fileList.filter((filePath, index) => {
+                const files = fileList.map((filePath) => {
                     return this.file(filePath);
                 });
 
-                res(files);
+                Promise.all(files).then((css) => {
+                    res(css);
+                });
 
             }
             catch (err) {

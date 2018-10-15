@@ -200,6 +200,7 @@ class Util {
 
     inlineHTMLandCSS(options, source, dir) {
 
+
         let stringRegex = this.stringRegex;
 
         /* Logic for inling styles adapted from rollup-plugin-angular CREDIT Felix Itzenplitz */
@@ -212,7 +213,7 @@ class Util {
                     return '"' + text + '"';
                 }
                 let text = fs.readFileSync(includePath).toString();
-
+                console.log(includePath);
                 text = preprocessor(text, includePath);
                 text = escape(text);
                 return '"' + text + '"';
