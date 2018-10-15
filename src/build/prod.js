@@ -156,7 +156,13 @@ class ProdBuild extends Build {
         });
       };
 
-      let rollup = spawn(path.join(config.projectRoot, 'node_modules', '.bin', 'rollup'), ['-c', 'config/rollup.rxjs.js']);
+      let rollup;
+
+      if (process.platform === 'win32') {
+        rollup = spawn('cmd', ['/c', path.join(config.projectRoot, 'node_modules', '.bin', 'rollup'), '-c', path.join('config', 'rollup.rxjs.js')]);
+      } else {
+        rollup = spawn(path.join(config.projectRoot, 'node_modules', '.bin', 'rollup'), ['-c', path.join('config', 'rollup.rxjs.js')]);
+      }
 
       rollup.stdout.on('data', (msg) => {
         log.message(msg);

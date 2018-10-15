@@ -96,6 +96,8 @@ class Scaffold {
 
                     }
 
+                } else {
+                    log.error('git may not be installed properly on this device or something else is preventing angular-rollup from merging with @angular/cli.')
                 }
 
 
@@ -127,20 +129,20 @@ class Scaffold {
                         projectPackage.scripts = this.sortObject(Object.assign(cliPackage.scripts, projectPackage.scripts));
 
                         if (cli.program.angularVersion) {
-                          for(let prop in projectPackage.dependencies) {
-                              if (prop.includes('@angular') && !prop.includes('@angular-devkit')) {
-                                projectPackage.dependencies[prop] = cli.program.angularVersion;
-                              }
-                          }
-                          for(let prop in projectPackage.devDependencies) {
-                            if (prop.includes('@angular') && !prop.includes('@angular-devkit')) {
-                              projectPackage.devDependencies[prop] = cli.program.angularVersion;
+                            for (let prop in projectPackage.dependencies) {
+                                if (prop.includes('@angular') && !prop.includes('@angular-devkit')) {
+                                    projectPackage.dependencies[prop] = cli.program.angularVersion;
+                                }
                             }
-                          }
-                          // TODO: figure out ~ > in version
-                          if (cli.program.angularVersion[0] === '7') {
-                            projectPackage.devDependencies['typescript'] = '~3.1.1';
-                          }
+                            for (let prop in projectPackage.devDependencies) {
+                                if (prop.includes('@angular') && !prop.includes('@angular-devkit')) {
+                                    projectPackage.devDependencies[prop] = cli.program.angularVersion;
+                                }
+                            }
+                            // TODO: figure out ~ > in version
+                            if (cli.program.angularVersion[0] === '7') {
+                                projectPackage.devDependencies['typescript'] = '~3.1.1';
+                            }
                         }
 
                         if (cli.program.prettier) {
