@@ -1,7 +1,5 @@
 node_modules
-cli.config.json
 .DS_Store
-yarn.lock
 package-lock.json
 cli.config.json
 .idea
