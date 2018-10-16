@@ -213,7 +213,6 @@ class Util {
                     return '"' + text + '"';
                 }
                 let text = fs.readFileSync(includePath).toString();
-                console.log(includePath);
                 text = preprocessor(text, includePath);
                 text = escape(text);
                 return '"' + text + '"';
