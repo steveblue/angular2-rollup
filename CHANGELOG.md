@@ -1,3 +1,9 @@
+## 2.0.0-rc.8
+
+- FIXED issue with generating libraries in Windows
+
+-------------------------------------------------------------------------------------------------------------
+
 ## 2.0.0-rc.7
 
 - FIXED issue that prevented production build from working in Windows
