@@ -1,6 +1,6 @@
 # ngr
 
-CLI for building Angular with Rollup, Closure Compiler and Webpack
+CLI for building Angular with Rollup and Closure Compiler
 
 [![Join the chat at https://gitter.im/angular2-rollup/Lobby](https://badges.gitter.im/angular2-rollup/Lobby.svg)](https://gitter.im/angular2-rollup/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
