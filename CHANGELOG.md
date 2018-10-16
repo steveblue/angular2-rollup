@@ -1,3 +1,55 @@
+# 2.0.0
+
+angular-rollup 2.0.0 delivers the same cli as 1.x with more powerful builds and integration with @angular/cli!
+
+- NEW integration with @angular/cli means you can run familiar commands in same project
+- NEW configuration means less files in root directory
+- NEW asynchronous build scripts deliver faster build times
+- NEW ability to work with several libraries in the same project
+- NEW logging mechanism destroys the log allowing logs to be cleaner and more concise
+- NEW pretty printed error logs in Terminal with direct links to VS Code
+- NEW ability to scaffold a project with prettier installed
+- NEW ability to scaffold a project with SSL enabled in development server
+- NEW ability to migrate an application generated with @angular/cli to angular-rollup
+- NEW production build is even more optimal with inclusion of Angular Build Optimizer
+- NEW scaffold a new project with Angular IVY preconfigured
+- NEW stacktraces when ngr fails allowing for more better error reporting
+- NEW `--env` argument mirrors the way @angular/cli handles environments
+- NEW `--rollup` argument will optimize with Closure Compiler in ADVANCED_OPTIMIZATIONS
+- NEW build hooks for development build allow you to watch changes in `src` or `dist` in `ngr.config.js`
+- NEW production build concatenates all vendor scripts into `vendor.js` cutting down network requests
+- UPDATED postcss to > 5.0.0, meaning new configuration as well
+- DEPRECATED `build` directory, all builds are now output to `dist` by default comparable to @angular/cli
+- DEPRECATED the ability to scaffold an Angular Universal application. This feature will return soon!
+- DEPRECATED the ability to lazyload with Closure Compiler. This feature will return soon!
+- DEPRECATED main.ts. The build now uses the main.ts provided by @angular/cli
+- DEPRECATED unit / e2e testing scripts, use @angular/cli instead
+- DEPRECATED i18n tooling, use `@angular/compiler-cli` directly instead
+
+
+### UPDATING from 1.x to @angular/cli
+
+To migrate an application running on angular-rollup 1.x or @angular/cli, the best option is to scaffold a new app with the old source.
+
+```
+ngr new my-new-app --src /path/to/old/src
+```
+
+This will migrate the src directory as well as all config from the old project to a new directory. Old configuration files will be renamed `.bak` so you can compare old files against the new configuration.
+
+
+### ROADMAP
+
+- Scaffold Angular Universal application
+- Scripts for lazyloading while optimizing with Closure Compiler
+- Generate Bazel configuration in the project
+- Support for LESS and Stylus
+
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
 ## 2.0.0-rc.8
 
 - FIXED issue with generating libraries in Windows
@@ -75,7 +127,7 @@ To migrate an existing src directory:
 - NEW migrate a `@angular/cli^6.0.0` project to `angular-rollup`
 - NEW generate a library with `ngr generate library lib-name` in any project directory
 - FIXED issues with watcher when running `ngr build dev --watch`
-- FIXED issues when running `ngr new
+- FIXED issues when running `ngr new`
 - UPDATE CHANGELOG.md with RC changes
 
 -------------------------------------------------------------------------------------------------------------
