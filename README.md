@@ -34,7 +34,7 @@ CLI for building Angular with Rollup, Closure Compiler and Webpack
     * [Config](#buildconfig)
     * [Server](#server)
     * [Libraries](#library)
-    * [Code Generation, Testing, and i18n](#testing)
+    * [Schematics, Testing, and i18n](#testing)
 
 * [FAQ](#faq)
 * [License](#license)
@@ -222,7 +222,7 @@ After you have generated some components for the library, use `ngr build lib` to
 `ngr build lib my-lib-name`
 
 
-## Use `@angular/cli` Code Generation, Testing, and i18n
+## Use `@angular/cli` for Schematics, Testing, and i18n
 
 `ng generate` works in `angular-rollup`!
 
@@ -410,8 +410,6 @@ We like [Visual Studio Code](https://code.visualstudio.com/). Below are some VS 
 | Path Intellisense     | Autocomplete for paths in the project |
 | NPM Intellisense      | Autocomplete paths to node_modules |
 | Auto Import ES6 & TS | Auto import for TypeScript |
-| TypeScript Hero |  Additional tooling for the TypeScript language  |
-
 
 
 # License
