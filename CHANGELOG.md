@@ -1,3 +1,12 @@
+## 2.0.0-rc.7
+
+- FIXED issue that prevented production build from working in Windows
+- FIXED issue that could potentially prevent scaffolding a new app
+- FIXED issue in library build that prevented production css from being deployed
+
+-------------------------------------------------------------------------------------------------------------
+
+
 ## 2.0.0-rc.6
 
 - NEW `--ivy` argument scaffolds a new app setup for angular ivy
