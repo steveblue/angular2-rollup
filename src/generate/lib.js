@@ -67,8 +67,7 @@ class LibraryGenerator extends Generator {
     init() {
 
         log.message(config.projectRoot + ' '+ this.outputPath);
-        this.srcPath = path.join(this.outputPath.replace(config.projectRoot, '').slice(1),
-                                 this.name);
+        this.srcPath = this.outputPath.replace(config.projectRoot, '').slice(1).replace(/\\/gi, '/') + '/'+ this.name;
 
         this.directoryDepth = this.getFileDirectoryDepth(this.outputPath) -
                               this.getFileDirectoryDepth(config.projectRoot) + 1;
