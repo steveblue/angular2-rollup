@@ -139,10 +139,18 @@ class Scaffold {
                                     projectPackage.devDependencies[prop] = cli.program.angularVersion;
                                 }
                             }
-                            // TODO: figure out ~ > in version
-                            if (cli.program.angularVersion[0] === '7') {
-                                projectPackage.devDependencies['typescript'] = '~3.1.1';
-                            }
+
+                        }
+
+                        if (cli.program.angularVersion &&
+                            cli.program.angularVersion[0] === '7' ||
+                            cli.program.angularVersion &&
+                            cli.program.angularVersion.includes('~7') ||
+                            cli.program.angularVersion &&
+                            cli.program.angularVersion.includes('^7') ||
+                            cliPackage.dependencies['@angular/core'].includes('~7')) {
+                            projectPackage.devDependencies['tsickle'] = '0.33.1';
+                            projectPackage.devDependencies['typescript'] = '3.1.3';
                         }
 
                         if (cli.program.prettier) {

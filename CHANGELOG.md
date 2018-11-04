@@ -1,3 +1,7 @@
+# 2.0.1
+
+- UPDATE scaffold for @angular packages > 7.0.0
+
 # 2.0.0
 
 angular-rollup 2.0.0 delivers the same cli as 1.x with more powerful builds and integration with @angular/cli!
