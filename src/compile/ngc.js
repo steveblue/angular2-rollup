@@ -113,7 +113,7 @@ class AOTBuilder {
 
     compileMain() {
 
-        return new Promise((res) => {
+        return new Promise((res, rej) => {
             let inFile = path.join(config.src, 'main.ts');
             let outFile = path.join(config.projectRoot, config.build, 'main.ts');
 
@@ -123,7 +123,7 @@ class AOTBuilder {
             const jsTarget = tsConfig.compilerOptions.target;
 
             if (cli.build === 'prod') {
-                outFile = path.join('out-tsc/src/main.ts');
+                outFile = path.join('out-tsc/tmp/main.ts');
             }
 
             fs.readFile(inFile, 'utf8', (err, contents) => {

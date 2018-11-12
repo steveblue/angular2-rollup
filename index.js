@@ -35,6 +35,7 @@ program
   .option('--closure [bool]', 'bundle and optimize with closure compiler (default)')
   .option('--rollup [bool]', 'bundle with rollup and optimize with closure compiler')
   .option('--webpack [bool]', 'use @angular/cli to build')
+  .option('--keepTempFiles [bool]', 'retain the /tmp and /out-tsc directories post production build')
   .option('g, generate [string]', 'generate schematics packaged with angular-rollup')
   .option('serve, --serve [bool]', 'spawn the local express server')
   .parse(process.argv);

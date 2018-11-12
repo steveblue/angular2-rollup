@@ -45,18 +45,30 @@ class ProdBuild extends Build {
 
     (async () => {
       // const copyMain = await cp('main.ts', 'main.js');
-      const copy = await cp('-R', path.normalize(config.src + '/'), path.normalize('./out-tsc'));
+      const copy = await cp('-R', path.normalize(config.src + '/'), path.normalize('./tmp'));
       // // remove moduleId prior to ngc build. TODO: look for another method.
       // const stripModuleId = await ls(path.normalize('out-tsc/**/*.ts')).forEach(function (file) {
       //   sed('-i', /^.*moduleId: module.id,.*$/, '', file);
       // });
+      if (ls(path.normalize('tmp/**/*.scss')).length > 0) {
 
-      const sass = await sassBuilder.batch(ls(path.normalize(config.src + '/**/*.scss')));
-      const postcss = await postcssBuilder.batch(sass);
+        const sass = await sassBuilder.batch(ls(path.normalize('./tmp/**/*.scss')));
+        await postcssBuilder.batch(sass);
+        await this.transformSCSSPathstoCSS();
 
+      } 
+      else if (ls(path.normalize('tmp/**/*.css')).length > 0) {
 
+        const cssFileList = ls(path.normalize('tmp/**/*.css'));
+        await postcssBuilder.batch(cssFileList);
 
-      const src = await aotBuilder.compile(path.join('src', 'tsconfig.' + cli.build + '.json'));
+      }
+      
+      // rewrite tsconfig to compile tmp instead of src
+      await sed('-i', 'src/', 'tmp/', path.join('tmp', 'tsconfig.' + cli.build + '.json'));
+      // use tsconfig copied to tmp instead of src
+      const src = await aotBuilder.compile(path.join('tmp', 'tsconfig.' + cli.build + '.json'));
+
       const main = await aotBuilder.compileMain();
       await log.message('copied main.ts');
       const buildOptimize = await ls(path.normalize('out-tsc/**/*.component.js')).forEach(function (file) {
@@ -64,7 +76,9 @@ class ProdBuild extends Build {
         fs.writeFileSync(file, buildOptimizer({ content: content }).content);
       });
 
-      if (cli.program.rollup) {
+      await mv(path.normalize('out-tsc/tmp'), path.normalize('out-tsc/src'));
+
+      if (cli.program.rollup) { 
         const prepRxjs = await this.buildRxjsFESM();
         const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.js'));
         const optimize = await closureBuilder.bundle();
@@ -73,9 +87,6 @@ class ProdBuild extends Build {
         const prepRxjs = await this.buildRxjsFESM();
         const bundle = await closureBuilder.bundle();
       }
-
-
-
 
       this.post();
 
@@ -89,7 +100,7 @@ class ProdBuild extends Build {
     let build = () => {
 
       cp('-R', path.join('src', 'environments'), 'config');
-
+      rm('-rf', path.join('tmp'));
       rm('-f', path.join('src', 'environments', 'environment.ts'));
       if (cli.env === 'dev') {
         cp(path.join('config', 'environments', 'environment.ts'), path.join('src', 'environments', 'environment.ts'));
@@ -183,12 +194,36 @@ class ProdBuild extends Build {
     });
   }
 
+  transformSCSSPathstoCSS() {
+    
+    return Promise.all(ls(path.normalize('tmp/**/*.ts')).map((filePath) => {
+        return new Promise((res, rej) => {
+
+            try {
+                sed('-i', '.scss', '.css', filePath);
+                res();
+            } catch(err) {
+                rej(err);
+            }
+         
+        });
+    }));
+
+  }
+
+
   post() {
+
+    if (!cli.program.keepTempFiles) {
+      rm('-rf', 'tmp');
+      rm('-rf', 'out-tsc');
+      rm('-rf', 'dist/out-tsc');
+    }
 
     const bundleArtifact = path.join(this.outputPath, 'bundle.es2015.js');
     // return environments to rightful place
     if (fs.existsSync(path.join('config', 'environments'))) {
-      rm('-rf', path.join('src', 'environments'));
+      rm('-rf', path  .join('src', 'environments'));
       cp('-R', path.join('config', 'environments'), 'src');
       rm('-rf', path.join('config', 'environments'));
     }

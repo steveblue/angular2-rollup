@@ -49,12 +49,14 @@ class LibBuild extends Build {
         const postcssBuilder = new PostCSSBuilder({ dist: this.libConfig.dist, sourceMap: false });
         const styles = config.projects[config.project].architect.build.options.styles;
 
+
         if (ls(path.normalize('tmp/**/*.scss')).length > 0) {
 
             const sassFileList = ls(path.normalize('tmp/**/*.scss'));
             (async () => {
                 const sass = await sassBuilder.batch(sassFileList);
                 const postcss = await postcssBuilder.batch(sass);
+                const convert = await this.transformSCSSPathstoCSS();
                 const bundle = await this.bundleLib();
             })();
 
@@ -86,6 +88,23 @@ class LibBuild extends Build {
         //         postcssBuilder.batch(css);
         //     });
         // }
+
+    }
+
+    transformSCSSPathstoCSS() {
+    
+        return Promise.all(ls(path.normalize('tmp/**/*.ts')).map((filePath) => {
+            return new Promise((res, rej) => {
+
+                try {
+                    sed('-i', '.scss', '.css', filePath);
+                    res();
+                } catch(err) {
+                    rej(err);
+                }
+             
+            });
+        })); 
 
     }
 

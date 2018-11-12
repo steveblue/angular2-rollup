@@ -102,11 +102,11 @@ class Sass {
 
     // TODO: figure out better way to transform paths based on needs
 
-    if (cli.program.build === 'prod' &&
-      isGlobal === false) {
-      outFilePath = path.join('out-tsc', outFilePath);
-      outFile = path.join('out-tsc', outFile);
-    }
+    // if (cli.program.build === 'prod' &&
+    //   isGlobal === false) {
+    //    outFilePath = path.join('out-tsc', outFilePath);
+    //    outFile = path.join('out-tsc', outFile);
+    // }
 
     if (cli.program.build === 'lib' &&
       isGlobal === true) {
@@ -132,7 +132,6 @@ class Sass {
       if (this.sassConfig.sourceMap) {
         renderConfig.sourceMap = this.sassConfig.sourceMap;
       }
-
 
       sass.render(renderConfig, (error, result) => {
         if (error) {
