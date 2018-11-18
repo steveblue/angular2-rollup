@@ -107,17 +107,14 @@ Options:
 
 ## Build
 
-To build the app for development, enable livereload, and start up the server:
+`ng serve` to build for development using `@angular/cli`.
+
+To build the app for development with `@angular/compiler-cli`, enable livereload, and start up the server:
 
 * `$ ngr build dev --watch --serve`
 
 `ngr` will build the application for development using AOT in --watch mode.
 
-Optionally, use `--jit` to bootstrap Angular with JIT Compiler.
-
-Once your work has been validated with the development build, you can also test the production build.
-
-We recommended bundling and optimizing with Closure Compiler in ADVANCED_OPTIMIZATIONS mode. This is the default production build because it produces the most optimal bundles.
 
 ## Production
 
