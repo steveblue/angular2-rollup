@@ -185,7 +185,7 @@ class ProdBuild extends Build {
         editFile('node_modules/rxjs/operators/package.json'),
         editFile('node_modules/rxjs/ajax/package.json'),
         editFile('node_modules/rxjs/testing/package.json'),
-        editFile('node_modules/rxjs/websocket/package.json')])
+        editFile('node_modules/rxjs/webSocket/package.json')])
           .then(data => {
             res();
           });
