@@ -1,3 +1,9 @@
+# 2.0.2
+
+- FIXED issue that prevented production build when building rxjs FESM
+
+-------------------------------------------------------------------------------------------------------------
+
 # 2.0.1
 
 - UPDATE scaffold for @angular packages > 7.0.0
