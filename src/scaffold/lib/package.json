@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "license": "MIT",
-  "module": "./esm5/{{projectName}}.es5.js",
+  "module": "./esm5/{{projectName}}.js",
   "es2015": "./fesm2015/{{projectName}}.js",
   "esm5": "./esm5/{{projectName}}.js",
   "esm2015": "./esm2015/{{projectName}}.js",
