@@ -2,6 +2,7 @@
 const findup = require('findup');
 const path = require('path');
 const fs = require('fs');
+const log = require('./log');
 const processRoot = path.join(path.dirname(process.cwd()), path.basename(process.cwd()));
 const cliRoot = findup.sync(__dirname, 'package.json');
 let projectRoot = require(path.join(cliRoot, 'cli.config.json')).projectRoot;
@@ -14,8 +15,12 @@ class Config {
         if (fs.existsSync(projectRoot + '/ngr.config.js')) {
             config = require(projectRoot + '/ngr.config.js');
         } else {  // for processes not in the root
-            projectRoot = findup.sync(projectRoot, 'ngr.config.js');
-            config = require(projectRoot + '/ngr.config.js');
+             if (!fs.existsSync(path.join(projectRoot, 'ngr.config.js'))) {
+                log.error('ngr command requires to be run in an Angular project scaffolded with angular-rollup');
+                process.exit();
+             }
+             projectRoot = findup.sync(projectRoot, 'ngr.config.js');
+             config = require(projectRoot + '/ngr.config.js');
         }
 
         if (fs.existsSync(projectRoot + '/angular.json')) {
