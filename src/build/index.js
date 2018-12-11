@@ -21,9 +21,10 @@ class Build {
     if (!cli.program.webpack) {
       const args = cli.program.rawArgs.filter((str) => {
         return !str.includes('node');
-      }).map((str) => {
-        return path.basename(str);
       });
+      // .map((str) => {
+      //   return path.basename(str);
+      // });
       log.process('ngr ' + args.join(' '));
 
     }
