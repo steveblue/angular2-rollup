@@ -92,7 +92,7 @@ class LibBuild extends Build {
     }
 
     transformSCSSPathstoCSS() {
-    
+
         return Promise.all(ls(path.normalize('tmp/**/*.ts')).map((filePath) => {
             return new Promise((res, rej) => {
 
@@ -102,9 +102,9 @@ class LibBuild extends Build {
                 } catch(err) {
                     rej(err);
                 }
-             
+
             });
-        })); 
+        }));
 
     }
 
@@ -277,16 +277,34 @@ class LibBuild extends Build {
 
         this.processESM().then((res) => {
 
+
             // copy package.json to dist
             exec('cp ' + this.libConfig.src + '/package.json' + ' ' + this.libConfig.dist + '/package.json', () => {
 
                 log.message('package.json copied to ./' + this.libConfig.dist);
+                fs.readFile(this.libConfig.dist + '/package.json', 'utf-8', (err, stdout) => {
 
+                    const pack = JSON.parse(stdout);
+                    const metaFile = path.join(this.libConfig.dist, pack.typings.split('.')[0]+'.metadata.json');
+                    if (fs.existsSync(metaFile)) {
+
+                        const metadata = JSON.parse(fs.readFileSync(metaFile).toString());
+
+                        if (metadata.importAs !== pack.name) {
+                            metadata.importAs = pack.name;
+                            fs.writeFile(metaFile, JSON.stringify(metadata), (err) => {
+                                if (err) {
+                                    throw err;
+                                }
+                            });
+                        }
+                    }
+
+                });
 
                 if (util.hasHook('post')) {
                     log.message('processing post task');
                     config.projects[config.project].architect.build.hooks[cli.env].post(process.argv);
-
                 }
 
                 log.destroy();
