@@ -4,7 +4,9 @@
 - FIXED issue that caused libraries to scaffold with incorrect path to es5 bundle
 - FIXED issue that caused scoped packages to build without proper importAs property in metadata.json
 - FIXED issue that prevented production build when building rxjs FESM
-- FIXED issue that prevented JIT build from executing
+- FIXED issues that prevents JIT build from executing
+- FIXED issue that prevents PROD build from completing properly
+
 
 -------------------------------------------------------------------------------------------------------------
 

@@ -16,7 +16,10 @@ class Config {
             config = require(projectRoot + '/ngr.config.js');
         } else {  // for processes not in the root
              if (!fs.existsSync(path.join(projectRoot, 'ngr.config.js'))) {
+                log.break();
                 log.error('ngr command requires to be run in an Angular project scaffolded with angular-rollup');
+                log.break();
+                log.break();
                 process.exit();
              }
              projectRoot = findup.sync(projectRoot, 'ngr.config.js');
