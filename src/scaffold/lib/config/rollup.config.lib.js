@@ -1,9 +1,9 @@
 // rollup.config.lib.js
 
 export default {
-  input: 'out-tsc/es2015/{{projectName}}.js',
+  input: 'out-tsc/es2015/{{folderName}}.js',
   output: {
-    file: 'dist/{{projectName}}/fesm2015/{{projectName}}.js',
+    file: 'dist/{{projectName}}/fesm2015/{{folderName}}.js',
     format: 'es',
     sourcemap: false
   },

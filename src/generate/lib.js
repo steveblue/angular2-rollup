@@ -12,6 +12,7 @@ class LibraryGenerator extends Generator {
 
     constructor() {
         super();
+        this.folderName = this.name.includes('/') ? this.name.split('/')[1] : this.name;
         this.addProjectToConfig = new Scaffold().addProjectToConfig;
     }
 
@@ -23,11 +24,15 @@ class LibraryGenerator extends Generator {
 
         ls(directoryPath).forEach((file) => {
             let depth = this.directoryDepth;
+            if (this.name.includes('/')) {
+                depth = depth + 1;
+            }
             if (fs.statSync(path.join(directoryPath, file)).isFile()) {
                 if (!path.join(directoryPath, file).includes('tsconfig.lib.json')) {
                     depth = depth + 1;
                 }
                 this.replacePathInFile(path.join(directoryPath, file), depth);
+                this.replaceFolderNameInFile(path.join(directoryPath, file));
                 this.replaceNameInFile(path.join(directoryPath, file));
                 this.replaceProjectPathInFile(path.join(directoryPath, file));
             }
@@ -43,6 +48,10 @@ class LibraryGenerator extends Generator {
             relativePath += '../';
         }
         sed('-i', /{{relativePath}}/g, relativePath, path.normalize(filePath));
+    }
+
+    replaceFolderNameInFile(filePath) {
+         sed('-i', /{{folderName}}/g, this.folderName, path.normalize(filePath));
     }
 
     replaceNameInFile(filePath) {

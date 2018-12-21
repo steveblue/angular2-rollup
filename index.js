@@ -107,9 +107,9 @@ let exitHandler = (options, err) => {
     rm('-rf', path.join('config', 'environments'));
   }
   if (err && err !== 'SIGINT') {
-    log.break();
+    process.stdout.write('\n');
     console.log(colors.red('NGR ERROR', err));
-    log.break();
+    process.stdout.write('\n');
   }
   if (options.exit) process.exit();
 };

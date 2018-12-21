@@ -9,7 +9,7 @@
         "strictMetadataEmit": true,
         "skipTemplateCodegen": true,
         "annotateForClosureCompiler": true,
-        "flatModuleOutFile": "{{projectName}}.js",
+        "flatModuleOutFile": "{{folderName}}.js",
         "flatModuleId": "{{projectName}}"
     },
     "files": [

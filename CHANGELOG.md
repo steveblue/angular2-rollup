@@ -17,7 +17,7 @@
 - UPDATE production build to support css only
 - FIXED issues in library build when using `.css` files instead of `.scss`
 
-NOTE: In this release we made it possible to develop easier with `@angular/cli` yet still build for production with `ngr build prod`. The existing development build still works, but it is highly recommended to use `ng serve` for development when possible instead of `ngr build dev`. If you have been developing off `angular/rollup`, upgrading to take advantage of `ng serve` is relatively simple. Update all references to `.css` files in your `component.ts` files to `.scss`. Now your application should run fine in `@angular/cli` for development and the `angular-rollup` production build will still honor SCSS for production.
+NOTE: In this release we made it possible to develop easier with `@angular/cli` yet still build for production with `ngr build prod`. The existing development build still worxks, but it is highly recommended to use `ng serve` for development when possible instead of `ngr build dev`. If you have been developing off `angular/rollup`, upgrading to take advantage of `ng serve` is relatively simple. Update all references to `.css` files in your `component.ts` files to `.scss`. Now your application should run fine in `@angular/cli` for development and the `angular-rollup` production build will still honor SCSS for production.
 
 -------------------------------------------------------------------------------------------------------------
 

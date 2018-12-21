@@ -1,28 +1,28 @@
 {
     "src": "{{projectPath}}",
     "dist": "dist/{{projectName}}",
-    "filename": "{{projectName}}",
+    "filename": "{{folderName}}",
     "es2015": {
         "tsConfig": "tsconfig.lib.fesm2015.json",
         "rollupConfig": "rollup.config.lib.js",
-        "outFile": "dist/{{projectName}}/fesm2015/{{projectName}}.js"
+        "outFile": "dist/{{projectName}}/fesm2015/{{folderName}}.js"
     },
     "es5": {
         "tsConfig": "tsconfig.lib.es5.json",
         "rollupConfig": "rollup.config.lib-es5.js",
-        "outFile": "dist/{{projectName}}/fesm5/{{projectName}}.js"
+        "outFile": "dist/{{projectName}}/fesm5/{{folderName}}.js"
     },
     "umd": {
         "tsConfig": "tsconfig.lib.umd.json",
         "rollupConfig": "rollup.config.lib-umd.js",
-        "outFile": "dist/{{projectName}}/bundles/{{projectName}}.umd.js"
+        "outFile": "dist/{{projectName}}/bundles/{{folderName}}.umd.js"
     },
     "esm5": {
         "tsConfig": "tsconfig.lib.esm5.json",
-        "outFile": "dist/{{projectName}}/esm5/{{projectName}}.js"
+        "outFile": "dist/{{projectName}}/esm5/{{folderName}}.js"
     },
     "esm2015": {
         "tsConfig": "tsconfig.lib.esm2015.json",
-        "outFile": "dist/{{projectName}}/esm2015/{{projectName}}.js"
+        "outFile": "dist/{{projectName}}/esm2015/{{folderName}}.js"
     }
 }
