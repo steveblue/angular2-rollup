@@ -15,16 +15,17 @@ class Config {
         if (fs.existsSync(projectRoot + '/ngr.config.js')) {
             config = require(projectRoot + '/ngr.config.js');
         } else {  // for processes not in the root
-             projectRoot = findup.sync(projectRoot, 'ngr.config.js');
-             config = require(projectRoot + '/ngr.config.js');
 
-             if (!fs.existsSync(projectRoot)) {
-                log.break();
-                log.error('ngr command requires to be run in an Angular project scaffolded with angular-rollup');
-                log.break();
-                log.break();
-                process.exit();
-             }
+            try{
+                projectRoot = findup.sync(projectRoot, 'ngr.config.js');
+                config = require(projectRoot + '/ngr.config.js');
+            } catch(e){
+                    log.break();
+                    log.error('ngr command requires to be run in an Angular project scaffolded with angular-rollup');
+                    log.break();
+                    log.break();
+                    process.exit();
+            }
 
         }
 
