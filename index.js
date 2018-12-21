@@ -107,8 +107,9 @@ let exitHandler = (options, err) => {
     rm('-rf', path.join('config', 'environments'));
   }
   if (err && err !== 'SIGINT') {
-    console.log(' ');
+    log.break();
     console.log(colors.red('NGR ERROR', err));
+    log.break();
   }
   if (options.exit) process.exit();
 };
@@ -126,4 +127,8 @@ process.on('SIGUSR2', exitHandler.bind(null, { exit: true }));
 //catches uncaught exceptions
 process.on('uncaughtException', exitHandler.bind(null, { exit: true }));
 
-process.on('unhandledRejection', err => console.log(colors.red('NGR ERROR', err)));
+process.on('unhandledRejection', err => {
+  process.stdout.write('\n');
+  console.log(colors.red('NGR ERROR', err))
+  process.stdout.write('\n');
+});

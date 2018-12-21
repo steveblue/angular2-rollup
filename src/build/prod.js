@@ -56,14 +56,14 @@ class ProdBuild extends Build {
         await postcssBuilder.batch(sass);
         await this.transformSCSSPathstoCSS();
 
-      } 
+      }
       else if (ls(path.normalize('tmp/**/*.css')).length > 0) {
 
         const cssFileList = ls(path.normalize('tmp/**/*.css'));
         await postcssBuilder.batch(cssFileList);
 
       }
-      
+
       // rewrite tsconfig to compile tmp instead of src
       await sed('-i', 'src/', 'tmp/', path.join('tmp', 'tsconfig.' + cli.build + '.json'));
       // use tsconfig copied to tmp instead of src
@@ -78,7 +78,7 @@ class ProdBuild extends Build {
 
       await mv(path.normalize('out-tsc/tmp'), path.normalize('out-tsc/src'));
 
-      if (cli.program.rollup) { 
+      if (cli.program.rollup) {
         const prepRxjs = await this.buildRxjsFESM();
         const bundle = await rollupBuilder.bundle(path.join(config.projectRoot, 'rollup.config.js'));
         const optimize = await closureBuilder.bundle();
@@ -195,7 +195,7 @@ class ProdBuild extends Build {
   }
 
   transformSCSSPathstoCSS() {
-    
+
     return Promise.all(ls(path.normalize('tmp/**/*.ts')).map((filePath) => {
         return new Promise((res, rej) => {
 
@@ -205,7 +205,7 @@ class ProdBuild extends Build {
             } catch(err) {
                 rej(err);
             }
-         
+
         });
     }));
 
@@ -243,7 +243,7 @@ class ProdBuild extends Build {
         log.logFileStats(path.join(this.outputPath, file));
       });
     } else {
-      log.buildStats(this.startTime);
+      log.buildStats(this.startTime, this.outputPath);
     }
 
     if (util.hasArg('serve')) {

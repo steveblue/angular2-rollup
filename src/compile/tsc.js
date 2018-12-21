@@ -59,10 +59,10 @@ class TSBuilder {
 
         return new Promise((res, rej) => {
 
-            const outFile = path.join(config.projectRoot, config.build, 'main.ts');
+            const outFile = path.join(config.projectRoot, config.build, 'src', 'main.ts');
             const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
 
-            fs.readFile(path.join(config.projectRoot, 'main.ts'), 'utf8', (err, contents) => {
+            fs.readFile(path.join(config.projectRoot, 'src', 'main.ts'), 'utf8', (err, contents) => {
 
                 if (!err) {
                     contents = contents.replace("./out-tsc/" + config.src + "/app/app.module.ngfactory", config.src + "/app/app.module");

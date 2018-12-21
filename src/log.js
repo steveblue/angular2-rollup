@@ -464,7 +464,6 @@ class Log {
             });
         }
 
-
         if (fs.existsSync(path.join(config.build, 'bundles'))) {
             ls(path.join(config.build, 'bundles')).forEach((file) => {
                 if (fs.lstatSync(path.join(config.build, 'bundles', file)).isFile()) {
@@ -472,8 +471,6 @@ class Log {
                 }
             });
         }
-
-
 
     }
 

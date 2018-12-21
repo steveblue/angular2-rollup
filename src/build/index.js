@@ -12,7 +12,9 @@ class Build {
   constructor() {
 
     if (!config.projects) {
+      log.break();
       log.error('NGR ERROR: ngr >= 2.0.0 requires projects schema in ngr.config.js');
+      log.break();
     }
     this.outputPath = config.projects[config.project].architect.build.options.outputPath;
     this.startTime = moment(new Date());
