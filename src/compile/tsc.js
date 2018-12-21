@@ -57,7 +57,7 @@ class TSBuilder {
 
     compileMain() {
 
-        return new Promise((res) => {
+        return new Promise((res, rej) => {
 
             const outFile = path.join(config.projectRoot, config.build, 'main.ts');
             const tscPath = path.join(config.projectRoot, 'node_modules', '.bin', 'tsc');
