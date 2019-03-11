@@ -282,25 +282,6 @@ class LibBuild extends Build {
             exec('cp ' + this.libConfig.src + '/package.json' + ' ' + this.libConfig.dist + '/package.json', () => {
 
                 log.message('package.json copied to ./' + this.libConfig.dist);
-                fs.readFile(this.libConfig.dist + '/package.json', 'utf-8', (err, stdout) => {
-
-                    const pack = JSON.parse(stdout);
-                    const metaFile = path.join(this.libConfig.dist, pack.typings.split('.')[0]+'.metadata.json');
-                    if (fs.existsSync(metaFile)) {
-
-                        const metadata = JSON.parse(fs.readFileSync(metaFile).toString());
-
-                        if (metadata.importAs !== pack.name) {
-                            metadata.importAs = pack.name;
-                            fs.writeFile(metaFile, JSON.stringify(metadata), (err) => {
-                                if (err) {
-                                    throw err;
-                                }
-                            });
-                        }
-                    }
-
-                });
 
                 if (util.hasHook('post')) {
                     log.message('processing post task');
