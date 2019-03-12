@@ -1,9 +1,14 @@
+# 2.0.3
+
+- FIXED issue that caused library build to fail on Windows
+
+-------------------------------------------------------------------------------------------------------------
+
 # 2.0.2
 
 - UPDATE running ngr in non angular-rollup project will display error in console once again
 - FIXED issue that caused libraries to scaffold with incorrect path to es5 bundle
 - FIXED issue that caused libraries to not generate properly with a scoped name
-- FIXED issue that caused scoped packages to build without proper importAs property in metadata.json
 - FIXED issue that prevented production build when building rxjs FESM
 - FIXED issues that prevents JIT build from executing
 - FIXED issue that prevents PROD build from completing properly
