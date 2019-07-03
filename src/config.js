@@ -24,7 +24,7 @@ class Config {
                     log.error('ngr command requires to be run in an Angular project scaffolded with angular-rollup');
                     log.break();
                     log.break();
-                    process.exit();
+                    process.exit(1);
             }
 
         }

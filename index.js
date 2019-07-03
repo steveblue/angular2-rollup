@@ -74,7 +74,7 @@ let cli = () => {
 if (process.argv.indexOf('new') > -1) {
   if (fs.existsSync(path.join(processRoot, program.new))) {
     console.log(colors.red(program.new + ' already exists'));
-    process.exit();
+    process.exit(1);
   }
   if (!fs.existsSync(path.join(processRoot, program.new))) mkdir(path.join(processRoot, program.new));
   cp(path.join(cliRoot, 'src', 'scaffold', 'root', 'ngr.config.js'), path.join(processRoot, program.new));
@@ -100,7 +100,6 @@ fs.writeFile(
 );
 
 let exitHandler = (options, err) => {
-  //util.cleanOnExit();
   if (fs.existsSync(path.join('config', 'environments'))) {
     rm('-rf', path.join('src', 'environments'));
     cp('-R', path.join('config', 'environments'), 'src');
@@ -110,8 +109,11 @@ let exitHandler = (options, err) => {
     process.stdout.write('\n');
     console.log(colors.red('NGR ERROR', err));
     process.stdout.write('\n');
+    process.exit(1);
   }
-  if (options.exit) process.exit();
+  if (options.exit) {
+    process.exit(1);
+  }
 };
 
 // do something when app is closing
