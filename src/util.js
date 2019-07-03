@@ -1,6 +1,6 @@
 require('shelljs/global');
 
-const colors = require('colors');
+const exec = require('child_process').exec;
 const path = require('path');
 const fs = require('fs');
 const UglifyJS = require('uglify-js');

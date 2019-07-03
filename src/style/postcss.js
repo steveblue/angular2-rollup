@@ -1,9 +1,7 @@
 require('shelljs/global');
-
-const sass = require('node-sass');
+const exec = require('child_process').exec;
 const path = require('path');
 const fs = require('fs');
-const util = require('./../util.js');
 const log = require('./../log.js');
 const config = require('./../config');
 const cli = require('./../../cli.config.json');

@@ -112,7 +112,7 @@ let exitHandler = (options, err) => {
     process.exit(1);
   }
   if (options.exit) {
-    process.exit(1);
+    process.exit(0);
   }
 };
 

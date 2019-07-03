@@ -1,4 +1,5 @@
 'use strict';
+const exec        = require('child_process').exec;
 const path        = require('path');
 const fs          = require('fs');
 const ora         = require('ora');
