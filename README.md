@@ -83,7 +83,6 @@ Options:
   --src [string]             specify a path to an existing src folder
   --skip-install [bool]      prevents install during scaffold
   --yarn [bool]              use yarn instead of npm to install
-  --ivy [bool]               start a new project with angular ivy
   --prettier [bool]          scaffold a new workspace with prettier installed
   --ssl [bool]               scaffold a new workspace with https express server
   --angularVersion [string]  scaffold a new workspace with a specific version of angular
