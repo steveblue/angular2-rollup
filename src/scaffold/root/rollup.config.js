@@ -43,8 +43,7 @@ export default {
         new ResolveRxjs(),
         new ResolveAngular(),
         nodeResolve({
-            module: true,
-            jsnext: true
+            mainFields: ['module', 'jsnext']
         })
     ],
     onwarn: function (message) {

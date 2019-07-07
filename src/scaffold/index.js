@@ -44,11 +44,12 @@ class Scaffold {
 
                     util.copyDir(srcDir, path.join(this.path, 'src'), { silent: true });
 
-                    if (cli.program.ivy) {
-                        util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/ivy/src'), path.join(this.path, 'src'), { silent: true });
-                        rm(path.join(this.path, 'src', 'app', 'app.routes.ts'));
-                        rm('-rf', path.join(this.path, 'src', 'app', 'shared'));
-                    }
+                    // DEPRECATED for 8.0.0
+                    // if (cli.program.ivy) {
+                    //     util.copyDir(path.normalize(config.cliRoot + '/src/scaffold/ivy/src'), path.join(this.path, 'src'), { silent: true });
+                    //     rm(path.join(this.path, 'src', 'app', 'app-routing.module.ts'));
+                    //     rm('-rf', path.join(this.path, 'src', 'app', 'shared'));
+                    // }
 
                     ls(srcDir).forEach((file) => {
                         console.log(this.formatCreateMsg('create ' + path.join(this.cliName, 'src', file) + ' (' + fs.statSync(path.join(srcDir, file)).size + ' bytes)'));

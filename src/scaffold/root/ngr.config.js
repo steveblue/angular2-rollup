@@ -37,7 +37,6 @@ module.exports = {
                                 "systemjs/dist/system.js",
                                 "systemjs/dist/system.js.map",
                                 "reflect-metadata/Reflect.js",
-                                "reflect-metadata/Reflect.js.map",
                                 "tslib/tslib.js",
                                 "@angular",
                                 "rxjs"

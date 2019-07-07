@@ -1,3 +1,24 @@
+# 2.0.4
+
+- UPDATE scaffold for Angular 8.0.0
+- FIXED instances where process.exit is called without error code
+- UPDATE several dependencies to prevent warnings and vulnerabilities
+- UPDATE default rollup.config to use new properties required for rollup-plugin-node-resolve 
+- UPDATE google-closure-compiler to reference jar file in google-closure-compiler-java package
+- UPDATE filename of routing module in scaffold to coincide with Angular CLI
+- DEPRECATE --ivy scaffold option, was only good for early testing in Angular 7.0.0
+- DEPRECATE HttpModule from scaffold
+- DEPRECATE css-mqpacker postcss plugin from scaffold, this package was deprecated
+- DEPRECATE ngr build jit, ngr build dev (still available for compatibility reasons)
+
+NOTE: This release is most likely one of the final maintenance releases of 2.0.x. 
+
+Since 1.0.0 the aim of this project has been to bring supplemental functionality to Angular CLI. In this regard, `ng serve` is preferable to `ngr build dev` for development, however `ngr build prod` can provide a smaller bundle than `ng build` because angular-rollup bundles and optimizes with Closure Compiler.
+
+This project will be migrating to Angular Architect API in the future while attempting to retain some backwards compatibility. Some breaking changes are expected These changes will be available in 3.0.x releases of angular-rollup. Release date is TBD.
+
+-------------------------------------------------------------------------------------------------------------
+
 # 2.0.3
 
 - FIXED issue that caused library build to fail on Windows
