@@ -1,6 +1,6 @@
 {
   "name": "angular-rollup",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "cli for building angular with closure compiler and rollup",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "js-string-escape": "^1.0.1",
     "magic-string": "^0.23.2",
     "moment": "^2.21.0",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.13.1",
     "ora": "^2.1.0",
     "prettier": "^1.14.2",
     "shelljs": "^0.8.1",
@@ -48,6 +48,6 @@
     "ngr": "index.js"
   },
   "engines": {
-    "node": ">8.0.0 <11.0.0"
+    "node": ">8.0.0"
   }
 }
