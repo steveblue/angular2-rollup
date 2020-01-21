@@ -108,12 +108,6 @@ Options:
 
 `ng serve` to build for development using `@angular/cli`.
 
-To build the app for development with `@angular/compiler-cli`, enable livereload, and start up the server:
-
-* `$ ngr build dev --watch --serve`
-
-`ngr` will build the application for development using AOT in --watch mode.
-
 
 ## Production
 
