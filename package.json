@@ -36,7 +36,7 @@
     "js-string-escape": "^1.0.1",
     "magic-string": "^0.23.2",
     "moment": "^2.21.0",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.13.1",
     "ora": "^2.1.0",
     "prettier": "^1.14.2",
     "shelljs": "^0.8.1",
