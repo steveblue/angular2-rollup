@@ -36,7 +36,10 @@ class Scaffold {
             {}, (error, stdout, stderr) => {
 
                 stdout.split('\n').forEach((msg) => { console.log(this.formatCreateMsg(msg.trim())); });
-
+                if (stdout.includes('already exists')) {
+                    log.error(stdout);
+                    return;
+                }
                 if (stdout.includes('initialized git.')) {
 
                     console.log("Project '" + this.cliName + "' is merging with @angular/cli.");

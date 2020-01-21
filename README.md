@@ -51,7 +51,7 @@ Install the [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/j
 
 - Install the cli and global npm dependencies
 
-`$ npm install -g angular-rollup`
+`$ npm install -g angular-rollup @angular/cli`
 
 - Apps are scaffolded just like the `@angular/cli`. Use `ngr` instead of `ng`.
 
